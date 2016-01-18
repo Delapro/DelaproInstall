@@ -417,8 +417,8 @@ $layout.ParentNode.ReplaceChild($layoutComment, $layout)
 $viewer.Save($viewerFile)
 
 # Thunderbird
-Start-BitsTransfer http://download.cdn.mozilla.net/pub/thunderbird/releases/38.4.0/win32/de/Thunderbird%20Setup%2038.4.0.exe
-Start-Process -Wait .\Thunderbird%20Setup%2038.4.0.exe /S
+Start-BitsTransfer http://download.cdn.mozilla.net/pub/thunderbird/releases/38.5.1/win32/de/Thunderbird%20Setup%2038.5.1.exe
+Start-Process -Wait .\Thunderbird%20Setup%2038.5.1.exe /S
 
 # Chrome 64-Bit Install
 Start-BitsTransfer https://dl.google.com/tag/s/appguid%3D%7B8A69D345-D564-463C-AFF1-A69D9E530F96%7D%26iid%3D%7BB8C15A03-A737-2713-B3A5-1CEBDBE72BC3%7D%26lang%3Dde%26browser%3D2%26usagestats%3D0%26appname%3DGoogle%2520Chrome%26needsadmin%3Dprefers%26ap%3Dx64-stable%26installdataindex%3Ddefaultbrowser/dl/chrome/install/googlechromestandaloneenterprise64.msi
