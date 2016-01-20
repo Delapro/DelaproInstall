@@ -395,6 +395,13 @@ Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/15
 # Adobe Reader Silent Install mit Progressbar
 # Start-Process  -Wait .\AdbeRdr11010_de_DE.exe /sPB
 Start-Process  -Wait .\AcroRdrDC1500920069_de_DE.exe /sPB
+# EULA abnicken
+If ((Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader\DC\AdobeViewer' -Name EULA).EULA -ne $null) {
+	If ((Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader\DC\AdobeViewer' -Name EULA).EULA -eq 0) {
+		Set-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader\DC\AdobeViewer' -Name EULA -Value 1
+		"Adobe Reader EULA abgenickt"
+	}
+}
 # Pfad für Reader DC holen
 $ftype = Cmd /c Ftype  acrobat
 $dc = (($ftype -split '=')[1]).Replace('"%1"',"")
