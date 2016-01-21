@@ -390,7 +390,8 @@ Control printers
 # man entfernt nur das Jahrhundert und die Punkte!
 #
 # DC Version: http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/1500920069/AcroRdrDC1500920069_de_DE.exe
-# Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/11.x/11.0.10/de_DE/AdbeRdr11010_de_DE.exe  
+# Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/11.x/11.0.10/de_DE/AdbeRdr11010_de_DE.exe
+# DC Release-Infos: http://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotes/index.html
 Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/1501020056/AcroRdrDC1501020056_de_DE.exe
 # Adobe Reader Silent Install mit Progressbar
 # Start-Process  -Wait .\AdbeRdr11010_de_DE.exe /sPB
