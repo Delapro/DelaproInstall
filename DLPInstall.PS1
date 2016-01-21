@@ -391,10 +391,10 @@ Control printers
 #
 # DC Version: http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/1500920069/AcroRdrDC1500920069_de_DE.exe
 # Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/11.x/11.0.10/de_DE/AdbeRdr11010_de_DE.exe  
-Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/1500920069/AcroRdrDC1500920069_de_DE.exe
+Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/1501020056/AcroRdrDC1501020056_de_DE.exe
 # Adobe Reader Silent Install mit Progressbar
 # Start-Process  -Wait .\AdbeRdr11010_de_DE.exe /sPB
-Start-Process  -Wait .\AcroRdrDC1500920069_de_DE.exe /sPB
+Start-Process  -Wait .\AcroRdrDC1501020056_de_DE.exe /sPB
 # EULA abnicken, bei Neuinstallation muss zuerst der Key angelegt werden
 New-Item 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader\DC\AdobeViewer' -Force
 If ((Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader\DC\AdobeViewer' -Name EULA).EULA -eq 0) {
