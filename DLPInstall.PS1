@@ -386,6 +386,7 @@ If (Test-WindowsVista) {
 
 Control printers
 
+# Acrobat DC Versionsnummererklärung: http://www.adobe.com/devnet-docs/acrobatetk/tools/AdminGuide/basics.html#versioning-strategy
 # Downloaddateiname für DC: Reader DC 2015.009.20069 wird zu 1500920069
 # man entfernt nur das Jahrhundert und die Punkte!
 #
