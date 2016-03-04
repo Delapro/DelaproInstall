@@ -164,12 +164,12 @@ If (-not (Get-Command Unblock-File -ErrorAction SilentlyContinue)) {
 	
 	If (Test-64Bit) {
 		If  (Test-Windows7) {
-			(New-Object Net.WebClient).DownloadFile("https://download.microsoft.com/download/2/C/6/2C6E1B4A-EBE5-48A6-B225-2D2058A9CEFB/W2K12R2-KB3094174-x64.msu",  "$($DLPInstPath)W2K12R2-KB3094174-x64.msu")
-			Start-Process -Wait .\W2K12R2-KB3094174-x64.msu
-		} else {
 			(New-Object Net.WebClient).DownloadFile("http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu",  "$($DLPInstPath)Windows6.1-KB2819745-x64-MultiPkg.msu")
 			# Invoke-Item .\Windows6.1-KB2819745-x64-MultiPkg.msu
 			Start-Process -Wait .\Windows6.1-KB2819745-x64-MultiPkg.msu
+		} else {
+			(New-Object Net.WebClient).DownloadFile("https://download.microsoft.com/download/2/C/6/2C6E1B4A-EBE5-48A6-B225-2D2058A9CEFB/W2K12R2-KB3094174-x64.msu",  "$($DLPInstPath)W2K12R2-KB3094174-x64.msu")
+			Start-Process -Wait .\W2K12R2-KB3094174-x64.msu
 		}
 	} else {
 		(New-Object Net.WebClient).DownloadFile("http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x86-MultiPkg.msu",  "$($DLPInstPath)Windows6.1-KB2819745-x86-MultiPkg.msu")
