@@ -353,6 +353,7 @@ If (Test-Windows10) {
 	}
 }
 
+# Parameter beachten Start-Process -Wait "$($DLPInstPath)dlpsetup.exe" -ArgumentList "-a","-NOINSTNET40","-NOINSTACROBAT","-NOINSTDELAPROPDF","-pathDelapro=$($DlpPath)"
 Start-Process -Wait "$($DLPInstPath)dlpsetup.exe"
 
 # Für Neuinstallation BEL2014.LOG anlegen, damit ein spezieller Hinweis erfolgt, falls diese nochmals eingespielt werden sollte
