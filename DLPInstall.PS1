@@ -374,7 +374,7 @@ $link.Save()
 reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Ports" /v "$($DlpPath)\Export\PDF\Delapro.EPS" /t reg_sz
 # net stop spooler
 # net start spooler
-Restart-Service spooler
+Restart-Service spooler -Force
 
 New-Item -Type Directory $DlpPath\Export\PDF\Temp
 
