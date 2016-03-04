@@ -461,8 +461,9 @@ $layout.ParentNode.ReplaceChild($layoutComment, $layout)
 $viewer.Save($viewerFile)
 
 # Thunderbird
-Start-BitsTransfer http://download.cdn.mozilla.net/pub/thunderbird/releases/38.5.1/win32/de/Thunderbird%20Setup%2038.5.1.exe
-Start-Process -Wait .\Thunderbird%20Setup%2038.5.1.exe /S
+$tbVersion = "38.6.0"
+Start-BitsTransfer http://download.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe
+Start-Process -Wait .\Thunderbird%20Setup%20$tbVersion.exe /S
 
 # Chrome
 If (Test-64Bit) {
