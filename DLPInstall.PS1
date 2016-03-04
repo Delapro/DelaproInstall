@@ -440,8 +440,9 @@ If ((Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader
 # Pfad für Reader DC holen
 $ftype = Cmd /c Ftype  acrobat
 $dc = (($ftype -split '=')[1]).Replace('"%1"',"")
-# neuere Versionen von DC scheinen ein /u (Win8.1 Pro) einzutragen
+# neuere Versionen von DC scheinen ein /u (Win8.1 Pro) einzutragen, komische Installation verwenden sogar "/ u"
 $dc = $dc.Replace('/u',"")
+$dc = $dc.Replace('/ u', "")
 $dc = $dc.TrimEnd()
 $dc = $dc.Replace('"', "")
 $dcfile = Get-Item $dc
