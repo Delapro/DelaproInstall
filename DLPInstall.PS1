@@ -4,6 +4,8 @@ $DlpInstPath = "C:\Temp\DelaproInstall\"
 $DlpPath = "C:\Delapro"
 # Pfad für Spielprogramm
 $DlpGamePath = "C:\DelaGame"
+# Pfad für Webseite
+$easyBaseURI = "http://www.easysoftware.de"
 
 Function Test-64Bit () {
 	[System.IntPtr]::Size -eq 8
@@ -301,19 +303,19 @@ if (-not (Get-Command Rename-Printer -ErrorAction SilentlyContinue)) {
 	}
 }
 
-Start-BitsTransfer http://www.easysoftware.de/Demo/dlpsetup.exe $DlpInstPath
+Start-BitsTransfer $easyBaseURI/Demo/dlpsetup.exe $DlpInstPath
 Unblock-File "$($DLPInstPath)dlpsetup.exe"
-Start-BitsTransfer http://www.easysoftware.de/download/easyTeamViewerQS_de.exe $DLPInstPath
+Start-BitsTransfer $easyBaseURI/download/easyTeamViewerQS_de.exe $DLPInstPath
 Unblock-File "$($DLPInstPath)easyTeamViewerQS_de.exe"
-# Start-BitsTransfer http://www.easysoftware.de/download/dlppreise2015-1.zip $DLPInstPath
+# Start-BitsTransfer $easyBaseURI/download/dlppreise2015-1.zip $DLPInstPath
 # Unblock-File "$($DLPInstPath)dlppreise2015-1.zip"
 # Invoke-Item "$($DLPInstPath)dlppreise2015-1.zip"
 # Bildarchivierung
-# Start-BitsTransfer http://www.easysoftware.de/download/dlpwinim.exe $DLPInstPath
+# Start-BitsTransfer $easyBaseURI/download/dlpwinim.exe $DLPInstPath
 # Invoke-Item "$($DLPInstPath)dlpwinim.exe"
-# Start-BitsTransfer http://www.easysoftware.de/util/DlpWinIm.EXE $DLPInstPath
+# Start-BitsTransfer $easyBaseURI/util/DlpWinIm.EXE $DLPInstPath
 # Move-Item .\DlpWinIm.EXE  "$($DlpPath)\Image"  -Force
-# Start-BitsTransfer http://www.easysoftware.de/download/dlpwinzert.exe $DLPInstPath
+# Start-BitsTransfer $easyBaseURI/download/dlpwinzert.exe $DLPInstPath
 # Invoke-Item "$($DLPInstPath)dlpwinzert.exe"
 
 # eDocPrint Pro braucht .Net 3.5! Ist auf Windows 10 nicht automatisch vorhanden!
