@@ -383,18 +383,12 @@ Start-Process -Wait "$($DLPInstPath)dlpsetup.exe"
 
 # Für Neuinstallation BEL2014.LOG anlegen, damit ein spezieller Hinweis erfolgt, falls diese nochmals eingespielt werden sollte
 "Neuinstallation" | Set-Content  "$($DlpPath)\BEL2014.LOG"
-new-item -path $DlpPath\Fernwartung -Type Directory
+
+# Teamviewer Fernwartung einrichten
+New-Item -path $DlpPath\Fernwartung -Type Directory
 Copy-Item .\easyTeamViewerQS_de.exe $DlpPath\Fernwartung
-# Invoke-Item $DlpPath\Fernwartung
-# Link auf Desktop erstellen, Text: 
-# easy Internet Fernwartung (Teamviewer)
-$TvPath = "$($DlpPath)\Fernwartung\easyTeamViewerQS_de.exe"
-$Shell = New-Object -ComObject Wscript.Shell
-$desktop = $Shell.SpecialFolders.Item("AllUsersDesktop")
-$link = $Shell.CreateShortcut("$($desktop)\easy Internet Fernwartung (Teamviewer).lnk")
-$link.TargetPath = $TVPath
-# $link.WorkingDirectory = ""
-$link.Save()
+# Link auf Desktop erstellen, Text: easy Internet Fernwartung (Teamviewer)
+New-FileShortcut -FileTarget "$($DlpPath)\Fernwartung\easyTeamViewerQS_de.exe" -LinkFilename "easy Internet Fernwartung (Teamviewer).lnk"
 
 # DelaproMailer-Port anlegen:
 reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Ports" /v "$($DlpPath)\Export\PDF\Delapro.EPS" /t reg_sz
