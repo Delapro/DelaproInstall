@@ -116,6 +116,31 @@ Function Test-WUARebootRequired {
     }
 }
 
+# erzeugt auf dem Öffentlichen Desktop einen Link zu einer Datei, benötigt dazu Adminrechte!
+Function New-FileShortcut {
+	[CmdletBinding()]
+	Param (
+		[String]$FileTarget,
+		[String]$LinkFilename,
+		[String]$WorkingDirectory,
+		[String]$Description
+	)
+	
+	$Shell = New-Object -ComObject Wscript.Shell
+	$desktop = $Shell.SpecialFolders.Item("AllUsersDesktop")
+	Write-Verbose "Desktoppfad: $desktop"
+	If (-Not $LinkFilename.ToUpper().EndsWith(".LNK")) {
+		$LinkFilename = $LinkFilename + ".LNK"
+	}
+	Write-Verbose "Shortcutpfad: $LinkFilename"
+	$link = $Shell.CreateShortcut("$($desktop)\$($LinkFilename)")
+	$link.TargetPath = $FileTarget
+	$link.WorkingDirectory = $WorkingDirectory
+	$link.Description = $Description
+	$link.Save()
+	
+}
+
 If (Test-WindowsServer) {
 	Write-Error "Windows Server erkannt, bitte Installation manuell durchführen!"
 	# weitere Scriptausführung anhalten
