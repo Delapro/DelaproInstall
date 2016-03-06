@@ -141,6 +141,48 @@ Function New-FileShortcut {
 	
 }
 
+# ermittelt den Pfad der AcroRd32.exe gibt diesen als [FileInfo]-Objekt zurück
+Function Get-AcrobatReaderDCEXE {
+	[CmdletBinding()]
+	Param()
+	
+	# Pfad für Reader DC holen
+	$ftype = Cmd /c Ftype  acrobat
+	Write-Verbose "FType: $ftype"
+	$dc = (($ftype -split '=')[1]).Replace('"%1"',"")
+	Write-Verbose $dc
+	# neuere Versionen von DC scheinen ein /u (Win8.1 Pro) einzutragen, komische Installation verwenden sogar "/ u"
+	$dc = $dc.Replace('/u',"")
+	$dc = $dc.Replace('/ u', "")
+	$dc = $dc.TrimEnd()
+	$dc = $dc.Replace('"', "")
+	$dcfile = Get-Item $dc
+	$dcfile
+}
+
+# Schaltet beim Acrobat ReaderDC die rechte Leiste ab
+Function Set-AcrobatReaderDCViewerRightPaneOff { 
+	[CmdletBinding()]
+	Param(
+		[System.IO.FileInfo]$AcrobatReaderDCEXE
+	)
+
+	# Viewer XML-Datei laden
+	$viewerFile = "$($AcrobatReaderDCEXE.Directory.Fullname)\AcroApp\DEU\Viewer.aapp"
+	Write-Verbose $viewerFile
+	$viewer = [xml](Get-Content $viewerFile)
+	# Layout auskommentieren, hier die ausführliche Variante: http://stackoverflow.com/questions/6328288/how-to-comment-a-line-of-a-xml-file-in-c-sharp-with-system-xml
+	$layout = $viewer.Application.Layouts.Layout
+	$layoutComment = $viewer.CreateComment($layout.OuterXml)
+	# Layout-Element durch das Element mit dem Kommentar ersetzen
+	$layout.ParentNode.ReplaceChild($layoutComment, $layout)
+	# so würde das Ergebnis aussehen:
+	# $viewer.OuterXml
+	# Ergebnis speichern, geht nur mit Adminrechten!
+	$viewer.Save($viewerFile)
+	
+}
+
 If (Test-WindowsServer) {
 	Write-Error "Windows Server erkannt, bitte Installation manuell durchführen!"
 	# weitere Scriptausführung anhalten
@@ -459,26 +501,8 @@ If ((Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader
 }
 
 # Pfad für Reader DC holen
-$ftype = Cmd /c Ftype  acrobat
-$dc = (($ftype -split '=')[1]).Replace('"%1"',"")
-# neuere Versionen von DC scheinen ein /u (Win8.1 Pro) einzutragen, komische Installation verwenden sogar "/ u"
-$dc = $dc.Replace('/u',"")
-$dc = $dc.Replace('/ u', "")
-$dc = $dc.TrimEnd()
-$dc = $dc.Replace('"', "")
-$dcfile = Get-Item $dc
-# Viewer XML-Datei laden
-$viewerFile = "$($dcfile.Directory.Fullname)\AcroApp\DEU\Viewer.aapp"
-$viewer = [xml](Get-Content $viewerFile)
-# Layout auskommentieren, hier die ausführliche Variante: http://stackoverflow.com/questions/6328288/how-to-comment-a-line-of-a-xml-file-in-c-sharp-with-system-xml
-$layout = $viewer.Application.Layouts.Layout
-$layoutComment = $viewer.CreateComment($layout.OuterXml)
-# Layout-Element durch das Element mit dem Kommentar ersetzen
-$layout.ParentNode.ReplaceChild($layoutComment, $layout)
-# so würde das Ergebnis aussehen:
-# $viewer.OuterXml
-# Ergebnis speichern, geht nur mit Adminrechten!
-$viewer.Save($viewerFile)
+$dcFile = Get-AcrobatReaderDCEXE
+Set-AcrobatReaderDCViewerRightPaneOff $dcFile
 
 # Thunderbird
 $tbVersion = "38.6.0"
