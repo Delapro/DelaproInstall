@@ -422,8 +422,8 @@ If (Test-Windows10) {
 	}
 }
 
-# Parameter beachten Start-Process -Wait "$($DLPInstPath)dlpsetup.exe" -ArgumentList "-a","-NOINSTNET40","-NOINSTACROBAT","-NOINSTDELAPROPDF","-pathDelapro=$($DlpPath)"
-Start-Process -Wait "$($DLPInstPath)dlpsetup.exe"
+# Delapro installieren
+Start-Process -Wait "$($DLPInstPath)dlpsetup.exe" -ArgumentList "-a","-NOINSTNET40","-NOINSTACROBAT","-NOINSTDELAPROPDF","-pathDelapro=$($DlpPath)"
 
 # Für Neuinstallation BEL2014.LOG anlegen, damit ein spezieller Hinweis erfolgt, falls diese nochmals eingespielt werden sollte
 "Neuinstallation" | Set-Content  "$($DlpPath)\BEL2014.LOG"
