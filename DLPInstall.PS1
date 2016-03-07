@@ -77,7 +77,8 @@ Function Test-DelaproInstalled {
 Function Test-DelaproDirectoryExists {
 	[CmdletBinding()]
 	Param (
-		[String]$Path
+		#[Parameter(Mandatory=$true][String]$Path
+		[String]$Path = "C:\DELAPRO"
 	)
 	
 	Test-Path $Path
