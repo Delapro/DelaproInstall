@@ -58,6 +58,31 @@ Function Test-NetFramework35Installed()
 	}
 }
 
+# Prüft, ob Delapro bereits installiert ist, schaut nur unter Programme in der Registrierung und nicht nach dem Pfad!
+Function Test-DelaproInstalled {
+	[CmdletBinding()]
+	Param()
+
+	$installed = $false
+	If (Test-64Bit)	{
+		$installed=Test-Path 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\windows\CurrentVersion\Uninstall\{61DB59C0-0B0E-11D4-B878-00A0C91D65AB}'
+	} else {
+		$installed=Test-Path 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\windows\CurrentVersion\Uninstall\{61DB59C0-0B0E-11D4-B878-00A0C91D65AB}'
+	}
+	
+	$installed
+}
+
+# Prüft ob das angegebene Delapro-Verzeichnis existiert
+Function Test-DelaproDirectoryExists {
+	[CmdletBinding()]
+	Param (
+		[String]$Path
+	)
+	
+	Test-Path $Path
+}
+
 # Mal sehen, ob es was bringt unter alten Windowsversionen
 Function Copy-FileWithDateTime ($source, $dest) {
 	
