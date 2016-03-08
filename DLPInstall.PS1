@@ -188,7 +188,7 @@ Function Get-AcrobatReaderDCEXE {
 	$dcfile
 }
 
-# Schaltet beim Acrobat ReaderDC die rechte Leiste ab
+# Schaltet beim Acrobat ReaderDC die rechte Leiste ab, muss mit Admin-Rechten laufen
 Function Set-AcrobatReaderDCViewerRightPaneOff { 
 	[CmdletBinding()]
 	Param(
@@ -201,14 +201,19 @@ Function Set-AcrobatReaderDCViewerRightPaneOff {
 	$viewer = [xml](Get-Content $viewerFile)
 	# Layout auskommentieren, hier die ausführliche Variante: http://stackoverflow.com/questions/6328288/how-to-comment-a-line-of-a-xml-file-in-c-sharp-with-system-xml
 	$layout = $viewer.Application.Layouts.Layout
-	$layoutComment = $viewer.CreateComment($layout.OuterXml)
-	# Layout-Element durch das Element mit dem Kommentar ersetzen
-	$layout.ParentNode.ReplaceChild($layoutComment, $layout)
-	# so würde das Ergebnis aussehen:
-	# $viewer.OuterXml
-	# Ergebnis speichern, geht nur mit Adminrechten!
-	$viewer.Save($viewerFile)
-	
+	If ($layout -eq $null) {
+		# $viewer.Application.Layouts.'#comment'
+		# würde den Kommentar enthalten
+		Write-Error "Kann Viewerlayout nicht ändern, entsprechendes Layout-Element nicht gefunden. Evtl. bereits auskommentiert."
+	} else {
+		$layoutComment = $viewer.CreateComment($layout.OuterXml)
+		# Layout-Element durch das Element mit dem Kommentar ersetzen
+		$layout.ParentNode.ReplaceChild($layoutComment, $layout)
+		# so würde das Ergebnis aussehen:
+		# $viewer.OuterXml
+		# Ergebnis speichern, geht nur mit Adminrechten!
+		$viewer.Save($viewerFile)
+	}	
 }
 
 If (Test-WindowsServer) {
