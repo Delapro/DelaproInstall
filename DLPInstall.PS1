@@ -243,7 +243,10 @@ If (-not (Get-Command Unblock-File -ErrorAction SilentlyContinue)) {
 	# Wenn kein Unblock-File da ist, dann fehlt auch Invoke-WebRequest!
 	# Invoke-WebRequest "http://www.microsoft.com/de-de/download/details.aspx?id=40855"
 	# Start-BitsTransfer "http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu"
-	
+
+	# Bevor etwas installiert wird, zuerst einen Systemwiederherstellungspunkt setzen
+	CheckPoint-Computer "vor .Net-Framework- bzw. Powershell-Installation"
+
 	# Allerdings muss bei Windows 7 und Windows Vista vorher geprüft werden, ob Net 4.5 bereits verfügbar ist
 	# https://msdn.microsoft.com/en-us/library/ee942965(v=vs.110).aspx
 	If (-Not  (Test-NetFramework45Installed)) {
