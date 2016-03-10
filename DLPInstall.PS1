@@ -442,6 +442,10 @@ BDAG0AZABMAGkAbgBlAD0AIgBUACIAIABFAHYAZQBuAHQAcwA9ACIATAAxACIAIABXAGEAaQB0AD0AIg
 [System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String($DelaproESF)) | Set-Content "C:\ProgramData\eDocPrintPro\Delapro.ESF"
 reg add "HKCU\SOFTWARE\MAY Computer\eDocPrintPro\DelaproPDF\Standard" /v "Esf" /t "reg_sz" /d "DelaproPDF"  /f
 
+# bei Problemen mit eDocPrintPro, hilft bei neueren Versionen, ab 3.23.4 ein Registry-Eintrag über den eine Log-Funktion aktiviert wird
+# HKEY_LOCAL_MACHINE\SOFTWARE\MAYComputer\eDocPrintPro\<Drucker-Name> 
+# darunter String mit dem Namen "log-path" anlegen
+
 Rename-Printer -Name eDocPrintPro -NewName DelaproPDF
 
 # die ab Windows 10 v1511 Einstellung für den Standarddruckertreiber, welche immer den zuletzt benutzten Drucker zum
