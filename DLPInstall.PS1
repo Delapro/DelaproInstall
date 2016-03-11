@@ -247,6 +247,9 @@ If (-not (Get-Command Unblock-File -ErrorAction SilentlyContinue)) {
 	# Bevor etwas installiert wird, zuerst einen Systemwiederherstellungspunkt setzen
 	CheckPoint-Computer "vor .Net-Framework- bzw. Powershell-Installation"
 
+	# TODO: Die Installation der Pakete automatisieren, hier werden die betreffenden Paramter zum Aufruf
+	# beschrieben: https://support.microsoft.com/en-us/kb/934307
+
 	# Allerdings muss bei Windows 7 und Windows Vista vorher geprüft werden, ob Net 4.5 bereits verfügbar ist
 	# https://msdn.microsoft.com/en-us/library/ee942965(v=vs.110).aspx
 	If (-Not  (Test-NetFramework45Installed)) {
