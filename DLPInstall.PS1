@@ -344,9 +344,9 @@ Start-BitsTransfer $easyBaseURI/Demo/dlpsetup.exe $DlpInstPath
 Unblock-File "$($DLPInstPath)dlpsetup.exe"
 Start-BitsTransfer $easyBaseURI/download/easyTeamViewerQS_de.exe $DLPInstPath
 Unblock-File "$($DLPInstPath)easyTeamViewerQS_de.exe"
-# Start-BitsTransfer $easyBaseURI/download/dlppreise2015-1.zip $DLPInstPath
-# Unblock-File "$($DLPInstPath)dlppreise2015-1.zip"
-# Invoke-Item "$($DLPInstPath)dlppreise2015-1.zip"
+# Start-BitsTransfer $easyBaseURI/download/dlppreise2016-1.exe $DLPInstPath
+# Unblock-File "$($DLPInstPath)dlppreise2016-1.exe"
+# Invoke-Item "$($DLPInstPath)dlppreise2016-1.exe"
 # Bildarchivierung
 # Start-BitsTransfer $easyBaseURI/download/dlpwinim.exe $DLPInstPath
 # Invoke-Item "$($DLPInstPath)dlpwinim.exe"
