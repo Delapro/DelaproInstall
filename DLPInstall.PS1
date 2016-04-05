@@ -233,6 +233,18 @@ Function Get-DelaproBackups {
 	$ds
 }
 
+Function Import-OldDLPVersion {
+	[CmdletBinding()]
+	Param(
+		[String]$Source,
+		[String]$Destination
+	)
+	
+	Copy-Item "$Source\*.*" $Destination -Force -Verbose
+	Copy-Item "$Source\Laser\DlpWinIm.M*" "$($Destination)\Laser" -Force -Verbose
+	Copy-Item "$Source\Laser\*.BMP" "$($Destination)\Laser" -Force -Verbose
+	Copy-Item "$Source\Laser\*.PDF" "$($Destination)\Laser" -Force -Verbose
+}
 
 If (Test-WindowsServer) {
 	Write-Error "Windows Server erkannt, bitte Installation manuell durchführen!"
@@ -589,11 +601,8 @@ If ($ds.length -ge 1) {
 	# -Force zum überschreiben von alten Dateien aber vorher mit Polyfill abklären
 	Expand-Archive "$($ds.Fullname)" "$($DLPInstPath)AlteDatensicherung"
 	# jetzt die Daten übernehmen
-	Copy-Item "$($DLPInstPath)AlteDatensicherung\*.*" "$($DlpPath)" -Force -Verbose
-	Copy-Item "$($DLPInstPath)AlteDatensicherung\Laser\DlpWinIm.M*" "$($DlpPath)\Laser" -Force -Verbose
-	Copy-Item "$($DLPInstPath)AlteDatensicherung\Laser\*.BMP" "$($DlpPath)\Laser" -Force -Verbose
-	Copy-Item "$($DLPInstPath)AlteDatensicherung\Laser\*.PDF" "$($DlpPath)\Laser" -Force -Verbose
-	# Laufwerksbuchstaben des Sicherungsstick im Programmverteiler setzen
+	Import-OldDlpVersion -Source $($DLPInstPath)AlteDatensicherung -Destination $($DlpPath)
+	# TODO: Laufwerksbuchstaben des Sicherungsstick im Programmverteiler setzen
 } else {
 	# Bitte Daten manuell einspielen
 	break
