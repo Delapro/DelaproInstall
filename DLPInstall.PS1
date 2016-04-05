@@ -349,11 +349,11 @@ Unblock-File "$($DLPInstPath)easyTeamViewerQS_de.exe"
 # Invoke-Item "$($DLPInstPath)dlppreise2016-1.exe"
 # Bildarchivierung
 # Start-BitsTransfer $easyBaseURI/download/dlpwinim.exe $DLPInstPath
-# Invoke-Item "$($DLPInstPath)dlpwinim.exe"
+# Start-Process -Wait "$($DLPInstPath)dlpwinim.exe" -ArgumentList "-a", "-pathDelapro=$($DlpPath)"
 # Start-BitsTransfer $easyBaseURI/util/DlpWinIm.EXE $DLPInstPath
 # Move-Item .\DlpWinIm.EXE  "$($DlpPath)\Image"  -Force
 # Start-BitsTransfer $easyBaseURI/download/dlpwinzert.exe $DLPInstPath
-# Invoke-Item "$($DLPInstPath)dlpwinzert.exe"
+# Start-Process -Wait "$($DLPInstPath)dlpwinzert.exe" -ArgumentList "-a", "-pathDelapro=$($DlpPath)"
 
 # eDocPrint Pro braucht .Net 3.5! Ist auf Windows 10 nicht automatisch vorhanden!
 If (-Not (Test-NetFramework35Installed)) {
