@@ -548,7 +548,7 @@ $dcFile = Get-AcrobatReaderDCEXE
 Set-AcrobatReaderDCViewerRightPaneOff $dcFile
 
 # Thunderbird
-$tbVersion = "38.6.0"
+$tbVersion = "38.7.1"
 Start-BitsTransfer http://download.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe
 Start-Process -Wait .\Thunderbird%20Setup%20$tbVersion.exe /S
 
