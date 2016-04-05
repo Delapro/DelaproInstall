@@ -471,8 +471,8 @@ bQBlAD0AIgBUACUARABPAEMATgBBAE0ARQAlACIAIABBAHUAdABvAE4AdQBtAGIAZQByAD0AIgBMADAA
 BDAG0AZABMAGkAbgBlAD0AIgBUACIAIABFAHYAZQBuAHQAcwA9ACIATAAxACIAIABXAGEAaQB0AD0AIgBMADAAIgAvAD4APAAvAGUARABvAGMAUAByAGkAbgB0AFAAcgBvAD4A
 "@
 
-[System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String($DelaproESF)) | Set-Content "C:\Users\All Users\eDocPrintPro\Delapro.ESF"
-[System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String($DelaproESF)) | Set-Content "C:\ProgramData\eDocPrintPro\Delapro.ESF"
+[System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String($DelaproESF)) | Set-Content "C:\Users\All Users\eDocPrintPro\Delapro.ESFX"
+[System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String($DelaproESF)) | Set-Content "C:\ProgramData\eDocPrintPro\Delapro.ESFX"
 reg add "HKCU\SOFTWARE\MAY Computer\eDocPrintPro\DelaproPDF\Standard" /v "Esf" /t "reg_sz" /d "DelaproPDF"  /f
 
 # bei Problemen mit eDocPrintPro, hilft bei neueren Versionen, ab 3.23.4 ein Registry-Eintrag über den eine Log-Funktion aktiviert wird
