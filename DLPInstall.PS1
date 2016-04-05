@@ -599,6 +599,8 @@ If ($ds.length -ge 1) {
 	# also eine Datensicherung gefunden, diese entpacken
 	$ds = $ds[0]
 	# -Force zum überschreiben von alten Dateien aber vorher mit Polyfill abklären
+	# wenn es hier einen Fehler gibt ein nichts entpackt wird, sollte $Error.Exception.HResult überprüft werden, wenn
+	# HResult -2146233087 liefert, ist die ZIP-Datei nicht in Ordnung
 	Expand-Archive "$($ds.Fullname)" "$($DLPInstPath)AlteDatensicherung"
 	# jetzt die Daten übernehmen
 	Import-OldDlpVersion -Source $($DLPInstPath)AlteDatensicherung -Destination $($DlpPath)
