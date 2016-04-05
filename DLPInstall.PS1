@@ -564,9 +564,8 @@ If (Test-64Bit) {
 }
 
 #Delapro Daten von Datensicherung einspielen
-# hier könnte man Expand-Archive nutzen oder?
 # Laufwerksbuchstaben ermitteln
-$dl = Get-Volume| where {$_.Driveletter -ne $null} |  select -ExpandProperty Driveletter
+$dl = Get-Volume| where {$_.Driveletter -ne $null} | where {$_.OperationalStatus -eq "OK"} |  select -ExpandProperty Driveletter
 #  Sicherungen ermitteln und nach Datum sortieren
 $ds = $dl | % {Get-ChildItem "$($_):\Delapro*.ZIP"} 
 # Sortieren mit neuester zuerst
