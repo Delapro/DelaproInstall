@@ -573,6 +573,7 @@ $ds = $ds| sort -Descending Name
 If ($ds.length -ge 1) {
 	# also eine Datensicherung gefunden, diese entpacken
 	$ds = $ds[0]
+	# -Force zum überschreiben von alten Dateien aber vorher mit Polyfill abklären
 	Expand-Archive "$($ds.Fullname)" "$($DLPInstPath)AlteDatensicherung"
 	# jetzt die Daten übernehmen
 	Copy-Item "$($DLPInstPath)AlteDatensicherung\*.*" "$($DlpPath)" -Force -Verbose
