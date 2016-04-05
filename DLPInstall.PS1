@@ -216,6 +216,23 @@ Function Set-AcrobatReaderDCViewerRightPaneOff {
 	}	
 }
 
+# versucht die verfügbaren Delaprobackups zu ermitteln, in der Regel sollte es die USB-Sticks mit den Sicherungen finden
+Function Get-DelaproBackups {
+	[CmdletBinding()]
+	Param(
+		
+	)
+
+	# Laufwerksbuchstaben ermitteln
+	$dl = Get-Volume| where {$_.Driveletter -ne $null} | where {$_.OperationalStatus -eq "OK"} |  select -ExpandProperty Driveletter
+	#  Sicherungen ermitteln und nach Datum sortieren
+	$ds = $dl | % {Get-ChildItem "$($_):\Delapro*.ZIP"} 
+	# Sortieren mit neuester zuerst
+	$ds = $ds| sort -Descending Name
+	$ds
+}
+
+
 If (Test-WindowsServer) {
 	Write-Error "Windows Server erkannt, bitte Installation manuell durchführen!"
 	# weitere Scriptausführung anhalten
@@ -564,12 +581,7 @@ If (Test-64Bit) {
 }
 
 #Delapro Daten von Datensicherung einspielen
-# Laufwerksbuchstaben ermitteln
-$dl = Get-Volume| where {$_.Driveletter -ne $null} | where {$_.OperationalStatus -eq "OK"} |  select -ExpandProperty Driveletter
-#  Sicherungen ermitteln und nach Datum sortieren
-$ds = $dl | % {Get-ChildItem "$($_):\Delapro*.ZIP"} 
-# Sortieren mit neuester zuerst
-$ds = $ds| sort -Descending Name
+$ds = Get-DelaproBackups
 If ($ds.length -ge 1) {
 	# also eine Datensicherung gefunden, diese entpacken
 	$ds = $ds[0]
