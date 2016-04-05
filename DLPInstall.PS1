@@ -535,7 +535,7 @@ $dcVersion = "1501020056"
 Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/$dcVersion/AcroRdrDC$($dcVersion)_de_DE.exe
 # Adobe Reader Silent Install mit Progressbar
 # Start-Process  -Wait .\AdbeRdr11010_de_DE.exe /sPB
-Start-Process  -Wait .\AcroRdrDC$($dcVersion)_de_DE.exe /sPB
+Start-Process  -Wait .\AcroRdrDC$($dcVersion)_de_DE.exe -ArgumentList "/sPB"
 # EULA abnicken, bei Neuinstallation muss zuerst der Key angelegt werden
 New-Item 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader\DC\AdobeViewer' -Force
 If ((Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader\DC\AdobeViewer' -Name EULA).EULA -eq 0) {
