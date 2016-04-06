@@ -246,6 +246,26 @@ Function Import-OldDLPVersion {
 	Copy-Item "$Source\Laser\*.PDF" "$($Destination)\Laser" -Force -Verbose
 }
 
+# prüft, ob Chrome installiert ist, entweder System- oder Userlevel
+Function Test-Chrome {
+	[CmdletBinding()]
+	[OutputType([System.Boolean])]
+	Param ()
+	
+	$ret = $false
+	
+	$regLoc = @('Registry::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe',
+	  	    	'Registry::HKEY_CURRENT_USER\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe',
+	  		'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe',
+	  		'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe')
+	
+	$regLoc | % {
+			$ret = $ret -or (Test-Path $_)
+	}
+	
+	$ret
+}
+
 If (Test-WindowsServer) {
 	Write-Error "Windows Server erkannt, bitte Installation manuell durchführen!"
 	# weitere Scriptausführung anhalten
