@@ -246,7 +246,8 @@ Function Import-OldDLPVersion {
 	Copy-Item "$Source\Laser\*.PDF" "$($Destination)\Laser" -Force -Verbose
 }
 
-# prüft, ob Chrome installiert ist, entweder System- oder Userlevel
+# prüft, ob Chrome installiert ist, entweder System- oder Userlevel, egal ob 32-Bit oder 64-Bit, gibt $true oder $false zurück
+# Chromium-Keys, gelten auch für Chrome: http://www.chromium.org/developers/installer
 Function Test-Chrome {
 	[CmdletBinding()]
 	[OutputType([System.Boolean])]
@@ -603,14 +604,16 @@ Start-BitsTransfer http://download.cdn.mozilla.net/pub/thunderbird/releases/$tbV
 Start-Process -Wait .\Thunderbird%20Setup%20$tbVersion.exe /S
 
 # Chrome
-If (Test-64Bit) {
-	# Chrome 64-Bit Install
-	Start-BitsTransfer https://dl.google.com/tag/s/appguid%3D%7B8A69D345-D564-463C-AFF1-A69D9E530F96%7D%26iid%3D%7BB8C15A03-A737-2713-B3A5-1CEBDBE72BC3%7D%26lang%3Dde%26browser%3D2%26usagestats%3D0%26appname%3DGoogle%2520Chrome%26needsadmin%3Dprefers%26ap%3Dx64-stable%26installdataindex%3Ddefaultbrowser/dl/chrome/install/googlechromestandaloneenterprise64.msi
-	Start-Process -Wait .\googlechromestandaloneenterprise64.msi
-} else {
-	# Chrome 32-Bit Install
-	Start-BitsTransfer https://dl.google.com/tag/s/appguid%3D%7B8A69D345-D564-463C-AFF1-A69D9E530F96%7D%26iid%3D%7B8CA1A63B-B60A-2207-BB17-B73EE41CDE71%7D%26lang%3Den%26browser%3D4%26usagestats%3D0%26appname%3DGoogle%2520Chrome%26needsadmin%3Dprefers%26installdataindex%3Ddefaultbrowser/dl/chrome/install/googlechromestandaloneenterprise.msi
-	Start-Process -Wait .\googlechromestandaloneenterprise.msi
+If (-not (Test-Chrome)) {
+	If (Test-64Bit) {
+		# Chrome 64-Bit Install
+		Start-BitsTransfer https://dl.google.com/tag/s/appguid%3D%7B8A69D345-D564-463C-AFF1-A69D9E530F96%7D%26iid%3D%7BB8C15A03-A737-2713-B3A5-1CEBDBE72BC3%7D%26lang%3Dde%26browser%3D2%26usagestats%3D0%26appname%3DGoogle%2520Chrome%26needsadmin%3Dprefers%26ap%3Dx64-stable%26installdataindex%3Ddefaultbrowser/dl/chrome/install/googlechromestandaloneenterprise64.msi
+		Start-Process -Wait .\googlechromestandaloneenterprise64.msi
+	} else {
+		# Chrome 32-Bit Install
+		Start-BitsTransfer https://dl.google.com/tag/s/appguid%3D%7B8A69D345-D564-463C-AFF1-A69D9E530F96%7D%26iid%3D%7B8CA1A63B-B60A-2207-BB17-B73EE41CDE71%7D%26lang%3Den%26browser%3D4%26usagestats%3D0%26appname%3DGoogle%2520Chrome%26needsadmin%3Dprefers%26installdataindex%3Ddefaultbrowser/dl/chrome/install/googlechromestandaloneenterprise.msi
+		Start-Process -Wait .\googlechromestandaloneenterprise.msi
+	}
 }
 
 #Delapro Daten von Datensicherung einspielen
