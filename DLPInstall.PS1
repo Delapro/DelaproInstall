@@ -254,16 +254,11 @@ Function Test-Chrome {
 	Param ()
 	
 	$ret = $false
-	
 	$regLoc = @('Registry::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe',
 	  	    	'Registry::HKEY_CURRENT_USER\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe',
 	  		'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe',
 	  		'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe')
-	
-	$regLoc | % {
-			$ret = $ret -or (Test-Path $_)
-	}
-	
+	$regLoc | % { $ret = $ret -or (Test-Path $_) }
 	$ret
 }
 
