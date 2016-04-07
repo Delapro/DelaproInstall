@@ -389,6 +389,12 @@ CheckPoint-Computer "vor Delapro Installation"
 # ein Wiederherstellungspunkt erstellt wurde. Versuchen Sie es später erneut.
 # erscheint Control System aufrufen und manuellen Systemwiederherstellungspunkt erstellen
 # hier weitere Infos zu obigem Thema: http://msdn.microsoft.com/de-de/library/windows/desktop/aa378727(v=vs.85).aspx
+#
+# Wenn die Meldung:
+# Dieser Befehl kann aufgrund des folgenden Fehlers nicht ausgeführt werden: Der Dienst kann nicht gestartet werden, da er
+# deaktiviert ist oder ihm keine aktivierten Geräte zugeordnet sind.
+# Dabei enthält $Error.Exception.HResult den Wert -2147024809
+
 Control System 
 
 # hier gibt es die passenden WMI-Klassen für SystemRestore: https://msdn.microsoft.com/en-us/library/windows/desktop/aa378986(v=vs.85).aspx
