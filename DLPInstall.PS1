@@ -665,7 +665,11 @@ If ($ds.length -ge 1) {
 	# HResult -2146233087 liefert, ist die ZIP-Datei nicht in Ordnung
 	Expand-Archive "$($ds.Fullname)" "$($DLPInstPath)AlteDatensicherung"
 	# jetzt die Daten übernehmen
-	Import-OldDlpVersion -Source $($DLPInstPath)AlteDatensicherung -Destination $($DlpPath)
+	If (Test-Path "$($DLPInstPath)AlteDatensicherung") {
+		# damit kein Datenkuddelmuddel entsteht, altes Sicherungsverzeichnis löschen, falls vorhanden
+		Remove-Item "$($DLPInstPath)AlteDatensicherung" -Force
+	}
+	Import-OldDlpVersion -Source "$($DLPInstPath)AlteDatensicherung" -Destination "$($DlpPath)"
 	# TODO: Laufwerksbuchstaben des Sicherungsstick im Programmverteiler setzen
 } else {
 	# Bitte Daten manuell einspielen
