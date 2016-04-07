@@ -262,6 +262,20 @@ Function Test-Chrome {
 	$ret
 }
 
+# Zum ermitteln der verfügbaren GhostScript-Versionen
+Function Get-Ghostscript {
+	[CmdletBinding()]
+	[OutputType([System.IO.DirectoryInfo])]
+	Param ()
+	
+	$gsDirs = @()
+	
+	$gsDirs += Get-ChildItem "$($Env:ProgramFiles)\GS" -ErrorAction SilentlyContinue
+	$gsDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\GS" -ErrorAction SilentlyContinue
+	
+	$gsDirs
+}
+
 If (Test-WindowsServer) {
 	Write-Error "Windows Server erkannt, bitte Installation manuell durchführen!"
 	# weitere Scriptausführung anhalten
