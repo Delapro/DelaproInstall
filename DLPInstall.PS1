@@ -262,6 +262,21 @@ Function Test-Chrome {
 	$ret
 }
 
+# prüft, ob Thunderbird installiert ist, entweder System- oder Userlevel, egal ob 32-Bit oder 64-Bit, gibt $true oder $false zurück
+Function Test-Thunderbird {
+	[CmdletBinding()]
+	[OutputType([System.Boolean])]
+	Param ()
+	
+	$ret = $false
+	$regLoc = @('Registry::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\thunderbird.exe',
+	  	    	'Registry::HKEY_CURRENT_USER\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\thunderbird.exe',
+	  		'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\thunderbird.exe',
+	  		'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\thunderbird.exe')
+	$regLoc | % { $ret = $ret -or (Test-Path $_) }
+	$ret
+}
+
 # Zum ermitteln der verfügbaren GhostScript-Versionen
 Function Get-Ghostscript {
 	[CmdletBinding()]
