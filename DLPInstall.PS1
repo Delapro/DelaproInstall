@@ -306,6 +306,20 @@ Function Get-Ghostscript {
 	$gsDirs
 }
 
+# legt einen neuen Printerport an
+Function New-PrinterPort {
+	[CmdletBinding()]
+	#[OutputType([System.Boolean])]
+	Param(
+		[System.String]$Portname
+	)
+	
+	reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Ports" /v "$Portname" /t reg_sz
+	# net stop spooler
+	# net start spooler
+	Restart-Service Spooler -Force
+}
+
 If (Test-WindowsServer) {
 	Write-Error "Windows Server erkannt, bitte Installation manuell durchführen!"
 	# weitere Scriptausführung anhalten
@@ -572,10 +586,7 @@ Copy-Item .\easyTeamViewerQS_de.exe $DlpPath\Fernwartung
 New-FileShortcut -FileTarget "$($DlpPath)\Fernwartung\easyTeamViewerQS_de.exe" -LinkFilename "easy Internet Fernwartung (Teamviewer).lnk"
 
 # DelaproMailer-Port anlegen:
-reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Ports" /v "$($DlpPath)\Export\PDF\Delapro.EPS" /t reg_sz
-# net stop spooler
-# net start spooler
-Restart-Service spooler -Force
+New-PrinterPort -Name "$($DlpPath)\Export\PDF\Delapro.EPS"
 
 New-Item -Type Directory $DlpPath\Export\PDF\Temp
 
