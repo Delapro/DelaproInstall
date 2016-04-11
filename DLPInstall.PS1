@@ -586,7 +586,7 @@ Copy-Item .\easyTeamViewerQS_de.exe $DlpPath\Fernwartung
 New-FileShortcut -FileTarget "$($DlpPath)\Fernwartung\easyTeamViewerQS_de.exe" -LinkFilename "easy Internet Fernwartung (Teamviewer).lnk"
 
 # DelaproMailer-Port anlegen:
-New-PrinterPort -Name "$($DlpPath)\Export\PDF\Delapro.EPS"
+New-PrinterPort -Portname "$($DlpPath)\Export\PDF\Delapro.EPS"
 
 New-Item -Type Directory $DlpPath\Export\PDF\Temp
 
