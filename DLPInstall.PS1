@@ -236,14 +236,14 @@ Function Get-DelaproBackups {
 Function Import-OldDLPVersion {
 	[CmdletBinding()]
 	Param(
-		[String]$Source,
-		[String]$Destination
+		[String]$SourcePath,
+		[String]$DestinationPath
 	)
 	
-	Copy-Item "$Source\*.*" $Destination -Force -Verbose
-	Copy-Item "$Source\Laser\DlpWinIm.M*" "$($Destination)\Laser" -Force -Verbose
-	Copy-Item "$Source\Laser\*.BMP" "$($Destination)\Laser" -Force -Verbose
-	Copy-Item "$Source\Laser\*.PDF" "$($Destination)\Laser" -Force -Verbose
+	Copy-Item "$SourcePath\*.*" $DestinationPath -Force -Verbose
+	Copy-Item "$SourcePath\Laser\DlpWinIm.M*" "$($DestinationPath)\Laser" -Force -Verbose
+	Copy-Item "$SourcePath\Laser\*.BMP" "$($DestinationPath)\Laser" -Force -Verbose
+	Copy-Item "$SourcePath\Laser\*.PDF" "$($DestinationPath)\Laser" -Force -Verbose
 }
 
 # prüft, ob Chrome installiert ist, entweder System- oder Userlevel, egal ob 32-Bit oder 64-Bit, gibt $true oder $false zurück
@@ -686,7 +686,7 @@ If ($ds.length -ge 1) {
 		# damit kein Datenkuddelmuddel entsteht, altes Sicherungsverzeichnis löschen, falls vorhanden
 		Remove-Item "$($DLPInstPath)AlteDatensicherung" -Force
 	}
-	Import-OldDlpVersion -Source "$($DLPInstPath)AlteDatensicherung" -Destination "$($DlpPath)"
+	Import-OldDlpVersion -SourcePath "$($DLPInstPath)AlteDatensicherung" -DestinationPath "$($DlpPath)"
 	# TODO: Laufwerksbuchstaben des Sicherungsstick im Programmverteiler setzen
 } else {
 	# Bitte Daten manuell einspielen
