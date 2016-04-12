@@ -306,6 +306,33 @@ Function Get-Ghostscript {
 	$gsDirs
 }
 
+# neueste Version Commandlineversion von Ghostscript aufrufen
+Function Invoke-Ghostscript {
+	[CmdletBinding()]
+	#[OutputType([System.IO.DirectoryInfo])]
+	Param (
+		[System.String]$sOutputFile,
+		[System.String]$sDEVICE,
+		[System.String]$dNOPAUSE,
+		[System.String]$dLastPage,
+		[System.String]$dTextAlphaBits,
+		[System.String]$dGraphicsAlphaBits,
+		[System.String]$r,
+		[System.String]$gx,
+		[System.String]$gy,
+	)
+	
+}
+
+Function ConvertTo-Bmp {
+	[CmdletBinding()]
+	#[OutputType([System.IO.DirectoryInfo])]
+	Param (
+		[System.String]$Quality
+	)
+	
+}
+
 # legt einen neuen Printerport an
 Function New-PrinterPort {
 	[CmdletBinding()]
