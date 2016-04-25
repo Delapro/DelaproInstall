@@ -610,6 +610,8 @@ If (Test-WindowsVista) {
 				Add-PrinterDriver -name "Microsoft PS Class Driver" -InfPath C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_d74c8d3824a210d1\prnms005.inf
 			} else {
 				Add-PrinterDriver -name "Microsoft PS Class Driver" -InfPath C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_1233c058c621b357\prnms005.inf
+				# ab v1511:
+				Add-PrinterDriver -name "Microsoft PS Class Driver" -InfPath C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_a3895815234f1110\prnms005.inf
 			}
 		} else {
 			# Win8
