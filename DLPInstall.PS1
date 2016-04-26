@@ -679,15 +679,16 @@ $ds = Get-DelaproBackups
 If ($ds.length -ge 1) {
 	# also eine Datensicherung gefunden, diese entpacken
 	$ds = $ds[0]
+	If (Test-Path "$($DLPInstPath)AlteDatensicherung") {
+		# damit kein Datenkuddelmuddel entsteht, altes Sicherungsverzeichnis löschen, falls vorhanden
+		Remove-Item "$($DLPInstPath)AlteDatensicherung" -Force
+	}
+
 	# -Force zum überschreiben von alten Dateien aber vorher mit Polyfill abklären
 	# wenn es hier einen Fehler gibt ein nichts entpackt wird, sollte $Error.Exception.HResult überprüft werden, wenn
 	# HResult -2146233087 liefert, ist die ZIP-Datei nicht in Ordnung
 	Expand-Archive "$($ds.Fullname)" "$($DLPInstPath)AlteDatensicherung"
 	# jetzt die Daten übernehmen
-	If (Test-Path "$($DLPInstPath)AlteDatensicherung") {
-		# damit kein Datenkuddelmuddel entsteht, altes Sicherungsverzeichnis löschen, falls vorhanden
-		Remove-Item "$($DLPInstPath)AlteDatensicherung" -Force
-	}
 	Import-OldDlpVersion -SourcePath "$($DLPInstPath)AlteDatensicherung" -DestinationPath "$($DlpPath)"
 	# TODO: Laufwerksbuchstaben des Sicherungsstick im Programmverteiler setzen
 } else {
