@@ -243,6 +243,7 @@ Function Import-OldDLPVersion {
 	Copy-Item "$SourcePath\*.*" $DestinationPath -Force -Verbose
 	Copy-Item "$SourcePath\Laser\DlpWin.M*" "$($DestinationPath)\Laser" -Force -Verbose
 	Copy-Item "$SourcePath\Laser\*.BMP" "$($DestinationPath)\Laser" -Force -Verbose
+	Copy-Item "$SourcePath\Laser\*.JPG" "$($DestinationPath)\Laser" -Force -Verbose
 	Copy-Item "$SourcePath\Laser\*.PDF" "$($DestinationPath)\Laser" -Force -Verbose
 }
 
