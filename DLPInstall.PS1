@@ -386,6 +386,9 @@ If (-not (Get-Command Unblock-File -ErrorAction SilentlyContinue)) {
 		(New-Object Net.WebClient).DownloadFile("http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x86-MultiPkg.msu",  "$($DLPInstPath)Windows6.1-KB2819745-x86-MultiPkg.msu")
 		# Invoke-Item .\Windows6.1-KB2819745-x86-MultiPkg.msu
 		Start-Process -Wait .\Windows6.1-KB2819745-x86-MultiPkg.msu
+		# Falls es hier Probleme geben sollte, mit Fehlermeldung 0xc80003f3, dann hilfe wahrscheinlich die Installation
+		# einer neueren Version des .Net-Framework z. B. 4.6.1. Diese muss aber erzwungen werden, da eigentlich nur 4.5 für
+		# WMF 4.0 Voraussetzung ist.
 	}
 	If (Test-WUARebootRequired) {
 		Write-Warning "Neustart notwendig!"
