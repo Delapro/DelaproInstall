@@ -779,6 +779,8 @@ If ($ds.length -ge 1) {
 	break
 }
 
+Cleanup-Delapro -DelaproPath $DLPPath
+
 # Prüfen, ob man sich im Delapro-Verzeichnis befindet
 If (-Not ((Get-Location).Path -eq "$($DlpPath)")) {
   CD $DlpPath
