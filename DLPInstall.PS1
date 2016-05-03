@@ -321,6 +321,83 @@ Function New-PrinterPort {
 	Restart-Service Spooler -Force
 }
 
+# räumt das Delapro-Verzeichnis auf
+Function Cleanup-Delapro {
+	[CmdletBinding()]
+	Param(
+		[System.String]$DelaproPath
+	)
+
+	# Prüfen, ob man sich im Delapro-Verzeichnis befindet
+	#If (-Not ((Get-Location).Path -eq "$($DlpPath)")) {
+	#  CD $DlpPath
+	#}
+	
+	# Aufräumarbeiten
+	Remove-Item "$($DlpPath)\Report.EXE"
+	Remove-Item "$($DlpPath)\TXTPrev.EXE"
+	Remove-Item "$($DlpPath)\easyBack.exe"
+	Remove-Item "$($DlpPath)\easyRest.exe"
+	Remove-Item "$($DlpPath)\PCAWInfo.EXE"
+	Remove-Item "$($DlpPath)\PCAWInfo.BAT"
+	Remove-Item "$($DlpPath)\PCAWRUN.BAT"
+	Remove-Item "$($DlpPath)\Bdruck.EXE"
+	Remove-Item "$($DlpPath)\ARJ.EXE"
+	Remove-Item "$($DlpPath)\DBU.EXE"
+	Remove-Item "$($DlpPath)\INFO.BAT"
+	Remove-Item "$($DlpPath)\HOST.BAT"
+	Remove-Item "$($DlpPath)\STREAMER.BAT"
+	Remove-Item "$($DlpPath)\ModeCo80.BAT"
+	Remove-Item "$($DlpPath)\BackupZI.BAT"
+	Remove-Item "$($DlpPath)\DelaTeil.SET"
+	Remove-Item "$($DlpPath)\DelaVoll.SET"
+	Remove-Item "$($DlpPath)\DlpVoll.SET"
+	Remove-Item "$($DlpPath)\LoadFix.COM"
+	
+	# JaNein.EXE?
+	
+	# von Ringel
+	Remove-Item "$($DlpPath)\BTX.BAT"
+	Remove-Item "$($DlpPath)\BTX.PRN"
+	Remove-Item "$($DlpPath)\BTX_UEBE.BAT"
+	Remove-Item "$($DlpPath)\COMPILE.BAT"
+	
+	# Export-KZBV-Temp und PDF-Temp-Verzeichnis löschen
+	# COPY-Verzeichnis aufräumen, vor allem auch bei LL-Versionen
+	
+	#Dir *.BAK | group LastWriteTime
+	Remove-Item "$($DlpPath)\*.BAK"
+	
+	#Dir *.TBK | group LastWriteTime
+	Remove-Item "$($DlpPath)\*.TBK"
+	
+	#dir cm??17*.*
+	Remove-Item "$($DlpPath)\cm??17*.DLL"
+	Remove-Item "$($DlpPath)\cm??17*.LNG"
+	Remove-Item "$($DlpPath)\cm??17*.OCX"
+	
+	#dir cm??18*.*
+	Remove-Item "$($DlpPath)\cm??18*.DLL"
+	Remove-Item "$($DlpPath)\cm??18*.LNG"
+	
+	# dir cm??19*.*
+	# Remove-Item cm??19*.DLL
+	# Remove-Item cm??19*.LNG
+	
+	DIR cm*
+	
+	# DLP.LOG-Datei verkleinern
+	If (Test-Path "$($DlpPath)\dlp.log") {
+		(get-content "$($DlpPath)\dlp.log")[-300..-1] | set-content "$($DlpPath)\dlp.log"
+	}
+	
+	# Alte Backup-Logdateien löschen, wo älter als ein Jahr sind:
+	If (Test-Path "$($DlpPath)\backup\log\*.log") {
+		Get-Item "$($DlpPath)\backup\log\*.log" | where {$_.LastWriteTime -lt ((Get-Date).AddDays(-365))} | Remove-Item
+	}
+	
+}
+
 If (Test-WindowsServer) {
 	Write-Error "Windows Server erkannt, bitte Installation manuell durchführen!"
 	# weitere Scriptausführung anhalten
@@ -707,68 +784,6 @@ If (-Not ((Get-Location).Path -eq "$($DlpPath)")) {
   CD $DlpPath
 }
 
-# Aufräumarbeiten
-Remove-Item Report.EXE
-Remove-Item TXTPrev.EXE
-Remove-Item easyBack.exe
-Remove-Item easyRest.exe
-Remove-Item PCAWInfo.EXE
-Remove-Item PCAWInfo.BAT
-Remove-Item PCAWRUN.BAT
-Remove-Item Bdruck.EXE
-Remove-Item ARJ.EXE
-Remove-Item DBU.EXE
-Remove-Item INFO.BAT
-Remove-Item HOST.BAT
-Remove-Item STREAMER.BAT
-Remove-Item ModeCo80.BAT
-Remove-Item BackupZI.BAT
-Remove-Item DelaTeil.SET
-Remove-Item DelaVoll.SET
-Remove-Item DlpVoll.SET
-Remove-Item LoadFix.COM
-
-# JaNein.EXE?
-
-# von Ringel
-Remove-Item BTX.BAT
-Remove-Item BTX.PRN
-Remove-Item BTX_UEBE.BAT
-Remove-Item COMPILE.BAT
-
-# Export-KZBV-Temp und PDF-Temp-Verzeichnis löschen
-# COPY-Verzeichnis aufräumen, vor allem auch bei LL-Versionen
-
-Dir *.BAK | group LastWriteTime
-Remove-Item *.BAK
-
-Dir *.TBK | group LastWriteTime
-Remove-Item *.TBK
-
-dir cm??17*.*
-Remove-Item cm??17*.DLL
-Remove-Item cm??17*.LNG
-Remove-Item cm??17*.OCX
-
-dir cm??18*.*
-Remove-Item cm??18*.DLL
-Remove-Item cm??18*.LNG
-
-# dir cm??19*.*
-# Remove-Item cm??19*.DLL
-# Remove-Item cm??19*.LNG
-
-DIR cm*
-
-# DLP.LOG-Datei verkleinern
-If (Test-Path dlp.log) {
-	(get-content dlp.log)[-300..-1] | set-content dlp.log
-}
-
-# Alte Backup-Logdateien löschen, wo älter als ein Jahr sind:
-If (Test-Path .\backup\log\*.log) {
-	Get-Item backup\log\*.log | where {$_.LastWriteTime -lt ((Get-Date).AddDays(-365))} | Remove-Item
-}
 
 # Spielprogramm anlegen und Daten rüberkopieren
 New-Item -Type Directory $DlpGamePath
