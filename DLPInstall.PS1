@@ -245,7 +245,7 @@ Function Import-OldDLPVersion {
 	Copy-Item "$SourcePath\Laser\*.BMP" "$($DestinationPath)\Laser" -Force -Verbose
 	Copy-Item "$SourcePath\Laser\*.JPG" "$($DestinationPath)\Laser" -Force -Verbose
 	Copy-Item "$SourcePath\Laser\*.PDF" "$($DestinationPath)\Laser" -Force -Verbose
-	Copy-Item "$SourcePath\XMLForm\*.*" "$($DestinationPath)\XMLForm" -Force -Verbose -Recurse
+	Copy-Item -Path "$SourcePath\XMLForm" "$($DestinationPath)\XMLForm" -Force -Verbose -Recurse
 }
 
 # prüft, ob Chrome installiert ist, entweder System- oder Userlevel, egal ob 32-Bit oder 64-Bit, gibt $true oder $false zurück
