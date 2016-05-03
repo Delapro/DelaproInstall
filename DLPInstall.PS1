@@ -321,6 +321,39 @@ Function New-PrinterPort {
 	Restart-Service Spooler -Force
 }
 
+# importiert das neueste Delapro-Backup, entweder aus einer ZIP-Datei von easyBackup32 oder aus einem Pfad
+# wo Delapro.EXE und eine aktuelle AUFTRAG.DBF liegt
+Function Import-LastDelaproBackup {
+	[CmdletBinding()]
+	Param(
+		[System.String]$TempPath,
+		[System.String]$DestinationPath
+	)
+
+	#Delapro Daten von Datensicherung einspielen
+	$ds = Get-DelaproBackups
+	If ($ds.length -ge 1) {
+		# also eine Datensicherung gefunden, diese entpacken
+		$ds = $ds[0]
+		If (Test-Path $TempPath) {
+			# damit kein Datenkuddelmuddel entsteht, altes Sicherungsverzeichnis löschen, falls vorhanden
+			Remove-Item $TempPath -Force
+		}
+	
+		# -Force zum überschreiben von alten Dateien aber vorher mit Polyfill abklären
+		# wenn es hier einen Fehler gibt ein nichts entpackt wird, sollte $Error.Exception.HResult überprüft werden, wenn
+		# HResult -2146233087 liefert, ist die ZIP-Datei nicht in Ordnung
+		Expand-Archive "$($ds.Fullname)" $TempPath
+		# jetzt die Daten übernehmen
+		Import-OldDlpVersion -SourcePath $TempPath -DestinationPath $DestinationPath
+		# TODO: Laufwerksbuchstaben des Sicherungsstick im Programmverteiler setzen
+	} else {
+		# Bitte Daten manuell einspielen
+		break
+	}
+
+}
+
 # räumt das Delapro-Verzeichnis auf
 Function Cleanup-Delapro {
 	[CmdletBinding()]
@@ -757,27 +790,7 @@ If (-not (Test-Chrome)) {
 	}
 }
 
-#Delapro Daten von Datensicherung einspielen
-$ds = Get-DelaproBackups
-If ($ds.length -ge 1) {
-	# also eine Datensicherung gefunden, diese entpacken
-	$ds = $ds[0]
-	If (Test-Path "$($DLPInstPath)AlteDatensicherung") {
-		# damit kein Datenkuddelmuddel entsteht, altes Sicherungsverzeichnis löschen, falls vorhanden
-		Remove-Item "$($DLPInstPath)AlteDatensicherung" -Force
-	}
-
-	# -Force zum überschreiben von alten Dateien aber vorher mit Polyfill abklären
-	# wenn es hier einen Fehler gibt ein nichts entpackt wird, sollte $Error.Exception.HResult überprüft werden, wenn
-	# HResult -2146233087 liefert, ist die ZIP-Datei nicht in Ordnung
-	Expand-Archive "$($ds.Fullname)" "$($DLPInstPath)AlteDatensicherung"
-	# jetzt die Daten übernehmen
-	Import-OldDlpVersion -SourcePath "$($DLPInstPath)AlteDatensicherung" -DestinationPath "$($DlpPath)"
-	# TODO: Laufwerksbuchstaben des Sicherungsstick im Programmverteiler setzen
-} else {
-	# Bitte Daten manuell einspielen
-	break
-}
+Import-LastDelaproBackup -TempPath "$($DLPInstPath)AlteDatensicherung" -DestinationPath "$($DLPPath)"
 
 Cleanup-Delapro -DelaproPath $DLPPath
 
