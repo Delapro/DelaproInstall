@@ -382,7 +382,7 @@ Function Copy-Delagame {
 		[System.String]$DelaGamePath
 	)
 	
-	If (-Not Test-Path $DlpGamePath) {
+	If (-Not (Test-Path $DlpGamePath)) {
 		New-Item -Type Directory $DlpGamePath
 	}
 	Copy-Item "$($DelaproPath)\*.*" $DlpGamePath
