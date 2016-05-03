@@ -374,6 +374,21 @@ Function Import-LastDelaproBackup {
 
 }
 
+# Kopier die Daten ins Spielprogramm
+Function Copy-Delagame {
+	[CmdletBinding()]
+	Param(
+		[System.String]$DelaproPath,
+		[System.String]$DelaGamePath
+	)
+	
+	If (-Not Test-Path $DlpGamePath) {
+		New-Item -Type Directory $DlpGamePath
+	}
+	Copy-Item "$($DelaproPath)\*.*" $DlpGamePath
+
+}
+
 # räumt das Delapro-Verzeichnis auf
 Function Cleanup-Delapro {
 	[CmdletBinding()]
@@ -819,11 +834,8 @@ If (-Not ((Get-Location).Path -eq "$($DlpPath)")) {
   CD $DlpPath
 }
 
-
 # Spielprogramm anlegen und Daten rüberkopieren
-New-Item -Type Directory $DlpGamePath
-Copy-Item "$($DlpPath)\*.*" $DlpGamePath
-
+Copy-Delagame -DelaproPath $($DlpPath) -DelagamePath $DlpGamePath 
 
 # Um die Standardprogramme einzusehen:
 Control.exe  /Name Microsoft.DefaultPrograms
