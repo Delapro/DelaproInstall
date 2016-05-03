@@ -834,8 +834,10 @@ If (-Not ((Get-Location).Path -eq "$($DlpPath)")) {
   CD $DlpPath
 }
 
-# Spielprogramm anlegen und Daten rüberkopieren
-Copy-Delagame -DelaproPath $($DlpPath) -DelagamePath $DlpGamePath 
+If (-Not (Test-Path $DlpGamePath)) {
+	# Spielprogramm anlegen und Daten rüberkopieren
+	Copy-Delagame -DelaproPath $($DlpPath) -DelagamePath $DlpGamePath 
+}
 
 # Um die Standardprogramme einzusehen:
 Control.exe  /Name Microsoft.DefaultPrograms
