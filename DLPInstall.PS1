@@ -321,6 +321,26 @@ Function New-PrinterPort {
 	Restart-Service Spooler -Force
 }
 
+# ermittelt die vorhandenen Antimalware-Programme
+Function Get-AntiMalware {
+	[CmdletBinding()]
+	#[OutputType([System.Boolean])]
+	Param(
+		
+	)
+	
+	$av = gwmi -Namespace root/SecurityCenter2 -Class AntivirusProduct
+	If ($av -eq $null) {
+		# kein Virenscanner installiert, also Security Essentials holen
+		Start https://www.microsoft.com/de-de/download/details.aspx?id=5201
+	}
+	# Der Wert productState kann hiermit interpretiert werden: https://msdn.microsoft.com/en-us/library/bb432509(VS.85).aspx
+	# siehe auch: http://blogs.msdn.com/b/alejacma/archive/2008/05/12/how-to-get-antivirus-information-with-wmi-vbscript.aspx?PageIndex=2#comments
+	# alle relevanten Werte und Erklärungen findet man hier: https://msdn.microsoft.com/en-us/library/gg537273(v=vs.85).aspx
+	#  nützliche Hinweise zu verschiedenen Antivirusprodukten: http://neophob.com/2010/03/wmi-query-windows-securitycenter2/
+	$av
+}
+
 # importiert das neueste Delapro-Backup, entweder aus einer ZIP-Datei von easyBackup32 oder aus einem Pfad
 # wo Delapro.EXE und eine aktuelle AUFTRAG.DBF liegt
 Function Import-LastDelaproBackup {
@@ -811,16 +831,7 @@ Cmd /c Assoc  .pdf
 Cmd /c Ftype  acrobat
 
 # den Status des Virenscanners holen:
-$av = gwmi -Namespace root/SecurityCenter2 -Class AntivirusProduct
-If ($av -eq $null) {
-	# kein Virenscanner installiert, also Security Essentials holen
-	Start https://www.microsoft.com/de-de/download/details.aspx?id=5201
-}
-# Der Wert productState kann hiermit interpretiert werden: https://msdn.microsoft.com/en-us/library/bb432509(VS.85).aspx
-# siehe auch: http://blogs.msdn.com/b/alejacma/archive/2008/05/12/how-to-get-antivirus-information-with-wmi-vbscript.aspx?PageIndex=2#comments
-# alle relevanten Werte und Erklärungen findet man hier: https://msdn.microsoft.com/en-us/library/gg537273(v=vs.85).aspx
-#  nützliche Hinweise zu verschiedenen Antivirusprodukten: http://neophob.com/2010/03/wmi-query-windows-securitycenter2/
-
+Get-AntiMalware
 
 # Windows Defender:
 Control.exe /Name Microsoft.WindowsDefender
