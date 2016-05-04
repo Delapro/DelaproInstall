@@ -434,6 +434,7 @@ Function Cleanup-Delapro {
 	Remove-Item "$($DlpPath)\DelaVoll.SET"
 	Remove-Item "$($DlpPath)\DlpVoll.SET"
 	Remove-Item "$($DlpPath)\LoadFix.COM"
+	Remove-Item "$($DlpPath)\StdForm.ARJ"
 	
 	# JaNein.EXE?
 	
