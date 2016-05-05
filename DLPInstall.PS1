@@ -415,34 +415,35 @@ Function Cleanup-Delapro {
 	#}
 	
 	# Aufräumarbeiten
-	Remove-Item "$($DlpPath)\Report.EXE"
-	Remove-Item "$($DlpPath)\TXTPrev.EXE"
-	Remove-Item "$($DlpPath)\easyBack.exe"
-	Remove-Item "$($DlpPath)\easyRest.exe"
-	Remove-Item "$($DlpPath)\PCAWInfo.EXE"
-	Remove-Item "$($DlpPath)\PCAWInfo.BAT"
-	Remove-Item "$($DlpPath)\PCAWRUN.BAT"
-	Remove-Item "$($DlpPath)\Bdruck.EXE"
-	Remove-Item "$($DlpPath)\ARJ.EXE"
-	Remove-Item "$($DlpPath)\DBU.EXE"
-	Remove-Item "$($DlpPath)\INFO.BAT"
-	Remove-Item "$($DlpPath)\HOST.BAT"
-	Remove-Item "$($DlpPath)\STREAMER.BAT"
-	Remove-Item "$($DlpPath)\ModeCo80.BAT"
-	Remove-Item "$($DlpPath)\BackupZI.BAT"
-	Remove-Item "$($DlpPath)\DelaTeil.SET"
-	Remove-Item "$($DlpPath)\DelaVoll.SET"
-	Remove-Item "$($DlpPath)\DlpVoll.SET"
-	Remove-Item "$($DlpPath)\LoadFix.COM"
-	Remove-Item "$($DlpPath)\StdForm.ARJ"
-	
-	# JaNein.EXE?
-	
-	# von Ringel
-	Remove-Item "$($DlpPath)\BTX.BAT"
-	Remove-Item "$($DlpPath)\BTX.PRN"
-	Remove-Item "$($DlpPath)\BTX_UEBE.BAT"
-	Remove-Item "$($DlpPath)\COMPILE.BAT"
+	$toRemove = @("Report.EXE",
+	              "TXTPrev.EXE",
+	              "easyBack.exe",
+	              "easyRest.exe",
+	              "PCAWInfo.EXE",
+	              "PCAWInfo.BAT",
+	              "PCAWRUN.BAT",
+	              "Bdruck.EXE",
+	              "ARJ.EXE",
+	              "DBU.EXE",
+	              "INFO.BAT",
+	              "HOST.BAT",
+	              "STREAMER.BAT",
+	              "ModeCo80.BAT",
+	              "BackupZI.BAT",
+	              "DelaTeil.SET",
+	              "DelaVoll.SET",
+	              "DlpVoll.SET",
+	              "LoadFix.COM",
+	              "StdForm.ARJ",
+	              # JaNein.EXE?
+	              #
+	              # von Ringel
+	              "BTX.BAT",
+	              "BTX.PRN",
+	              "BTX_UEBE.BAT",
+	              "COMPILE.BAT"
+	             )
+	$toRemove | % {Remove-Item "$($DlpPath)\$_" -ErrorAction SilentlyContinue}
 	
 	# Export-KZBV-Temp und PDF-Temp-Verzeichnis löschen
 	# COPY-Verzeichnis aufräumen, vor allem auch bei LL-Versionen
