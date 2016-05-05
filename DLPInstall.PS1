@@ -443,25 +443,25 @@ Function Cleanup-Delapro {
 	              "BTX_UEBE.BAT",
 	              "COMPILE.BAT"
 	             )
-	$toRemove | % {Remove-Item "$($DlpPath)\$_" -ErrorAction SilentlyContinue}
+	$toRemove | % {Remove-Item "$($DelaproPath)\$_" -ErrorAction SilentlyContinue}
 	
 	# Export-KZBV-Temp und PDF-Temp-Verzeichnis löschen
 	# COPY-Verzeichnis aufräumen, vor allem auch bei LL-Versionen
 	
 	#Dir *.BAK | group LastWriteTime
-	Remove-Item "$($DlpPath)\*.BAK"
+	Remove-Item "$($DelaproPath)\*.BAK"
 	
 	#Dir *.TBK | group LastWriteTime
-	Remove-Item "$($DlpPath)\*.TBK"
+	Remove-Item "$($DelaproPath)\*.TBK"
 	
 	#dir cm??17*.*
-	Remove-Item "$($DlpPath)\cm??17*.DLL"
-	Remove-Item "$($DlpPath)\cm??17*.LNG"
-	Remove-Item "$($DlpPath)\cm??17*.OCX"
+	Remove-Item "$($DelaproPath)\cm??17*.DLL"
+	Remove-Item "$($DelaproPath)\cm??17*.LNG"
+	Remove-Item "$($DelaproPath)\cm??17*.OCX"
 	
 	#dir cm??18*.*
-	Remove-Item "$($DlpPath)\cm??18*.DLL"
-	Remove-Item "$($DlpPath)\cm??18*.LNG"
+	Remove-Item "$($DelaproPath)\cm??18*.DLL"
+	Remove-Item "$($DelaproPath)\cm??18*.LNG"
 	
 	# dir cm??19*.*
 	# Remove-Item cm??19*.DLL
@@ -470,13 +470,13 @@ Function Cleanup-Delapro {
 	DIR cm*
 	
 	# DLP.LOG-Datei verkleinern
-	If (Test-Path "$($DlpPath)\dlp.log") {
-		(get-content "$($DlpPath)\dlp.log")[-300..-1] | set-content "$($DlpPath)\dlp.log"
+	If (Test-Path "$($DelaproPath)\dlp.log") {
+		(get-content "$($DelaproPath)\dlp.log")[-300..-1] | set-content "$($DelaproPath)\dlp.log"
 	}
 	
 	# Alte Backup-Logdateien löschen, wo älter als ein Jahr sind:
-	If (Test-Path "$($DlpPath)\backup\log\*.log") {
-		Get-Item "$($DlpPath)\backup\log\*.log" | where {$_.LastWriteTime -lt ((Get-Date).AddDays(-365))} | Remove-Item
+	If (Test-Path "$($DelaproPath)\backup\log\*.log") {
+		Get-Item "$($DelaproPath)\backup\log\*.log" | where {$_.LastWriteTime -lt ((Get-Date).AddDays(-365))} | Remove-Item
 	}
 	
 }
