@@ -374,6 +374,18 @@ Function Install-AcrobatDC {
 	}
 }
 
+# legt ein Backup eines Delapro-Verzeichnis mittels easyBackup32.exe an
+Function Backup-Delapro {
+	[CmdletBinding()]
+	#[OutputType([System.Boolean])]
+	Param(
+		[System.String]$DelaproPath="C:\Delapro",
+		[System.String]$BackupPath="C:\Temp\DelaproSicherung"
+	)
+	
+	Start-Process -Wait (Join-Path -Path $($DelaproPath) -ChildPath "Backup\easyBackup32.EXE") -ArgumentList @("*.*", "/S", "/V", "/AUTO", $BackupPath)
+}
+
 # legt einen neuen Printerport an
 Function New-PrinterPort {
 	[CmdletBinding()]
