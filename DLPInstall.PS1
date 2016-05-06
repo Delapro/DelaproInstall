@@ -320,6 +320,32 @@ Function Get-Ghostscript {
 	$gsDirs
 }
 
+# Installation Ghostscript
+Function Install-Ghostscript {
+	[CmdletBinding()]
+	Param(
+		[parameter(Mandatory=$true)]
+		[System.String]$tempPath
+	)
+
+	# Infos zur aktuellen Version: http://ghostscript.com/Releases.html
+	$ghostVersion="gs919"
+	If (Test-64Bit) {
+		$ghostPlatform = "w64"
+	} else {
+		$ghostPlatform = "w32"
+	}
+	$ghostEXE = "$ghostVersion$ghostPlatform.exe"
+	$ghostUrl = "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/$ghostVersion/$ghostEXE"
+	$ghostCall = Join-Path -Path $tempPath -ChildPath $ghostEXE
+
+	# Start-BitsTransfer $ghostUrl  $tempPath
+	Invoke-WebRequest -Uri $ghostUrl -OutFile $ghostCall
+	
+	## /S muss groß sein!
+	Start-Process -Wait $ghostcall -ArgumentList "/S"
+}
+
 # legt einen neuen Printerport an
 Function New-PrinterPort {
 	[CmdletBinding()]
@@ -642,27 +668,13 @@ If (-Not (Test-NetFramework35Installed)) {
 # Unterverzeichnis anlegen, um entpackte Dateien aus ZIP-Archiven reinzulegen
 New-Item "eDocPrintPro" -Type Directory
 
-## Download von GhostScript: https://code.google.com/p/ghostscript/downloads/detail?name=gs910w64.exe&can=2&q=
-## GhostScript downloaden und installieren
-#If (Test-64Bit) {
-## $ghostscriptFn = "gs915w64"
-#$ghostscriptFn = "gs915x64"
-#} else {
-## $ghostscriptFn = "gs915w32"
-#$ghostscriptFn = "gs915x32"
-#}
 #
 ## Download direkt von PDFPrinter.at
 #$ghostUrl = "ftp://download.may.co.at/Repository/msoftware/MAYComp/Current/RO/$ghostscriptFn.zip"
 #Invoke-WebRequest $ghostUrl  -OutFile "$($DLPInstPath)$($ghostscriptFn).zip"
 #Expand-Archive "$($DLPInstPath)$($ghostscriptFn).zip" "eDocPrintPro"
 #
-## Download von ghostscript direkt
-## $ghostUrl = "http://downloads.ghostscript.com/public/$ghostscriptFn.exe"
-## Start-BitsTransfer $ghostUrl  $DLPInstPath\eDocPrintPro\
-#
-## /S muss groß sein!
-#.\eDocPrintPro\$($ghostscriptFn).exe /S
+
 
 #Start-BitsTransfer http://www.pdfprinter.at/de/download-links/download-edocprintpro.html $DLPInstPath
 # FTP via http://technet.microsoft.com/en-us/library/hh849901.aspx laden
