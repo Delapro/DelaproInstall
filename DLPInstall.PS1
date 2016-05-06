@@ -360,6 +360,77 @@ Function New-PrinterPort {
 	Restart-Service Spooler -Force
 }
 
+# installiert den DelaproMailer Drucker, dazu werden Adminrechte benötigt!
+Function Install-DelaproMailerPrinter {
+	[CmdletBinding()]
+	Param(
+		[System.String]$DelaproPath = "C:\Delapro",
+		[System.String]$Portname = "$($DelaproPath)\Export\PDF\Delapro.EPS",
+		[System.String]$PrinterName = "DelaproMail"
+	)
+
+	# DelaproMailer-Port anlegen:
+	Write-Verbose "Lege $Portname an"
+	New-PrinterPort -Portname $PortName
+	
+	Write-Verbose "Lege Tempverzeichnis für Export an $DelaproPath\Export\PDF\Temp"
+	New-Item -Type Directory $DelaproPath\Export\PDF\Temp
+	
+	# DelaproMailer-Druckertreiber anlegen
+	# für künftige Aktionen GhostScript-Druckertreiber installieren:
+	# rundll32 printui.dll,PrintUIEntry /Gw /ia /m "Ghostscript PDF" /f "C:\program files\gs\gs9.18\lib\ghostpdf.inf"
+	# klappt aber noch nicht wegen der Zertifikate. Doch, wenn dies vorweg installiert wird: C:\Program Files\GS\gs9.18\lib>pnputil -i -a ghostpdf.inf
+	# dann noch dies hinterher um den eigentlichen Druckertreiber anzulegen:  rundll32 printui.dll,PrintUIEntry /if /b "DelaproTest" /r "$($DlpPath)\Export\PDF\Delapro.EPS" /m "Ghostscript PDF"
+	If (Test-WindowsVista) {
+		Write-Verbose "Installiere Druckertreiber unter Vista"
+		rundll32 printui.dll,PrintUIEntry /if /b "$PrinterName" /f  $env:WinDir\inf\ntprint.inf /r "$($DelaproPath)\Export\Pdf\Delapro.EPS" /m "Xerox Phaser 5400 PS"
+	} else {
+		if (Test-Windows7) {
+			Write-Verbose "Installiere Druckertreiber unter Win7"
+			rundll32 printui.dll,PrintUIEntry /if /b "$PrinterName" /f $env:WinDir\inf\ntprint.inf /r "$($DelaproPath)\Export\Pdf\Delapro.EPS" /m "Xerox Phaser 6120 PS"
+		} else {
+			If (Test-Windows10) {
+				# PRÜFEN! Alternative Xerox PS Color Class Driver V1.1, Oder HP Laserjet 2500 PS wird von Parallels verwendet
+				$driverName = "Microsoft PS Class Driver"
+				If (Test-64Bit) {
+					# leider anders bei Win10-II also v1511, wahrscheinlich bei allen künftigen Upgrades:
+					If ((gwmi win32_operatingsystem).version -eq "10.0.10586") {
+						$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_d74c8d3824a210d1\prnms005.inf"
+					} else {
+						$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_865ce515acd2fce4\prnms005.inf"
+					}
+				} else {
+					# leider anders bei Win10-II also v1511, wahrscheinlich bei allen künftigen Upgrades:
+					If ((gwmi win32_operatingsystem).version -eq "10.0.10586") {
+						$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_a3895815234f1110\prnms005.inf"
+					} else {
+						$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_1233c058c621b357\prnms005.inf"
+					}
+				}
+			} else {
+				# Win8
+				
+				# PRÜFEN! Alternative Xerox PS Color Class Driver V1.1, Oder HP Laserjet 2500 PS wird von Parallels verwendet
+				# oder Class Driver V1.2
+				$driverName = "Microsoft PS Class Driver"
+				If (Test-64Bit) {
+					# 64-Bit
+					$driverInf ="C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_2a40c5f594dc2ce8\prnms005.inf"
+				} else {
+					# 32-Bit!
+					$driverInf ="C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_b69a5a93baea1ad3\prnms005.inf"
+				}
+				
+			}
+			Write-Verbose "Installiere Druckertreiber unter Win8/Win10 $driverName $driverInf"
+			Add-PrinterDriver -name $driverName -InfPath $driverInf
+			Write-Verbose "Installiere Druckerwarteschlange"
+			Add-Printer -Name $PrinterName -DriverName $driverName -PortName $Portname
+		}
+	}
+
+}
+
 # ermittelt die vorhandenen Antimalware-Programme
 Function Get-AntiMalware {
 	[CmdletBinding()]
@@ -761,59 +832,7 @@ Copy-Item .\easyTeamViewerQS_de.exe $DlpPath\Fernwartung
 # Link auf Desktop erstellen, Text: easy Internet Fernwartung (Teamviewer)
 New-FileShortcut -FileTarget "$($DlpPath)\Fernwartung\easyTeamViewerQS_de.exe" -LinkFilename "easy Internet Fernwartung (Teamviewer).lnk"
 
-# DelaproMailer-Port anlegen:
-New-PrinterPort -Portname "$($DlpPath)\Export\PDF\Delapro.EPS"
-
-New-Item -Type Directory $DlpPath\Export\PDF\Temp
-
-# DelaproMailer-Druckertreiber anlegen
-# für künftige Aktionen GhostScript-Druckertreiber installieren:
-# rundll32 printui.dll,PrintUIEntry /Gw /ia /m "Ghostscript PDF" /f "C:\program files\gs\gs9.18\lib\ghostpdf.inf"
-# klappt aber noch nicht wegen der Zertifikate. Doch, wenn dies vorweg installiert wird: C:\Program Files\GS\gs9.18\lib>pnputil -i -a ghostpdf.inf
-# dann noch dies hinterher um den eigentlichen Druckertreiber anzulegen:  rundll32 printui.dll,PrintUIEntry /if /b "DelaproTest" /r "$($DlpPath)\Export\PDF\Delapro.EPS" /m "Ghostscript PDF"
-If (Test-WindowsVista) {
-	rundll32 printui.dll,PrintUIEntry /if /b "DelaproMail" /f  $env:WinDir\inf\ntprint.inf /r "$($DlpPath)\Export\Pdf\Delapro.EPS" /m "Xerox Phaser 5400 PS"
-} else {
-	if (Test-Windows7) {
-		rundll32 printui.dll,PrintUIEntry /if /b "DelaproMail" /f $env:WinDir\inf\ntprint.inf /r "$($DlpPath)\Export\Pdf\Delapro.EPS" /m "Xerox Phaser 6120 PS"
-	} else {
-		If (Test-Windows10) {
-			# PRÜFEN! Alternative Xerox PS Color Class Driver V1.1, Oder HP Laserjet 2500 PS wird von Parallels verwendet
-			$driverName = "Microsoft PS Class Driver"
-			If (Test-64Bit) {
-				# leider anders bei Win10-II also v1511, wahrscheinlich bei allen künftigen Upgrades:
-				If ((gwmi win32_operatingsystem).version -eq "10.0.10586") {
-					$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_d74c8d3824a210d1\prnms005.inf"
-				} else {
-					$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_865ce515acd2fce4\prnms005.inf"
-				}
-			} else {
-				# leider anders bei Win10-II also v1511, wahrscheinlich bei allen künftigen Upgrades:
-				If ((gwmi win32_operatingsystem).version -eq "10.0.10586") {
-					$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_a3895815234f1110\prnms005.inf"
-				} else {
-					$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_1233c058c621b357\prnms005.inf"
-				}
-			}
-		} else {
-			# Win8
-			
-			# PRÜFEN! Alternative Xerox PS Color Class Driver V1.1, Oder HP Laserjet 2500 PS wird von Parallels verwendet
-			# oder Class Driver V1.2
-			$driverName = "Microsoft PS Class Driver"
-			If (Test-64Bit) {
-				# 64-Bit
-				$driverInf ="C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_2a40c5f594dc2ce8\prnms005.inf"
-			} else {
-				# 32-Bit!
-				$driverInf ="C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_b69a5a93baea1ad3\prnms005.inf"
-			}
-			
-		}
-		Add-PrinterDriver -name $driverName -InfPath $driverInf
-		Add-Printer -Name "DelaproMail" -DriverName $driverName -PortName "$($DlpPath)\Export\Pdf\Delapro.ePS"
-	}
-}
+Install-DelaproMailerPrinter
 
 Control printers
 
