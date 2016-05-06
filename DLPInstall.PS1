@@ -346,6 +346,34 @@ Function Install-Ghostscript {
 	Start-Process -Wait $ghostcall -ArgumentList "/S"
 }
 
+# Installation von AcrobatDC
+Function Install-AcrobatDC {
+	[CmdletBinding()]
+	Param(
+		[parameter(Mandatory=$true)]
+		[System.String]$tempDirectory
+	)
+
+	# Acrobat DC Versionsnummererklärung: http://www.adobe.com/devnet-docs/acrobatetk/tools/AdminGuide/basics.html#versioning-strategy
+	# Downloaddateiname für DC: Reader DC 2015.009.20069 wird zu 1500920069
+	# man entfernt nur das Jahrhundert und die Punkte!
+	#
+	# DC Version: http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/1500920069/AcroRdrDC1500920069_de_DE.exe
+	# Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/11.x/11.0.10/de_DE/AdbeRdr11010_de_DE.exe
+	# DC Release-Infos: http://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotes/index.html
+	$dcVersion = "1501020056"
+	Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/$dcVersion/AcroRdrDC$($dcVersion)_de_DE.exe -Destination $tempDirectory
+	# Adobe Reader Silent Install mit Progressbar
+	# Start-Process  -Wait .\AdbeRdr11010_de_DE.exe /sPB
+	Start-Process  -Wait "$($tempDirectory)\AcroRdrDC$($dcVersion)_de_DE.exe" -ArgumentList "/sPB"
+	# EULA abnicken, bei Neuinstallation muss zuerst der Key angelegt werden
+	New-Item 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader\DC\AdobeViewer' -Force
+	If ((Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader\DC\AdobeViewer' -Name EULA).EULA -eq 0) {
+		Set-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader\DC\AdobeViewer' -Name EULA -Value 1
+		"Adobe Reader EULA abgenickt"
+	}
+}
+
 # legt einen neuen Printerport an
 Function New-PrinterPort {
 	[CmdletBinding()]
@@ -836,24 +864,7 @@ Install-DelaproMailerPrinter
 
 Control printers
 
-# Acrobat DC Versionsnummererklärung: http://www.adobe.com/devnet-docs/acrobatetk/tools/AdminGuide/basics.html#versioning-strategy
-# Downloaddateiname für DC: Reader DC 2015.009.20069 wird zu 1500920069
-# man entfernt nur das Jahrhundert und die Punkte!
-#
-# DC Version: http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/1500920069/AcroRdrDC1500920069_de_DE.exe
-# Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/11.x/11.0.10/de_DE/AdbeRdr11010_de_DE.exe
-# DC Release-Infos: http://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotes/index.html
-$dcVersion = "1501020056"
-Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/$dcVersion/AcroRdrDC$($dcVersion)_de_DE.exe
-# Adobe Reader Silent Install mit Progressbar
-# Start-Process  -Wait .\AdbeRdr11010_de_DE.exe /sPB
-Start-Process  -Wait .\AcroRdrDC$($dcVersion)_de_DE.exe -ArgumentList "/sPB"
-# EULA abnicken, bei Neuinstallation muss zuerst der Key angelegt werden
-New-Item 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader\DC\AdobeViewer' -Force
-If ((Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader\DC\AdobeViewer' -Name EULA).EULA -eq 0) {
-	Set-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader\DC\AdobeViewer' -Name EULA -Value 1
-	"Adobe Reader EULA abgenickt"
-}
+Install-AcrobatDC -TempDirectory $DLPInstPath
 
 # Pfad für Reader DC holen
 $dcFile = Get-AcrobatReaderDCEXE
