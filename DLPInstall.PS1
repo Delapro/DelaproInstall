@@ -779,31 +779,39 @@ If (Test-WindowsVista) {
 	} else {
 		If (Test-Windows10) {
 			# PRÜFEN! Alternative Xerox PS Color Class Driver V1.1, Oder HP Laserjet 2500 PS wird von Parallels verwendet
+			$driverName = "Microsoft PS Class Driver"
 			If (Test-64Bit) {
-				# 64-Bit
-				Add-PrinterDriver -name "Microsoft PS Class Driver" -InfPath C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_865ce515acd2fce4\prnms005.inf
-				# leider wieder anders bei Win10-II:
-				Add-PrinterDriver -name "Microsoft PS Class Driver" -InfPath C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_d74c8d3824a210d1\prnms005.inf
+				# leider anders bei Win10-II also v1511, wahrscheinlich bei allen künftigen Upgrades:
+				If ((gwmi win32_operatingsystem).version -eq "10.0.10586") {
+					$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_d74c8d3824a210d1\prnms005.inf"
+				} else {
+					$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_865ce515acd2fce4\prnms005.inf"
+				}
 			} else {
-				Add-PrinterDriver -name "Microsoft PS Class Driver" -InfPath C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_1233c058c621b357\prnms005.inf
-				# ab v1511:
-				Add-PrinterDriver -name "Microsoft PS Class Driver" -InfPath C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_a3895815234f1110\prnms005.inf
+				# leider anders bei Win10-II also v1511, wahrscheinlich bei allen künftigen Upgrades:
+				If ((gwmi win32_operatingsystem).version -eq "10.0.10586") {
+					$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_a3895815234f1110\prnms005.inf"
+				} else {
+					$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_1233c058c621b357\prnms005.inf"
+				}
 			}
 		} else {
 			# Win8
 			
 			# PRÜFEN! Alternative Xerox PS Color Class Driver V1.1, Oder HP Laserjet 2500 PS wird von Parallels verwendet
 			# oder Class Driver V1.2
+			$driverName = "Microsoft PS Class Driver"
 			If (Test-64Bit) {
 				# 64-Bit
-				Add-PrinterDriver -name "Microsoft PS Class Driver" -InfPath C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_2a40c5f594dc2ce8\prnms005.inf
+				$driverInf ="C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_2a40c5f594dc2ce8\prnms005.inf"
 			} else {
 				# 32-Bit!
-				Add-PrinterDriver -name "Microsoft PS Class Driver" -InfPath C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_b69a5a93baea1ad3\prnms005.inf
+				$driverInf ="C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_b69a5a93baea1ad3\prnms005.inf"
 			}
 			
 		}
-		Add-Printer -Name "DelaproMail" -DriverName "Microsoft PS Class Driver" -PortName "$($DlpPath)\Export\Pdf\Delapro.ePS"
+		Add-PrinterDriver -name $driverName -InfPath $driverInf
+		Add-Printer -Name "DelaproMail" -DriverName $driverName -PortName "$($DlpPath)\Export\Pdf\Delapro.ePS"
 	}
 }
 
