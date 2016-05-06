@@ -499,6 +499,20 @@ Function Disable-SystemRestore {
 
 }
 
+# erlaubt das setzen der Größe für ein SystemRestoreSpeicher und das Laufwerk worauf gesichert werden soll
+Function Set-SystemRestore {
+	[CmdletBinding()]
+	Param(
+		[System.String]$ForDrive = "$($Env:SystemDrive)",
+		[System.String]$OnDrive = "$($Env:SystemDrive)",
+		[System.String]$SizePercent = 10,
+		[System.String]$SizeMB
+	)
+	
+	# vssadmin.exe Resize ShadowStorage /For=$Drive /On=$Drive /Maxsize=320MB 
+
+}
+
 # ermittelt die vorhandenen Antimalware-Programme
 Function Get-AntiMalware {
 	[CmdletBinding()]
