@@ -459,6 +459,46 @@ Function Install-DelaproMailerPrinter {
 
 }
 
+# Aktiviert "System Protection" bzw. "Computer Schutz", um bei Problemen mittels Systemwiederherstellung auf einen alten
+# Zeitpunkt zurückzukehren
+# ab Powershell 3.0 aufwärts unter dem Namen Enable-ComputerRestore verfügbar
+# diese Variante erlaubt nur die Angabe eines Laufwerks!
+Function Enable-SystemRestore {
+	[CmdletBinding()]
+	Param(
+		[System.String]$Drive = "$($Env:SystemDrive)\"
+	)
+	
+	$Drive=Join-Path -Path $Drive -ChildPath ""
+	If (Test-Path $Drive) {
+		# https://msdn.microsoft.com/en-us/library/windows/desktop/aa378858(v=vs.85).aspx
+		$cr=Invoke-CimMethod -Namespace root/DEFAULT -ClassName SystemRestore -MethodName Enable -Arguments @{Drive="$Drive"}
+		
+	} else {
+		Throw "$DriveToProtect not valid."
+	}
+
+}
+
+# Deaktiviert "System Protection" bzw. "Computer Schutz", nur der vollständigkeithalber hier
+# ab Powershell 3.0 aufwärts unter dem Namen Disable-ComputerRestore verfügbar
+# diese Variante erlaubt nur die Angabe eines Laufwerks!
+Function Disable-SystemRestore {
+	[CmdletBinding()]
+	Param(
+		[System.String]$Drive = "$($Env:SystemDrive)\"
+	)
+	
+	$Drive=Join-Path -Path $Drive -ChildPath ""
+	If (Test-Path $Drive) {
+		# https://msdn.microsoft.com/en-us/library/windows/desktop/aa378852(v=vs.85).aspx
+		$cr=Invoke-CimMethod -Namespace root/DEFAULT -ClassName SystemRestore -MethodName Disable -Arguments @{Drive="$Drive"}
+	} else {
+		Throw "$DriveToProtect not valid."
+	}
+
+}
+
 # ermittelt die vorhandenen Antimalware-Programme
 Function Get-AntiMalware {
 	[CmdletBinding()]
