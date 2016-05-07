@@ -320,6 +320,23 @@ Function Get-Ghostscript {
 	$gsDirs
 }
 
+# setzt die Version von Ghostscript in der GHOSTSCRIPT.BAT-Datei auf die übergebene Version
+Function Update-DelaproGhostscript {
+	[CmdletBinding()]
+	#[OutputType([System.IO.DirectoryInfo])]
+	Param (
+		[parameter(Mandatory=$true)]
+		[System.String]$PathDelaproGhostscript = "C:\DELAPRO\LASER\GHOSTSCRIPT.BAT"
+		[System.String]$PathGhostscript = (Get-GhostScript)[0]
+	)
+	
+	$matches = Get-Content $PathDelaproGhostscript | Select-String "SET GSDIR"
+	If ($matches) {
+		$content = Get-Content $PathDelaproGhostscript
+		
+	}
+}
+
 # Installation Ghostscript
 Function Install-Ghostscript {
 	[CmdletBinding()]
