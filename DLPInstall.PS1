@@ -168,6 +168,36 @@ Function New-FileShortcut {
 	
 }
 
+# druckt eine Windowstestseite vom angegebenen Drucker
+Function Test-Printer {
+	[CmdletBinding()]
+	Param(
+		[System.String]$PrinterName=(Get-DefaultPrinter).Name
+	)
+
+	Write-Verbose "PrinterName: $PrinterName"
+	# man könnte auch alternativ PrintUI.EXE nehmen
+	# oder WMI: https://msdn.microsoft.com/en-us/library/aa392757%28VS.85%29.aspx
+	rundll32 printui.dll,PrintUIEntry /k /n "$PrinterName"
+}
+
+# ermittelt den Windowsstandarddrucker
+Function Get-DefaultPrinter {
+	[CmdletBinding()]
+	[OutputType([System.Boolean])]
+	Param()
+
+	#$default = Get-WmiObject -Classname Win32_Printer| Where {$_.Default -eq $true}
+	$default = Get-CIMInstance -Classname Win32_Printer
+	If ($default) {
+		$default = $default | Where {$_.Default -eq $true}
+		# in $default hat man nun die klassische Variante Win32_Printer, für Powershell sollte man aber MSFT_Printer verwenden
+		# also einfach nochmal aufrufen und danach suchen:
+		$default = Get-CIMInstance -Namespace root\StandardCimV2 -Classname MSFT_Printer| Where {$_.Name -eq $default.Name}
+		$default
+	}
+}
+
 # ermittelt den Pfad der AcroRd32.exe gibt diesen als [FileInfo]-Objekt zurück
 Function Get-AcrobatReaderDCEXE {
 	[CmdletBinding()]
