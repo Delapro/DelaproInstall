@@ -324,15 +324,25 @@ Function Update-DelaproGhostscript {
 	[CmdletBinding()]
 	#[OutputType([System.IO.DirectoryInfo])]
 	Param (
-		[parameter(Mandatory=$true)]
-		[System.String]$PathDelaproGhostscript = "C:\DELAPRO\LASER\GHOSTSCRIPT.BAT"
-		[System.String]$PathGhostscript = (Get-GhostScript)[0]
+		[System.String]$PathDelaproGhostscript = "C:\DELAPRO\LASER\GHOSTPDF.BAT",
+		[System.String]$PathGhostscript = (Get-GhostScript)[0].Fullname
 	)
-	
+
+	Write-Verbose "Ermittelter Ghostscriptpfad: $PathGhostScript"
 	$matches = Get-Content $PathDelaproGhostscript | Select-String "SET GSDIR"
 	If ($matches) {
 		$content = Get-Content $PathDelaproGhostscript
-		
+		$matches | ForEach-Object {
+					$current = $_.Line
+					Write-Verbose "Zeile $($_.LineNumber) die geändert werden muss: $current"
+					Write-Verbose "Zeile: $($content[$_.LineNumber-1])"
+					$current = $current.SubString(0, $current.LastIndexOf("\"))
+					$current = $current.SubString($current.IndexOf("=")+1)
+					Write-Verbose "Pfad der ausgetauscht werden muss: $current"
+					$content[$_.LineNumber-1] = $content[$_.LineNumber-1].replace($current, $PathGhostscript)
+					Write-Verbose "so sollte es aussehen: $($content[$_.LineNumber-1].replace($current, $PathGhostscript))"
+		}
+		$content| Out-File $PathDelaproGhostscript
 	}
 }
 
