@@ -769,6 +769,26 @@ Function Set-SystemRestore {
 
 }
 
+# ermittelt das Standard-E-Mailprogramm
+Function Get-DefaultEMailClient {
+	[CmdletBinding()]
+	#[OutputType([System.Boolean])]
+	Param(
+		
+	)
+	
+	# Grundlage sind diese Artikel: 
+	# Default Startmenu-EMail-Client: https://msdn.microsoft.com/en-us/library/windows/desktop/dd203067(v=vs.85).aspx#email_reg
+	# Default E-Mail  https://msdn.microsoft.com/en-us/library/windows/desktop/cc144154(v=vs.85).aspx
+	# Default MAPI-Client: https://msdn.microsoft.com/en-us/library/windows/desktop/ee909492(v=vs.85).aspx
+	$mailClient = (Get-ItemProperty HKCU:\SOFTWARE\Clients\Mail\ -Name "(default)").'(default)'
+	If (! $mailClient) {
+		(Get-ItemProperty HKLM:\SOFTWARE\Clients\Mail\ -Name "(default)").'(default)'
+	}
+	$mailClient
+	
+}
+
 # ermittelt die vorhandenen Antimalware-Programme
 Function Get-AntiMalware {
 	[CmdletBinding()]
