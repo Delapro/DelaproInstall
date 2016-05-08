@@ -187,6 +187,7 @@ Function Get-DefaultPrinter {
 	[OutputType([System.Boolean])]
 	Param()
 
+	# Oder direkt per Registry? HKEY_CURRENT_USER\Software\Microsoft\Windows NT\CurrentVersion\Windows\Device
 	#$default = Get-WmiObject -Classname Win32_Printer| Where {$_.Default -eq $true}
 	$default = Get-CIMInstance -Classname Win32_Printer
 	If ($default) {
