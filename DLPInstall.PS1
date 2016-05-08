@@ -104,7 +104,6 @@ Function Copy-FileWithDateTime ($source, $dest) {
 	}
 }
 
-
 Function Test-VersionOrHigher ([string]$version, [int]$requestedVersionMajor,[int]$requestedVersionMinor, [int]$requestedVersionBuild, [int]$requestedVersionRevision) {
 	$return = $false
 	$versionSplit = $version -split "\."       # \. Wegen Regex!
@@ -498,6 +497,28 @@ Function Install-AcrobatDC {
 		Set-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader\DC\AdobeViewer' -Name EULA -Value 1
 		"Adobe Reader EULA abgenickt"
 	}
+}
+
+# Installation von Chrome
+Function Install-Chrome {
+	[CmdletBinding()]
+	Param(
+		[parameter(Mandatory=$true)]
+		[System.String]$tempDirectory
+	)
+
+	If (-not (Test-Chrome)) {
+		If (Test-64Bit) {
+			# Chrome 64-Bit Install
+			Start-BitsTransfer https://dl.google.com/tag/s/appguid%3D%7B8A69D345-D564-463C-AFF1-A69D9E530F96%7D%26iid%3D%7BB8C15A03-A737-2713-B3A5-1CEBDBE72BC3%7D%26lang%3Dde%26browser%3D2%26usagestats%3D0%26appname%3DGoogle%2520Chrome%26needsadmin%3Dprefers%26ap%3Dx64-stable%26installdataindex%3Ddefaultbrowser/dl/chrome/install/googlechromestandaloneenterprise64.msi -Destination $tempDirectory
+			Start-Process -Wait .\googlechromestandaloneenterprise64.msi
+		} else {
+			# Chrome 32-Bit Install
+			Start-BitsTransfer https://dl.google.com/tag/s/appguid%3D%7B8A69D345-D564-463C-AFF1-A69D9E530F96%7D%26iid%3D%7B8CA1A63B-B60A-2207-BB17-B73EE41CDE71%7D%26lang%3Den%26browser%3D4%26usagestats%3D0%26appname%3DGoogle%2520Chrome%26needsadmin%3Dprefers%26installdataindex%3Ddefaultbrowser/dl/chrome/install/googlechromestandaloneenterprise.msi -Destination $tempDirectory
+			Start-Process -Wait .\googlechromestandaloneenterprise.msi
+		}
+	}
+
 }
 
 # legt ein Backup eines Delapro-Verzeichnis mittels easyBackup32.exe an
@@ -1064,18 +1085,7 @@ $tbVersion = "45.0"
 Start-BitsTransfer https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe
 Start-Process -Wait .\Thunderbird%20Setup%20$tbVersion.exe /S
 
-# Chrome
-If (-not (Test-Chrome)) {
-	If (Test-64Bit) {
-		# Chrome 64-Bit Install
-		Start-BitsTransfer https://dl.google.com/tag/s/appguid%3D%7B8A69D345-D564-463C-AFF1-A69D9E530F96%7D%26iid%3D%7BB8C15A03-A737-2713-B3A5-1CEBDBE72BC3%7D%26lang%3Dde%26browser%3D2%26usagestats%3D0%26appname%3DGoogle%2520Chrome%26needsadmin%3Dprefers%26ap%3Dx64-stable%26installdataindex%3Ddefaultbrowser/dl/chrome/install/googlechromestandaloneenterprise64.msi
-		Start-Process -Wait .\googlechromestandaloneenterprise64.msi
-	} else {
-		# Chrome 32-Bit Install
-		Start-BitsTransfer https://dl.google.com/tag/s/appguid%3D%7B8A69D345-D564-463C-AFF1-A69D9E530F96%7D%26iid%3D%7B8CA1A63B-B60A-2207-BB17-B73EE41CDE71%7D%26lang%3Den%26browser%3D4%26usagestats%3D0%26appname%3DGoogle%2520Chrome%26needsadmin%3Dprefers%26installdataindex%3Ddefaultbrowser/dl/chrome/install/googlechromestandaloneenterprise.msi
-		Start-Process -Wait .\googlechromestandaloneenterprise.msi
-	}
-}
+Install-Chrome -TempDirectory $DLPInstPath
 
 Import-LastDelaproBackup -TempPath "$($DLPInstPath)AlteDatensicherung" -DestinationPath "$($DLPPath)"
 
