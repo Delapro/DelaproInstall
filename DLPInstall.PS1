@@ -549,6 +549,42 @@ Function Update-Backup {
 	}
 }
 
+# aktualisiert DlpWinPr.EXE, wenn die Version älter ist, als die Version auf www.easysoftware.de/util
+Function Update-DlpWinPr {
+	[CmdletBinding()]
+	#[OutputType([System.Boolean])]
+	Param(
+		[System.String]$DelaproPath="C:\Delapro"
+	)
+
+	# TODO: sollte noch $easyURI angepasst werden!
+	$c=Invoke-WebRequest -Uri http://www.easysoftware.de/util -UseBasicParsing
+	
+	# so sieht ein Eintrag aus, es geht ums Datum wo vor dem Eintrag steht!
+	# ...<A HREF="/util/EasyBackup32.exe">EasyBackup32.exe</A><br> 12/6/2013 10:07 PM        77824 <A HREF="...
+	
+	# Link mit dlpwinpr.exe ermitteln
+	$backup=($c.Links|where outerhtml -match "dlpwinpr.exe").outerhtml
+	# betreffende Eintragung ausschneiden, zuerst den Rest weg
+	$backup=$c.content.Substring(0, $c.content.IndexOf($backup))
+	# und das letzte <br> ermitteln
+	$backup=$backup.substring($backup.LastIndexOf("<br>")+4)
+	# Leerzeichen am Ende entfernen
+	$backup=$backup.TrimEnd(" ")
+	# Dateigröße entfernen
+	$backup=$backup.substring(0, $backup.LastIndexOf(" "))
+	# Datum ermitteln
+	$FileDate = Get-Date $backup
+	
+	$ExeDate = (Get-Item (Join-Path -Path $DelaproPath -ChildPath "Laser\DlpWinPr.EXE")).LastWriteTime
+	If ($EXEDate.Date -lt $FileDate.Date) {
+		Write-Verbose "Version muss aktualisiert werden"
+		Start-BitsTransfer http://www.easysoftware.de/util/DlpWinPr.exe -Destination (Join-Path -Path $DelaproPath -ChildPath Laser)
+	} else {
+		Write-Verbose "Version ist aktuell"
+	}
+}
+
 # legt einen neuen Printerport an
 Function New-PrinterPort {
 	[CmdletBinding()]
