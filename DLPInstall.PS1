@@ -512,13 +512,14 @@ Function Install-Thunderbird {
 		[System.String]$tempDirectory
 	)
 
-	# Thunderbird
-	#$tbVersion = "38.7.1"
-	$tbVersion = "45.0"
-	#Start-BitsTransfer http://download.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe
-	Start-BitsTransfer https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe -Destination $tempDirectory
-	Start-Process -Wait .\Thunderbird%20Setup%20$tbVersion.exe /S
-
+	If (-not (Test-Thunderbird)) {
+		#$tbVersion = "38.7.1"
+		$tbVersion = "45.0"
+		#Start-BitsTransfer http://download.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe
+		Start-BitsTransfer https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe -Destination $tempDirectory
+		Start-Process -Wait .\Thunderbird%20Setup%20$tbVersion.exe /S
+	}
+	
 }
 
 # legt ein Backup eines Delapro-Verzeichnis mittels easyBackup32.exe an
