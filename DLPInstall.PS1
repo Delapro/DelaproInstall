@@ -172,8 +172,38 @@ Function New-FileShortcut {
 Function Test-Printer {
 	[CmdletBinding()]
 	Param(
-		[System.String]$PrinterName=(Get-DefaultPrinter).Name
+                [Parameter(ParameterSetName='name', Position=0)]
+		[ValidateNotNull()]
+		[ValidateNotNullOrEmpty()]
+		[string]
+		${PrinterName},
+
+		[Parameter(ParameterSetName='object', Position=0)]
+		[PSTypeName('Microsoft.Management.Infrastructure.CimInstance#ROOT/StandardCimv2/MSFT_Printer')]
+		[ciminstance]
+		${PrinterObject}
+
+		#[Parameter(ParameterSetName="PrinterName",Position=0)]
+		#[System.String]$PrinterName=(Get-DefaultPrinter).Name
+		#[Parameter(ParameterSetName="PrinterObject",Position=0)]
+		#[]
 	)
+
+	switch -exact ($PSCmdlet.ParameterSetName) {
+	{ @('name') -contains $_} 	{
+						Write-Verbose "PrinterName: $PrinterName"
+						$PrinterName = $PrinterName
+					} 
+	{ @('object') -contains $_}	{
+						Write-Verbose "PrinterObject: $PrinterObject"
+						$PrinterName = $PrinterObject.Name
+					}
+	}
+
+	If (! $PrinterName) {
+		Write-Verbose "muss Standarddrucker ermitteln"
+		$PrinterName = (Get-DefaultPrinter).Name
+	}
 
 	Write-Verbose "PrinterName: $PrinterName"
 	# man könnte auch alternativ PrintUI.EXE nehmen
@@ -184,7 +214,7 @@ Function Test-Printer {
 # ermittelt den Windowsstandarddrucker
 Function Get-DefaultPrinter {
 	[CmdletBinding()]
-	[OutputType([System.Boolean])]
+	[OutputType([Microsoft.Management.Infrastructure.CimInstance[]])][OutputType([Microsoft.Management.Infrastructure.CimInstance[]])]
 	Param()
 
 	# Oder direkt per Registry? HKEY_CURRENT_USER\Software\Microsoft\Windows NT\CurrentVersion\Windows\Device
