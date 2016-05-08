@@ -522,6 +522,29 @@ Function Install-Thunderbird {
 	
 }
 
+# Installation von Teamviewer
+Function Install-Teamviewer {
+	[CmdletBinding()]
+	Param(
+		[System.String]$tempDirectory="C:\Temp\",
+		[System.String]$DestinationPath="C:\Delapro",
+		[System.String]$CreateDesktopLink="easy Internet Fernwartung (Teamviewer).lnk"
+	)
+
+	# es macht Sinn, hier noch eine TV-Typ mit aufzunehmen um auch einen TV-Host installieren zu können
+
+	# Teamviewer Fernwartung einrichten
+	Start-BitsTransfer "http://www.easysoftware.de/download/easyTeamViewerQS_de.exe"  -Destination $tempDirectory
+	Unblock-File "$($tempDirectory)easyTeamViewerQS_de.exe"
+	If (! (Test-Path $DestinationPath\Fernwartung)) {
+		New-Item -path $DestinationPath\Fernwartung -Type Directory
+	}
+	Copy-Item $tempDirectory\easyTeamViewerQS_de.exe $DestinationPath\Fernwartung -Force
+	# Link auf Desktop erstellen, Text: easy Internet Fernwartung (Teamviewer)
+	New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\easyTeamViewerQS_de.exe" -LinkFilename $CreateDesktopLink
+
+}
+
 # legt ein Backup eines Delapro-Verzeichnis mittels easyBackup32.exe an
 Function Backup-Delapro {
 	[CmdletBinding()]
@@ -1028,8 +1051,6 @@ if (-not (Get-Command Rename-Printer -ErrorAction SilentlyContinue)) {
 
 Start-BitsTransfer $easyBaseURI/Demo/dlpsetup.exe $DlpInstPath
 Unblock-File "$($DLPInstPath)dlpsetup.exe"
-Start-BitsTransfer $easyBaseURI/download/easyTeamViewerQS_de.exe $DLPInstPath
-Unblock-File "$($DLPInstPath)easyTeamViewerQS_de.exe"
 # Start-BitsTransfer $easyBaseURI/download/dlppreise2016-1.exe $DLPInstPath
 # Unblock-File "$($DLPInstPath)dlppreise2016-1.exe"
 # Invoke-Item "$($DLPInstPath)dlppreise2016-1.exe"
@@ -1063,11 +1084,7 @@ Start-Process -Wait "$($DLPInstPath)dlpsetup.exe" -ArgumentList "-a","-NOINSTNET
 # Für Neuinstallation BEL2014.LOG anlegen, damit ein spezieller Hinweis erfolgt, falls diese nochmals eingespielt werden sollte
 "Neuinstallation" | Set-Content  "$($DlpPath)\BEL2014.LOG"
 
-# Teamviewer Fernwartung einrichten
-New-Item -path $DlpPath\Fernwartung -Type Directory
-Copy-Item .\easyTeamViewerQS_de.exe $DlpPath\Fernwartung
-# Link auf Desktop erstellen, Text: easy Internet Fernwartung (Teamviewer)
-New-FileShortcut -FileTarget "$($DlpPath)\Fernwartung\easyTeamViewerQS_de.exe" -LinkFilename "easy Internet Fernwartung (Teamviewer).lnk"
+Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -CreateDesktopLink "easy Internet Fernwartung (Teamviewer).lnk"
 
 Install-DelaproMailerPrinter
 
