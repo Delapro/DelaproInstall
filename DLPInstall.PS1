@@ -214,7 +214,7 @@ Function Test-Printer {
 # ermittelt den Windowsstandarddrucker
 Function Get-DefaultPrinter {
 	[CmdletBinding()]
-	[OutputType([Microsoft.Management.Infrastructure.CimInstance[]])][OutputType([Microsoft.Management.Infrastructure.CimInstance[]])]
+	[OutputType([Microsoft.Management.Infrastructure.CimInstance[]])]
 	Param()
 
 	# Oder direkt per Registry? HKEY_CURRENT_USER\Software\Microsoft\Windows NT\CurrentVersion\Windows\Device
@@ -364,6 +364,23 @@ Function Test-AcrobatReader {
 	  		'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\AcroRd32.exe')
 	$regLoc | % { $ret = $ret -or (Test-Path $_) }
 	$ret
+}
+
+# zum Setzen und Resetten von Font und Fenstergrößen
+Function Set-DlpUi {
+	[CmdletBinding()]
+	#[OutputType([System.IO.DirectoryInfo])]
+	Param (
+		[Parameter(ParameterSetName="Reset")]
+		[switch]$Reset
+	)
+	
+	If($Reset) {
+		Remove-ItemProperty 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings' -Name "Width" -ErrorAction SilentlyContinue
+		Remove-ItemProperty 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings' -Name "Height" -ErrorAction SilentlyContinue
+		Remove-ItemProperty 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings' -Name "FontSize" -ErrorAction SilentlyContinue
+		Remove-ItemProperty 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings' -Name "FontWidth" -ErrorAction SilentlyContinue
+	}
 }
 
 # Zum ermitteln der verfügbaren GhostScript-Versionen
