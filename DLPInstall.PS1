@@ -852,10 +852,17 @@ Function Get-DefaultEMailClient {
 	# Default Startmenu-EMail-Client: https://msdn.microsoft.com/en-us/library/windows/desktop/dd203067(v=vs.85).aspx#email_reg
 	# Default E-Mail  https://msdn.microsoft.com/en-us/library/windows/desktop/cc144154(v=vs.85).aspx
 	# Default MAPI-Client: https://msdn.microsoft.com/en-us/library/windows/desktop/ee909492(v=vs.85).aspx
-	$mailClient = (Get-ItemProperty HKCU:\SOFTWARE\Clients\Mail\ -Name "(default)").'(default)' -ErrorAction SilentlyContinue
+	
+	# damit hat Windows 7 Probleme:
+	#$mailClient = (Get-ItemProperty HKCU:\SOFTWARE\Clients\Mail\ -Name "(default)").'(default)' -ErrorAction SilentlyContinue
+	#If (! $mailClient) {
+	#	(Get-ItemProperty HKLM:\SOFTWARE\Clients\Mail\ -Name "(default)").'(default)' -ErrorAction SilentlyContinue
+	#}
+	$mailClient = (Get-ItemProperty Registry::HKEY_CURRENT_USER\SOFTWARE\Clients\Mail\ -Name "(default)" -ErrorAction SilentlyContinue).'(default)'
 	If (! $mailClient) {
-		(Get-ItemProperty HKLM:\SOFTWARE\Clients\Mail\ -Name "(default)").'(default)' -ErrorAction SilentlyContinue
+		$mailClient = (Get-ItemProperty Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Clients\Mail\ -Name "(default)" -ErrorAction SilentlyContinue).'(default)' 
 	}
+
 	$mailClient
 	
 }
