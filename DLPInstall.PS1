@@ -217,14 +217,25 @@ Function Get-DefaultPrinter {
 	[OutputType([Microsoft.Management.Infrastructure.CimInstance[]])]
 	Param()
 
+	# Prüfen, ob StandardCimV2 verfügbar ist, wenn ja kann man von ausgehen, dass man Win8 oder neuer hat, wo CIM
+	# auf jeden Fall verfügbar ist
+	$useCIM = Get-WMIObject -Namespace root -Class __NAMESPACE | where {$_.Name -eq "StandardCimv2"}
+	
 	# Oder direkt per Registry? HKEY_CURRENT_USER\Software\Microsoft\Windows NT\CurrentVersion\Windows\Device
-	#$default = Get-WmiObject -Classname Win32_Printer| Where {$_.Default -eq $true}
-	$default = Get-CIMInstance -Classname Win32_Printer
+	If ($useCIM) {
+		# funktioniert ab Windows 8
+		$default = Get-CIMInstance -Classname Win32_Printer
+	} else {
+		# funktioniert vor Windows 8
+		$default = Get-WmiObject -Classname Win32_Printer
+	}
 	If ($default) {
 		$default = $default | Where {$_.Default -eq $true}
-		# in $default hat man nun die klassische Variante Win32_Printer, für Powershell sollte man aber MSFT_Printer verwenden
-		# also einfach nochmal aufrufen und danach suchen:
-		$default = Get-CIMInstance -Namespace root\StandardCimV2 -Classname MSFT_Printer| Where {$_.Name -eq $default.Name}
+		# in $default hat man nun die klassische Variante Win32_Printer, für Powershell bei Windows 8 oder höher sollte
+		# man aber MSFT_Printer verwenden, damit man kompatibel zu den *-Print* Cmdlets ist, welche MSFT_Printer verwenden
+		If ($useCIM) {
+			$default = Get-CIMInstance -Namespace root\StandardCimV2 -Classname MSFT_Printer | Where {$_.Name -eq $default.Name}
+		}
 		$default
 	}
 }
