@@ -568,7 +568,7 @@ Function Install-AcrobatDC {
 	# DC Version: http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/1500920069/AcroRdrDC1500920069_de_DE.exe
 	# Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/11.x/11.0.10/de_DE/AdbeRdr11010_de_DE.exe
 	# DC Release-Infos: http://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotes/index.html
-	$dcVersion = "1501020056"
+	$dcVersion = "15.016.20039".Replace(".", "")
 	Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/$dcVersion/AcroRdrDC$($dcVersion)_de_DE.exe -Destination $tempDirectory
 	# Adobe Reader Silent Install mit Progressbar
 	# Start-Process  -Wait .\AdbeRdr11010_de_DE.exe /sPB
@@ -613,7 +613,7 @@ Function Install-Thunderbird {
 
 	If (-not (Test-Thunderbird)) {
 		#$tbVersion = "38.7.1"
-		$tbVersion = "45.0"
+		$tbVersion = "45.1.0"
 		#Start-BitsTransfer http://download.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe
 		Start-BitsTransfer https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe -Destination $tempDirectory
 		Start-Process -Wait .\Thunderbird%20Setup%20$tbVersion.exe /S
