@@ -214,7 +214,7 @@ Function Test-Printer {
 # ermittelt den Windowsstandarddrucker
 Function Get-DefaultPrinter {
 	[CmdletBinding()]
-	[OutputType([Microsoft.Management.Infrastructure.CimInstance[]])]
+	# inkompatibel zu PS2.0: [OutputType([Microsoft.Management.Infrastructure.CimInstance[]])]
 	Param()
 
 	# Prüfen, ob StandardCimV2 verfügbar ist, wenn ja kann man von ausgehen, dass man Win8 oder neuer hat, wo CIM
