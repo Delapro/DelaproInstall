@@ -190,7 +190,7 @@ Function Test-Printer {
 	)
 
 	switch -exact ($PSCmdlet.ParameterSetName) {
-	{ @('name') -contains $_} 	{
+	{ @('name') -contains $_}	{
 						Write-Verbose "PrinterName: $PrinterName"
 						$PrinterName = $PrinterName
 					} 
