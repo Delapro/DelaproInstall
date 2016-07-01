@@ -1177,17 +1177,21 @@ if (-not (Get-Command Rename-Printer -ErrorAction SilentlyContinue)) {
 
 Start-BitsTransfer $easyBaseURI/Demo/dlpsetup.exe $DlpInstPath
 Unblock-File "$($DLPInstPath)dlpsetup.exe"
-# $dlpPreise = "DLPPreise2016-3.exe"
-# Start-BitsTransfer $easyBaseURI/download/$dlpPreise $DLPInstPath
-# Unblock-File "$($DLPInstPath)$($dlpPreise)"
-# Invoke-Item "$($DLPInstPath)$($dlpPreise)"
+<#
+# Preisupdate
+$dlpPreise = "DLPPreise2016-3.exe"
+Start-BitsTransfer $easyBaseURI/download/$dlpPreise $DLPInstPath
+Unblock-File "$($DLPInstPath)$($dlpPreise)"
+Invoke-Item "$($DLPInstPath)$($dlpPreise)"
 # Bildarchivierung
-# Start-BitsTransfer $easyBaseURI/download/dlpwinim.exe $DLPInstPath
-# Start-Process -Wait "$($DLPInstPath)dlpwinim.exe" -ArgumentList "-a", "-pathDelapro=$($DlpPath)"
-# Start-BitsTransfer $easyBaseURI/util/DlpWinIm.EXE $DLPInstPath
-# Move-Item .\DlpWinIm.EXE  "$($DlpPath)\Image"  -Force
-# Start-BitsTransfer $easyBaseURI/download/dlpwinzert.exe $DLPInstPath
-# Start-Process -Wait "$($DLPInstPath)dlpwinzert.exe" -ArgumentList "-a", "-pathDelapro=$($DlpPath)"
+Start-BitsTransfer $easyBaseURI/download/dlpwinim.exe $DLPInstPath
+Start-Process -Wait "$($DLPInstPath)dlpwinim.exe" -ArgumentList "-a", "-pathDelapro=$($DlpPath)"
+Start-BitsTransfer $easyBaseURI/util/DlpWinIm.EXE $DLPInstPath
+Move-Item .\DlpWinIm.EXE  "$($DlpPath)\Image"  -Force
+# Zertifikatsmodul
+Start-BitsTransfer $easyBaseURI/download/dlpwinzert.exe $DLPInstPath
+Start-Process -Wait "$($DLPInstPath)dlpwinzert.exe" -ArgumentList "-a", "-pathDelapro=$($DlpPath)"
+#>
 
 Install-eDocPrintPro -tempPath "$($DLPInstPath)"
 
