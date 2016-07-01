@@ -1177,9 +1177,10 @@ if (-not (Get-Command Rename-Printer -ErrorAction SilentlyContinue)) {
 
 Start-BitsTransfer $easyBaseURI/Demo/dlpsetup.exe $DlpInstPath
 Unblock-File "$($DLPInstPath)dlpsetup.exe"
-# Start-BitsTransfer $easyBaseURI/download/dlppreise2016-1.exe $DLPInstPath
-# Unblock-File "$($DLPInstPath)dlppreise2016-1.exe"
-# Invoke-Item "$($DLPInstPath)dlppreise2016-1.exe"
+# $dlpPreise = "DLPPreise2016-3.exe"
+# Start-BitsTransfer $easyBaseURI/download/$dlpPreise $DLPInstPath
+# Unblock-File "$($DLPInstPath)$($dlpPreise)"
+# Invoke-Item "$($DLPInstPath)$($dlpPreise)"
 # Bildarchivierung
 # Start-BitsTransfer $easyBaseURI/download/dlpwinim.exe $DLPInstPath
 # Start-Process -Wait "$($DLPInstPath)dlpwinim.exe" -ArgumentList "-a", "-pathDelapro=$($DlpPath)"
