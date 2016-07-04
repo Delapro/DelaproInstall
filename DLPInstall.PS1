@@ -1232,6 +1232,8 @@ Install-Thunderbird -TempDirectory $DLPInstPath
 Install-Chrome -TempDirectory $DLPInstPath
 
 Import-LastDelaproBackup -TempPath "$($DLPInstPath)AlteDatensicherung" -DestinationPath "$($DLPPath)"
+# zum Direkt einspielen
+# Import-OldDLPVersion -SourcePath G: -DestinationPath "$($DLPPath)"
 
 Cleanup-Delapro -DelaproPath $DLPPath
 
