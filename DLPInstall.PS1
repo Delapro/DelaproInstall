@@ -613,7 +613,7 @@ Function Install-Thunderbird {
 
 	If (-not (Test-Thunderbird)) {
 		#$tbVersion = "38.7.1"
-		$tbVersion = "45.1.0"
+		$tbVersion = "45.2.0"
 		#Start-BitsTransfer http://download.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe
 		Start-BitsTransfer https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe -Destination $tempDirectory
 		Start-Process -Wait .\Thunderbird%20Setup%20$tbVersion.exe /S
