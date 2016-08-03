@@ -1219,6 +1219,8 @@ Start-Process -Wait "$($DLPInstPath)dlpwinzert.exe" -ArgumentList "-a", "-pathDe
 
 Install-eDocPrintPro -tempPath "$($DLPInstPath)"
 
+# abklären, ob die Util-Methode besser ist anstatt Rename:
+# C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDocPrintProUtil.EXE /AddPrinter /Printer="DelaproPDF" /Driver="eDocPrintPro" /Silent
 Rename-Printer -Name eDocPrintPro -NewName DelaproPDF
 
 # die ab Windows 10 v1511 Einstellung für den Standarddruckertreiber, welche immer den zuletzt benutzten Drucker zum
