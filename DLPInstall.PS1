@@ -779,21 +779,40 @@ Function Install-DelaproMailerPrinter {
 			If (Test-Windows10) {
 				# PRÜFEN! Alternative Xerox PS Color Class Driver V1.1, Oder HP Laserjet 2500 PS wird von Parallels verwendet
 				$driverName = "Microsoft PS Class Driver"
+				$driverID = ""
+				$winBuild = (gwmi Win32_OperatingSystem).Version
 				If (Test-64Bit) {
-					# leider anders bei Win10-II also v1511, wahrscheinlich bei allen künftigen Upgrades:
-					If ((gwmi win32_operatingsystem).version -eq "10.0.10586") {
-						$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_d74c8d3824a210d1\prnms005.inf"
-					} else {
-						$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_865ce515acd2fce4\prnms005.inf"
+					# leider ändert sich die ID mit jedem größeren Windows 10 Update
+					switch ($winBuild) {
+						"10.0.10240" {$driverID = "865ce515acd2fce4"}
+						"10.0.10586" {$driverID = "d74c8d3824a210d1"}
+						"10.0.14393" {$driverID = "f9239fa24dfa8848"} 
 					}
 				} else {
-					# leider anders bei Win10-II also v1511, wahrscheinlich bei allen künftigen Upgrades:
-					If ((gwmi win32_operatingsystem).version -eq "10.0.10586") {
-						$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_a3895815234f1110\prnms005.inf"
-					} else {
-						$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_1233c058c621b357\prnms005.inf"
+					# zusätzlich gibt es unterschiede zwischen 32-Bit und 64-Bit
+					switch ($winBuild) {
+						"10.0.10240" {$driverID = "1233c058c621b357"}
+						"10.0.10586" {$driverID = "a3895815234f1110"}
 					}
 				}
+
+				If (-Not ($driverID)) {
+					Write-Verbose "Microsoft Postscriptdruckertreiber wird ermittelt"
+					# alle MS-Druckertreiber ermitteln
+					$driverMSPrinter = Get-WindowsDriver -Online -All | where classname -eq Printer|where providername -eq  Microsoft 
+					# davon die Postscripttreiber ermitteln
+					$driver = $driverMSPrinter |  % {Get-WindowsDriver -Online -driver $_.originalfilename} | where hardwaredescription -eq "Microsoft PS Class Driver"
+					# Treiber ausgeben
+					Write-Verbose $driver
+					$driverInf = ($driver[0]).OriginalFilename
+				} else {
+					If (Test-64Bit) {
+						$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_$($driverID)\prnms005.inf"
+					} else {
+						$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_$($driverID)\prnms005.inf"
+					}
+				}
+				
 			} else {
 				# Win8
 				
