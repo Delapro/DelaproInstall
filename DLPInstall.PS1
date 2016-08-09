@@ -1215,6 +1215,11 @@ Move-Item .\DlpWinIm.EXE  "$($DlpPath)\Image"  -Force
 # Zertifikatsmodul
 Start-BitsTransfer $easyBaseURI/download/dlpwinzert.exe $DLPInstPath
 Start-Process -Wait "$($DLPInstPath)dlpwinzert.exe" -ArgumentList "-a", "-pathDelapro=$($DlpPath)"
+# Chartmodul
+Start-BitsTransfer $easyBaseURI/util/dlpwinchart.exe $DLPInstPath
+Start-Process -Wait "$($DLPInstPath)dlpwinchart.exe" -ArgumentList "-a", "-pathDelapro=$($DlpPath)"
+Start-BitsTransfer $easyBaseURI/util/DlpWinCt.EXE $DLPInstPath
+Move-Item .\DlpWinCt.EXE  "$($DlpPath)\Image"  -Force
 #>
 
 Install-eDocPrintPro -tempPath "$($DLPInstPath)"
