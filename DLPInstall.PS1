@@ -657,7 +657,7 @@ Function Backup-Delapro {
 	)
 	
 	Write-Verbose "Sichere $DelaproPath nach $BackupPath"
-	Start-Process -Wait (Join-Path -Path $($DelaproPath) -ChildPath "Backup\easyBackup32.EXE") -ArgumentList @("*.*", "/S", "/V", "/AUTO", $BackupPath)
+	Start-Process -Wait (Join-Path -Path $($DelaproPath) -ChildPath "Backup\easyBackup32.EXE") -ArgumentList @("*.*", "/S", "/V", "/AUTO", $BackupPath) -WorkingDirectory $DelaproPath
 }
 
 # aktualisiert easyBackup32, wenn die Version älter ist, als die Version auf www.easysoftware.de/util
