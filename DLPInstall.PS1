@@ -656,6 +656,7 @@ Function Backup-Delapro {
 		[System.String]$BackupPath="C:\Temp\DelaproSicherung"
 	)
 	
+	Write-Verbose "Sichere $DelaproPath nach $BackupPath"
 	Start-Process -Wait (Join-Path -Path $($DelaproPath) -ChildPath "Backup\easyBackup32.EXE") -ArgumentList @("*.*", "/S", "/V", "/AUTO", $BackupPath)
 }
 
@@ -686,13 +687,15 @@ Function Update-Backup {
 	# Datum ermitteln
 	$FileDate = Get-Date $backup
 	
-	$ExeDate = (Get-Item (Join-Path -Path $DelaproPath -ChildPath "Backup\EasyBackup32.EXE")).LastWriteTime
+	$ExePath = Join-Path -Path $DelaproPath -ChildPath "Backup\EasyBackup32.EXE"
+	Write-Verbose "Prüfe $ExePath"
+	$ExeDate = (Get-Item $ExePath).LastWriteTime
 	If ($EXEDate.Date -lt $FileDate.Date) {
-		Write-Verbose "Version muss aktualisiert werden"
+		Write-Verbose "Version muss aktualisiert werden, von $($ExeDate.Date) auf $($FileDat.Date)"
 		Start-BitsTransfer http://www.easysoftware.de/util/easybackup32.exe -Destination (Join-Path -Path $DelaproPath -ChildPath Backup)
 		Start-BitsTransfer http://www.easysoftware.de/util/easyrestore32.exe -Destination (Join-Path -Path $DelaproPath -ChildPath Backup)
 	} else {
-		Write-Verbose "Version ist aktuell"
+		Write-Verbose "Version ist aktuell, $($ExeDate.Date)"
 	}
 }
 
@@ -723,12 +726,14 @@ Function Update-DlpWinPr {
 	# Datum ermitteln
 	$FileDate = Get-Date $backup
 	
-	$ExeDate = (Get-Item (Join-Path -Path $DelaproPath -ChildPath "Laser\DlpWinPr.EXE")).LastWriteTime
+	$ExePath = Join-Path -Path $DelaproPath -ChildPath "Laser\DlpWinPr.EXE"
+	Write-Verbose "Prüfe $ExePath"
+	$ExeDate = (Get-Item $ExePath).LastWriteTime
 	If ($EXEDate.Date -lt $FileDate.Date) {
-		Write-Verbose "Version muss aktualisiert werden"
+		Write-Verbose "Version muss aktualisiert werden, von $($ExeDate.Date) auf $($FileDat.Date)"
 		Start-BitsTransfer http://www.easysoftware.de/util/DlpWinPr.exe -Destination (Join-Path -Path $DelaproPath -ChildPath Laser)
 	} else {
-		Write-Verbose "Version ist aktuell"
+		Write-Verbose "Version ist aktuell, $($ExeDate.Date)"
 	}
 }
 
