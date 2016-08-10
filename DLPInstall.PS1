@@ -691,7 +691,7 @@ Function Update-Backup {
 	Write-Verbose "Prüfe $ExePath"
 	$ExeDate = (Get-Item $ExePath).LastWriteTime
 	If ($EXEDate.Date -lt $FileDate.Date) {
-		Write-Verbose "Version muss aktualisiert werden, von $($ExeDate.Date) auf $($FileDat.Date)"
+		Write-Verbose "Version muss aktualisiert werden, von $($ExeDate.Date) auf $($FileDate.Date)"
 		Start-BitsTransfer http://www.easysoftware.de/util/easybackup32.exe -Destination (Join-Path -Path $DelaproPath -ChildPath Backup)
 		Start-BitsTransfer http://www.easysoftware.de/util/easyrestore32.exe -Destination (Join-Path -Path $DelaproPath -ChildPath Backup)
 	} else {
@@ -730,7 +730,7 @@ Function Update-DlpWinPr {
 	Write-Verbose "Prüfe $ExePath"
 	$ExeDate = (Get-Item $ExePath).LastWriteTime
 	If ($EXEDate.Date -lt $FileDate.Date) {
-		Write-Verbose "Version muss aktualisiert werden, von $($ExeDate.Date) auf $($FileDat.Date)"
+		Write-Verbose "Version muss aktualisiert werden, von $($ExeDate.Date) auf $($FileDate.Date)"
 		Start-BitsTransfer http://www.easysoftware.de/util/DlpWinPr.exe -Destination (Join-Path -Path $DelaproPath -ChildPath Laser)
 	} else {
 		Write-Verbose "Version ist aktuell, $($ExeDate.Date)"
