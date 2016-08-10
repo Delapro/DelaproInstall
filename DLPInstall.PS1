@@ -407,7 +407,7 @@ Function Get-Ghostscript {
 	
 	$gsDirs += Get-ChildItem "$($Env:ProgramFiles)\GS" -ErrorAction SilentlyContinue -Directory -Exclude Fonts
 	$gsDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\GS" -ErrorAction SilentlyContinue -Directory -Exclude Fonts
-	
+	$gsDirs = $gsDirs | sort Name -Descending
 	$gsDirs
 }
 
