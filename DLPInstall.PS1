@@ -434,7 +434,7 @@ Function Update-DelaproGhostscript {
 					$content[$_.LineNumber-1] = $content[$_.LineNumber-1].replace($current, $PathGhostscript)
 					Write-Verbose "so sollte es aussehen: $($content[$_.LineNumber-1].replace($current, $PathGhostscript))"
 		}
-		$content| Out-File $PathDelaproGhostscript
+		$content| Set-Content $PathDelaproGhostscript
 	}
 }
 
