@@ -769,8 +769,10 @@ Function Install-DelaproMailerPrinter {
 	Write-Verbose "Lege $Portname an"
 	New-PrinterPort -Portname $PortName
 	
-	Write-Verbose "Lege Tempverzeichnis für Export an $DelaproPath\Export\PDF\Temp"
-	New-Item -Type Directory $DelaproPath\Export\PDF\Temp
+	If (-Not (Test-Path $DelaproPath\Export\PDF\Temp)) {
+		Write-Verbose "Lege Tempverzeichnis für Export an $DelaproPath\Export\PDF\Temp"
+		New-Item -Type Directory $DelaproPath\Export\PDF\Temp
+	}
 	
 	# DelaproMailer-Druckertreiber anlegen
 	# für künftige Aktionen GhostScript-Druckertreiber installieren:
@@ -804,6 +806,7 @@ Function Install-DelaproMailerPrinter {
 					switch ($winBuild) {
 						"10.0.10240" {$driverID = "1233c058c621b357"}
 						"10.0.10586" {$driverID = "a3895815234f1110"}
+						"10.0.14393" {$driverID = "05a177376e5c60f5"}
 					}
 				}
 
