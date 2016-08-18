@@ -386,15 +386,49 @@ Function Set-DlpUi {
 	#[OutputType([System.IO.DirectoryInfo])]
 	Param (
 		[Parameter(ParameterSetName="Reset")]
-		[switch]$Reset
+		[switch]$Reset,
+		[Parameter(ParameterSetName="Set")]
+		[string]$Fontname,
+		[int]$FontWeight
 	)
 	
-	If($Reset) {
-		Remove-ItemProperty 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings' -Name "Width" -ErrorAction SilentlyContinue
-		Remove-ItemProperty 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings' -Name "Height" -ErrorAction SilentlyContinue
-		Remove-ItemProperty 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings' -Name "FontSize" -ErrorAction SilentlyContinue
-		Remove-ItemProperty 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings' -Name "FontWidth" -ErrorAction SilentlyContinue
+	$regBase = 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings'
+
+	switch ($PSCmdlet) {
+		"Reset" {				
+					Remove-ItemProperty $regBase -Name "Height" -ErrorAction SilentlyContinue
+					Remove-ItemProperty $regBase -Name "Width" -ErrorAction SilentlyContinue
+					Remove-ItemProperty $regBase -Name "FontSize" -ErrorAction SilentlyContinue
+					Remove-ItemProperty $regBase -Name "FontWidth" -ErrorAction SilentlyContinue
+					Remove-ItemProperty $regBase -Name "FontName" -ErrorAction SilentlyContinue
+					Remove-ItemProperty $regBase -Name "FontWeight" -ErrorAction SilentlyContinue
+		}
+		"Set" {
+			If ($Fontname) { Set-ItemProperty $regBase -Name "FontName" -Value $Fontname }
+			If ($FontWeight) { Set-ItemProperty $regBase -Name "FontName" -Value $FontWeight }			
+		}
 	}
+
+}
+
+# zum Auslesen von Font und Fenstergrößen
+Function Get-DlpUi {
+	[CmdletBinding()]
+	#[OutputType([System.IO.DirectoryInfo])]
+	Param (
+	)
+	
+	$regBase = 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings'
+
+	[PSCustomObject]@{
+						PSTypeName = "Delapro.UI.Settings";
+						Height = (Get-ItemProperty $regBase -Name "Height" -ErrorAction SilentlyContinue).Height; 
+						Width = (Get-ItemProperty $regBase -Name "Width" -ErrorAction SilentlyContinue).Width; 
+						FontSize = (Get-ItemProperty $regBase -Name "FontSize" -ErrorAction SilentlyContinue).FontSize; 
+						FontWidth = (Get-ItemProperty $regBase -Name "FontWidth" -ErrorAction SilentlyContinue).FontWidth; 
+						FontName = (Get-ItemProperty $regBase -Name "FontName" -ErrorAction SilentlyContinue).FontName; 
+						FontWeight = (Get-ItemProperty $regBase -Name "FontWeight" -ErrorAction SilentlyContinue).FontWeight; 
+					 }
 }
 
 # Zum ermitteln der verfügbaren GhostScript-Versionen
