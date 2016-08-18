@@ -404,6 +404,7 @@ Function Set-DlpUi {
 					Remove-ItemProperty $regBase -Name "FontWeight" -ErrorAction SilentlyContinue
 		}
 		"Set" {
+			# Hinweis zu Fonts in der Console: https://support.microsoft.com/en-us/kb/247815
 			If ($Fontname) { Set-ItemProperty $regBase -Name "FontName" -Value $Fontname }
 			If ($FontWeight) { Set-ItemProperty $regBase -Name "FontName" -Value $FontWeight }			
 		}
