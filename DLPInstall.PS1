@@ -440,8 +440,14 @@ Function Get-Ghostscript {
 	
 	$gsDirs = @()
 	
-	$gsDirs += Get-ChildItem "$($Env:ProgramFiles)\GS" -ErrorAction SilentlyContinue -Directory -Exclude Fonts
-	$gsDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\GS" -ErrorAction SilentlyContinue -Directory -Exclude Fonts
+	If ($PSVersionTable.PSVersion -eq "2.0")
+	{
+		$gsDirs += Get-ChildItem "$($Env:ProgramFiles)\GS" -ErrorAction SilentlyContinue -Exclude Fonts | where { $_.PSIsContainer}
+		$gsDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\GS" -ErrorAction SilentlyContinue -Exclude Fonts| where { $_.PSIsContainer}
+	} else {
+		$gsDirs += Get-ChildItem "$($Env:ProgramFiles)\GS" -ErrorAction SilentlyContinue -Directory -Exclude Fonts
+		$gsDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\GS" -ErrorAction SilentlyContinue -Directory -Exclude Fonts
+	}
 	$gsDirs = $gsDirs | sort Name -Descending
 	$gsDirs
 }
