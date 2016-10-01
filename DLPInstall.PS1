@@ -394,7 +394,7 @@ Function Set-DlpUi {
 	
 	$regBase = 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings'
 
-	switch ($PSCmdlet) {
+	switch ($PSCmdlet.ParameterSetName) {
 		"Reset" {				
 					Remove-ItemProperty $regBase -Name "Height" -ErrorAction SilentlyContinue
 					Remove-ItemProperty $regBase -Name "Width" -ErrorAction SilentlyContinue
@@ -406,7 +406,7 @@ Function Set-DlpUi {
 		"Set" {
 			# Hinweis zu Fonts in der Console: https://support.microsoft.com/en-us/kb/247815
 			If ($Fontname) { Set-ItemProperty $regBase -Name "FontName" -Value $Fontname }
-			If ($FontWeight) { Set-ItemProperty $regBase -Name "FontName" -Value $FontWeight }			
+			If ($FontWeight) { Set-ItemProperty $regBase -Name "FontWeight" -Value $FontWeight }			
 		}
 	}
 
