@@ -1267,7 +1267,7 @@ Invoke-Item "$($DLPInstPath)$($dlpPreise)"
 Start-BitsTransfer $easyBaseURI/download/dlpwinim.exe $DLPInstPath
 Start-Process -Wait "$($DLPInstPath)dlpwinim.exe" -ArgumentList "-a", "-pathDelapro=$($DlpPath)"
 Start-BitsTransfer $easyBaseURI/util/DlpWinIm.EXE $DLPInstPath
-Move-Item .\DlpWinIm.EXE  "$($DlpPath)\Image"  -Force
+Move-Item $DLPInstPath\DlpWinIm.EXE  "$($DlpPath)\Image"  -Force
 # Zertifikatsmodul
 Start-BitsTransfer $easyBaseURI/download/dlpwinzert.exe $DLPInstPath
 Start-Process -Wait "$($DLPInstPath)dlpwinzert.exe" -ArgumentList "-a", "-pathDelapro=$($DlpPath)"
