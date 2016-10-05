@@ -1275,7 +1275,7 @@ Start-Process -Wait "$($DLPInstPath)dlpwinzert.exe" -ArgumentList "-a", "-pathDe
 Start-BitsTransfer $easyBaseURI/util/dlpwinchart.exe $DLPInstPath
 Start-Process -Wait "$($DLPInstPath)dlpwinchart.exe" -ArgumentList "-a", "-pathDelapro=$($DlpPath)"
 Start-BitsTransfer $easyBaseURI/util/DlpWinCt.EXE $DLPInstPath
-Move-Item .\DlpWinCt.EXE  "$($DlpPath)\Image"  -Force
+Move-Item $DLPInstPath\DlpWinCt.EXE  "$($DlpPath)\Image"  -Force
 #>
 
 Install-eDocPrintPro -tempPath "$($DLPInstPath)"
