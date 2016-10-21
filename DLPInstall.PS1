@@ -1179,7 +1179,7 @@ If (-not (Get-Command Unblock-File -ErrorAction SilentlyContinue)) {
 	# Bei 64Bit Win7 also: 
 	# expand.exe -f:* .\Windows6.1-KB2819745-x64-MultiPkg.msu %TEMP%
 	# pkgmgr.exe /n:%temp%\Windows6.1-KB2819745-x64-MultiPkg.xml
-	
+
 	If (Test-64Bit) {
 		If  (Test-Windows7) {
 			(New-Object Net.WebClient).DownloadFile("http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu",  "$($DLPInstPath)Windows6.1-KB2819745-x64-MultiPkg.msu")
@@ -1256,6 +1256,20 @@ if (-not (Get-Command Rename-Printer -ErrorAction SilentlyContinue)) {
 			# anstatt Name doch DeviceID?
 			$dlpprn = Get-WMIObject Win32_Printer -Filter $Filter
 			$renres = $dlpprn.RenamePrinter($NewName)
+			# renres.ReturnValue == 5 wenn Access Denied, bei 0 erfolgreich
+		}
+	}
+}
+
+# Remove-Printer geht nur unter Win8 oder höher, benötigt Admin-Rechte
+if (-not (Get-Command Remove-Printer -ErrorAction SilentlyContinue)) {
+	# damit die Function verfügbar wird, muss sie mittels & ausgeführt werden und mit dem Scope global: versehen werden
+	&{
+		Function global:Remove-Printer ($Name) {
+			$Filter = "Name='$($Name)'"
+			# anstatt Name doch DeviceID?
+			$dlpprn = Get-WMIObject Win32_Printer -Filter $Filter
+			$renres = $dlpprn.Delete()
 			# renres.ReturnValue == 5 wenn Access Denied, bei 0 erfolgreich
 		}
 	}
