@@ -1305,7 +1305,7 @@ Install-eDocPrintPro -tempPath "$($DLPInstPath)"
 Start-Process -Wait "C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDocPrintProUtil.EXE" -ArgumentList "/AddPrinter", '/Printer="DelaproPDF"', '/Driver="eDocPrintPro"', "/Silent"
 # Rename-Printer -Name eDocPrintPro -NewName DelaproPDF
 # durch Aufruf von eDocPrintProUtil.EXE sind zwei Druckertreiber vorhanden, deshalb den Standard eDocPrintPro löschen
-Remove-Printer eDocPrintPro
+Remove-Printer -Name eDocPrintPro
 
 # die ab Windows 10 v1511 Einstellung für den Standarddruckertreiber, welche immer den zuletzt benutzten Drucker zum
 # Standarddrucker macht ausschalten
