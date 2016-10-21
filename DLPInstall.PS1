@@ -1174,6 +1174,12 @@ If (-not (Get-Command Unblock-File -ErrorAction SilentlyContinue)) {
 	     }
 	}
 	
+	# Hinweis zu Windows 7 und den ewigen Updates. Wenn man das WMF Update direkt ladet
+	# und manuell installiert, geht es schneller: https://support.microsoft.com/en-us/kb/934307
+	# Bei 64Bit Win7 also: 
+	# expand.exe -f:* .\Windows6.1-KB2819745-x64-MultiPkg.msu %TEMP%
+	# pkgmgr.exe /n:%temp%\Windows6.1-KB2819745-x64-MultiPkg.xml
+	
 	If (Test-64Bit) {
 		If  (Test-Windows7) {
 			(New-Object Net.WebClient).DownloadFile("http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu",  "$($DLPInstPath)Windows6.1-KB2819745-x64-MultiPkg.msu")
