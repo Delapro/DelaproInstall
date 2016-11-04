@@ -975,6 +975,31 @@ Function Get-DefaultEMailClient {
 	
 }
 
+# prüft, ob MAPI korrekt verfügbar ist
+Function Test-MAPI {
+	[CmdletBinding()]
+	#[OutputType([System.Boolean])]
+	Param(
+		
+	)
+
+	# https://support.microsoft.com/en-us/kb/141061
+	# https://msdn.microsoft.com/en-us/library/office/cc815368(v=office.15)
+	# aber 64Bit mit WOW6432Node beachten!
+}
+
+# MAPI-Profile anzeigen
+Function Show-MAPIProfiles {
+	[CmdletBinding()]
+	#[OutputType([System.Boolean])]
+	Param(
+		
+	)
+
+	# Suche nach MLCFG32.CPL
+
+}
+
 # ermittelt die vorhandenen Antimalware-Programme
 Function Get-AntiMalware {
 	[CmdletBinding()]
