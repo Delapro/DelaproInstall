@@ -799,6 +799,23 @@ Function New-PrinterPort {
 	Restart-Service Spooler -Force
 }
 
+# durchsucht die installierten Druckertreiber nach einem bestimmten Namen von einem Hersteller
+# benötigt Adminrechte
+Function Get-InstalledWindowsPrinterDriver {
+	[CmdletBinding()]
+	Param(
+		[String]$Vendor,
+		[String]$Driver 
+	)
+
+	# alle Druckertreiber ermitteln
+	$vendorPrinter = Get-WindowsDriver -Online -All | where classname -eq Printer|where providername -eq  $Vendor 
+	# davon die passenden Treiber ermitteln
+	$printerDriver = $vendorPrinter |  % {Get-WindowsDriver -Online -driver $_.originalfilename} | where hardwaredescription -eq $Driver
+	# Treiber ausgeben
+	$printerDriver
+}
+
 # installiert den DelaproMailer Drucker, dazu werden Adminrechte benötigt!
 Function Install-DelaproMailerPrinter {
 	[CmdletBinding()]
@@ -855,11 +872,7 @@ Function Install-DelaproMailerPrinter {
 
 				If (-Not ($driverID)) {
 					Write-Verbose "Microsoft Postscriptdruckertreiber wird ermittelt"
-					# alle MS-Druckertreiber ermitteln
-					$driverMSPrinter = Get-WindowsDriver -Online -All | where classname -eq Printer|where providername -eq  Microsoft 
-					# davon die Postscripttreiber ermitteln
-					$driver = $driverMSPrinter |  % {Get-WindowsDriver -Online -driver $_.originalfilename} | where hardwaredescription -eq "Microsoft PS Class Driver"
-					# Treiber ausgeben
+					$driver = Get-InstalledWindowsPrinterDriver -Vendor Microsoft -Driver "Microsoft PS Class Driver"
 					Write-Verbose $driver
 					$driverInf = ($driver[0]).OriginalFilename
 				} else {
