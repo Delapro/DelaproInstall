@@ -1082,7 +1082,7 @@ Function Copy-Delagame {
 }
 
 # räumt das Delapro-Verzeichnis auf
-Function Cleanup-Delapro {
+Function Invoke-CleanupDelapro {
 	[CmdletBinding()]
 	Param(
 		[System.String]$DelaproPath
@@ -1383,7 +1383,7 @@ Import-LastDelaproBackup -TempPath "$($DLPInstPath)AlteDatensicherung" -Destinat
 # zum Direkt einspielen
 # Import-OldDLPVersion -SourcePath G: -DestinationPath "$($DLPPath)"
 
-Cleanup-Delapro -DelaproPath $DLPPath
+Invoke-CleanupDelapro -DelaproPath $DLPPath
 
 # Prüfen, ob man sich im Delapro-Verzeichnis befindet
 If (-Not ((Get-Location).Path -eq "$($DlpPath)")) {
