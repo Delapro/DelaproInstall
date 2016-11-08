@@ -873,7 +873,7 @@ Function Install-DelaproMailerPrinter {
 				If (-Not ($driverID)) {
 					Write-Verbose "Microsoft Postscriptdruckertreiber wird ermittelt"
 					$driver = Get-InstalledWindowsPrinterDriver -Vendor Microsoft -Driver "Microsoft PS Class Driver"
-					Write-Verbose "$(($driver).OriginalFilename)
+					Write-Verbose "$(($driver).OriginalFilename)"
 					$driverInf = ($driver[0]).OriginalFilename
 				} else {
 					If (Test-64Bit) {
