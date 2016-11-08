@@ -1,5 +1,5 @@
 # wegen Win10 v1607 Edge.Problemen:
-# (Invoke-WebRequest https://raw.githubusercontent.com/Delapro/DelaproInstall/master/DLPInstall.PS1).Content.Replace(""+[char]10,[char]13+[char]10)| Set-Clipboard; Notepad.EXE
+# (Invoke-WebRequest -UseBasicParsing -Url https://raw.githubusercontent.com/Delapro/DelaproInstall/master/DLPInstall.PS1).Content.Replace(""+[char]10,[char]13+[char]10)| Set-Clipboard; Notepad.EXE
 
 # Verzeichnis für temporäre und Installationsdateien
 $DlpInstPath = "C:\Temp\DelaproInstall\"
@@ -31,6 +31,14 @@ Function Test-WindowsServer() {
 	# 2 = Server OS DC
 	# 3 = Server OS Non Domain
 	(Get-WmiObject Win32_OperatingSystem).ProductType -ne 1
+}
+
+Function Test-WUARebootRequired {
+    try {
+        (New-Object -ComObject "Microsoft.Update.SystemInfo").RebootRequired
+    } catch {
+        Write-Warning -Message "Failed to query COM object because $($_.Exception.Message)"
+    }
 }
 
 Function Test-Admin() {
@@ -136,14 +144,6 @@ Function Test-VersionOrHigher ([string]$version, [int]$requestedVersionMajor,[in
 		}
 	}
 	$return
-}
-
-Function Test-WUARebootRequired {
-    try {
-        (New-Object -ComObject "Microsoft.Update.SystemInfo").RebootRequired
-    } catch {
-        Write-Warning -Message "Failed to query COM object because $($_.Exception.Message)"
-    }
 }
 
 # erzeugt auf dem Öffentlichen Desktop einen Link zu einer Datei, benötigt dazu Adminrechte!
