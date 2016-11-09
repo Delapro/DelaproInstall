@@ -799,6 +799,63 @@ Function Install-MissingPowershellCmdLets {
 
 }
 
+# Delapro installieren, muss schon heruntergeladen sein und in $TempDirectory liegen
+Function Install-DelaproModul {
+	[CmdletBinding()]
+	Param(
+		[String]$TempDirectory,
+		[string]$DelaproPath="C:\Delapro"
+	)
+
+	Start-Process -Wait "$($TempDirectory)dlpsetup.exe" -ArgumentList "-a","-NOINSTNET40","-NOINSTACROBAT","-NOINSTDELAPROPDF","-pathDelapro=$($DelaproPath)"
+
+}
+
+# ladet und installiert das Delapro-Chartmodul
+Function Install-DelaproChartModul {
+	[CmdletBinding()]
+	Param(
+		[String]$TempDirectory,
+		[string]$DelaproPath="C:\Delapro",
+		[string]$DownloadUrl="http://www.easysoftware.de/util/"
+	)
+	
+	Start-BitsTransfer "$($DownloadUrl)dlpwinchart.exe" $TempDirectory
+	Start-Process -Wait "$($TempDirectory)dlpwinchart.exe" -ArgumentList "-a", "-pathDelapro=$($DelaproPath)"
+	Start-BitsTransfer "$($DownloadUrl)DlpWinCt.EXE" $TempDirectory
+	Move-Item $TempDirectory\DlpWinCt.EXE  "$($DelaproPath)\Image"  -Force
+
+}
+
+# ladet und installiert das Delapro-Zertifikat
+Function Install-DelaproZertifikatModul {
+	[CmdletBinding()]
+	Param(
+		[String]$TempDirectory,
+		[string]$DelaproPath="C:\Delapro",
+		[string]$DownloadUrl="http://www.easysoftware.de/download/"
+	)
+
+	Start-BitsTransfer "$($DownloadUrl)dlpwinzert.exe" $TempDirectory
+	Start-Process -Wait "$($TempDirectory)dlpwinzert.exe" -ArgumentList "-a", "-pathDelapro=$($DelaproPath)"
+
+}
+
+# ladet und installiert das Delapro-Bildarchivierungsmodul
+Function Install-DelaproBildarchivierungModul {
+		[CmdletBinding()]
+	Param(
+		[String]$TempDirectory,
+		[string]$DelaproPath="C:\Delapro",
+		[string]$DownloadUrl="http://www.easysoftware.de"
+	)
+
+	Start-BitsTransfer $DownloadUrl/download/dlpwinim.exe $TempDirectory
+	Start-Process -Wait "$($TempDirectory)dlpwinim.exe" -ArgumentList "-a", "-pathDelapro=$($DelaproPath)"
+	Start-BitsTransfer $DownloadUrl/util/DlpWinIm.EXE $TempDirectory
+	Move-Item $TempDirectory\DlpWinIm.EXE  "$($DlpPath)\Image"  -Force
+}
+
 # legt ein Backup eines Delapro-Verzeichnis mittels easyBackup32.exe an
 Function Backup-Delapro {
 	[CmdletBinding()]
@@ -1344,26 +1401,6 @@ Install-MissingPowershellCmdLets
 
 Start-BitsTransfer $easyBaseURI/Demo/dlpsetup.exe $DlpInstPath
 Unblock-File "$($DLPInstPath)dlpsetup.exe"
-<#
-# Preisupdate
-$dlpPreise = "DLPPreise2016-3.exe"
-Start-BitsTransfer $easyBaseURI/download/$dlpPreise $DLPInstPath
-Unblock-File "$($DLPInstPath)$($dlpPreise)"
-Invoke-Item "$($DLPInstPath)$($dlpPreise)"
-# Bildarchivierung
-Start-BitsTransfer $easyBaseURI/download/dlpwinim.exe $DLPInstPath
-Start-Process -Wait "$($DLPInstPath)dlpwinim.exe" -ArgumentList "-a", "-pathDelapro=$($DlpPath)"
-Start-BitsTransfer $easyBaseURI/util/DlpWinIm.EXE $DLPInstPath
-Move-Item $DLPInstPath\DlpWinIm.EXE  "$($DlpPath)\Image"  -Force
-# Zertifikatsmodul
-Start-BitsTransfer $easyBaseURI/download/dlpwinzert.exe $DLPInstPath
-Start-Process -Wait "$($DLPInstPath)dlpwinzert.exe" -ArgumentList "-a", "-pathDelapro=$($DlpPath)"
-# Chartmodul
-Start-BitsTransfer $easyBaseURI/util/dlpwinchart.exe $DLPInstPath
-Start-Process -Wait "$($DLPInstPath)dlpwinchart.exe" -ArgumentList "-a", "-pathDelapro=$($DlpPath)"
-Start-BitsTransfer $easyBaseURI/util/DlpWinCt.EXE $DLPInstPath
-Move-Item $DLPInstPath\DlpWinCt.EXE  "$($DlpPath)\Image"  -Force
-#>
 
 Install-eDocPrintPro -tempPath "$($DLPInstPath)"
 
@@ -1386,8 +1423,21 @@ If (Test-Windows10) {
 	}
 }
 
-# Delapro installieren
-Start-Process -Wait "$($DLPInstPath)dlpsetup.exe" -ArgumentList "-a","-NOINSTNET40","-NOINSTACROBAT","-NOINSTDELAPROPDF","-pathDelapro=$($DlpPath)"
+Install-DelaproHauptmodul -TempDirectory $DLPInstPath -Path $DlpPath 
+
+Install-DelaproChartModul -TempDirectory $DLPInstPath -Path $DlpPath -DownloadUrl $easyBaseURI "$easyBaseURI/util/"
+Install-DelaproZertifikatModul -TempDirectory $DLPInstPath -Path $DlpPath -DownloadUrl $easyBaseURI "$easyBaseURI/download/"
+Install-DelaproBildarchivierungModul -TempDirectory $DLPInstPath -Path $DlpPath -DownloadUrl $easyBaseURI "$easyBaseURI"
+
+<#
+
+# Preisupdate
+$dlpPreise = "DLPPreise2016-3.exe"
+Start-BitsTransfer $easyBaseURI/download/$dlpPreise $DLPInstPath
+Unblock-File "$($DLPInstPath)$($dlpPreise)"
+Invoke-Item "$($DLPInstPath)$($dlpPreise)"
+
+#>
 
 # Für Neuinstallation BEL2014.LOG anlegen, damit ein spezieller Hinweis erfolgt, falls diese nochmals eingespielt werden sollte
 "Neuinstallation" | Set-Content  "$($DlpPath)\BEL2014.LOG"
