@@ -690,6 +690,115 @@ Function Install-Teamviewer {
 
 }
 
+# diese Funktion übernimmt die Installation des .Net-Frameworks, wenn dieses nicht installiert sein sollte
+Function Install-NetFramework {
+	[CmdletBinding()]
+	Param()
+
+	# Allerdings muss bei Windows 7 und Windows Vista vorher geprüft werden, ob Net 4.5 bereits verfügbar ist
+	# https://msdn.microsoft.com/en-us/library/ee942965(v=vs.110).aspx
+	If (-Not  (Test-NetFramework45Installed)) {
+                # hier die Übersicht bei welchem BS welche .Net Version läuft: https://msdn.microsoft.com/en-us/library/8z6watww(v=vs.110).aspx
+	     If (Test-WindowsVista) {
+			 Write-Verbose "Vista erkannt, installiere .Net Framework 4.6"
+	                # Vista unterstützt maximal 4.6 und das war es dann!
+		     # Wenn Net 4.5 nicht vorhanden ist, wird gleich 4.6 heruntergeladen und installiert
+		     (New-Object Net.WebClient).DownloadFile("http://go.microsoft.com/fwlink/?LinkId=528222",  "$($DLPInstPath)NDP46-KB3045560-Web.exe")
+		      # Invoke-Item .\NDP46-KB3045560-Web.exe
+		      Start-Process -Wait .\NDP46-KB3045560-Web.exe
+	     } else {
+			 Write-Verbose "Installiere .Net Framework 4.6.1"
+		     # Unter Windows 7 gleich .NET 4.6.1 installieren
+		     (New-Object Net.WebClient).DownloadFile("http://go.microsoft.com/fwlink/?LinkId=671728",  "$($DLPInstPath)NDP461-KB3088520.exe")
+		      # Invoke-Item .\NDP461-KB3088520.exe
+		      Start-Process -Wait .\NDP461-KB3088520.exe
+	     }
+	}
+
+}
+
+# Installiert Powershell 4
+Function Install-Powershell {
+
+	# Hinweis zu Windows 7 und den ewigen Updates. Wenn man das WMF Update direkt ladet
+	# und manuell installiert, geht es schneller: https://support.microsoft.com/en-us/kb/934307
+	# Bei 64Bit Win7 also: 
+	# expand.exe -f:* .\Windows6.1-KB2819745-x64-MultiPkg.msu %TEMP%
+	# pkgmgr.exe /n:%temp%\Windows6.1-KB2819745-x64-MultiPkg.xml
+
+	If (Test-64Bit) {
+		If  (Test-Windows7) {
+			(New-Object Net.WebClient).DownloadFile("http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu",  "$($DLPInstPath)Windows6.1-KB2819745-x64-MultiPkg.msu")
+			# Invoke-Item .\Windows6.1-KB2819745-x64-MultiPkg.msu
+			Start-Process -Wait .\Windows6.1-KB2819745-x64-MultiPkg.msu
+		} else {
+			(New-Object Net.WebClient).DownloadFile("https://download.microsoft.com/download/2/C/6/2C6E1B4A-EBE5-48A6-B225-2D2058A9CEFB/W2K12R2-KB3094174-x64.msu",  "$($DLPInstPath)W2K12R2-KB3094174-x64.msu")
+			Start-Process -Wait .\W2K12R2-KB3094174-x64.msu
+		}
+	} else {
+		(New-Object Net.WebClient).DownloadFile("http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x86-MultiPkg.msu",  "$($DLPInstPath)Windows6.1-KB2819745-x86-MultiPkg.msu")
+		# Invoke-Item .\Windows6.1-KB2819745-x86-MultiPkg.msu
+		Start-Process -Wait .\Windows6.1-KB2819745-x86-MultiPkg.msu
+		# Falls es hier Probleme geben sollte, mit Fehlermeldung 0xc80003f3, dann hilfe wahrscheinlich die Installation
+		# einer neueren Version des .Net-Framework z. B. 4.6.1. Diese muss aber erzwungen werden, da eigentlich nur 4.5 für
+		# WMF 4.0 Voraussetzung ist.
+	}
+
+}
+
+# baut bei Windows 7 oder 8 fehlende Powershell Cmdlets nach
+# es wird aber das Cmdlet nicht komplett nachgebildet, sondern nur die Funktion
+# die im Rahmen dieses Skripts benötigt wird!!
+Function Install-MissingPowershellCmdLets {
+	
+	# Expand-Archive gibt’s erst ab Powershell 5/Windows 10
+	if (-not (Get-Command Expand-Archive -ErrorAction SilentlyContinue)) {
+		# damit die Function verfügbar wird, muss sie mittels & ausgeführt werden und mit dem Scope global: versehen werden
+		&{
+			function global:Expand-Archive($Path,$DestinationPath) {
+				# fallback for .net earlier than 4.5
+				$shell = (new-object -com shell.application -strict)
+				$zipfiles = $shell.namespace("$path").items()
+				If (-Not (Test-Path -Path $DestinationPath)) {
+					# Powershell 5.0 legt keine Verzeichnis bei Expand-Archive an
+					#New-Item $DestinationPath -Type Directory
+				}
+				$DestinationPath = Resolve-Path $DestinationPath
+				$shell.namespace("$DestinationPath").copyHere($zipfiles, 4) # 4 = don't show progress dialog
+			}
+		}
+	}
+
+	# Rename-Printer geht nur unter Win8 oder höher, benötigt Admin-Rechte
+	if (-not (Get-Command Rename-Printer -ErrorAction SilentlyContinue)) {
+		# damit die Function verfügbar wird, muss sie mittels & ausgeführt werden und mit dem Scope global: versehen werden
+		&{
+			Function global:Rename-Printer ($Name, $NewName) {
+				$Filter = "Name='$($Name)'"
+				# anstatt Name doch DeviceID?
+				$dlpprn = Get-WMIObject Win32_Printer -Filter $Filter
+				$renres = $dlpprn.RenamePrinter($NewName)
+				# renres.ReturnValue == 5 wenn Access Denied, bei 0 erfolgreich
+			}
+		}
+	}
+
+	# Remove-Printer geht nur unter Win8 oder höher, benötigt Admin-Rechte
+	if (-not (Get-Command Remove-Printer -ErrorAction SilentlyContinue)) {
+		# damit die Function verfügbar wird, muss sie mittels & ausgeführt werden und mit dem Scope global: versehen werden
+		&{
+			Function global:Remove-Printer ($Name) {
+				$Filter = "Name='$($Name)'"
+				# anstatt Name doch DeviceID?
+				$dlpprn = Get-WMIObject Win32_Printer -Filter $Filter
+				$renres = $dlpprn.Delete()
+				# renres.ReturnValue == 5 wenn Access Denied, bei 0 erfolgreich
+			}
+		}
+	}
+
+}
+
 # legt ein Backup eines Delapro-Verzeichnis mittels easyBackup32.exe an
 Function Backup-Delapro {
 	[CmdletBinding()]
@@ -1194,47 +1303,12 @@ If (-not (Get-Command Unblock-File -ErrorAction SilentlyContinue)) {
 	# TODO: Die Installation der Pakete automatisieren, hier werden die betreffenden Paramter zum Aufruf
 	# beschrieben: https://support.microsoft.com/en-us/kb/934307
 
-	# Allerdings muss bei Windows 7 und Windows Vista vorher geprüft werden, ob Net 4.5 bereits verfügbar ist
-	# https://msdn.microsoft.com/en-us/library/ee942965(v=vs.110).aspx
 	If (-Not  (Test-NetFramework45Installed)) {
-                # hier die Übersicht bei welchem BS welche .Net Version läuft: https://msdn.microsoft.com/en-us/library/8z6watww(v=vs.110).aspx
-	     If (Test-WindowsVista) {
-	                # Vista unterstützt maximal 4.6 und das war es dann!
-		     # Wenn Net 4.5 nicht vorhanden ist, wird gleich 4.6 heruntergeladen und installiert
-		     (New-Object Net.WebClient).DownloadFile("http://go.microsoft.com/fwlink/?LinkId=528222",  "$($DLPInstPath)NDP46-KB3045560-Web.exe")
-		      # Invoke-Item .\NDP46-KB3045560-Web.exe
-		      Start-Process -Wait .\NDP46-KB3045560-Web.exe
-	     } else {
-		     # Unter Windows 7 gleich .NET 4.6.1 installieren
-		     (New-Object Net.WebClient).DownloadFile("http://go.microsoft.com/fwlink/?LinkId=671728",  "$($DLPInstPath)NDP461-KB3088520.exe")
-		      # Invoke-Item .\NDP461-KB3088520.exe
-		      Start-Process -Wait .\NDP461-KB3088520.exe
-	     }
+		Install-NetFramework
 	}
-	
-	# Hinweis zu Windows 7 und den ewigen Updates. Wenn man das WMF Update direkt ladet
-	# und manuell installiert, geht es schneller: https://support.microsoft.com/en-us/kb/934307
-	# Bei 64Bit Win7 also: 
-	# expand.exe -f:* .\Windows6.1-KB2819745-x64-MultiPkg.msu %TEMP%
-	# pkgmgr.exe /n:%temp%\Windows6.1-KB2819745-x64-MultiPkg.xml
 
-	If (Test-64Bit) {
-		If  (Test-Windows7) {
-			(New-Object Net.WebClient).DownloadFile("http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu",  "$($DLPInstPath)Windows6.1-KB2819745-x64-MultiPkg.msu")
-			# Invoke-Item .\Windows6.1-KB2819745-x64-MultiPkg.msu
-			Start-Process -Wait .\Windows6.1-KB2819745-x64-MultiPkg.msu
-		} else {
-			(New-Object Net.WebClient).DownloadFile("https://download.microsoft.com/download/2/C/6/2C6E1B4A-EBE5-48A6-B225-2D2058A9CEFB/W2K12R2-KB3094174-x64.msu",  "$($DLPInstPath)W2K12R2-KB3094174-x64.msu")
-			Start-Process -Wait .\W2K12R2-KB3094174-x64.msu
-		}
-	} else {
-		(New-Object Net.WebClient).DownloadFile("http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x86-MultiPkg.msu",  "$($DLPInstPath)Windows6.1-KB2819745-x86-MultiPkg.msu")
-		# Invoke-Item .\Windows6.1-KB2819745-x86-MultiPkg.msu
-		Start-Process -Wait .\Windows6.1-KB2819745-x86-MultiPkg.msu
-		# Falls es hier Probleme geben sollte, mit Fehlermeldung 0xc80003f3, dann hilfe wahrscheinlich die Installation
-		# einer neueren Version des .Net-Framework z. B. 4.6.1. Diese muss aber erzwungen werden, da eigentlich nur 4.5 für
-		# WMF 4.0 Voraussetzung ist.
-	}
+	Install-Powershell
+
 	If (Test-WUARebootRequired) {
 		Write-Warning "Neustart notwendig!"
 		# Theoretisch könnte man gleich  Restart-Computer  ausführen...
@@ -1266,52 +1340,7 @@ Control System
 
 # zunächst mal die Cmdlets nachbauen, welche benötigt werden und evtl. nicht da sind
 
-# muss noch verschönert werden:
-# Expand-Archive gibt’s erst ab Powershell 5/Windows 10
-if (-not (Get-Command Expand-Archive -ErrorAction SilentlyContinue)) {
-	# damit die Function verfügbar wird, muss sie mittels & ausgeführt werden und mit dem Scope global: versehen werden
-	&{
-		function global:Expand-Archive($Path,$DestinationPath) {
-			# fallback for .net earlier than 4.5
-			$shell = (new-object -com shell.application -strict)
-			$zipfiles = $shell.namespace("$path").items()
-			If (-Not (Test-Path -Path $DestinationPath)) {
-				# Powershell 5.0 legt keine Verzeichnis bei Expand-Archive an
-				#New-Item $DestinationPath -Type Directory
-			}
-			$DestinationPath = Resolve-Path $DestinationPath
-			$shell.namespace("$DestinationPath").copyHere($zipfiles, 4) # 4 = don't show progress dialog
-		}
-	}
-}
-
-# Rename-Printer geht nur unter Win8 oder höher, benötigt Admin-Rechte
-if (-not (Get-Command Rename-Printer -ErrorAction SilentlyContinue)) {
-	# damit die Function verfügbar wird, muss sie mittels & ausgeführt werden und mit dem Scope global: versehen werden
-	&{
-		Function global:Rename-Printer ($Name, $NewName) {
-			$Filter = "Name='$($Name)'"
-			# anstatt Name doch DeviceID?
-			$dlpprn = Get-WMIObject Win32_Printer -Filter $Filter
-			$renres = $dlpprn.RenamePrinter($NewName)
-			# renres.ReturnValue == 5 wenn Access Denied, bei 0 erfolgreich
-		}
-	}
-}
-
-# Remove-Printer geht nur unter Win8 oder höher, benötigt Admin-Rechte
-if (-not (Get-Command Remove-Printer -ErrorAction SilentlyContinue)) {
-	# damit die Function verfügbar wird, muss sie mittels & ausgeführt werden und mit dem Scope global: versehen werden
-	&{
-		Function global:Remove-Printer ($Name) {
-			$Filter = "Name='$($Name)'"
-			# anstatt Name doch DeviceID?
-			$dlpprn = Get-WMIObject Win32_Printer -Filter $Filter
-			$renres = $dlpprn.Delete()
-			# renres.ReturnValue == 5 wenn Access Denied, bei 0 erfolgreich
-		}
-	}
-}
+Install-MissingPowershellCmdLets
 
 Start-BitsTransfer $easyBaseURI/Demo/dlpsetup.exe $DlpInstPath
 Unblock-File "$($DLPInstPath)dlpsetup.exe"
