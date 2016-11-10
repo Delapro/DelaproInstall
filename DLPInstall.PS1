@@ -868,6 +868,22 @@ Function Install-DelaproBildarchivierungModul {
 	Move-Item $TempDirectory\DlpWinIm.EXE  "$($DlpPath)\Image"  -Force
 }
 
+# ladet und installiert das aktuelle DelaproPreisupdate
+Install-DelaproPreisupdate {
+	[CmdletBinding()]
+	Param(
+		[String]$TempDirectory,
+		[string]$DownloadUrl="http://www.easysoftware.de"
+	)
+
+	# aktuelles Preisupdate
+	$dlpPreise = "DLPPreise2016-3.exe"
+	Start-BitsTransfer $easyBaseURI/download/$dlpPreise $TempDirectory
+	Unblock-File "$($TempDirectory)$($dlpPreise)"
+	Start-Process -Wait "$($TempDirectory)$($dlpPreise)" -ArgumentList "-oPreisUpdate"
+	Start-Process -Wait "$($TempDirectory)$PreisUpdate\UPDDIRKT.BAT" - ArgumentList = ".\Preisupdate"
+}
+
 # legt ein Backup eines Delapro-Verzeichnis mittels easyBackup32.exe an
 Function Backup-Delapro {
 	[CmdletBinding()]
@@ -1516,17 +1532,13 @@ Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -C
 
 Install-DelaproHauptmodul -TempDirectory $DLPInstPath -DelaproPath $DlpPath 
 
-Install-DelaproChartModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI "$easyBaseURI/util/"
-Install-DelaproZertifikatModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI "$easyBaseURI/download/"
-Install-DelaproBildarchivierungModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI "$easyBaseURI"
+Install-DelaproChartModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI
+Install-DelaproZertifikatModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI
+Install-DelaproBildarchivierungModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI
 
 <#
 
-# Preisupdate
-$dlpPreise = "DLPPreise2016-3.exe"
-Start-BitsTransfer $easyBaseURI/download/$dlpPreise $DLPInstPath
-Unblock-File "$($DLPInstPath)$($dlpPreise)"
-Invoke-Item "$($DLPInstPath)$($dlpPreise)"
+Install-DelaproPreisupdate -TempDirectory $DLPInstPath -DownloadUrl $easyBaseURI
 
 #>
 
