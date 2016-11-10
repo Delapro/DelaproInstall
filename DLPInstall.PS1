@@ -1073,6 +1073,21 @@ Function Install-DelaproMailerPrinter {
 
 }
 
+Function Disable-Windows10DefaultPrinterRoaming {
+
+	# die ab Windows 10 v1511 Einstellung für den Standarddruckertreiber, welche immer den zuletzt benutzten Drucker zum
+	# Standarddrucker macht ausschalten
+	If (Test-Windows10) {
+		# Key vorhanden?
+		If ((Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows' -Name LegacyDefaultPrinterMode).LegacyDefaultPrinterMode -ne $null) {
+			If ((Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows' -Name LegacyDefaultPrinterMode).LegacyDefaultPrinterMode -eq 0) {
+				Set-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows' -Name LegacyDefaultPrinterMode -Value 1
+				"LegacyDefaultPrinterMode modifiziert"
+			}
+		}
+	}
+}
+
 # Aktiviert "System Protection" bzw. "Computer Schutz", um bei Problemen mittels Systemwiederherstellung auf einen alten
 # Zeitpunkt zurückzukehren
 # ab Powershell 3.0 aufwärts unter dem Namen Enable-ComputerRestore verfügbar
@@ -1220,6 +1235,35 @@ Function Set-DefenderPreferences {
 Function Show-Defender {
 	# Windows Defender:
 	Control.exe /Name Microsoft.WindowsDefender
+}
+
+Function Invoke-DefenderSetupAndScan {
+
+	Show-Defender
+	Import-Module defender
+	get-command -Module defender
+	Get-MpComputerStatus
+	# Fehlermeldung, wenn Kaspersky oder wahrscheinlich anderer Virenscanner aktiv ist bzw vorher aktiv war und deinstalliert wurde: 
+	# Get-MpComputerStatus : Die extrinsische Methode konnte nicht ausgeführt werden.
+	# In Zeile:1 Zeichen:1
+	# + Get-MpComputerStatus
+	# + ~~~~~~~~~~~~~~~~~~~~
+	#     + CategoryInfo          : MetadataError: (MSFT_MpComputerStatus:ROOT\Microsoft\...pComputerStatus) [Get-MpComputer
+	#    Status], CimException
+	#     + FullyQualifiedErrorId : MI RESULT 16,Get-MpComputerStatus
+	# ----
+	# hier wie andere Virenscanner abgefragt werden können: https://gallery.technet.microsoft.com/scriptcenter/Get-the-status-of-4b748f25
+	# root\SecurityCenter2 machts möglich
+
+	# alte Einstellungen dokumentieren
+	Get-MpPreference
+	# neue Einstellungen setzen
+	Set-DefenderPreferences
+
+	# Scanlauf starten
+	Update-MpSignature
+	Start-MpScan -ScanType QuickScan
+
 }
 
 # importiert das neueste Delapro-Backup, entweder aus einer ZIP-Datei von easyBackup32 oder aus einem Pfad
@@ -1434,17 +1478,7 @@ Start-Process -Wait "C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDoc
 # durch Aufruf von eDocPrintProUtil.EXE sind zwei Druckertreiber vorhanden, deshalb den Standard eDocPrintPro löschen
 Remove-Printer -Name eDocPrintPro
 
-# die ab Windows 10 v1511 Einstellung für den Standarddruckertreiber, welche immer den zuletzt benutzten Drucker zum
-# Standarddrucker macht ausschalten
-If (Test-Windows10) {
-	# Key vorhanden?
-	If ((Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows' -Name LegacyDefaultPrinterMode).LegacyDefaultPrinterMode -ne $null) {
-		If ((Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows' -Name LegacyDefaultPrinterMode).LegacyDefaultPrinterMode -eq 0) {
-			Set-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows' -Name LegacyDefaultPrinterMode -Value 1
-			"LegacyDefaultPrinterMode modifiziert"
-		}
-	}
-}
+Disable-Windows10DefaultPrinterRoaming
 
 Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -CreateDesktopLink "easy Internet Fernwartung (Teamviewer).lnk"
 
@@ -1505,28 +1539,5 @@ Cmd /c Ftype  acrobat
 # den Status des Virenscanners holen:
 Get-AntiMalware
 
-Show-Defender
-Import-Module defender
-get-command -Module defender
-Get-MpComputerStatus
-# Fehlermeldung, wenn Kaspersky oder wahrscheinlich anderer Virenscanner aktiv ist bzw vorher aktiv war und deinstalliert wurde: 
-# Get-MpComputerStatus : Die extrinsische Methode konnte nicht ausgeführt werden.
-# In Zeile:1 Zeichen:1
-# + Get-MpComputerStatus
-# + ~~~~~~~~~~~~~~~~~~~~
-#     + CategoryInfo          : MetadataError: (MSFT_MpComputerStatus:ROOT\Microsoft\...pComputerStatus) [Get-MpComputer
-#    Status], CimException
-#     + FullyQualifiedErrorId : MI RESULT 16,Get-MpComputerStatus
-# ----
-# hier wie andere Virenscanner abgefragt werden können: https://gallery.technet.microsoft.com/scriptcenter/Get-the-status-of-4b748f25
-# root\SecurityCenter2 machts möglich
-
-# alte Einstellungen dokumentieren
-Get-MpPreference
-# neue Einstellungen setzen
-Set-DefenderPreferences
-
-# Scanlauf starten
-Update-MpSignature
-Start-MpScan -ScanType QuickScan
+Invoke-DefenderSetupAndScan
 
