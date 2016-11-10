@@ -975,6 +975,28 @@ Function Update-DlpWinPr {
 	}
 }
 
+# aktualisiert DlpRawPr.EXE, wenn die Version älter ist, als die Version auf github
+Function Update-DlpRawPr {
+	[CmdletBinding()]
+	#[OutputType([System.Boolean])]
+	Param(
+		[System.String]$DelaproPath="C:\Delapro"
+	)
+
+	$rawVersionNumber = "1.2.0-Pre"
+	$rawVersion = [version]$rawVersionNumber.Replace("-Pre", "")
+
+	$ExePath = Join-Path -Path $DelaproPath -ChildPath "Laser\DlpRawPr.EXE"
+	Write-Verbose "Prüfe $ExePath"
+	$ExeVersion = [version](Get-Item $ExePath).VersionInfo.ProductVersion
+	If ($ExeVersion -lt $rawVersion) {
+		Write-Verbose "Version muss aktualisiert werden, von $($ExeVersion) auf $($rawVersion)"
+		Invoke-WebRequest -Uri https://github.com/Delapro/DlpRawPr/releases/download/v$rawVersionNumber/DlpRawPr.exe -OutFile (Join-Path -Path (Join-Path -Path $DelaproPath -ChildPath Laser) -ChildPath DLPWinPr.EXE) 
+	} else {
+		Write-Verbose "Version ist aktuell, $($ExeVersion)"
+	}
+}
+
 # legt einen neuen Printerport an
 Function New-PrinterPort {
 	[CmdletBinding()]
