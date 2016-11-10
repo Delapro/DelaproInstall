@@ -1423,6 +1423,8 @@ If (Test-Windows10) {
 	}
 }
 
+Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -CreateDesktopLink "easy Internet Fernwartung (Teamviewer).lnk"
+
 Install-DelaproHauptmodul -TempDirectory $DLPInstPath -Path $DlpPath 
 
 Install-DelaproChartModul -TempDirectory $DLPInstPath -Path $DlpPath -DownloadUrl $easyBaseURI "$easyBaseURI/util/"
@@ -1441,8 +1443,6 @@ Invoke-Item "$($DLPInstPath)$($dlpPreise)"
 
 # Für Neuinstallation BEL2014.LOG anlegen, damit ein spezieller Hinweis erfolgt, falls diese nochmals eingespielt werden sollte
 "Neuinstallation" | Set-Content  "$($DlpPath)\BEL2014.LOG"
-
-Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -CreateDesktopLink "easy Internet Fernwartung (Teamviewer).lnk"
 
 Install-DelaproMailerPrinter
 
