@@ -22,6 +22,18 @@ Function Test-Windows7() {
 	(Get-WmiObject Win32_OperatingSystem).Caption -match "Windows 7"
 }
 
+# testet speziell auf Windows 8.0
+Function Test-Windows8-0 {
+
+	# https://msdn.microsoft.com/en-us/library/windows/desktop/ms724833(v=vs.85).aspx
+	$v = [System.Environment]::OSVersion.Version
+	If ($v.Major -eq 8 -and $v.Minor -eq 2) {
+		$true
+	} else {
+		$false
+	}
+}
+
 Function Test-Windows10() {
 	(Get-WmiObject Win32_OperatingSystem).Caption -match "Windows 10"
 }
@@ -1416,6 +1428,12 @@ If (Test-WindowsServer) {
 If (-Not (Test-Admin)) {
 	Write-Error "Script benötigt Administratorrechte"
 	# weitere Scriptausführung anhalten
+	Break
+}
+
+If (Test-Windows8-0) {
+	Write-Error "Windows 8.0 wird nicht unterstützt! Bitte updaten auf Windows 8.1."
+	Write-Error "Weitere Infos: https://support.microsoft.com/de-de/help/15288/windows-8-update-to-windows-8-1"
 	Break
 }
 
