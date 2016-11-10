@@ -1217,6 +1217,11 @@ Function Set-DefenderPreferences {
 	set-MpPreference -CheckForSignaturesBeforeRunningScan $true
 }
 
+Function Show-Defender {
+	# Windows Defender:
+	Control.exe /Name Microsoft.WindowsDefender
+}
+
 # importiert das neueste Delapro-Backup, entweder aus einer ZIP-Datei von easyBackup32 oder aus einem Pfad
 # wo Delapro.EXE und eine aktuelle AUFTRAG.DBF liegt
 Function Import-LastDelaproBackup {
@@ -1500,8 +1505,7 @@ Cmd /c Ftype  acrobat
 # den Status des Virenscanners holen:
 Get-AntiMalware
 
-# Windows Defender:
-Control.exe /Name Microsoft.WindowsDefender
+Show-Defender
 Import-Module defender
 get-command -Module defender
 Get-MpComputerStatus
@@ -1517,12 +1521,12 @@ Get-MpComputerStatus
 # hier wie andere Virenscanner abgefragt werden können: https://gallery.technet.microsoft.com/scriptcenter/Get-the-status-of-4b748f25
 # root\SecurityCenter2 machts möglich
 
-
-
-Update-MpSignature
+# alte Einstellungen dokumentieren
 Get-MpPreference
-
+# neue Einstellungen setzen
 Set-DefenderPreferences
 
+# Scanlauf starten
+Update-MpSignature
 Start-MpScan -ScanType QuickScan
 
