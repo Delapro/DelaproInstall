@@ -1199,6 +1199,24 @@ Function Get-AntiMalware {
 	$av
 }
 
+# konfiguriert den Windows Defender mit sinnvolleren Einstellungen
+Function Set-DefenderPreferences {
+	[CmdletBinding()]
+	#[OutputType([System.Boolean])]
+	Param(
+		
+	)
+
+	# Wechseldatenträger überprüfen:
+	set-MpPreference -DisableRemovableDriveScanning $false
+	# Wiederherstellungspunkt für das System erstellen:
+	set-MpPreference -DisableRestorePoint $false
+	# Dateien unter Quarantäne entfernen nach: 1 Monat ausschalten (Die Werte müssen bestimmten Vorgabe entsprechen, sonst wird 30Tage=1Monat verwendet, max 90 Tage):
+	set-MpPreference -QuarantinePurgeItemsAfterDelay 0
+	# Virendefinitionen aktualisieren, bevor ein Scan gestartet wird (scheint aber nicht zu funktionieren):
+	set-MpPreference -CheckForSignaturesBeforeRunningScan $true
+}
+
 # importiert das neueste Delapro-Backup, entweder aus einer ZIP-Datei von easyBackup32 oder aus einem Pfad
 # wo Delapro.EXE und eine aktuelle AUFTRAG.DBF liegt
 Function Import-LastDelaproBackup {
@@ -1503,14 +1521,8 @@ Get-MpComputerStatus
 
 Update-MpSignature
 Get-MpPreference
-# Wechseldatenträger überprüfen:
-set-MpPreference -DisableRemovableDriveScanning $false
-# Wiederherstellungspunkt für das System erstellen:
-set-MpPreference -DisableRestorePoint $false
-# Dateien unter Quarantäne entfernen nach: 1 Monat ausschalten (Die Werte müssen bestimmten Vorgabe entsprechen, sonst wird 30Tage=1Monat verwendet, max 90 Tage):
-set-MpPreference -QuarantinePurgeItemsAfterDelay 0
-# Virendefinitionen aktualisieren, bevor ein Scan gestartet wird (scheint aber nicht zu funktionieren):
-set-MpPreference -CheckForSignaturesBeforeRunningScan $true
+
+Set-DefenderPreferences
 
 Start-MpScan -ScanType QuickScan
 
