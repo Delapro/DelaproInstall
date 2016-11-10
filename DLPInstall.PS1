@@ -830,12 +830,12 @@ Function Install-DelaproChartModul {
 	Param(
 		[String]$TempDirectory,
 		[string]$DelaproPath="C:\Delapro",
-		[string]$DownloadUrl="http://www.easysoftware.de/util/"
+		[string]$DownloadUrl="http://www.easysoftware.de/"
 	)
 	
-	Start-BitsTransfer "$($DownloadUrl)dlpwinchart.exe" $TempDirectory
+	Start-BitsTransfer "$($DownloadUrl)/util/dlpwinchart.exe" $TempDirectory
 	Start-Process -Wait "$($TempDirectory)dlpwinchart.exe" -ArgumentList "-a", "-pathDelapro=$($DelaproPath)"
-	Start-BitsTransfer "$($DownloadUrl)DlpWinCt.EXE" $TempDirectory
+	Start-BitsTransfer "$($DownloadUrl)/util/DlpWinCt.EXE" $TempDirectory
 	Move-Item $TempDirectory\DlpWinCt.EXE  "$($DelaproPath)\Image"  -Force
 
 }
@@ -846,10 +846,10 @@ Function Install-DelaproZertifikatModul {
 	Param(
 		[String]$TempDirectory,
 		[string]$DelaproPath="C:\Delapro",
-		[string]$DownloadUrl="http://www.easysoftware.de/download/"
+		[string]$DownloadUrl="http://www.easysoftware.de/"
 	)
 
-	Start-BitsTransfer "$($DownloadUrl)dlpwinzert.exe" $TempDirectory
+	Start-BitsTransfer "$($DownloadUrl)/download/dlpwinzert.exe" $TempDirectory
 	Start-Process -Wait "$($TempDirectory)dlpwinzert.exe" -ArgumentList "-a", "-pathDelapro=$($DelaproPath)"
 
 }
