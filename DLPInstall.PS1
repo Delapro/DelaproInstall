@@ -812,7 +812,7 @@ Function Install-MissingPowershellCmdLets {
 }
 
 # Delapro installieren, muss schon heruntergeladen sein und in $TempDirectory liegen
-Function Install-DelaproModul {
+Function Install-DelaproHauptmodul {
 	[CmdletBinding()]
 	Param(
 		[String]$TempDirectory,
@@ -1514,11 +1514,11 @@ Disable-Windows10DefaultPrinterRoaming
 
 Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -CreateDesktopLink "easy Internet Fernwartung (Teamviewer).lnk"
 
-Install-DelaproHauptmodul -TempDirectory $DLPInstPath -Path $DlpPath 
+Install-DelaproHauptmodul -TempDirectory $DLPInstPath -DelaproPath $DlpPath 
 
-Install-DelaproChartModul -TempDirectory $DLPInstPath -Path $DlpPath -DownloadUrl $easyBaseURI "$easyBaseURI/util/"
-Install-DelaproZertifikatModul -TempDirectory $DLPInstPath -Path $DlpPath -DownloadUrl $easyBaseURI "$easyBaseURI/download/"
-Install-DelaproBildarchivierungModul -TempDirectory $DLPInstPath -Path $DlpPath -DownloadUrl $easyBaseURI "$easyBaseURI"
+Install-DelaproChartModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI "$easyBaseURI/util/"
+Install-DelaproZertifikatModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI "$easyBaseURI/download/"
+Install-DelaproBildarchivierungModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI "$easyBaseURI"
 
 <#
 
