@@ -1422,19 +1422,19 @@ Function Invoke-CleanupDelapro {
 If (Test-WindowsServer) {
 	Write-Error "Windows Server erkannt, bitte Installation manuell durchführen!"
 	# weitere Scriptausführung anhalten
-	Break
+	Return
 }
 
 If (-Not (Test-Admin)) {
 	Write-Error "Script benötigt Administratorrechte"
 	# weitere Scriptausführung anhalten
-	Break
+	Return
 }
 
 If (Test-Windows8-0) {
 	Write-Error "Windows 8.0 wird nicht unterstützt! Bitte updaten auf Windows 8.1."
 	Write-Error "Weitere Infos: https://support.microsoft.com/de-de/help/15288/windows-8-update-to-windows-8-1"
-	Break
+	Return
 }
 
 If (-not (Test-Path -Path $DlpInstPath)) {
@@ -1468,7 +1468,7 @@ If (-not (Get-Command Unblock-File -ErrorAction SilentlyContinue)) {
 	If (Test-WUARebootRequired) {
 		Write-Warning "Neustart notwendig!"
 		# Theoretisch könnte man gleich  Restart-Computer  ausführen...
-		break
+		Return
 	}
 }
 
