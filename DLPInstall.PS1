@@ -1283,31 +1283,35 @@ Function Show-Defender {
 Function Invoke-DefenderSetupAndScan {
 
 	Show-Defender
-	Import-Module defender
-	get-command -Module defender
-	Get-MpComputerStatus
-	# Fehlermeldung, wenn Kaspersky oder wahrscheinlich anderer Virenscanner aktiv ist bzw vorher aktiv war und deinstalliert wurde: 
-	# Get-MpComputerStatus : Die extrinsische Methode konnte nicht ausgeführt werden.
-	# In Zeile:1 Zeichen:1
-	# + Get-MpComputerStatus
-	# + ~~~~~~~~~~~~~~~~~~~~
-	#     + CategoryInfo          : MetadataError: (MSFT_MpComputerStatus:ROOT\Microsoft\...pComputerStatus) [Get-MpComputer
-	#    Status], CimException
-	#     + FullyQualifiedErrorId : MI RESULT 16,Get-MpComputerStatus
-	# ----
-	# hier wie andere Virenscanner abgefragt werden können: https://gallery.technet.microsoft.com/scriptcenter/Get-the-status-of-4b748f25
-	# root\SecurityCenter2 machts möglich
 
-	# alte Einstellungen dokumentieren
-	Get-MpPreference
-	# neue Einstellungen setzen
-	Set-DefenderPreferences
+	If (Import-Module defender -ErrorAction SilentlyContinue) {
+		# Get-Command -Module defender
+		If (Get-MpComputerStatus -ErrorAction SilentlyContinue) {
+			# Fehlermeldung, wenn Kaspersky oder wahrscheinlich anderer Virenscanner aktiv ist bzw vorher aktiv war und deinstalliert wurde: 
+			# Get-MpComputerStatus : Die extrinsische Methode konnte nicht ausgeführt werden.
+			# In Zeile:1 Zeichen:1
+			# + Get-MpComputerStatus
+			# + ~~~~~~~~~~~~~~~~~~~~
+			#     + CategoryInfo          : MetadataError: (MSFT_MpComputerStatus:ROOT\Microsoft\...pComputerStatus) [Get-MpComputer
+			#    Status], CimException
+			#     + FullyQualifiedErrorId : MI RESULT 16,Get-MpComputerStatus
+			# ----
+			# hier wie andere Virenscanner abgefragt werden können: https://gallery.technet.microsoft.com/scriptcenter/Get-the-status-of-4b748f25
+			# root\SecurityCenter2 machts möglich
 
-	# Scanlauf starten
-	Update-MpSignature
-	Start-MpScan -ScanType QuickScan
+			Get-MpComputerStatus
 
-}
+			# alte Einstellungen dokumentieren
+			Get-MpPreference
+			# neue Einstellungen setzen
+			Set-DefenderPreferences
+
+			# Scanlauf starten
+			Update-MpSignature
+			Start-MpScan -ScanType QuickScan
+		}
+	}
+}	
 
 # importiert das neueste Delapro-Backup, entweder aus einer ZIP-Datei von easyBackup32 oder aus einem Pfad
 # wo Delapro.EXE und eine aktuelle AUFTRAG.DBF liegt
