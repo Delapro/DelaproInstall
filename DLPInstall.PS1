@@ -1088,6 +1088,20 @@ Function Disable-Windows10DefaultPrinterRoaming {
 	}
 }
 
+# öffnet Drucker und Geräte
+Function Show-Printers {
+	[CmdletBinding()]
+	Param(
+		[Switch]$modernUI
+	)
+
+	If ($modernUI) {
+		Start-Process ms-settings:printers
+	} else {
+		Control.exe printers
+	}
+}
+
 # Aktiviert "System Protection" bzw. "Computer Schutz", um bei Problemen mittels Systemwiederherstellung auf einen alten
 # Zeitpunkt zurückzukehren
 # ab Powershell 3.0 aufwärts unter dem Namen Enable-ComputerRestore verfügbar
@@ -1503,7 +1517,7 @@ Invoke-Item "$($DLPInstPath)$($dlpPreise)"
 
 Install-DelaproMailerPrinter
 
-Control printers
+Show-Printers
 
 Install-AcrobatDC -TempDirectory $DLPInstPath
 
