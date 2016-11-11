@@ -1467,6 +1467,20 @@ Function Invoke-CleanupDelapro {
 	
 }
 
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#  CMDLET-ENDE
+
 If (Test-WindowsServer) {
 	Write-Error "Windows Server erkannt, bitte Installation manuell durchführen!"
 	# weitere Scriptausführung anhalten
