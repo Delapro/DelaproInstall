@@ -1306,32 +1306,31 @@ Function Invoke-DefenderSetupAndScan {
 
 	Show-Defender
 
-	If (Import-Module defender -ErrorAction SilentlyContinue) {
-		# Get-Command -Module defender
-		If (Get-MpComputerStatus -ErrorAction SilentlyContinue) {
-			# Fehlermeldung, wenn Kaspersky oder wahrscheinlich anderer Virenscanner aktiv ist bzw vorher aktiv war und deinstalliert wurde: 
-			# Get-MpComputerStatus : Die extrinsische Methode konnte nicht ausgeführt werden.
-			# In Zeile:1 Zeichen:1
-			# + Get-MpComputerStatus
-			# + ~~~~~~~~~~~~~~~~~~~~
-			#     + CategoryInfo          : MetadataError: (MSFT_MpComputerStatus:ROOT\Microsoft\...pComputerStatus) [Get-MpComputer
-			#    Status], CimException
-			#     + FullyQualifiedErrorId : MI RESULT 16,Get-MpComputerStatus
-			# ----
-			# hier wie andere Virenscanner abgefragt werden können: https://gallery.technet.microsoft.com/scriptcenter/Get-the-status-of-4b748f25
-			# root\SecurityCenter2 machts möglich
+	Import-Module defender -ErrorAction SilentlyContinue
+	# Get-Command -Module defender
+	If (Get-MpComputerStatus -ErrorAction SilentlyContinue) {
+		# Fehlermeldung, wenn Kaspersky oder wahrscheinlich anderer Virenscanner aktiv ist bzw vorher aktiv war und deinstalliert wurde: 
+		# Get-MpComputerStatus : Die extrinsische Methode konnte nicht ausgeführt werden.
+		# In Zeile:1 Zeichen:1
+		# + Get-MpComputerStatus
+		# + ~~~~~~~~~~~~~~~~~~~~
+		#     + CategoryInfo          : MetadataError: (MSFT_MpComputerStatus:ROOT\Microsoft\...pComputerStatus) [Get-MpComputer
+		#    Status], CimException
+		#     + FullyQualifiedErrorId : MI RESULT 16,Get-MpComputerStatus
+		# ----
+		# hier wie andere Virenscanner abgefragt werden können: https://gallery.technet.microsoft.com/scriptcenter/Get-the-status-of-4b748f25
+		# root\SecurityCenter2 machts möglich
 
-			Get-MpComputerStatus
+		Get-MpComputerStatus
 
-			# alte Einstellungen dokumentieren
-			Get-MpPreference
-			# neue Einstellungen setzen
-			Set-DefenderPreferences
+		# alte Einstellungen dokumentieren
+		Get-MpPreference
+		# neue Einstellungen setzen
+		Set-DefenderPreferences
 
-			# Scanlauf starten
-			Update-MpSignature
-			Start-MpScan -ScanType QuickScan
-		}
+		# Scanlauf starten
+		Update-MpSignature
+		Start-MpScan -ScanType QuickScan
 	}
 }	
 
