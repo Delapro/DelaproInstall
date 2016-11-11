@@ -607,7 +607,7 @@ Function Install-eDocPrintPro {
 	reg add "HKCU\SOFTWARE\MAY Computer\eDocPrintPro\DelaproPDF\Standard" /v "Esf" /t "reg_sz" /d "DelaproPDF"  /f
 	
 	# zum aktivieren der ESC-Datei
-	Start-Process 'C:\Program Files\Common Files\MAY Computer\eDocPrintPro\ApplyESF.EXE'
+	Start-Process -Wait 'C:\Program Files\Common Files\MAYComputer\eDocPrintPro\ApplyESF.EXE'
 
 	# bei Problemen mit eDocPrintPro, hilft bei neueren Versionen, ab 3.23.4 ein Registry-Eintrag über den eine Log-Funktion aktiviert wird
 	# HKEY_LOCAL_MACHINE\SOFTWARE\MAYComputer\eDocPrintPro\<Drucker-Name> 
@@ -872,7 +872,7 @@ Function Install-DelaproBildarchivierungModul {
 	Start-BitsTransfer $DownloadUrl/download/dlpwinim.exe $TempDirectory
 	Start-Process -Wait "$($TempDirectory)dlpwinim.exe" -ArgumentList "-a", "-pathDelapro=$($DelaproPath)"
 	Start-BitsTransfer $DownloadUrl/util/DlpWinIm.EXE $TempDirectory
-	Move-Item $TempDirectory\DlpWinIm.EXE  "$($DlpPath)\Image"  -Force
+	Move-Item $TempDirectory\DlpWinIm.EXE  "$($DelaproPath)\Image"  -Force
 }
 
 # ladet und installiert das aktuelle DelaproPreisupdate
