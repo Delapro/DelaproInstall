@@ -736,8 +736,31 @@ Function Install-NetFramework {
 
 }
 
+# gibt die installierten .Net-Frameworkversionen zurück
+Function Get-NetFrameworkVersions {
+	Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP' -recurse |
+	Get-ItemProperty -name Version,Release -ErrorAction SilentlyContinue |
+	Where { $_.PSChildName -match '^(?!S)\p{L}'} |
+	Select PSChildName, Version, Release, @{
+	name="Product"
+	expression={
+		switch -regex ($_.Release) {
+			"378389" { [Version]"4.5" }
+			"378675|378758" { [Version]"4.5.1" }
+			"379893" { [Version]"4.5.2" }
+			"393295|393297" { [Version]"4.6" }
+			"394254|394271" { [Version]"4.6.1" }
+			"394802|394806" { [Version]"4.6.2" }
+			{$_ -gt 394806} { [Version]"Undocumented 4.6.2 or higher, please update script" }
+		}
+		}
+	}
+}
+
 # Installiert Powershell 4
 Function Install-Powershell {
+
+	# Hinweise zu WMF5.0: https://msdn.microsoft.com/en-us/powershell/wmf/5.0/requirements
 
 	# Hinweis zu Windows 7 und den ewigen Updates. Wenn man das WMF Update direkt ladet
 	# und manuell installiert, geht es schneller: https://support.microsoft.com/en-us/kb/934307
