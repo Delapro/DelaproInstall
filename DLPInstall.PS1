@@ -187,7 +187,7 @@ Function New-FileShortcut {
 Function Test-Printer {
 	[CmdletBinding()]
 	Param(
-                [Parameter(ParameterSetName='name', Position=0)]
+        [Parameter(ParameterSetName='name', Position=0)]
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
 		[string]
@@ -1172,13 +1172,21 @@ Function Disable-Windows10DefaultPrinterRoaming {
 Function Show-Printers {
 	[CmdletBinding()]
 	Param(
-		[Switch]$modernUI
+        [Parameter(ParameterSetName='ModernUI', Position=0)]
+		[Switch]$modernUI,
+        [Parameter(ParameterSetName='Win32', Position=0)]
+		[Switch]$All
+
 	)
 
 	If ($modernUI) {
 		Start-Process ms-settings:printers
 	} else {
-		Control.exe printers
+		If ($All) {
+			Start-Process 'shell:::{2227A280-3AEA-1069-A2DE-08002B30309D}'
+		} else {
+			Control.exe printers
+		}
 	}
 }
 
