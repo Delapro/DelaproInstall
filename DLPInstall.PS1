@@ -1609,9 +1609,9 @@ Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -C
 
 Install-DelaproHauptmodul -TempDirectory $DLPInstPath -DelaproPath $DlpPath 
 
-Install-DelaproChartModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI
-Install-DelaproZertifikatModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI
 Install-DelaproBildarchivierungModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI
+Install-DelaproZertifikatModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI
+Install-DelaproChartModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI
 
 <#
 
