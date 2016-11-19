@@ -902,16 +902,21 @@ Function Install-DelaproBildarchivierungModul {
 Function Install-DelaproPreisupdate {
 	[CmdletBinding()]
 	Param(
-		[String]$TempDirectory,
+		[String]$TempDirectory=$Env:TEMP,
 		[string]$DownloadUrl="http://www.easysoftware.de"
 	)
 
+	# Backslash anhängen falls notwendig
+	$TempDirectory = Join-Path -Path $TempDirectory -ChildPath ""
 	# aktuelles Preisupdate
 	$dlpPreise = "DLPPreise2016-3.exe"
 	Start-BitsTransfer $easyBaseURI/download/$dlpPreise $TempDirectory
 	Unblock-File "$($TempDirectory)$($dlpPreise)"
-	Start-Process -Wait "$($TempDirectory)$($dlpPreise)" -ArgumentList "-oPreisUpdate"
-	Start-Process -Wait "$($TempDirectory)$PreisUpdate\UPDDIRKT.BAT" - ArgumentList ".\Preisupdate"
+	Start-Process -Wait "$($TempDirectory)$($dlpPreise)" -ArgumentList "-o$($TempDirectory)\PreisUpdate", "-y"
+	$dir = Get-Location
+	Set-Location "$($TempDirectory)\PreisUpdate"
+	Start-Process -Wait ".\UPDDIRKT.BAT"
+	Set-Location $dir
 }
 
 # legt ein Backup eines Delapro-Verzeichnis mittels easyBackup32.exe an
