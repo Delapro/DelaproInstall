@@ -1175,7 +1175,7 @@ Function Disable-Windows10DefaultPrinterRoaming {
 
 # öffnet Drucker und Geräte
 Function Show-Printers {
-	[CmdletBinding()]
+	[CmdletBinding(DefaultParameterSetName="All")]
 	Param(
         [Parameter(ParameterSetName='ModernUI', Position=0)]
 		[Switch]$modernUI,
