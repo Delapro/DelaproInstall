@@ -686,7 +686,33 @@ Function Install-Thunderbird {
 	
 }
 
-# Installation von Teamviewer
+<#
+.SYNOPSIS
+    Installiert easy Internetfernwartung und erzeugt einen Link auf dem Desktop
+.DESCRIPTION
+    Install-Teamviewer ladet die aktuell auf der easy-Homepage hinterlegte
+	Teamviewer-Version herunter. Zusätzlich wird ein Link auf dem Desktop
+	erstellt.
+	Es werden Admin-Rechte benötigt. 
+.PARAMETER tempDirectory
+	Temporäres Verzeichnis, wo der Teamviewer beim Download gespeichert werden kann
+	Vorgabe: C:\Temp\
+.PARAMETER DestinationPath
+	Verzeichnis in dem die Teamviewer.exe gespeichert wird, allerdings nur Basispfad.
+	Unterm Basispfad wird noch das Unterverzeichnis Fernwartung angelegt.
+	Vorgabe: C:\Delapro
+.PARAMETER CreateDesktopLink
+	Name der Verknüpfung welche auf dem Desktop angelegt wird und auf die
+	Teamviewer.exe zeigt.
+	Vorgabe: easy Internet Fernwartung (Teamviewer).lnk
+.EXAMPLE
+    Install-Teamviewer
+
+    Installiert den Teamviewer im Verzeichnis C:\Delapro\Fernwartung, beim
+	Herunterladen wird die Fernwartungs-EXE im Verzeichnis C:\Temp zwischengespeichert.
+	Es wird automatisch der Link "easy Internet Fernwartung (Teamviewer).lnk" 
+	auf dem Desktop erzeugt.
+#>
 Function Install-Teamviewer {
 	[CmdletBinding()]
 	Param(
