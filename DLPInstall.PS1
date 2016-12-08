@@ -620,7 +620,7 @@ Function Install-AcrobatDC {
 	[CmdletBinding()]
 	Param(
 		[parameter(Mandatory=$true)]
-		[System.String]$tempDirectory
+		[System.String]$tempDirectory="$Env:TEMP\"
 	)
 
 	# Acrobat DC Versionsnummererklärung: http://www.adobe.com/devnet-docs/acrobatetk/tools/AdminGuide/basics.html#versioning-strategy
@@ -650,7 +650,7 @@ Function Install-Chrome {
 	[CmdletBinding()]
 	Param(
 		[parameter(Mandatory=$true)]
-		[System.String]$tempDirectory
+		[System.String]$tempDirectory="$Env:TEMP\"
 	)
 
 	If (-not (Test-Chrome)) {
@@ -672,7 +672,7 @@ Function Install-Thunderbird {
 	[CmdletBinding()]
 	Param(
 		[parameter(Mandatory=$true)]
-		[System.String]$tempDirectory
+		[System.String]$tempDirectory="$Env:TEMP\"
 	)
 
 	If (-not (Test-Thunderbird)) {
@@ -716,7 +716,7 @@ Function Install-Thunderbird {
 Function Install-Teamviewer {
 	[CmdletBinding()]
 	Param(
-		[System.String]$tempDirectory="C:\Temp\",
+		[System.String]$tempDirectory="$Env:TEMP\",
 		[System.String]$DestinationPath="C:\Delapro",
 		[System.String]$CreateDesktopLink="easy Internet Fernwartung (Teamviewer).lnk"
 	)
