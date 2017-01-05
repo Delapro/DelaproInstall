@@ -1458,7 +1458,7 @@ Function Copy-Delagame {
 Function Invoke-CleanupDelapro {
 	[CmdletBinding()]
 	Param(
-		[System.String]$DelaproPath
+		[System.String]$DelaproPath="C:\Delapro"
 	)
 
 	# Prüfen, ob man sich im Delapro-Verzeichnis befindet
