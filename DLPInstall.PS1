@@ -1055,7 +1055,7 @@ Function Update-DlpRawPr {
 	$ExeVersion = [version](Get-Item $ExePath).VersionInfo.ProductVersion
 	If ($ExeVersion -lt $rawVersion) {
 		Write-Verbose "Version muss aktualisiert werden, von $($ExeVersion) auf $($rawVersion)"
-		Invoke-WebRequest -Uri https://github.com/Delapro/DlpRawPr/releases/download/v$($rawVersionNumber)/DlpRawPr.exe -OutFile (Join-Path -Path (Join-Path -Path $DelaproPath -ChildPath Laser) -ChildPath DLPWinPr.EXE) 
+		Invoke-WebRequest -Uri https://github.com/Delapro/DlpRawPr/releases/download/v$($rawVersionNumber)/DlpRawPr.exe -OutFile (Join-Path -Path (Join-Path -Path $DelaproPath -ChildPath Laser) -ChildPath DLPRawPr.EXE) 
 	} else {
 		Write-Verbose "Version ist aktuell, $($ExeVersion)"
 	}
