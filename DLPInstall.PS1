@@ -795,7 +795,7 @@ Function Install-Powershell {
 	# pkgmgr.exe /n:%temp%\Windows6.1-KB2819745-x64-MultiPkg.xml
 
 	If (-Not (Test-Path $DLPInstPath)) {
-		New-Item $($DLPInstPath)
+		New-Item $($DLPInstPath) -ItemType Directory
 	}
 
 	If (Test-64Bit) {
