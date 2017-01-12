@@ -649,7 +649,7 @@ Function Install-AcrobatDC {
 Function Install-Chrome {
 	[CmdletBinding()]
 	Param(
-		[parameter(Mandatory=$true)]
+		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\"
 	)
 
