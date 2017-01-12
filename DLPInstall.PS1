@@ -495,8 +495,8 @@ Function Update-DelaproGhostscript {
 Function Install-Ghostscript {
 	[CmdletBinding()]
 	Param(
-		[parameter(Mandatory=$true)]
-		[System.String]$tempPath
+		#[parameter(Mandatory=$true)]
+		[System.String]$tempPath="$Env:TEMP\"
 	)
 
 	# Infos zur aktuellen Version: http://ghostscript.com/Releases.html
