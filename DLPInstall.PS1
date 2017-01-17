@@ -895,7 +895,7 @@ Function Install-DelaproChartModul {
 	Start-BitsTransfer "$($DownloadUrl)/util/dlpwinchart.exe" $TempDirectory
 	Start-Process -Wait "$($TempDirectory)dlpwinchart.exe" -ArgumentList "-a", "-pathDelapro=$($DelaproPath)"
 	Start-BitsTransfer "$($DownloadUrl)/util/DlpWinCt.EXE" $TempDirectory
-	Move-Item $TempDirectory\DlpWinCt.EXE  "$($DelaproPath)\Image"  -Force
+	Move-Item $TempDirectory\DlpWinCt.EXE  "$($DelaproPath)\"  -Force
 
 }
 
