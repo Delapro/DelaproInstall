@@ -887,7 +887,7 @@ Function Install-DelaproHauptmodul {
 Function Install-DelaproChartModul {
 	[CmdletBinding()]
 	Param(
-		[String]$TempDirectory,
+		[String]$TempDirectory=$Env:TEMP,
 		[string]$DelaproPath="C:\Delapro",
 		[string]$DownloadUrl="http://www.easysoftware.de/"
 	)
