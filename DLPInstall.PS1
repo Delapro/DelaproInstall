@@ -896,6 +896,7 @@ Function Install-DelaproChartModul {
 	Start-Process -Wait "$($TempDirectory)\dlpwinchart.exe" -ArgumentList "-a", "-pathDelapro=$($DelaproPath)"
 	Start-BitsTransfer "$($DownloadUrl)/util/DlpWinCt.EXE" $TempDirectory
 	Move-Item $TempDirectory\DlpWinCt.EXE  "$($DelaproPath)\"  -Force
+	# TODO: abchecken, ob DLP_GRAF.EXE > 1MB, sonst ist es die 16-Bit Fassung
 
 }
 
