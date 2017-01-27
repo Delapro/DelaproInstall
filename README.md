@@ -12,5 +12,12 @@ Backup-Delapro -Verbose
 Update-DlpWinPr -Verbose
 ```
 
+PDF-Dateiversand einrichten
 
-
+```Powershell
+# Ghostscript Version ermitteln
+Get-Ghostscript
+# TODO: GhostPDF.BAT in LASER-Verzeichnis kopieren
+# Ghostscript in GhostPDF.BAT korrekt setzen
+Update-DelaproGhostscript -Verbose
+```
