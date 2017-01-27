@@ -10,6 +10,7 @@ Update-Backup -Verbose
 Backup-Delapro -Verbose
 # Druckertreiber aktualisieren
 Update-DlpWinPr -Verbose
+
 ```
 
 PDF-Dateiversand einrichten
@@ -20,4 +21,5 @@ Get-Ghostscript
 # TODO: GhostPDF.BAT in LASER-Verzeichnis kopieren
 # Ghostscript in GhostPDF.BAT korrekt setzen
 Update-DelaproGhostscript -Verbose
+
 ```
