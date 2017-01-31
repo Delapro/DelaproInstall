@@ -44,6 +44,23 @@ If ((@("gs9.00", "gs8.63") -contains $gv[0].Name -and $gv.length -eq 1) -or $gv.
 Update-DelaproGhostscript -Verbose
 
 # DelaproMailer-Druckertreiber installieren
-Install-DelaproMailer -Verbose
+Install-DelaproMailerPrinter -Verbose
 
+```
+
+## Delapro-Verzeichnis aufräumen
+```Powershell
+cd \Delapro
+Invoke-CleanupDelapro -Verbose
+```
+
+## Update einspielen
+```Powershell
+cd \Delapro\Update
+If (Get-Location -match "\Update") {
+    Del *.*
+    C:\temp\Exes.exe
+}
+cd ..
+.\update\update
 ```
