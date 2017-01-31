@@ -3,12 +3,22 @@ Powershell Installationsscript um Delapro ab Windows Vista bis Windows 10 zu ins
 
 Befehle, wenn man https://easysoftware.de/ps Cmdlets verwendet:
 
+## Powershell auf Version 4 oder aktueller aktualisieren
+```Powershell
+# Windows 7 hochbeamen auf aktuellere Powershellversion
+If (Test-Net45FrameworkInstalled) {
+    Install-Powershell
+}
+```
+
+## fehlende Cmdlets unter Windows 7 nachreichen
 ```Powershell
 # Bei Windows 7 fehlende, evtl. benötigte Cmdlets aktivieren
 Install-MissingPowershellCmdlets
 
 ```
 
+## Backup aktualisieren, Backup durchführen und DLPWinPr aktualisieren
 ```Powershell
 # Backup aktualisieren
 Update-Backup -Verbose
@@ -19,8 +29,7 @@ Update-DlpWinPr -Verbose
 
 ```
 
-PDF-Dateiversand einrichten
-
+## PDF-Dateiversand einrichten
 ```Powershell
 # Ghostscript Version ermitteln
 $gv = Get-Ghostscript
