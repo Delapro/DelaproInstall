@@ -6,9 +6,10 @@ Befehle, wenn man https://easysoftware.de/ps Cmdlets verwendet:
 ## Powershell auf Version 4 oder aktueller aktualisieren
 ```Powershell
 # Windows 7 hochbeamen auf aktuellere Powershellversion
-If (Test-Net45FrameworkInstalled) {
+If (Test-NetFramework45Installed) {
     Install-Powershell
 }
+
 ```
 
 ## fehlende Cmdlets unter Windows 7 nachreichen
@@ -52,6 +53,7 @@ Install-DelaproMailerPrinter -Verbose
 ```Powershell
 cd \Delapro
 Invoke-CleanupDelapro -Verbose
+
 ```
 
 ## Update einspielen
@@ -63,4 +65,5 @@ If (Get-Location -match "\Update") {
 }
 cd ..
 .\update\update
+
 ```
