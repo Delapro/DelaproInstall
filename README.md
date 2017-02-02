@@ -51,14 +51,14 @@ Install-DelaproMailerPrinter -Verbose
 
 ## Delapro-Verzeichnis aufräumen
 ```Powershell
-cd \Delapro
+cd C:\Delapro
 Invoke-CleanupDelapro -Verbose
 
 ```
 
 ## Update einspielen
 ```Powershell
-cd \Delapro\Update
+cd C:\Delapro\Update
 If ((Get-Location) -match "\Update") {
     Del *.*
     C:\temp\Exes.exe
