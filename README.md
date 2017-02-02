@@ -67,3 +67,11 @@ cd ..
 .\update\update
 
 ```
+
+## Acrobat Reader Seitenpane abschalten
+```Powershell
+$dc = Get-AcrobatReaderDCExe
+Set-AcrobatReaderDCViewerPaneOff -AcrobatReaderDCExe $dc
+
+```
+
