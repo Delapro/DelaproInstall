@@ -377,6 +377,17 @@ Function Test-Thunderbird {
 	$ret
 }
 
+# prüft, ob LibreOffice installiert ist, gibt $true oder $false zurück
+Function Test-LibreOffice {
+	[CmdletBinding()]
+	[OutputType([System.Boolean])]
+	Param ()
+	
+	$ret = $false
+	# TODO: To be implemented!
+	$ret
+}
+
 # prüft, ob AcrobatReader installiert ist, entweder System- oder Userlevel, egal ob 32-Bit oder 64-Bit, gibt $true oder $false zurück
 Function Test-AcrobatReader {
 	[CmdletBinding()]
@@ -685,6 +696,25 @@ Function Install-Thunderbird {
 	}
 	
 }
+
+# Installation von LibreOffice
+Function Install-LibreOffice {
+	[CmdletBinding()]
+	Param(
+		[parameter(Mandatory=$true)]
+		[System.String]$tempDirectory="$Env:TEMP\"
+	)
+
+	If (-not (Test-LibreOffice)) {
+		# Infos zur aktuellen Version: https://de.libreoffice.org/download/release-notes/
+		# Installationsparameter: https://wiki.documentfoundation.org/Deployment_and_Migration
+		$loVersion = "5.3.0"
+		Start-BitsTransfer http://download.documentfoundation.org/libreoffice/stable/$loVersion/win/x86/LibreOffice_$loVersion_Win_x86.msi -Destination $tempDirectory
+		Start-Process -Wait .\LibreOffice_$loVersion_Win_x86.msi
+	}
+	
+}
+
 
 <#
 .SYNOPSIS
