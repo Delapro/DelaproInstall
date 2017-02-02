@@ -59,7 +59,7 @@ Invoke-CleanupDelapro -Verbose
 ## Update einspielen
 ```Powershell
 cd \Delapro\Update
-If (Get-Location -match "\Update") {
+If ((Get-Location) -match "\Update") {
     Del *.*
     C:\temp\Exes.exe
 }
