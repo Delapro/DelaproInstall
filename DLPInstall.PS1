@@ -1527,6 +1527,23 @@ Function Set-FormulareFertigteileVariable {
 
 }
 
+# ermittelt den Text für Fertigteile
+Function Get-FertigteileText {
+	[CmdletBinding()]
+	Param(
+		[System.String]$DelaproPath="C:\Delapro"
+	)
+
+	$iniFile = Join-Path -Path (Resolve-Path $DelaproPath) -ChildPath "DLP_Main.INI"
+	Write-Verbose $iniFile
+	$ini = Get-Content $iniFile -Encoding Oem
+	$Value = $ini | Select-String -Pattern "(?<=FertigteileText=).+"
+	If ($Value) {
+		$Value[0].Matches[0].Value
+	}
+
+}
+
 # räumt das Delapro-Verzeichnis auf
 Function Invoke-CleanupDelapro {
 	[CmdletBinding()]
