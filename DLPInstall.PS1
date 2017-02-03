@@ -701,7 +701,7 @@ Function Install-Thunderbird {
 Function Install-LibreOffice {
 	[CmdletBinding()]
 	Param(
-		[parameter(Mandatory=$true)]
+		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\"
 	)
 
@@ -709,12 +709,13 @@ Function Install-LibreOffice {
 		# Infos zur aktuellen Version: https://de.libreoffice.org/download/release-notes/
 		# Installationsparameter: https://wiki.documentfoundation.org/Deployment_and_Migration
 		$loVersion = "5.3.0"
-		Start-BitsTransfer http://download.documentfoundation.org/libreoffice/stable/$loVersion/win/x86/LibreOffice_$loVersion_Win_x86.msi -Destination $tempDirectory
+		$url = "http://download.documentfoundation.org/libreoffice/stable/$loVersion/win/x86/LibreOffice_$($loVersion)_Win_x86.msi"
+		Write-Verbose "Download von $url"
+		Start-BitsTransfer $url -Destination $tempDirectory
 		Start-Process -Wait .\LibreOffice_$loVersion_Win_x86.msi
 	}
 	
 }
-
 
 <#
 .SYNOPSIS
