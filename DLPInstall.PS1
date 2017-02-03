@@ -630,7 +630,7 @@ Function Install-eDocPrintPro {
 Function Install-AcrobatDC {
 	[CmdletBinding()]
 	Param(
-		[parameter(Mandatory=$true)]
+		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\"
 	)
 
