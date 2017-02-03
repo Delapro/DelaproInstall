@@ -2,7 +2,7 @@
 
 Powershell Installationsscript um Delapro ab Windows Vista bis Windows 10 zu installieren.
 
-Befehle, wenn man https://easysoftware.de/ps Cmdlets verwendet:
+Befehle, wenn man [Delapro Administrationsscript](https://easysoftware.de/ps) Cmdlets verwendet:
 
 ## Powershell auf Version 4 oder aktueller aktualisieren
 
