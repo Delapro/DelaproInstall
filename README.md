@@ -1,9 +1,11 @@
 # DelaproInstall
+
 Powershell Installationsscript um Delapro ab Windows Vista bis Windows 10 zu installieren.
 
 Befehle, wenn man https://easysoftware.de/ps Cmdlets verwendet:
 
 ## Powershell auf Version 4 oder aktueller aktualisieren
+
 ```Powershell
 # Windows 7 hochbeamen auf aktuellere Powershellversion
 If (Test-NetFramework45Installed) {
@@ -13,6 +15,7 @@ If (Test-NetFramework45Installed) {
 ```
 
 ## fehlende Cmdlets unter Windows 7 nachreichen
+
 ```Powershell
 # Bei Windows 7 fehlende, evtl. benötigte Cmdlets aktivieren
 Install-MissingPowershellCmdlets
@@ -20,6 +23,7 @@ Install-MissingPowershellCmdlets
 ```
 
 ## Backup aktualisieren, Backup durchführen und DLPWinPr aktualisieren
+
 ```Powershell
 # Backup aktualisieren
 Update-Backup -Verbose
@@ -31,6 +35,7 @@ Update-DlpWinPr -Verbose
 ```
 
 ## PDF-Dateiversand einrichten
+
 ```Powershell
 # Ghostscript Version ermitteln
 $gv = Get-Ghostscript
@@ -50,6 +55,7 @@ Install-DelaproMailerPrinter -Verbose
 ```
 
 ## Delapro-Verzeichnis aufräumen
+
 ```Powershell
 cd C:\Delapro
 Invoke-CleanupDelapro -Verbose
@@ -57,6 +63,7 @@ Invoke-CleanupDelapro -Verbose
 ```
 
 ## Update einspielen
+
 ```Powershell
 cd C:\Delapro\Update
 If ((Get-Location) -match "\Update") {
@@ -69,9 +76,19 @@ cd ..
 ```
 
 ## Acrobat Reader Seitenpane abschalten
+
 ```Powershell
 $dc = Get-AcrobatReaderDCExe
 Set-AcrobatReaderDCViewerPaneOff -AcrobatReaderDCExe $dc
 
 ```
 
+## Einstellungen für Bildschirmdarstellung
+
+```Powershell
+# Ausgabe der aktuellen Einstellungen
+Get-DlpUI
+# Setzen des Font auf Lucida Console
+Set-DlpUi -Fontname "Lucida Console"
+
+```
