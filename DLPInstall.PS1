@@ -712,7 +712,7 @@ Function Install-LibreOffice {
 		$url = "http://download.documentfoundation.org/libreoffice/stable/$loVersion/win/x86/LibreOffice_$($loVersion)_Win_x86.msi"
 		Write-Verbose "Download von $url"
 		Start-BitsTransfer $url -Destination $tempDirectory
-		Start-Process -Wait .\LibreOffice_$loVersion_Win_x86.msi
+		Start-Process -Wait .\LibreOffice_$($loVersion)_Win_x86.msi
 	}
 	
 }
