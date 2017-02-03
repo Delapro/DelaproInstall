@@ -682,7 +682,7 @@ Function Install-Chrome {
 Function Install-Thunderbird {
 	[CmdletBinding()]
 	Param(
-		[parameter(Mandatory=$true)]
+		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\"
 	)
 
