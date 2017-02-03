@@ -1486,6 +1486,47 @@ Function Copy-Delagame {
 
 }
 
+# prüft ob der Text Fertigteile in den REP-Dateien fix drin steht
+Function Test-FormulareFertigteile {
+	[CmdletBinding()]
+	Param(
+		[System.String]$DelaproPath="C:\Delapro"
+	)
+
+	$formPrei = Join-Path -Path (Resolve-Path $DelaproPath) -ChildPath "FormPrei.TXT"
+	Write-Verbose "Prüfe Datei $formPrei"
+
+	If (Test-Path $formPrei) {
+		$fp = Get-Content $formPrei -Encoding Oem
+		If (($fp | Select-String -Pattern "(?<![_])Fertigteile")) {
+			$true
+		} 
+	} else {
+		Write-Verbose "FormPrei.txt nicht gefunden!"
+	}
+
+}
+
+# ersetzt den Text Fertigteile durch @AVD_Fertigteile()@ in FORMPREI.TXT
+Function Set-FormulareFertigteileVariable {
+	[CmdletBinding()]
+	Param(
+		[System.String]$DelaproPath="C:\Delapro"
+	)
+
+	$formPrei = Join-Path -Path (Resolve-Path $DelaproPath) -ChildPath "FormPrei.TXT"
+
+	If ((Test-FormulareFertigteile -DelaproPath $DelaproPath)) {
+		$fp = Get-Content $formPrei -Encoding Oem
+		If (($fp | Select-String -Pattern "(?<![_])Fertigteile")) {
+			Write-Verbose "Pattern gefunden, wird ersetzt"
+			$fp = $fp -replace "(?<![_])Fertigteile", "@AVD_Fertigteile()@"
+			$fp | Set-Content $formPrei -Encoding Oem
+		}
+	}
+
+}
+
 # räumt das Delapro-Verzeichnis auf
 Function Invoke-CleanupDelapro {
 	[CmdletBinding()]
