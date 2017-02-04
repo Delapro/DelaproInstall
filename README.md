@@ -76,7 +76,8 @@ Invoke-CleanupDelapro -Verbose
 
 ```Powershell
 cd C:\Delapro\Update
-If ((Get-Location) -match "\Update") {
+# \\Update wegen Match, sonst würde \U als RegEx von Match interpretiert!
+If ((Get-Location) -match "\\Update") {
     Del *.*
     C:\temp\Exes.exe
 }
