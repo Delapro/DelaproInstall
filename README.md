@@ -54,6 +54,16 @@ Install-DelaproMailerPrinter -Verbose
 
 ```
 
+## Importieren einer Delapro-Datensicherung
+
+```Powershell
+# durchsucht die vorhandenen Laufwerke nach einer Datensicherung und spielt diese ein
+Import-LastDelaproBackup
+# zum Direkt einspielen
+# Import-OldDLPVersion -SourcePath G: -DestinationPath "$($DLPPath)"
+
+```
+
 ## Delapro-Verzeichnis aufräumen
 
 ```Powershell
