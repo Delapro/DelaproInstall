@@ -92,3 +92,15 @@ Get-DlpUI
 Set-DlpUi -Fontname "Lucida Console"
 
 ```
+
+## Formulare überprüfen und aktualisieren
+
+```Powershell
+# Prüfen, ob noch "Fertigteile" anstatt Platzhalterfunktion verwendet wird
+If (Test-FormulareFertigteile) {
+    # FORMPREI.TXT aktualisieren
+    Set-FormulareFertigteileVariable
+    # Text für Fertigteile anzeigen
+    Get-FertigteileText
+}
+```
