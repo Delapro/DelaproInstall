@@ -322,7 +322,9 @@ Function Get-DelaproBackups {
 Function Import-OldDLPVersion {
 	[CmdletBinding()]
 	Param(
+		[parameter(Mandatory=$true)]
 		[String]$SourcePath,
+		[parameter(Mandatory=$true)]
 		[String]$DestinationPath
 	)
 	
