@@ -1443,8 +1443,8 @@ Function Invoke-DefenderSetupAndScan {
 Function Import-LastDelaproBackup {
 	[CmdletBinding()]
 	Param(
-		[System.String]$TempPath,
-		[System.String]$DestinationPath
+		[System.String]$TempPath="$($Env:Temp)\DelaproImport",
+		[System.String]$DestinationPath="C:\Delapro"
 	)
 
 	#Delapro Daten von Datensicherung einspielen
