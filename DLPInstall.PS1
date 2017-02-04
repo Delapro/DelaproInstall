@@ -1268,6 +1268,24 @@ Function Show-Printers {
 	}
 }
 
+# vergleicht zwei Textdateien miteinander
+Function Compare-TextFiles {
+	[CmdletBinding()]
+	Param(
+		[parameter(Mandatory=$true)]
+		[System.String]$ReferenceFile,
+		[parameter(Mandatory=$true)]
+		[System.String]$DiffFile
+	)
+
+	$ReferenceFile = Resolve-Path $ReferenceFile
+	$DiffFile = Resolve-Path $DiffFile
+
+	Write-Verbose "Vergleiche: $ReferenceFile mit $DiffFile"
+
+	Compare-Object -ReferenceObject (Get-Content $ReferenceFile) -DifferenceObject (Get-Content $DiffFile)
+}
+
 # Aktiviert "System Protection" bzw. "Computer Schutz", um bei Problemen mittels Systemwiederherstellung auf einen alten
 # Zeitpunkt zurückzukehren
 # ab Powershell 3.0 aufwärts unter dem Namen Enable-ComputerRestore verfügbar
