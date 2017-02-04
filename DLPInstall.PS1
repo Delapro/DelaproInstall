@@ -342,17 +342,17 @@ Function Import-OldDLPVersion {
 	
 	Write-Verbose "Windowsformulare vorhanden?"
 	If (Test-Path "$SourcePath\XMLForm") {
-		Copy-Item -Path "$SourcePath\XMLForm" "$($DestinationPath)\XMLForm" -Force -Verbose -Recurse
+		Copy-Item -Path "$SourcePath\XMLForm" "$($DestinationPath)" -Force -Verbose -Recurse
 	}
 
 	Write-Verbose "Bildarchivierung vorhanden?"
 	If (Test-Path "$SourcePath\Image") {
-		Copy-Item -Path "$SourcePath\Image" "$($DestinationPath)\Image" -Force -Verbose -Recurse
+		Copy-Item -Path "$SourcePath\Image" "$($DestinationPath)" -Force -Verbose -Recurse
 	}
 
 	Write-Verbose "Zertifikatmodul vorhanden?"
 	If (Test-Path "$SourcePath\Zert") {
-		Copy-Item -Path "$SourcePath\Zert" "$($DestinationPath)\Zert" -Force -Verbose -Recurse
+		Copy-Item -Path "$SourcePath\Zert" "$($DestinationPath)" -Force -Verbose -Recurse
 	}
 	# TODO: Zeiterfassung
 }
