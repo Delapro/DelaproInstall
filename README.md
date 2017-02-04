@@ -90,6 +90,8 @@ Set-AcrobatReaderDCViewerPaneOff -AcrobatReaderDCExe $dc
 Get-DlpUI
 # Setzen des Font auf Lucida Console
 Set-DlpUi -Fontname "Lucida Console"
+# Wenn es zu Durcheinander geht, alles wieder zurücksetzen:
+Set-DlpUi -Reset
 
 ```
 
