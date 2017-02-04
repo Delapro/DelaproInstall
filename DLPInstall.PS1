@@ -328,20 +328,29 @@ Function Import-OldDLPVersion {
 		[String]$DestinationPath
 	)
 	
+	Write-Verbose "SourcePfad: $SourcePath"
+	Write-Verbose "DestinationPfad: $DestinationPath"
+
+	Write-Verbose "Hauptprogramm einspielen"
 	Copy-Item "$SourcePath\*.*" $DestinationPath -Force -Verbose
+
+	Write-Verbose "Laser-Verzeichnis einspielen"
 	Copy-Item "$SourcePath\Laser\DlpWin.M*" "$($DestinationPath)\Laser" -Force -Verbose
 	Copy-Item "$SourcePath\Laser\*.BMP" "$($DestinationPath)\Laser" -Force -Verbose
 	Copy-Item "$SourcePath\Laser\*.JPG" "$($DestinationPath)\Laser" -Force -Verbose
 	Copy-Item "$SourcePath\Laser\*.PDF" "$($DestinationPath)\Laser" -Force -Verbose
-	# Windowsformulare beachten
+	
+	Write-Verbose "Windowsformulare vorhanden?"
 	If (Test-Path "$SourcePath\XMLForm") {
 		Copy-Item -Path "$SourcePath\XMLForm" "$($DestinationPath)\XMLForm" -Force -Verbose -Recurse
 	}
-	# Bildarchiverung beachten
+
+	Write-Verbose "Bildarchivierung vorhanden?"
 	If (Test-Path "$SourcePath\Image") {
 		Copy-Item -Path "$SourcePath\Image" "$($DestinationPath)\Image" -Force -Verbose -Recurse
 	}
-	# Zertifikatmodul beachten
+
+	Write-Verbose "Zertifikatmodul vorhanden?"
 	If (Test-Path "$SourcePath\Zert") {
 		Copy-Item -Path "$SourcePath\Zert" "$($DestinationPath)\Zert" -Force -Verbose -Recurse
 	}
@@ -1449,13 +1458,18 @@ Function Import-LastDelaproBackup {
 		[System.String]$DestinationPath="C:\Delapro"
 	)
 
+	Write-Verbose $TempPath
+	Write-Verbose $DestinationPath
+
 	#Delapro Daten von Datensicherung einspielen
 	$ds = Get-DelaproBackups
 	If ($ds.length -ge 1) {
 		# also eine Datensicherung gefunden, diese entpacken
 		$ds = $ds[0]
+		Write-Verbose "Sicherung: $ds"
 		If (Test-Path $TempPath) {
 			# damit kein Datenkuddelmuddel entsteht, altes Sicherungsverzeichnis löschen, falls vorhanden
+			Write-Verbose "Temppfad löschen"
 			Remove-Item $TempPath -Force
 		}
 	
