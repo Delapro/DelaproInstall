@@ -1470,7 +1470,7 @@ Function Import-LastDelaproBackup {
 		If (Test-Path $TempPath) {
 			# damit kein Datenkuddelmuddel entsteht, altes Sicherungsverzeichnis löschen, falls vorhanden
 			Write-Verbose "Temppfad löschen"
-			Remove-Item $TempPath -Force
+			Remove-Item $TempPath -Force -Recurse
 		}
 	
 		# -Force zum überschreiben von alten Dateien aber vorher mit Polyfill abklären
