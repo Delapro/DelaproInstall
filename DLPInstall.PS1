@@ -559,6 +559,13 @@ Function Install-eDocPrintPro {
 	
 	$eDocPrintProDir = Join-Path -Path $tempPath -ChildPath "eDocPrintPro"
 	$eDocPrintProDir = Join-Path -Path $eDocPrintProDir -ChildPath ""
+	Write-Verbose "Verzeichnis: $eDocPrintProDir"
+
+	# Unterverzeichnis löschen, falls bereits vorhanden
+	If (Test-Path $eDocPrintProDir) {
+		Remove-Item $eDocPrintProDir -Force -Recurse
+	}
+
 	# Unterverzeichnis anlegen, um entpackte Dateien aus ZIP-Archiven reinzulegen
 	New-Item $eDocPrintProDir -Type Directory
 	
@@ -577,8 +584,8 @@ Function Install-eDocPrintPro {
 	# http://www.xkey.at/d/file.php?file=MAYComp/Current/RO/eDocPrintPro.zip
 	# ftp://download.may.co.at/Repository/msoftware/MAYComp/Current/RO/eDocPrintPro.zip
 	
-	Expand-Archive "$($eDocPrintProDir)eDocPrintPro.zip" "eDocPrintPro"
-	Start-Process -Wait "$($eDocPrintProDir)\eDocPrintPro.exe" -ArgumentList @("/exenoui","/qn")
+	Expand-Archive "$($eDocPrintProDir)eDocPrintPro.zip" "$($eDocPrintProDir)eDocPrintPro"
+	Start-Process -Wait "$($eDocPrintProDir)\eDocPrintPro\eDocPrintPro.exe" -ArgumentList @("/exenoui","/qn")
 	
 	# Jetzt noch Delapro.ESFx einspielen, muss in C:\Users\All Users\eDocPrintPro und C:\Programdata\eDocPrintPro
 	# eine .ESFx-Datei ist eine einfache XML-Datei
@@ -628,7 +635,7 @@ Function Install-eDocPrintPro {
 	[System.Convert]::FromBase64String($DelaproESF) | Set-Content "C:\ProgramData\eDocPrintPro\DelaproPDF.ESFX" -Encoding Byte
 	reg add "HKCU\SOFTWARE\MAY Computer\eDocPrintPro\DelaproPDF\Standard" /v "Esf" /t "reg_sz" /d "DelaproPDF"  /f
 	
-	# zum aktivieren der ESC-Datei
+	# zum Aktivieren der ESF-Datei
 	Start-Process -Wait 'C:\Program Files\Common Files\MAYComputer\eDocPrintPro\ApplyESF.EXE'
 
 	# bei Problemen mit eDocPrintPro, hilft bei neueren Versionen, ab 3.23.4 ein Registry-Eintrag über den eine Log-Funktion aktiviert wird
