@@ -85,7 +85,7 @@ Import-LastDelaproBackup -Verbose
 ## Delapro-Verzeichnis aufräumen
 
 ```Powershell
-cd $DlpPath
+Set-Location $DlpPath
 Invoke-CleanupDelapro -Verbose
 
 ```
