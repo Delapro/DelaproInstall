@@ -147,6 +147,13 @@ abe: Fertigteile oder Sonstiges"
 
 ```
 
+## Delapro Autostart einrichten
+
+```Powershell
+New-FileShortcut -FileTarget  "$($DlpPath)\Delapro.exe" -LinkFilename StartDelapro -WorkingDirectory $DlpPath -Description "Autostart Delapro" -Folder (Get-StartupFolder) -Verbose
+
+```
+
 ## Installation von zusätzlichen Programmen
 
 ### Thunderbird
