@@ -1438,6 +1438,22 @@ Function Get-StartupFolder {
 	$folder
 }
 
+# Ermittelt den Pfad für den Desktop
+Function Get-DesktopFolder {
+	[CmdletBinding()]
+	Param(
+		[Switch]$AllUsers
+	)
+
+	If ($AllUsers) {
+		$folder = [System.Environment]::GetFolderPath("CommonDesktop")
+	} else {
+		$folder = [System.Environment]::GetFolderPath("Desktop")
+	}
+
+	$folder
+}
+
 # ermittelt die vorhandenen Antimalware-Programme
 Function Get-AntiMalware {
 	[CmdletBinding()]
