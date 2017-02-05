@@ -1414,6 +1414,30 @@ Function Show-StartupFolder {
 
 }
 
+# Ermittelt den Pfad für die Autostarteintragungen
+Function Get-StartupFolder {
+	[CmdletBinding()]
+	Param(
+		[Switch]$AllUsers,
+		[Switch]$Recursive
+	)
+
+	If ($AllUsers) {
+		$folder = [System.Environment]::GetFolderPath("CommonStartup")
+	} else {
+		$folder = [System.Environment]::GetFolderPath("Startup")
+	}
+
+	If (-Not ($Folder)) {
+		# es gibt Situationen da existiert das Verzeichnis nicht, also das Anlegen
+		# erzwingen
+		$Startup = (New-Object -ComObject Shell.Application).Namespace(0x07)
+		$folder = Get-StartupFolder -Recursive $AllUsers
+	}
+
+	$folder
+}
+
 # ermittelt die vorhandenen Antimalware-Programme
 Function Get-AntiMalware {
 	[CmdletBinding()]
