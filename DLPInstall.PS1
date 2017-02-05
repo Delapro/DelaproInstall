@@ -121,7 +121,7 @@ Function Copy-FileWithDateTime ($source, $dest) {
 	}
 	
 	If ($source -is [Array]) {
-		$source | % {Copy-OneFileWithDateTime $_.Path $dest}
+		$source | ForEach-Object {Copy-OneFileWithDateTime $_.Path $dest}
 	} else {
 		Copy-OneFileWithDateTime $source.Path $dest
 	}
@@ -234,7 +234,7 @@ Function Get-DefaultPrinter {
 
 	# Prüfen, ob StandardCimV2 verfügbar ist, wenn ja kann man von ausgehen, dass man Win8 oder neuer hat, wo CIM
 	# auf jeden Fall verfügbar ist
-	$useCIM = Get-WMIObject -Namespace root -Class __NAMESPACE | where {$_.Name -eq "StandardCimv2"}
+	$useCIM = Get-WMIObject -Namespace root -Class __NAMESPACE | Where-Object {$_.Name -eq "StandardCimv2"}
 	
 	# Oder direkt per Registry? HKEY_CURRENT_USER\Software\Microsoft\Windows NT\CurrentVersion\Windows\Device
 	If ($useCIM) {
@@ -245,12 +245,12 @@ Function Get-DefaultPrinter {
 		$default = Get-WmiObject -Classname Win32_Printer
 	}
 	If ($default) {
-		$default = $default | Where {$_.Default -eq $true}
+		$default = $default | Where-Object {$_.Default -eq $true}
 		# in $default hat man nun die klassische Variante Win32_Printer, für Powershell bei Windows 8 oder höher sollte
 		# man aber MSFT_Printer verwenden, damit man kompatibel zu den *-Print* Cmdlets ist, welche MSFT_Printer verwenden
 		If ($useCIM) {
-			$default = Get-CIMInstance -Namespace root\StandardCimV2 -Classname MSFT_Printer | Where {$_.Name -eq $default.Name}
-		}
+			$default = Get-CIMInstance -Namespace root\StandardCimV2 -Classname MSFT_Printer | Where-Object {$_.Name -eq $default.Name}
+		}	
 		$default
 	}
 }
@@ -311,11 +311,11 @@ Function Get-DelaproBackups {
 	)
 
 	# Laufwerksbuchstaben ermitteln
-	$dl = Get-Volume| where {$_.Driveletter -ne $null} | where {$_.OperationalStatus -eq "OK"} |  select -ExpandProperty Driveletter
+	$dl = Get-Volume| Where-Object {$_.Driveletter -ne $null} | Where-Object {$_.OperationalStatus -eq "OK"} |  Select-Object -ExpandProperty Driveletter
 	#  Sicherungen ermitteln und nach Datum sortieren
-	$ds = $dl | % {Get-ChildItem "$($_):\Delapro*.ZIP"} 
+	$ds = $dl | ForEach-Object {Get-ChildItem "$($_):\Delapro*.ZIP"} 
 	# Sortieren mit neuester zuerst
-	$ds = $ds| sort -Descending Name
+	$ds = $ds| Sort-Object -Descending Name
 	$ds
 }
 
@@ -369,7 +369,7 @@ Function Test-Chrome {
 	  	    	'Registry::HKEY_CURRENT_USER\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe',
 	  		'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe',
 	  		'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe')
-	$regLoc | % { $ret = $ret -or (Test-Path $_) }
+	$regLoc | ForEach-Object { $ret = $ret -or (Test-Path $_) }
 	$ret
 }
 
@@ -384,7 +384,7 @@ Function Test-Thunderbird {
 	  	    	'Registry::HKEY_CURRENT_USER\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\thunderbird.exe',
 	  		'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\thunderbird.exe',
 	  		'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\thunderbird.exe')
-	$regLoc | % { $ret = $ret -or (Test-Path $_) }
+	$regLoc | ForEach-Object { $ret = $ret -or (Test-Path $_) }
 	$ret
 }
 
@@ -410,7 +410,7 @@ Function Test-AcrobatReader {
 	  	    	'Registry::HKEY_CURRENT_USER\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\AcroRd32.exe',
 	  		'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\AcroRd32.exe',
 	  		'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\AcroRd32.exe')
-	$regLoc | % { $ret = $ret -or (Test-Path $_) }
+	$regLoc | ForEach-Object { $ret = $ret -or (Test-Path $_) }
 	$ret
 }
 
@@ -476,13 +476,13 @@ Function Get-Ghostscript {
 	
 	If ($PSVersionTable.PSVersion -eq "2.0")
 	{
-		$gsDirs += Get-ChildItem "$($Env:ProgramFiles)\GS" -ErrorAction SilentlyContinue -Exclude Fonts | where { $_.PSIsContainer}
-		$gsDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\GS" -ErrorAction SilentlyContinue -Exclude Fonts| where { $_.PSIsContainer}
+		$gsDirs += Get-ChildItem "$($Env:ProgramFiles)\GS" -ErrorAction SilentlyContinue -Exclude Fonts | Where-Object { $_.PSIsContainer}
+		$gsDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\GS" -ErrorAction SilentlyContinue -Exclude Fonts| Where-Object { $_.PSIsContainer}
 	} else {
 		$gsDirs += Get-ChildItem "$($Env:ProgramFiles)\GS" -ErrorAction SilentlyContinue -Directory -Exclude Fonts
 		$gsDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\GS" -ErrorAction SilentlyContinue -Directory -Exclude Fonts
 	}
-	$gsDirs = $gsDirs | sort Name -Descending
+	$gsDirs = $gsDirs | Sort-Object Name -Descending
 	$gsDirs
 }
 
@@ -815,8 +815,8 @@ Function Install-NetFramework {
 Function Get-NetFrameworkVersions {
 	Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP' -recurse |
 	Get-ItemProperty -name Version,Release -ErrorAction SilentlyContinue |
-	Where { $_.PSChildName -match '^(?!S)\p{L}'} |
-	Select PSChildName, Version, Release, @{
+	Where-Object { $_.PSChildName -match '^(?!S)\p{L}'} |
+	Select-Object PSChildName, Version, Release, @{
 	name="Product"
 	expression={
 		switch -regex ($_.Release) {
@@ -1027,7 +1027,7 @@ Function Update-Backup {
 	# ...<A HREF="/util/EasyBackup32.exe">EasyBackup32.exe</A><br> 12/6/2013 10:07 PM        77824 <A HREF="...
 	
 	# Link mit easybackup32.exe ermitteln
-	$backup=($c.Links|where outerhtml -match easybackup).outerhtml
+	$backup=($c.Links|Where-Object outerhtml -match easybackup).outerhtml
 	# betreffende Eintragung ausschneiden, zuerst den Rest weg
 	$backup=$c.content.Substring(0, $c.content.IndexOf($backup))
 	# und das letzte <br> ermitteln
@@ -1066,7 +1066,7 @@ Function Update-DlpWinPr {
 	# ...<A HREF="/util/EasyBackup32.exe">EasyBackup32.exe</A><br> 12/6/2013 10:07 PM        77824 <A HREF="...
 	
 	# Link mit dlpwinpr.exe ermitteln
-	$backup=($c.Links|where outerhtml -match "dlpwinpr.exe").outerhtml
+	$backup=($c.Links|Where-Object outerhtml -match "dlpwinpr.exe").outerhtml
 	# betreffende Eintragung ausschneiden, zuerst den Rest weg
 	$backup=$c.content.Substring(0, $c.content.IndexOf($backup))
 	# und das letzte <br> ermitteln
@@ -1140,9 +1140,9 @@ Function Get-InstalledWindowsPrinterDriver {
 	)
 
 	# alle Druckertreiber ermitteln
-	$vendorPrinter = Get-WindowsDriver -Online -All | where classname -eq Printer|where providername -eq  $Vendor 
+	$vendorPrinter = Get-WindowsDriver -Online -All | Where-Object classname -eq Printer|Where-Object providername -eq  $Vendor 
 	# davon die passenden Treiber ermitteln
-	$printerDriver = $vendorPrinter |  % {Get-WindowsDriver -Online -driver $_.originalfilename} | where hardwaredescription -eq $Driver
+	$printerDriver = $vendorPrinter |  ForEach-Object {Get-WindowsDriver -Online -driver $_.originalfilename} | Where-Object hardwaredescription -eq $Driver
 	# Treiber ausgeben
 	$printerDriver
 }
@@ -1184,7 +1184,7 @@ Function Install-DelaproMailerPrinter {
 				# PRÜFEN! Alternative Xerox PS Color Class Driver V1.1, Oder HP Laserjet 2500 PS wird von Parallels verwendet
 				$driverName = "Microsoft PS Class Driver"
 				$driverID = ""
-				$winBuild = (gwmi Win32_OperatingSystem).Version
+				$winBuild = (Get-WmiObject Win32_OperatingSystem).Version
 				If (Test-64Bit) {
 					# leider ändert sich die ID mit jedem größeren Windows 10 Update
 					switch ($winBuild) {
@@ -1446,10 +1446,10 @@ Function Get-AntiMalware {
 		
 	)
 	
-	$av = gwmi -Namespace root/SecurityCenter2 -Class AntivirusProduct
+	$av = Get-WmiObject -Namespace root/SecurityCenter2 -Class AntivirusProduct
 	If ($av -eq $null) {
 		# kein Virenscanner installiert, also Security Essentials holen
-		Start https://www.microsoft.com/de-de/download/details.aspx?id=5201
+		Start-Process https://www.microsoft.com/de-de/download/details.aspx?id=5201
 	}
 	# Der Wert productState kann hiermit interpretiert werden: https://msdn.microsoft.com/en-us/library/bb432509(VS.85).aspx
 	# siehe auch: http://blogs.msdn.com/b/alejacma/archive/2008/05/12/how-to-get-antivirus-information-with-wmi-vbscript.aspx?PageIndex=2#comments
@@ -1701,7 +1701,7 @@ Function Invoke-CleanupDelapro {
 	
 	# Alte Backup-Logdateien löschen, wo älter als ein Jahr sind:
 	If (Test-Path "$($DelaproPath)\backup\log\*.log") {
-		Get-Item "$($DelaproPath)\backup\log\*.log" | where {$_.LastWriteTime -lt ((Get-Date).AddDays(-365))} | Remove-Item
+		Get-Item "$($DelaproPath)\backup\log\*.log" | Where-Object {$_.LastWriteTime -lt ((Get-Date).AddDays(-365))} | Remove-Item
 	}
 	
 }
@@ -1852,7 +1852,7 @@ Invoke-CleanupDelapro -DelaproPath $DLPPath
 
 # Prüfen, ob man sich im Delapro-Verzeichnis befindet
 If (-Not ((Get-Location).Path -eq "$($DlpPath)")) {
-  CD $DlpPath
+  Set-Location $DlpPath
 }
 
 If (-Not (Test-Path $DlpGamePath)) {
