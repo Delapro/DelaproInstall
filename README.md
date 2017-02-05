@@ -97,7 +97,7 @@ If (-Not (Test-Path "$($DlpPath)\Update")) {
 Set-Location "$($DlpPath)\Update"
 # \\Update wegen Match, sonst würde \U als RegEx von Match interpretiert!
 If ((Get-Location) -match "\\Update") {
-    Remove-Item *.* -Force -Recurse
+    Remove-Item * -Force -Recurse
     C:\temp\Exes.exe
 }
 Set-Location ..
