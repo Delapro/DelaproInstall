@@ -151,6 +151,8 @@ abe: Fertigteile oder Sonstiges"
 
 ```Powershell
 New-FileShortcut -FileTarget  "$($DlpPath)\Delapro.exe" -LinkFilename StartDelapro -WorkingDirectory $DlpPath -Description "Autostart Delapro" -Folder (Get-StartupFolder) -Verbose
+# Verzeichnis öffnen
+Show-StartupFolder
 
 ```
 
