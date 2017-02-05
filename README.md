@@ -143,3 +143,29 @@ abe: Fertigteile oder Sonstiges"
 abe: Fertigteile oder Sonstiges"
 
 ```
+
+## Installation von zusätzlichen Programmen
+
+### Thunderbird
+
+```Powershell
+Install-Thunderbird
+```
+
+### Chrome
+
+```Powershell
+Install-Chrome
+```
+
+### Acrobat Reader DC
+
+```Powershell
+Install-AcrobatDC
+```
+
+### LibreOffice
+
+```Powershell
+Install-LibreOffice
+```
