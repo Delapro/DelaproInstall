@@ -83,7 +83,7 @@ Import-LastDelaproBackup -Verbose
 ## Delapro-Verzeichnis aufräumen
 
 ```Powershell
-cd C:\Delapro
+cd $DlpPath
 Invoke-CleanupDelapro -Verbose
 
 ```
@@ -91,18 +91,21 @@ Invoke-CleanupDelapro -Verbose
 ## Update einspielen
 
 ```Powershell
-cd C:\Delapro\Update
+If (-Not (Test-Path "$($DlpPath)\Update")) {
+    New-Item "$($DlpPath)\Update" -Type Directory
+}
+Set-Location "$($DlpPath)\Update"
 # \\Update wegen Match, sonst würde \U als RegEx von Match interpretiert!
 If ((Get-Location) -match "\\Update") {
-    Del *.*
+    Remove-Item *.* -Force -Recurse
     C:\temp\Exes.exe
 }
-cd ..
+Set-Location ..
 .\update\update
 
 ```
 
-## Acrobat Reader Seitenpane abschalten
+## Acrobat Reader Seitenpanel abschalten
 
 ```Powershell
 $dc = Get-AcrobatReaderDCExe
@@ -134,7 +137,7 @@ If (Test-FormulareFertigteile) {
     # Text für Fertigteile anzeigen
     Get-FertigteileText
 }
-cd C:\Delapro
+Set-Location $DlpPath
 # Text für Fertigteile setzen, falls noch nicht vorhanden:
 .\dlp_conf /INISETIFNOTSET DLP_MAIN.INI Formulare FertigteileText "  Sonstiges" "Text für 4. Preiszeile, Vorg
 abe: Fertigteile oder Sonstiges"
