@@ -1650,7 +1650,7 @@ Function Invoke-CleanupDelapro {
 	# Remove-Item cm??19*.DLL
 	# Remove-Item cm??19*.LNG
 	
-	DIR cm*
+	Get-ChildItem "$($DelaproPath)\cm*"
 	
 	# DLP.LOG-Datei verkleinern
 	If (Test-Path "$($DelaproPath)\dlp.log") {
