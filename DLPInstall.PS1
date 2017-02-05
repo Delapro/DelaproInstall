@@ -165,17 +165,17 @@ Function New-FileShortcut {
 		[String]$FileTarget,
 		[String]$LinkFilename,
 		[String]$WorkingDirectory,
-		[String]$Description
+		[String]$Description,
+		[String]$Folder=(Get-DesktopFolder -AllUsers)
 	)
 	
 	$Shell = New-Object -ComObject Wscript.Shell
-	$desktop = $Shell.SpecialFolders.Item("AllUsersDesktop")
-	Write-Verbose "Desktoppfad: $desktop"
+	Write-Verbose "Pfad: $folder"
 	If (-Not $LinkFilename.ToUpper().EndsWith(".LNK")) {
 		$LinkFilename = $LinkFilename + ".LNK"
 	}
 	Write-Verbose "Shortcutpfad: $LinkFilename"
-	$link = $Shell.CreateShortcut("$($desktop)\$($LinkFilename)")
+	$link = $Shell.CreateShortcut("$($folder)\$($LinkFilename)")
 	$link.TargetPath = $FileTarget
 	$link.WorkingDirectory = $WorkingDirectory
 	$link.Description = $Description
