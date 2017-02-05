@@ -34,7 +34,23 @@ Update-DlpWinPr -Verbose
 
 ```
 
-## PDF-Dateiversand einrichten
+## Druckertreiber einrichten
+
+### DelaproPDF für Ansicht einrichten
+
+```Powershell
+# eDocPrintPro-Treiber installieren
+Install-eDocPrintPro -tempPath "$($DLPInstPath)"
+# DelaproPDF-Druckertreiber erzeugen
+Start-Process -Wait "C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDocPrintProUtil.EXE" -ArgumentList "/AddPrinter", '/Printer="DelaproPDF"', '/Driver="eDocPrintPro"', "/Silent"
+# durch Aufruf von eDocPrintProUtil.EXE sind zwei Druckertreiber vorhanden, deshalb den Standard eDocPrintPro löschen
+Remove-Printer -Name eDocPrintPro
+# TODO: DelaproPDF.ESF-Einstellungen anwenden
+Show-Printers
+
+```
+
+### DelaproMail für PDF-Dateiversand einrichten
 
 ```Powershell
 # Ghostscript Version ermitteln
@@ -120,7 +136,7 @@ If (Test-FormulareFertigteile) {
 }
 cd C:\Delapro
 # Text für Fertigteile setzen, falls noch nicht vorhanden:
-.\dlp_conf /INISETIFNOTSET DLP_MAIN.INI Formulare FertigteileText Sonstiges "Text für 4. Preiszeile, Vorg
+.\dlp_conf /INISETIFNOTSET DLP_MAIN.INI Formulare FertigteileText "  Sonstiges" "Text für 4. Preiszeile, Vorg
 abe: Fertigteile oder Sonstiges"
 
 ```
