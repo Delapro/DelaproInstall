@@ -138,5 +138,8 @@ cd C:\Delapro
 # Text für Fertigteile setzen, falls noch nicht vorhanden:
 .\dlp_conf /INISETIFNOTSET DLP_MAIN.INI Formulare FertigteileText "  Sonstiges" "Text für 4. Preiszeile, Vorg
 abe: Fertigteile oder Sonstiges"
+# zum Forcieren eines Text kann man dies verwenden
+# .\dlp_conf /INISET DLP_MAIN.INI Formulare FertigteileText "  Sonstiges" "Text für 4. Preiszeile, Vorg
+abe: Fertigteile oder Sonstiges"
 
 ```
