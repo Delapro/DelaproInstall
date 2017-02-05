@@ -4,7 +4,9 @@ Powershell Installationsscript um Delapro ab Windows Vista bis Windows 10 zu ins
 
 Befehle, wenn man [Delapro Administrationsscript](https://easysoftware.de/ps) Cmdlets verwendet:
 
-## Powershell auf Version 4 oder aktueller aktualisieren
+## Vorbereitende Maßnahmen für Windows Vista und Windows 7
+
+### Powershell auf Version 4 oder aktueller aktualisieren
 
 ```Powershell
 # Windows 7 hochbeamen auf aktuellere Powershellversion
@@ -14,7 +16,7 @@ If (Test-NetFramework45Installed) {
 
 ```
 
-## fehlende Cmdlets unter Windows 7 nachreichen
+### fehlende Cmdlets unter Windows 7 nachreichen
 
 ```Powershell
 # Bei Windows 7 fehlende, evtl. benötigte Cmdlets aktivieren
