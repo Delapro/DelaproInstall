@@ -1399,6 +1399,21 @@ Function Show-MAPIProfiles {
 
 }
 
+# Öffnet den Ordner mit den Verknüpfungen zu den Autostarteintragungen
+Function Show-StartupFolder {
+	[CmdletBinding()]
+	Param(
+		[Switch]$AllUsers
+	)
+
+	If ($AllUsers) {
+		Start-Process "shell:common startup"
+	} else {
+		Start-Process "shell:startup"		
+	}
+
+}
+
 # ermittelt die vorhandenen Antimalware-Programme
 Function Get-AntiMalware {
 	[CmdletBinding()]
@@ -1626,7 +1641,7 @@ Function Invoke-CleanupDelapro {
 	              "BTX_UEBE.BAT",
 	              "COMPILE.BAT"
 	             )
-	$toRemove | % {Remove-Item "$($DelaproPath)\$_" -ErrorAction SilentlyContinue}
+	$toRemove | ForEach-Object {Remove-Item "$($DelaproPath)\$_" -ErrorAction SilentlyContinue}
 	
 	# Export-KZBV-Temp und PDF-Temp-Verzeichnis löschen
 	# COPY-Verzeichnis aufräumen, vor allem auch bei LL-Versionen
@@ -1636,6 +1651,9 @@ Function Invoke-CleanupDelapro {
 	
 	#Dir *.TBK | group LastWriteTime
 	Remove-Item "$($DelaproPath)\*.TBK"
+	
+	# alte Backupdateien löschen
+	Remove-Item "$($DelaproPath)\*.PDB"
 	
 	#dir cm??17*.*
 	Remove-Item "$($DelaproPath)\cm??17*.DLL"
