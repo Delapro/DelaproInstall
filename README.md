@@ -133,11 +133,11 @@ Set-DlpUi -Reset
 
 ```Powershell
 # Prüfen, ob noch "Fertigteile" anstatt Platzhalterfunktion verwendet wird
-If (Test-FormulareFertigteile) {
+If (Test-FormulareFertigteile -DelaproPath $DlpPath -Verbose) {
     # FORMPREI.TXT aktualisieren
-    Set-FormulareFertigteileVariable
+    Set-FormulareFertigteileVariable -DelaproPath $DlpPath -Verbose
     # Text für Fertigteile anzeigen
-    Get-FertigteileText
+    Get-FertigteileText -DelaproPath $DlpPath
 }
 Set-Location $DlpPath
 # Text für Fertigteile setzen, falls noch nicht vorhanden:
