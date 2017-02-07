@@ -1815,6 +1815,10 @@ Control System
 
 Install-MissingPowershellCmdLets
 
+# ab hier beginnen die eigentlichen Installationsroutinen
+Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -CreateDesktopLink "easy Internet Fernwartung (Teamviewer).lnk"
+
+# Druckertreiber Installation
 Start-BitsTransfer $easyBaseURI/Demo/dlpsetup.exe $DlpInstPath
 Unblock-File "$($DLPInstPath)dlpsetup.exe"
 
@@ -1827,10 +1831,12 @@ Start-Process -Wait "C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDoc
 # durch Aufruf von eDocPrintProUtil.EXE sind zwei Druckertreiber vorhanden, deshalb den Standard eDocPrintPro löschen
 Remove-Printer -Name eDocPrintPro
 
+Install-DelaproMailerPrinter
+Show-Printers
+
 Disable-Windows10DefaultPrinterRoaming
 
-Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -CreateDesktopLink "easy Internet Fernwartung (Teamviewer).lnk"
-
+# eigentliche Delaproinstallation
 Install-DelaproHauptmodul -TempDirectory $DLPInstPath -DelaproPath $DlpPath 
 
 Install-DelaproBildarchivierungModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI
@@ -1845,10 +1851,6 @@ Install-DelaproPreisupdate -TempDirectory $DLPInstPath -DownloadUrl $easyBaseURI
 
 # Für Neuinstallation BEL2014.LOG anlegen, damit ein spezieller Hinweis erfolgt, falls diese nochmals eingespielt werden sollte
 "Neuinstallation" | Set-Content  "$($DlpPath)\BEL2014.LOG"
-
-Install-DelaproMailerPrinter
-
-Show-Printers
 
 Install-AcrobatDC -TempDirectory $DLPInstPath
 
