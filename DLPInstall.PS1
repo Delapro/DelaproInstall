@@ -1815,6 +1815,8 @@ Control System
 
 Install-MissingPowershellCmdLets
 
+New-Item $DlpPath -ItemType Directory
+
 # ab hier beginnen die eigentlichen Installationsroutinen
 Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -CreateDesktopLink "easy Internet Fernwartung (Teamviewer).lnk"
 
