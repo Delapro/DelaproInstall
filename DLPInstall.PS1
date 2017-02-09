@@ -539,6 +539,65 @@ Function Install-Ghostscript {
 	Start-Process -Wait $ghostcall -ArgumentList "/S"
 }
 
+# konvertiert eine PDF-Datei in eine BMP-Datei
+Function Convert-PDF {
+	[CmdletBinding()]
+	Param(
+		[parameter(Mandatory=$true)]
+		[String]$PDFFile,
+		[String]$OutFile=(& {$PDFfi=[System.IO.FileInfo](Convert-Path $PDFFile);"$($Env:Temp)\$($PDFfi.Name.Replace($PDFfi.Extension,".BMP"))"}),
+		[String]$GhostScriptBasePath=(& {$gs=Get-GhostScript; If ($gs) {$gs=$gs[0].Fullname}; $gs}),
+		[Switch]$Show,
+		[Switch]$ShowDir,
+		[String[]]$OptArgs
+	)
+
+	$PDFFile = Resolve-Path $PDFFile
+	Write-Verbose "PDF: $PDFFile"
+	Write-Verbose "Out: $OutFile"
+
+	If ($GhostScriptBasePath) {
+		$gsPath = join-Path (Join-Path $GhostScriptBasePath "Bin") ""
+		If (Test-Path "$($gsPath)gswin64c.exe") {
+			$gsPath = "$($gsPath)gswin64c.exe"
+		} else {
+			"$($gsPath)gswin32c.exe"
+		}
+		Write-Verbose "GsPath: $gsPath"
+		If (Test-Path $gsPath) {
+			$arg = @("-sOutputFile=""$OutFile""",
+					 "-sDEVICE=bmp16m",
+					 "-dNOPAUSE",
+					 "-dTextAlphaBits=4",
+					 "-dGraphicsAlphaBits=4",
+					 "-dLastPage=1",
+					 "-r300",
+					 "-g2480x3508",
+					 "-dBATCH"
+					 )
+		    If ($OptArgs) {
+				$arg += $OptArgs
+			}
+			# wichtig, die PDF-Datei darf erst am Schluss kommen!
+			$arg += """$Pdffile"""
+
+			Write-Host """$gsPath"" $arg"
+			Start-Process -Wait -FilePath $gsPath -ArgumentList $arg -NoNewWindow
+			If ($Show) {
+				Start-Process $OutFile
+			}
+			If ($ShowDir) {
+				throw {"To be implemented!"}
+			}
+
+		} else {
+			Write-Error "Ghostscript-EXE nicht gefunden!"
+		}
+	} else {
+		Write-Error "Ghostscript-Verzeichnis nicht gefunden!"
+	}
+}
+
 # installiert eDocPrintPro
 Function Install-eDocPrintPro {
 	[CmdletBinding()]
