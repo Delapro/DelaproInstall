@@ -561,7 +561,7 @@ Function Convert-PDF {
 		If (Test-Path "$($gsPath)gswin64c.exe") {
 			$gsPath = "$($gsPath)gswin64c.exe"
 		} else {
-			"$($gsPath)gswin32c.exe"
+			$gsPath = "$($gsPath)gswin32c.exe"
 		}
 		Write-Verbose "GsPath: $gsPath"
 		If (Test-Path $gsPath) {
