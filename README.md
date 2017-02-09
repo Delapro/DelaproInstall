@@ -149,6 +149,15 @@ abe: Fertigteile oder Sonstiges"
 
 ```
 
+## PDF-Dateien
+
+### Briefpapier einbinden
+
+```Powershell
+# koonvertieren einer PDF-Datei in eine BMP-Datei
+Convert-PDF -PDFFile "$DLPPath\Laser\Briefkopf.pdf" -Verbose
+```
+
 ## Delapro Autostart einrichten
 
 ```Powershell
