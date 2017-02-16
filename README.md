@@ -154,7 +154,7 @@ abe: Fertigteile oder Sonstiges"
 ### Briefpapier einbinden
 
 ```Powershell
-# koonvertieren einer PDF-Datei in eine BMP-Datei
+# konvertieren einer PDF-Datei in eine BMP-Datei
 Convert-PDF -PDFFile "$DLPPath\Laser\Briefkopf.pdf" -Verbose
 ```
 
