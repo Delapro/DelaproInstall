@@ -1,6 +1,11 @@
 # wegen Win10 v1607 Edge.Problemen:
 # (Invoke-WebRequest -UseBasicParsing -Uri https://raw.githubusercontent.com/Delapro/DelaproInstall/master/DLPInstall.PS1).Content.Replace(""+[char]10,[char]13+[char]10)| Set-Clipboard; Notepad.EXE
 
+# Prüfen, ob FullLanguage Mode aktiv ist
+If (-Not ($ExecutionContext.SessionState.LanguageMode -eq "FullLanguage")) {
+	throw "Es ist zwingend der FullLanguage-Modus erforderlich!"
+}
+
 # Verzeichnis für temporäre und Installationsdateien
 $DlpInstPath = "C:\Temp\DelaproInstall\"
 # Installationsverzeichnis fürs Abrechnungsprogramm
