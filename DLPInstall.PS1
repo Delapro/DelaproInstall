@@ -189,7 +189,7 @@ Function New-FileShortcut {
 }
 
 # druckt eine Windowstestseite vom angegebenen Drucker
-Function Test-Printer {
+Function Invoke-PrinterTestPage {
 	[CmdletBinding()]
 	Param(
         [Parameter(ParameterSetName='name', Position=0)]
