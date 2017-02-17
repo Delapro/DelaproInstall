@@ -92,6 +92,8 @@ Invoke-CleanupDelapro -Verbose
 
 ## Update einspielen
 
+Dieses Beispiel funktioniert nur mit manuellen Updates, wo in C:\TEMP\ die Datei EXES.EXE abgelegt wurde.
+
 ```Powershell
 If (-Not (Test-Path "$($DlpPath)\Update")) {
     New-Item "$($DlpPath)\Update" -Type Directory
