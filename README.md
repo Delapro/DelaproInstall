@@ -10,8 +10,10 @@ Befehle, wenn man [Delapro Administrationsscript](https://easysoftware.de/ps) Cm
 
 ```Powershell
 # Windows 7 hochbeamen auf aktuellere Powershellversion
-If (Test-NetFramework45Installed) {
-    Install-Powershell
+If ($PSVersionTable.PSVersion.Major -lt 4) {
+    If (Test-NetFramework45Installed) {
+        Install-Powershell
+    }
 }
 
 ```
