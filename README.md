@@ -1,6 +1,11 @@
 # DelaproInstall
 
-Powershell Installationsscript um Delapro ab Windows Vista bis Windows 10 zu installieren.
+Powershell Installationsscript um Delapro ab Windows 7 bis Windows 10 zu installieren.
+
+> **Hinweis zu Windows Vista**
+>
+> Da der Microsoft Support für Windows Vista abgelaufen ist, wird Windows Vista von uns auch nicht mehr unterstützt.
+> Gleichwohl sind viele Funktionen und Vorgehensweisen noch für Windows Vista aktuell. Man kann die Installation für Windows Vista noch durchführen, wenn man im einen oder anderen Fall manuell nachhilft, bzw. auf einen etwas älteren Versionsstand der Scripte zurückgreift.
 
 Befehle, wenn man [Delapro Administrationsscript](https://easysoftware.de/ps) Cmdlets verwendet:
 
