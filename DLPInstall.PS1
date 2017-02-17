@@ -1478,6 +1478,24 @@ Function Show-MAPIProfiles {
 
 }
 
+# Zeigt ein bestimmtes Verzeichnis im Explorer an, bei Angabe von -Filename wird
+# die übergebene Datei gleich selektiert
+Function Show-Folder {
+	[CmdletBinding()]
+	Param(
+        [Parameter(ParameterSetName='Folder', Position=0)]
+		[System.String]$Foldername,
+        [Parameter(ParameterSetName='File', Position=0)]
+		[System.String]$Filename
+	)
+
+	If ($Foldername) {
+		Start-Process "Explorer.exe" -ArgumentList "/e,""$Foldername"""
+	} else {
+		Start-Process "Explorer.exe" -ArgumentList "/select,""$Filename"""
+	}
+}
+
 # Öffnet den Ordner mit den Verknüpfungen zu den Autostarteintragungen
 Function Show-StartupFolder {
 	[CmdletBinding()]
