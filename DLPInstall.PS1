@@ -1510,7 +1510,8 @@ Function Get-StartupFolder {
 	If (-Not ($Folder)) {
 		# es gibt Situationen da existiert das Verzeichnis nicht, also das Anlegen
 		# erzwingen
-		$Startup = (New-Object -ComObject Shell.Application).Namespace(0x07)
+		$ssfSTARTUP = 0x07   # siehe auch ShellSpecialFolderConstants unter https://msdn.microsoft.com/en-us/library/windows/desktop/bb774096(v=vs.85).aspx
+		$Startup = (New-Object -ComObject Shell.Application).Namespace($ssfSTARTUP)
 		$folder = Get-StartupFolder -Recursive $AllUsers
 	}
 
