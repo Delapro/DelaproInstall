@@ -1202,6 +1202,7 @@ Function New-PrinterPort {
 	$PrinterPorts = 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Ports'
 	
 	Set-ItemProperty $PrinterPorts -Name $Portname -Force
+	Write-Verbose "$($PrinterPorts)$Portname angelegt"
 	# wie geht Set-ItemProperty mit Reg_SZ?
 	Restart-Service Spooler -Force
 }
@@ -1234,7 +1235,9 @@ Function Install-DelaproMailerPrinter {
 
 	# DelaproMailer-Port anlegen:
 	Write-Verbose "Lege $Portname an"
-	New-PrinterPort -Portname $PortName
+	If (-Not (Test-PrinterPort -Portname $Portname)) {
+		New-PrinterPort -Portname $PortName
+	}
 	
 	If (-Not (Test-Path $DelaproPath\Export\PDF\Temp)) {
 		Write-Verbose "Lege Tempverzeichnis für Export an $DelaproPath\Export\PDF\Temp"
