@@ -1175,6 +1175,22 @@ Function Update-DlpRawPr {
 	}
 }
 
+# prüft, ob ein Printerport mit dem angegebenen Namen vorhanden ist
+Function Test-PrinterPort {
+	[CmdletBinding()]
+	Param(
+		[System.String]$Portname
+	)
+
+	$PrinterPorts = 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Ports'
+	If ((Get-ItemProperty $PrinterPorts -Name "$Portname" -ErrorAction SilentlyContinue).$Portname -eq $null) {
+		$false
+	} else {
+		$true
+	}
+
+}
+
 # legt einen neuen Printerport an
 Function New-PrinterPort {
 	[CmdletBinding()]
@@ -1183,14 +1199,10 @@ Function New-PrinterPort {
 		[System.String]$Portname
 	)
 	
-	# New-Item 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader\DC\AdobeViewer' -Force
-	# If ((Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader\DC\AdobeViewer' -Name EULA).EULA -eq 0) {
-	#		Set-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader\DC\AdobeViewer' -Name EULA -Value 1
-	# }
+	$PrinterPorts = 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Ports'
 	
-	reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Ports" /v "$Portname" /t reg_sz /f
-	# net stop spooler
-	# net start spooler
+	Set-ItemProperty $PrinterPorts -Name $Portname -Force
+	# wie geht Set-ItemProperty mit Reg_SZ?
 	Restart-Service Spooler -Force
 }
 
