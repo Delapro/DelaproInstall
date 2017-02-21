@@ -1201,7 +1201,7 @@ Function New-PrinterPort {
 	
 	$PrinterPorts = 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Ports'
 	
-	Set-ItemProperty $PrinterPorts -Name $Portname -Force
+	Set-ItemProperty $PrinterPorts -Name $Portname -Value "" -Force
 	Write-Verbose "$($PrinterPorts)$Portname angelegt"
 	# wie geht Set-ItemProperty mit Reg_SZ?
 	Restart-Service Spooler -Force

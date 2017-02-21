@@ -77,6 +77,10 @@ Update-DelaproGhostscript -Verbose
 # DelaproMailer-Druckertreiber installieren
 Install-DelaproMailerPrinter -Verbose
 
+# evtl. bei Win10, wegen kaputtem Microsoft PS Standardtreiber (fehlende Ränder)
+Add-PrinterDriver -Name "Xerox PS Color Class Driver V1.1"
+Set-Printer -Name "DelaproMail" -Drivername "Xerox PS Color Class Driver V1.1"
+
 ```
 
 ## Importieren einer Delapro-Datensicherung
