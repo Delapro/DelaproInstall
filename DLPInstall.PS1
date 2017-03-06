@@ -1376,9 +1376,30 @@ Function Compare-TextFiles {
 Function Get-WindowsUptime {
 	[CmdletBinding()]
 	Param(
-
+		# Parameter ermittelt die Zeiten wo tatsächlich der Rechner aktiv und nicht im Standby war
+		[Switch]$CalculateRealUsage
 	)
-	(Get-Date) - (Get-CimInstance -ClassName Win32_OperatingSystem | Select-Object -ExpandProperty LastBootUpTime)
+
+	$usage = (Get-Date) - (Get-CimInstance -ClassName Win32_OperatingSystem | Select-Object -ExpandProperty LastBootUpTime)
+
+	If ($CalculateRealUsage) {
+		# Standbymodus in Englisch "*low power*"
+		$events = Get-EventLog -Logname system -InstanceId 1 -After ((Get-Date).Subtract($usage)) | Where-Object Message -Like '*Standbymodus*'
+		$lastevent = $events.count -1
+		If ($events) {
+			$usetime = Get-Date - [datetime]$events[0].ReplacementStrings[1]
+			for ($i; $i -lt $lastevent; $i++) {
+				$sleep = [datetime]$events[$i].ReplacementStrings[0]
+				$wake = [datetime]$events[$i].ReplacementStrings[1]
+				$usetime += $sleep - $wake
+			}
+			$usetime
+		} else {
+			$usage
+		}
+	} else {
+		$usage
+	}
 }
 
 # Aktiviert "System Protection" bzw. "Computer Schutz", um bei Problemen mittels Systemwiederherstellung auf einen alten
