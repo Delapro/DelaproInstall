@@ -1372,6 +1372,15 @@ Function Compare-TextFiles {
 	Compare-Object -ReferenceObject (Get-Content $ReferenceFile) -DifferenceObject (Get-Content $DiffFile)
 }
 
+# ermittelt wie lange Windows bereits läuft
+Function Get-WindowsUptime {
+	[CmdletBinding()]
+	Param(
+
+	)
+	(Get-Date) - (Get-CimInstance -ClassName Win32_OperatingSystem | Select-Object -ExpandProperty LastBootUpTime)
+}
+
 # Aktiviert "System Protection" bzw. "Computer Schutz", um bei Problemen mittels Systemwiederherstellung auf einen alten
 # Zeitpunkt zurückzukehren
 # ab Powershell 3.0 aufwärts unter dem Namen Enable-ComputerRestore verfügbar
