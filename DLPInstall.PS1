@@ -1387,8 +1387,8 @@ Function Get-WindowsUptime {
 		$events = Get-EventLog -Logname system -InstanceId 1 -After ((Get-Date).Subtract($usage)) | Where-Object Message -Like '*Standbymodus*'
 		$lastevent = $events.count -1
 		If ($events) {
-			$usetime = Get-Date - [datetime]$events[0].ReplacementStrings[1]
-			for ($i; $i -lt $lastevent; $i++) {
+			$usetime = (Get-Date) - [datetime]$events[0].ReplacementStrings[1]
+			for ($i=0; $i -lt $lastevent; $i++) {
 				$sleep = [datetime]$events[$i].ReplacementStrings[0]
 				$wake = [datetime]$events[$i].ReplacementStrings[1]
 				$usetime += $sleep - $wake
