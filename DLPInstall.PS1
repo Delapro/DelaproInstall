@@ -777,7 +777,7 @@ Function Install-Thunderbird {
 		Write-Verbose "Download $tbVersion, Dateiname: $Filename"
 		$urlFilename = [uri]::EscapeUriString($Filename)
 		Start-BitsTransfer https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/$UrlFilename -Destination $tempDirectory
-		$Filename = Join-Path -path "$($tempDirectory)" -ChildPath $Filename
+		$Filename = Join-Path -path "$($tempDirectory)" -ChildPath $urlFilename
 		Write-Verbose "Installiere $Filename"
 		Start-Process -Wait $Filename -ArgumentList "/S"
 	}
