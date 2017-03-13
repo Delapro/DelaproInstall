@@ -773,8 +773,13 @@ Function Install-Thunderbird {
 		# Infos zur aktuellen Version: https://www.mozilla.org/en-US/thunderbird/notes/
 		$tbVersion = "45.8.0"
 		#Start-BitsTransfer http://download.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe
-		Start-BitsTransfer https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe -Destination $tempDirectory
-		Start-Process -Wait .\Thunderbird%20Setup%20$tbVersion.exe /S
+		$Filename = "Thunderbird Setup $tbVersion.exe"
+		Write-Verbose "Download $tbVersion, Dateiname: $Filename"
+		$urlFilename = [uri]::EscapeUriString($Filename)
+		Start-BitsTransfer https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/$UrlFilename -Destination $tempDirectory
+		$Filename = Join-Path -path "$($tempDirectory)" -ChildPath $Filename
+		Write-Verbose "Installiere $Filename"
+		Start-Process -Wait $Filename -ArgumentList "/S"
 	}
 	
 }
