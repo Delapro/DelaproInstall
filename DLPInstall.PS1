@@ -1188,7 +1188,7 @@ Function Get-EventLogApplicationErrors {
 Function Get-StartDateTimeFromEvent {
 	[CmdletBinding()]
 	Param(
-		[EventLogRecord]$e
+		[System.Diagnostics.Eventing.Reader.EventLogRecord]$e
 	)
 	If ($e.ID -eq 1000) {
 		$ed = $e.properties[9]
