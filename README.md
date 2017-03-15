@@ -205,3 +205,15 @@ Install-AcrobatDC
 ```Powershell
 Install-LibreOffice
 ```
+
+## Probleme ermitteln
+
+### Abstürzende Programme ausfindig machen
+
+```Powershell
+# alle verfügbaren Probleme ermitteln
+Get-EventLogApplicationError
+
+# Beachtung der Startzeit
+Get-EventLogApplicationError | Select TimeCreated, ID, @{N="Startzeit";E={Get-StartDateTimeFromEvent $_ }}, @{N="Laufzeit";E={$_.TimeCreated - (Get-StartDateTimeFromEvent $_) }} Message | ft * -Autosize
+```
