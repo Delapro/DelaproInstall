@@ -1191,7 +1191,7 @@ Function Get-StartDateTimeFromEvent {
 		[System.Diagnostics.Eventing.Reader.EventLogRecord]$e
 	)
 	If ($e.ID -eq 1000) {
-		$ed = $e.properties[9]
+		$ed = $e.properties[9].value
 		[datetime]::FromFileTime("0x$ed")
 	}
 }
