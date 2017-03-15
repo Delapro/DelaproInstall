@@ -212,8 +212,8 @@ Install-LibreOffice
 
 ```Powershell
 # alle verfügbaren Probleme ermitteln
-Get-EventLogApplicationError
+Get-EventLogApplicationErrors
 
 # Beachtung der Startzeit
-Get-EventLogApplicationError | Select TimeCreated, ID, @{N="Startzeit";E={Get-StartDateTimeFromEvent $_ }}, @{N="Laufzeit";E={$_.TimeCreated - (Get-StartDateTimeFromEvent $_) }} Message | ft * -Autosize
+Get-EventLogApplicationErrors | Select TimeCreated, ID, @{N="Startzeit";E={Get-StartDateTimeFromEvent $_ }}, @{N="Laufzeit";E={$_.TimeCreated - (Get-StartDateTimeFromEvent $_) }}, Message | ft * -Autosize
 ```
