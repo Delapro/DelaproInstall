@@ -1182,6 +1182,7 @@ Function Update-DlpRawPr {
 
 # ermittelt alle fehlerhaften Anwendungen
 Function Get-EventLogApplicationErrors {
+	# TODO: Vorsicht wegen fehlender Events: https://social.technet.microsoft.com/Forums/office/en-US/fecefcfa-d885-4996-a6bd-f5961d739120/event-log-entries-missing-in-posh-but-visible-in-eventvwr?forum=winserverpowershell
 	Get-WinEvent -Providername "Application Error"
 }
 
