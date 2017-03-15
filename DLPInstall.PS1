@@ -1180,6 +1180,22 @@ Function Update-DlpRawPr {
 	}
 }
 
+# ermittelt alle fehlerhaften Anwendungen
+Function Get-EventLogApplicationErrors {
+	Get-WinEvent -Providername "Application Error"
+}
+
+Function Get-StartDateTimeFromEvent {
+	[CmdletBinding()]
+	Param(
+		[EventLogRecord]$e
+	)
+	If ($e.ID -eq 1000) {
+		$ed = $e.properties[9]
+		[datetime]::FromFileTime("0x$ed")
+	}
+}
+
 # prüft, ob ein Printerport mit dem angegebenen Namen vorhanden ist
 Function Test-PrinterPort {
 	[CmdletBinding()]
