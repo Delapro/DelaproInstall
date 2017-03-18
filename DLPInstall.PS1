@@ -632,6 +632,7 @@ Function Install-eDocPrintPro {
 
 	# Unterverzeichnis anlegen, um entpackte Dateien aus ZIP-Archiven reinzulegen
 	New-Item $eDocPrintProDir -Type Directory
+	New-Item "$($eDocPrintProDir)eDocPrintPro" -Type Directory
 	
 	#
 	## Download direkt von PDFPrinter.at
