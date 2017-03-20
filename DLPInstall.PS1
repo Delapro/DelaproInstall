@@ -709,6 +709,43 @@ Function Install-eDocPrintPro {
 
 }
 
+# Gibt zu einer IPv4-Adresse die zugehörige IPv6-Adresse und umgekehrt zurück
+Function Convert-IPAddress {
+	[CmdletBinding()]
+	Param(
+		[IPAddress]$IPAdresse
+	)
+
+	Write-Verbose "Suche Gegenstück zu '$IPAdresse'"
+	$neighbors = Get-NetNeighbor
+
+	# nur IP-Adressen mit MAC-Eintragungen beachten
+	$nIPs = $neighbors |Where-Object LinkLayerAddress -ne "" | Sort-Object LinkLayerAddress
+
+	# MAC-Adresse zur gesuchten IP-Adresse ermitteln
+	$MAC = $nIPs | Where-Object IpAddress -eq $IPAdresse.IPAddressToString 
+	Write-Verbose "erkannte MAC-Adresse: $($Mac.LinkLayerAddress)"
+
+	# alle IP-Adressen zur MAC holen: 
+	$result = $nIPs | Where-Object LinkLayerAddress -eq $MAC.LinkLayerAddress
+
+	# angefragte IP-Adresse aus Ergebnismenge entfernen
+	$result = $result | Where-Object IpAddress -ne $IPAdresse.IPAddressToString
+
+	If ($IPAdresse.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetworkV6) {
+			Write-Verbose "von IPv6 nach IPv4, also nur IPv4 zurückgeben "
+			$result = $result | Where-Object {([IPAddress]$_.IPAddress).AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetwork}
+			($result).IpAddress
+	} elseif ($IPAdresse.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetwork) {
+			Write-Verbose "von IPv4 nach IPv6, also nur IPv6 zurückgeben "
+			$result = $result | Where-Object {([IPAddress]$_.IPAddress).AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetworkV6}
+			($result).IpAddress
+	} else {
+		Write-Error "unbekannte Adressestruktur"
+  	}  
+
+}
+
 # Installation von AcrobatDC
 Function Install-AcrobatDC {
 	[CmdletBinding()]
