@@ -40,6 +40,7 @@ Update-Backup -Verbose
 Backup-Delapro -Verbose
 # Druckertreiber aktualisieren
 Update-DlpWinPr -Verbose
+Update-DlpRawPr -Verbose
 
 ```
 
