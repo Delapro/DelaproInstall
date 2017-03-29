@@ -169,7 +169,12 @@ abe: Fertigteile oder Sonstiges"
 
 ```Powershell
 # konvertieren einer PDF-Datei in eine BMP-Datei
-Convert-PDF -PDFFile "$DLPPath\Laser\Briefkopf.pdf" -Verbose
+$pdf = "$DLPPath\Laser\Briefkopf.pdf"
+$bmp = $pdf.Replace(".pdf", ".bmp")
+Convert-PDF -PDFFile $pdf -OutFile $bmp -Verbose
+# Falls man noch was ändern müsste, oder einfach zum Anschauen
+Start-Process $bmp -Verb Edit
+
 ```
 
 ## Delapro Autostart einrichten
