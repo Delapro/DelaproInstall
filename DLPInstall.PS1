@@ -1338,12 +1338,13 @@ Function Install-DelaproMailerPrinter {
 						"10.0.10240" {$driverID = "1233c058c621b357"}
 						"10.0.10586" {$driverID = "a3895815234f1110"}
 						"10.0.14393" {$driverID = "05a177376e5c60f5"}
+						"10.0.15063" {$driverID = "9265cc492d241846"}
 					}
 				}
 
 				If (-Not ($driverID)) {
 					Write-Verbose "Microsoft Postscriptdruckertreiber wird ermittelt"
-					$driver = Get-InstalledWindowsPrinterDriver -Vendor Microsoft -Driver "Microsoft PS Class Driver"
+					$driver = Get-InstalledWindowsPrinterDriver -Vendor Microsoft -Driver $driverName
 					Write-Verbose "$(($driver).OriginalFilename)"
 					$driverInf = ($driver[0]).OriginalFilename
 				} else {
