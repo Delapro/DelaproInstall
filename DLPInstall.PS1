@@ -355,10 +355,16 @@ Function Import-OldDLPVersion {
 		Copy-Item -Path "$SourcePath\Image" "$($DestinationPath)" -Force -Verbose -Recurse
 	}
 
+	Write-Verbose "Bilder vorhanden?"
+	If (Test-Path "$SourcePath\Bilder") {
+		Copy-Item -Path "$SourcePath\Bilder" "$($DestinationPath)" -Force -Verbose -Recurse
+	}
+
 	Write-Verbose "Zertifikatmodul vorhanden?"
 	If (Test-Path "$SourcePath\Zert") {
 		Copy-Item -Path "$SourcePath\Zert" "$($DestinationPath)" -Force -Verbose -Recurse
 	}
+
 	# TODO: Zeiterfassung
 }
 
@@ -2057,6 +2063,7 @@ Install-Chrome -TempDirectory $DLPInstPath
 Import-LastDelaproBackup -TempPath "$($DLPInstPath)AlteDatensicherung" -DestinationPath "$($DLPPath)"
 # zum Direkt einspielen
 # Import-OldDLPVersion -SourcePath G: -DestinationPath "$($DLPPath)"
+# Import-OldDLPVersion -SourcePath C:\DelaproAlt -DestinationPath "$($DLPPath)"
 
 Invoke-CleanupDelapro -DelaproPath $DLPPath
 
