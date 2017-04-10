@@ -125,7 +125,7 @@ Set-Location ..
 
 ```Powershell
 $dc = Get-AcrobatReaderDCExe
-Set-AcrobatReaderDCViewerPaneOff -AcrobatReaderDCExe $dc
+Set-AcrobatReaderDCViewerRightPaneOff -AcrobatReaderDCExe $dc
 
 ```
 
