@@ -2025,6 +2025,7 @@ Install-eDocPrintPro -tempPath "$($DLPInstPath)"
 # abklären, ob die Util-Methode besser ist anstatt Rename:
 # C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDocPrintProUtil.EXE /AddPrinter /Printer="DelaproPDF" /Driver="eDocPrintPro" /Silent
 Start-Process -Wait "C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDocPrintProUtil.EXE" -ArgumentList "/AddPrinter", '/Printer="DelaproPDF"', '/Driver="eDocPrintPro"', "/Silent"
+# WENN der Aufruf hier hängen bleibt, dann liegt es an fehlenden LOKALEN Adminrechten!!
 # Rename-Printer -Name eDocPrintPro -NewName DelaproPDF
 # durch Aufruf von eDocPrintProUtil.EXE sind zwei Druckertreiber vorhanden, deshalb den Standard eDocPrintPro löschen
 Remove-Printer -Name eDocPrintPro
