@@ -90,7 +90,8 @@ Set-Printer -Name "DelaproMail" -Drivername "Xerox PS Color Class Driver V1.1"
 # durchsucht die vorhandenen Laufwerke nach einer Datensicherung und spielt diese ein
 Import-LastDelaproBackup -Verbose
 # zum Direkt einspielen
-# Import-OldDLPVersion -SourcePath G: -DestinationPath "$($DLPPath)"
+# Import-OldDLPVersion -SourcePath G:\Delapro\ -DestinationPath "$($DLPPath)"
+# Invoke-CleanupDelapro -Verbose
 
 ```
 
