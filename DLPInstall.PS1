@@ -1118,11 +1118,16 @@ Function Backup-Delapro {
 	#[OutputType([System.Boolean])]
 	Param(
 		[System.String]$DelaproPath="C:\Delapro",
-		[System.String]$BackupPath="C:\Temp\DelaproSicherung"
+		[System.String]$BackupPath="C:\Temp\DelaproSicherung",
+		[Switch]$IgnoreBilder
 	)
 	
 	Write-Verbose "Sichere $DelaproPath nach $BackupPath"
-	Start-Process -Wait (Join-Path -Path $($DelaproPath) -ChildPath "Backup\easyBackup32.EXE") -ArgumentList @("*.*", "/S", "/V", "/AUTO", $BackupPath) -WorkingDirectory $DelaproPath
+	$Argumente = @("*.*", "/S", "/V", "/AUTO", $BackupPath)
+	If ($IgnoreBilder) {
+		$Argumente += "/IB"
+	}
+	Start-Process -Wait (Join-Path -Path $($DelaproPath) -ChildPath "Backup\easyBackup32.EXE") -ArgumentList $Argumente -WorkingDirectory $DelaproPath
 }
 
 # aktualisiert easyBackup32, wenn die Version älter ist, als die Version auf www.easysoftware.de/util
