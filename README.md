@@ -156,11 +156,9 @@ If (Test-FormulareFertigteile -DelaproPath $DlpPath -Verbose) {
 }
 Set-Location $DlpPath
 # Text für Fertigteile setzen, falls noch nicht vorhanden:
-.\dlp_conf /INISETIFNOTSET DLP_MAIN.INI Formulare FertigteileText "  Sonstiges" "Text für 4. Preiszeile, Vorg
-abe: Fertigteile oder Sonstiges"
+.\dlp_conf /INISETIFNOTSET DLP_MAIN.INI Formulare FertigteileText "  Sonstiges" "Text für 4. Preiszeile, Vorgabe: Fertigteile oder Sonstiges"
 # zum Forcieren eines Text, kann man dies verwenden
-# .\dlp_conf /INISET DLP_MAIN.INI Formulare FertigteileText "  Sonstiges" "Text für 4. Preiszeile, Vorg
-abe: Fertigteile oder Sonstiges"
+# .\dlp_conf /INISET DLP_MAIN.INI Formulare FertigteileText "  Sonstiges" "Text für 4. Preiszeile, Vorgabe: Fertigteile oder Sonstiges"
 
 ```
 
