@@ -1695,7 +1695,15 @@ Function Set-DefenderPreferences {
 
 Function Show-Defender {
 	# Windows Defender:
-	Control.exe /Name Microsoft.WindowsDefender
+
+	If (Test-Windows10 -and ((Get-WmiObject Win32_OperatingSystem).Version -eq "10.0.15063")) {
+		# Windows Defender muss anders aufgerufen werden
+		# der Aufruf dauert aber ewig!
+		"Bitte warten, Aufruf dauert ein paar Sekunden..."
+		& "C:\Program Files\Windows Defender\MSASCui.exe"
+	} else {
+		Control.exe /Name Microsoft.WindowsDefender
+	}
 }
 
 Function Invoke-DefenderSetupAndScan {
