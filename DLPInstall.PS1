@@ -815,7 +815,7 @@ Function Install-Thunderbird {
 	If (-not (Test-Thunderbird)) {
 		#$tbVersion = "38.7.1"
 		# Infos zur aktuellen Version: https://www.mozilla.org/en-US/thunderbird/notes/
-		$tbVersion = "52.0"
+		$tbVersion = "52.1.1"
 		#Start-BitsTransfer http://download.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe
 		$Filename = "Thunderbird Setup $tbVersion.exe"
 		Write-Verbose "Download $tbVersion, Dateiname: $Filename"
@@ -839,7 +839,7 @@ Function Install-LibreOffice {
 	If (-not (Test-LibreOffice)) {
 		# Infos zur aktuellen Version: https://de.libreoffice.org/download/release-notes/
 		# Installationsparameter: https://wiki.documentfoundation.org/Deployment_and_Migration
-		$loVersion = "5.3.0"
+		$loVersion = "5.3.3"
 		$url = "http://download.documentfoundation.org/libreoffice/stable/$loVersion/win/x86/LibreOffice_$($loVersion)_Win_x86.msi"
 		Write-Verbose "Download von $url"
 		Start-BitsTransfer $url -Destination $tempDirectory
