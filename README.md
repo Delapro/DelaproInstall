@@ -35,12 +35,12 @@ Install-MissingPowershellCmdlets
 
 ```Powershell
 # Backup aktualisieren
-Update-Backup -Verbose
+Update-Backup -DelaproPath $DLPPath -Verbose
 # Sicherung des aktuellen Programms durchführen
-Backup-Delapro -Verbose
+Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -Verbose
 # Druckertreiber aktualisieren
-Update-DlpWinPr -Verbose
-Update-DlpRawPr -Verbose
+Update-DlpWinPr -DelaproPath $DLPPath -Verbose
+Update-DlpRawPr -DelaproPath $DLPPath -Verbose
 
 ```
 
@@ -73,7 +73,7 @@ If ((@("gs9.00", "gs8.63") -contains $gv[0].Name -and $gv.length -eq 1) -or $gv.
 # TODO: GhostPDF.BAT in LASER-Verzeichnis kopieren
 
 # Ghostscript in GhostPDF.BAT korrekt setzen
-Update-DelaproGhostscript -Verbose
+Update-DelaproGhostscript -PathDelaproGhostscript "$($DLPPath)\LASER\GHOSTPDF.BAT" -Verbose
 
 # DelaproMailer-Druckertreiber installieren
 Install-DelaproMailerPrinter -Verbose
