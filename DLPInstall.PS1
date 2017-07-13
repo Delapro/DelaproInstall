@@ -1038,7 +1038,8 @@ Function Install-MissingPowershellCmdLets {
 			Function global:Get-Volume ($Name) {
 				$vol = Get-WMIObject Win32_Volume
 				$vol | Select-Object @{Label="Driveletter";Expression={$_.Driveletter.SubString(0, 1)}},
-				                    @{Label="OperationalStatus";Expression={"OK"}}
+									 @{Label="FileSystemType";Expression={$_.FileSystem}},
+				                     @{Label="OperationalStatus";Expression={If ($_.FileSystem -ne $null) {"OK"} else {""} }}
 			}
 		}
 	}
