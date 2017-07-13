@@ -1031,6 +1031,19 @@ Function Install-MissingPowershellCmdLets {
 		}
 	}
 
+	# Get-Volume geht nur unter Win8 oder höher
+	if (-not (Get-Command Get-Volume -ErrorAction SilentlyContinue)) {
+		# damit die Function verfügbar wird, muss sie mittels & ausgeführt werden und mit dem Scope global: versehen werden
+		&{
+			Function global:Get-Volume ($Name) {
+				$vol = Get-WMIObject Win32_Volume
+				$vol | Select-Object @{Label="Driveletter";Expression={$_.Driveletter.SubString(0, 1)}},
+				                    @{Label="OperationalStatus";Expression={"OK"}}
+			}
+		}
+	}
+
+
 }
 
 # Delapro installieren, muss schon heruntergeladen sein und in $TempDirectory liegen
