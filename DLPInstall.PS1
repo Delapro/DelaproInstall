@@ -995,7 +995,7 @@ Function Install-MissingPowershellCmdLets {
 				$zipfiles = $shell.namespace("$path").items()
 				If (-Not (Test-Path -Path $DestinationPath)) {
 					# Powershell 5.0 legt keine Verzeichnis bei Expand-Archive an
-					#New-Item $DestinationPath -Type Directory
+					New-Item $DestinationPath -Type Directory
 				}
 				$DestinationPath = Resolve-Path $DestinationPath
 				$shell.namespace("$DestinationPath").copyHere($zipfiles, 4) # 4 = don't show progress dialog
