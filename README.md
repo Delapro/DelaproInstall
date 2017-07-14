@@ -187,6 +187,12 @@ Show-StartupFolder
 
 ## Installation von zusätzlichen Programmen
 
+### Teamviewer - easy Quicksupport
+
+```Powershell
+Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -CreateDesktopLink "easy Internet Fernwartung (Teamviewer).lnk"
+```
+
 ### Thunderbird
 
 ```Powershell
