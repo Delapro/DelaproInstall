@@ -711,6 +711,10 @@ Function Install-eDocPrintPro {
 
 	# bei Problemen mit eDocPrintPro, hilft bei neueren Versionen, ab 3.23.4 ein Registry-Eintrag über den eine Log-Funktion aktiviert wird
 	# HKEY_LOCAL_MACHINE\SOFTWARE\MAYComputer\eDocPrintPro\<Drucker-Name> 
+	# Get-ChildItem HKLM:\SOFTWARE\MAYComputer\eDocPrintPro\DelaproPDF
+	# Einrichten:
+	# New-Item "HKLM:\SOFTWARE\MAYComputer\eDocPrintPro\DelaproPDF"
+	# New-ItemProperty "HKLM:\SOFTWARE\MAYComputer\eDocPrintPro\DelaproPDF" -Name "log-path" -Value "C:\temp\edoc.log"
 	# darunter String mit dem Namen "log-path" anlegen
 
 }
