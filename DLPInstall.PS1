@@ -715,6 +715,8 @@ Function Install-eDocPrintPro {
 	# Einrichten:
 	# New-Item "HKLM:\SOFTWARE\MAYComputer\eDocPrintPro\DelaproPDF"
 	# New-ItemProperty "HKLM:\SOFTWARE\MAYComputer\eDocPrintPro\DelaproPDF" -Name "log-path" -Value "C:\temp\edoc.log"
+	# Logging abschalten:
+	# Remove-ItemProperty "HKLM:\SOFTWARE\MAYComputer\eDocPrintPro\DelaproPDF" -Name "log-path"
 	# darunter String mit dem Namen "log-path" anlegen
 
 }
