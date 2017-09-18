@@ -709,16 +709,52 @@ Function Install-eDocPrintPro {
 	# zum Aktivieren der ESF-Datei
 	Start-Process -Wait 'C:\Program Files\Common Files\MAYComputer\eDocPrintPro\ApplyESF.EXE'
 
-	# bei Problemen mit eDocPrintPro, hilft bei neueren Versionen, ab 3.23.4 ein Registry-Eintrag über den eine Log-Funktion aktiviert wird
-	# HKEY_LOCAL_MACHINE\SOFTWARE\MAYComputer\eDocPrintPro\<Drucker-Name> 
-	# Get-ChildItem HKLM:\SOFTWARE\MAYComputer\eDocPrintPro\DelaproPDF
-	# Einrichten:
-	# New-Item "HKLM:\SOFTWARE\MAYComputer\eDocPrintPro\DelaproPDF"
-	# New-ItemProperty "HKLM:\SOFTWARE\MAYComputer\eDocPrintPro\DelaproPDF" -Name "log-path" -Value "C:\temp\edoc.log"
-	# Logging abschalten:
-	# Remove-ItemProperty "HKLM:\SOFTWARE\MAYComputer\eDocPrintPro\DelaproPDF" -Name "log-path"
-	# darunter String mit dem Namen "log-path" anlegen
+}
 
+function Enable-eDocPrintProLogFile {
+	[CmdletBinding()]
+	Param(
+		[System.String]$PrinterName = "DelaproPDF",
+		[System.String]$logPath = "C:\temp\eDocPrintPro-$($PrinterName).LOG"
+	)
+
+	$regPath = "HKLM:\SOFTWARE\MAYComputer\eDocPrintPro\$($PrinterName)"
+	Write-Verbose $regPath
+	If (-Not (Test-Path $regPath)) {
+		New-Item $regPath
+	}
+
+	New-ItemProperty $regPath -Name "log-path" -Value $logPath
+}
+
+function Disable-eDocPrintProLogFile {
+	[CmdletBinding()]
+	Param(
+		[System.String]$PrinterName = "DelaproPDF"
+	)
+
+	$regPath = "HKLM:\SOFTWARE\MAYComputer\eDocPrintPro\$($PrinterName)"
+	Write-Verbose $regPath
+	If (Test-Path $regPath) {
+		Remove-ItemProperty "HKLM:\SOFTWARE\MAYComputer\eDocPrintPro\DelaproPDF" -Name "log-path"
+	}
+}
+
+function Show-eDocPrintProLogFile {
+	[CmdletBinding()]
+	Param(
+		[System.String]$PrinterName = "DelaproPDF"
+	)
+
+	$regPath = "HKLM:\SOFTWARE\MAYComputer\eDocPrintPro\$($PrinterName)"
+	Write-Verbose $regPath
+	$logPath = (Get-ItemProperty $regPath -Name "log-path" -ErrorAction SilentlyContinue).'log-path'
+	Write-Verbose $logPath
+	If ($logPath) {
+		If (Test-Path $logPath) {
+			Start-Process $logPath
+		}
+	}
 }
 
 # Gibt zu einer IPv4-Adresse die zugehörige IPv6-Adresse und umgekehrt zurück
