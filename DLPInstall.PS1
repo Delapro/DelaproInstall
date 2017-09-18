@@ -1376,8 +1376,6 @@ Function Install-DelaproMailerPrinter {
 	# rundll32 printui.dll,PrintUIEntry /Gw /ia /m "Ghostscript PDF" /f "C:\program files\gs\gs9.18\lib\ghostpdf.inf"
 	# klappt aber noch nicht wegen der Zertifikate. Doch, wenn dies vorweg installiert wird: C:\Program Files\GS\gs9.18\lib>pnputil -i -a ghostpdf.inf
 	# dann noch dies hinterher um den eigentlichen Druckertreiber anzulegen:  rundll32 printui.dll,PrintUIEntry /if /b "DelaproTest" /r "$($DlpPath)\Export\PDF\Delapro.EPS" /m "Ghostscript PDF"
-	# Bei Xerox direkt gibt es einen Treiber der auch echten randlosen Druck unterstützt!
-	# kann hier gefunden werden: http://www.support.xerox.com/support/global-printer-driver/downloads/enus.html?operatingSystem=win10x64&fileLanguage=de
 	If (Test-WindowsVista) {
 		Write-Verbose "Installiere Druckertreiber unter Vista"
 		rundll32 printui.dll,PrintUIEntry /if /b "$PrinterName" /f  $env:WinDir\inf\ntprint.inf /r "$($DelaproPath)\Export\Pdf\Delapro.EPS" /m "Xerox Phaser 5400 PS"
@@ -1443,6 +1441,26 @@ Function Install-DelaproMailerPrinter {
 			Add-Printer -Name $PrinterName -DriverName $driverName -PortName $Portname
 		}
 	}
+
+}
+
+Function Install-XeroxUniversalDriver {
+	[CmdletBinding()]
+	Param(
+		[String]$TempDirectory=$Env:TEMP
+		)
+
+	# Bei Xerox direkt gibt es einen Treiber der auch echten randlosen Druck unterstützt!
+	# kann hier gefunden werden: http://www.support.xerox.com/support/global-printer-driver/downloads/enus.html?operatingSystem=win10x64&fileLanguage=de
+	# Xerox Randlos Installation
+	$xeroxVersion = "5.548.8.0"
+	Start-BitsTransfer "http://download.support.xerox.com/pub/drivers/GLOBALPRINTDRIVER/drivers/win10x64/ar/UNIV_$($xeroxVersion)_PS_x64.exe" $TempDirectory
+	Start-Process -Wait -FilePath "$TempDirectory\UNIV_$($xeroxVersion)_PS_x64.exe" -ArgumentList "/S"
+	# DISM /Online /Add-Driver "C:\Xerox\UNIV_$xeroxVersion_PS_x64_Driver.inf\x2UNIVP.inf"
+	pnputil.exe -a "C:\Xerox\UNIV_$($xeroxVersion)_PS_x64_Driver.inf\x2UNIVP.inf"
+	# verfügbare Treiber einer .INF-Datei ausgeben, so kann man den Namen für Add-PrinterDriver ermitteln
+	# Get-WindowsDriver -Online -Driver "C:\Xerox\UNIV_5.548.8.0_PS_x64_Driver.inf\x2UNIVP.inf" |Select-Object Hardwaredescription -Unique
+	Add-PrinterDriver -Name "Xerox Global Print Driver PS"
 
 }
 

@@ -82,6 +82,12 @@ Install-DelaproMailerPrinter -Verbose
 Add-PrinterDriver -Name "Xerox PS Color Class Driver V1.1"
 Set-Printer -Name "DelaproMail" -Drivername "Xerox PS Color Class Driver V1.1"
 
+# wenn es gar nicht anders geht, kann man auch direkt von Xerox einen Treiber installieren
+# bei diesem müssen bei den Einstellungen die Ränder auf Aus gestellt werden
+Install-XeroxUniversalDriver -Verbose
+Set-Printer -Name "DelaproMail" -Drivername "Xerox Global Print Driver PS"
+
+
 ```
 
 ## Importieren einer Delapro-Datensicherung
