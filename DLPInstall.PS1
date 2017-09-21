@@ -1519,6 +1519,43 @@ Function Compare-TextFiles {
 	Compare-Object -ReferenceObject (Get-Content $ReferenceFile) -DifferenceObject (Get-Content $DiffFile)
 }
 
+Function Set-WindowsErrorReportingUI {
+	[CmdletBinding()]
+	Param(
+		[bool]$OnOff
+	)
+
+	$regPath = "HKCU:\SOFTWARE\Microsoft\Windows\Windows Error Reporting"
+	Write-Verbose $regPath
+	If (Test-Path $regPath) {
+		$value = If(-Not $OnOff) {1} else {0}
+		Write-Verbose "DontShowUI: $value"
+		Set-ItemProperty $regPath -Name "DontShowUI" -Value $value
+	}
+
+}
+
+Function Get-WindowsErrorReportingUI {
+	[CmdletBinding()]
+	Param(
+	)
+
+	$regPath = "HKCU:\SOFTWARE\Microsoft\Windows\Windows Error Reporting"
+	Write-Verbose $regPath
+	If (Test-Path $regPath) {
+		$result = (Get-ItemProperty $regPath -Name "DontShowUI").DontShowUI
+		Write-Verbose "DontShowUI: $result"
+	}
+	If ($result -eq 1) {
+		Write-Verbose "Keine Ausgabe der Fehlermeldungen"
+		$true
+	} else {
+		Write-Verbose "Ausgabe der Fehlermeldungen"
+		$false
+	}
+
+}
+
 # ermittelt wie lange Windows bereits läuft
 Function Get-WindowsUptime {
 	[CmdletBinding()]
