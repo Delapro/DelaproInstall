@@ -1285,6 +1285,59 @@ Function Update-DlpRawPr {
 	}
 }
 
+# ladet *.ERR-Dateien und erzeugt daraus Objekte, damit Fehler leichter abgefragt werden können
+Function Get-DelaproErrors {
+	[CmdletBinding()]
+	Param(
+		[System.IO.FileInfo[]]$Path = (Get-Location)
+	)
+
+	$Files = Resolve-Path $Path
+	Write-Verbose $Path
+
+	$Errors = @()
+	$Files | Select-Object -ExpandProperty Path | ForEach-Object { Write-Verbose $_; $Errors += (Get-DelaproErrorObject ($_)) }
+	$Errors 
+
+}
+
+Function Get-DelaproErrorObject {
+	[CmdletBinding()]
+	Param(
+		[String]$Filename
+	)
+
+	$ErrorData = Get-Content $Filename -Encoding Oem
+	$p=Select-String $Filename -Pattern "Fehlerbeschreibungsdatei|Verfügbarer Speicher|Clipperfehlercodes|Call-Stack|Angaben zu aktiven Arbeitsbereichen|Bildschirminhalt|Benutzererklärung|OK, Alle Infos ausgegeben" -Encoding oem
+
+	If ($p.Length -eq 1) {
+		# TODO: unwahrscheinlicher Sonderfall
+		# $Block = $p.Line
+	} else {
+		$p = $p | Sort-Object LineNumber
+		$NewObject = @{PSTypeName = "Delapro.Error"}
+		$NewObject["Datei"]=Get-Item $Filename
+		for ($item = 0; $item -lt $p.Count; $item++) {
+			$von = $p[$item].LineNumber
+			$bis = $p[$Item+1].LineNumber-1
+			Write-Verbose "$von - $Bis"
+			$Block = $ErrorData[$von..$Bis]
+			switch ($p[$item].Line) {
+				"Fehlerbeschreibungsdatei" {$NewObject["Datum"] = "Setzen"  }
+				"Verfügbarer Speicher:" {$NewObject["Speicher"]=($Block | Out-String) }
+				"Clipperfehlercodes:" {$NewObject["Clipperfehler"]=($Block | Out-String) }
+				"Call-Stack:" {$NewObject["CallStack"]=($Block | Out-String) }
+				"Bildschirminhalt:" {$NewObject["Bildschirminhalt"]=($Block | Out-String) }
+				"Angaben zu aktiven Arbeitsbereichen:" {$NewObject["Arbeitsbereiche"]=($Block | Out-String) }
+				"Benutzererklärung:" {$NewObject["Benutzererklärung"]=($Block | Out-String) }
+				Default {Write-Verbose "default: $_"}
+			}
+		}
+		$DlpError = [PSCustomObject]$NewObject
+	}
+	$DlpError
+}
+
 # ermittelt alle fehlerhaften Anwendungen
 Function Get-EventLogApplicationErrors {
 	# TODO: Vorsicht wegen fehlender Events: https://social.technet.microsoft.com/Forums/office/en-US/fecefcfa-d885-4996-a6bd-f5961d739120/event-log-entries-missing-in-posh-but-visible-in-eventvwr?forum=winserverpowershell
