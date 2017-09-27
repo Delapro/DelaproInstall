@@ -20,11 +20,11 @@ Function Test-64Bit () {
 }
 
 Function Test-WindowsVista() {
-	(Get-WmiObject Win32_OperatingSystem).Caption -match "Vista"
+	(Get-CimInstance Win32_OperatingSystem).Caption -match "Vista"
 }
 
 Function Test-Windows7() {
-	(Get-WmiObject Win32_OperatingSystem).Caption -match "Windows 7"
+	(Get-CimInstance Win32_OperatingSystem).Caption -match "Windows 7"
 }
 
 # testet speziell auf Windows 8.0
@@ -40,14 +40,14 @@ Function Test-Windows8-0 {
 }
 
 Function Test-Windows10() {
-	(Get-WmiObject Win32_OperatingSystem).Caption -match "Windows 10"
+	(Get-CimInstance Win32_OperatingSystem).Caption -match "Windows 10"
 }
 
 Function Test-WindowsServer() {
 	# 1 = Desktop OS
 	# 2 = Server OS DC
 	# 3 = Server OS Non Domain
-	(Get-WmiObject Win32_OperatingSystem).ProductType -ne 1
+	(Get-CimInstance Win32_OperatingSystem).ProductType -ne 1
 }
 
 Function Test-WUARebootRequired {
@@ -239,16 +239,9 @@ Function Get-DefaultPrinter {
 
 	# Prüfen, ob StandardCimV2 verfügbar ist, wenn ja kann man von ausgehen, dass man Win8 oder neuer hat, wo CIM
 	# auf jeden Fall verfügbar ist
-	$useCIM = Get-WMIObject -Namespace root -Class __NAMESPACE | Where-Object {$_.Name -eq "StandardCimv2"}
+	$useCIM = Get-CimInstance -Namespace root -Class __NAMESPACE | Where-Object {$_.Name -eq "StandardCimv2"}
 	
-	# Oder direkt per Registry? HKEY_CURRENT_USER\Software\Microsoft\Windows NT\CurrentVersion\Windows\Device
-	If ($useCIM) {
-		# funktioniert ab Windows 8
-		$default = Get-CIMInstance -Classname Win32_Printer
-	} else {
-		# funktioniert vor Windows 8
-		$default = Get-WmiObject -Classname Win32_Printer
-	}
+	$default = Get-CIMInstance -Classname Win32_Printer
 	If ($default) {
 		$default = $default | Where-Object {$_.Default -eq $true}
 		# in $default hat man nun die klassische Variante Win32_Printer, für Powershell bei Windows 8 oder höher sollte
@@ -1052,7 +1045,7 @@ Function Install-MissingPowershellCmdLets {
 			Function global:Rename-Printer ($Name, $NewName) {
 				$Filter = "Name='$($Name)'"
 				# anstatt Name doch DeviceID?
-				$dlpprn = Get-WMIObject Win32_Printer -Filter $Filter
+				$dlpprn = Get-CimInstance Win32_Printer -Filter $Filter
 				$renres = $dlpprn.RenamePrinter($NewName)
 				# renres.ReturnValue == 5 wenn Access Denied, bei 0 erfolgreich
 			}
@@ -1066,7 +1059,7 @@ Function Install-MissingPowershellCmdLets {
 			Function global:Remove-Printer ($Name) {
 				$Filter = "Name='$($Name)'"
 				# anstatt Name doch DeviceID?
-				$dlpprn = Get-WMIObject Win32_Printer -Filter $Filter
+				$dlpprn = Get-CimInstance Win32_Printer -Filter $Filter
 				$renres = $dlpprn.Delete()
 				# renres.ReturnValue == 5 wenn Access Denied, bei 0 erfolgreich
 			}
@@ -1078,7 +1071,7 @@ Function Install-MissingPowershellCmdLets {
 		# damit die Function verfügbar wird, muss sie mittels & ausgeführt werden und mit dem Scope global: versehen werden
 		&{
 			Function global:Get-Volume ($Name) {
-				$vol = Get-WMIObject Win32_Volume
+				$vol = Get-CimInstance Win32_Volume
 				$vol | Select-Object @{Label="Driveletter";Expression={$_.Driveletter.SubString(0, 1)}},
 									 @{Label="FileSystemType";Expression={$_.FileSystem}},
 				                     @{Label="OperationalStatus";Expression={If ($_.FileSystem -ne $null) {"OK"} else {""} }}
@@ -1441,7 +1434,7 @@ Function Install-DelaproMailerPrinter {
 				# PRÜFEN! Alternative Xerox PS Color Class Driver V1.1, Oder HP Laserjet 2500 PS wird von Parallels verwendet
 				$driverName = "Microsoft PS Class Driver"
 				$driverID = ""
-				$winBuild = (Get-WmiObject Win32_OperatingSystem).Version
+				$winBuild = (Get-CimInstance Win32_OperatingSystem).Version
 				If (Test-64Bit) {
 					# leider ändert sich die ID mit jedem größeren Windows 10 Update
 					switch ($winBuild) {
@@ -1828,7 +1821,7 @@ Function Get-AntiMalware {
 		
 	)
 	
-	$av = Get-WmiObject -Namespace root/SecurityCenter2 -Class AntivirusProduct
+	$av = Get-CimInstance -Namespace root/SecurityCenter2 -Class AntivirusProduct
 	If ($av -eq $null) {
 		# kein Virenscanner installiert, also Security Essentials holen
 		Start-Process https://www.microsoft.com/de-de/download/details.aspx?id=5201
@@ -1861,7 +1854,7 @@ Function Set-DefenderPreferences {
 Function Show-Defender {
 	# Windows Defender:
 
-	If (Test-Windows10 -and ((Get-WmiObject Win32_OperatingSystem).Version -eq "10.0.15063")) {
+	If (Test-Windows10 -and ((Get-CimInstance Win32_OperatingSystem).Version -eq "10.0.15063")) {
 		# Windows Defender muss anders aufgerufen werden
 		# der Aufruf dauert aber ewig!
 		"Bitte warten, Aufruf dauert ein paar Sekunden..."
