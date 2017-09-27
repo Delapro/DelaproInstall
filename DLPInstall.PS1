@@ -1282,11 +1282,11 @@ Function Update-DlpRawPr {
 Function Get-DelaproErrors {
 	[CmdletBinding()]
 	Param(
-		[System.IO.FileInfo[]]$Path = (Get-Location)
+		[String[]]$Pfad = (Join-Path -Path (Get-Location) -ChildPath "*.ERR")
 	)
 
-	$Files = Resolve-Path $Path
-	Write-Verbose $Path
+	$Files = Resolve-Path $Pfad
+	Write-Verbose "Dateien: $Files"
 
 	$Errors = @()
 	$Files | Select-Object -ExpandProperty Path | ForEach-Object { Write-Verbose $_; $Errors += (Get-DelaproErrorObject ($_)) }
@@ -1311,18 +1311,19 @@ Function Get-DelaproErrorObject {
 		$NewObject = @{PSTypeName = "Delapro.Error"}
 		$NewObject["Datei"]=Get-Item $Filename
 		for ($item = 0; $item -lt $p.Count; $item++) {
-			$von = $p[$item].LineNumber
-			$bis = $p[$Item+1].LineNumber-1
+			$von = $p[$item].LineNumber   # zählt von 1, dadurch wird Sektionsstring gleich übersprungen
+			$bis = $p[$Item+1].LineNumber-2  # zählt von 1 und 
 			Write-Verbose "$von - $Bis"
 			$Block = $ErrorData[$von..$Bis]
-			switch ($p[$item].Line) {
-				"Fehlerbeschreibungsdatei" {$NewObject["Datum"] = "Setzen"  }
-				"Verfügbarer Speicher:" {$NewObject["Speicher"]=($Block | Out-String) }
-				"Clipperfehlercodes:" {$NewObject["Clipperfehler"]=($Block | Out-String) }
-				"Call-Stack:" {$NewObject["CallStack"]=($Block | Out-String) }
+			switch -wildcard ($p[$item].Line) {
+				"Fehlerbeschreibungsdatei" {$NewObject["Datum"] = try { Get-Date (($Block|Out-String).Replace('Datum:','').Replace('Uhrzeit:','')) } catch {}  }
+				"Verfügbarer Speicher:" {$NewObject["Speicher"]=($Block | Out-String) -split '\r\n' }
+				"Clipperfehlercodes:" {$NewObject["Clipperfehler"]=($Block | Out-String) -split '\r\n' }
+				"Call-Stack:" {$NewObject["CallStack"]=($Block | Out-String) -split '\r\n'}
 				"Bildschirminhalt:" {$NewObject["Bildschirminhalt"]=($Block | Out-String) }
-				"Angaben zu aktiven Arbeitsbereichen:" {$NewObject["Arbeitsbereiche"]=($Block | Out-String) }
-				"Benutzererklärung:" {$NewObject["Benutzererklärung"]=($Block | Out-String) }
+				"Angaben zu aktiven Arbeitsbereichen:" {$NewObject["Arbeitsbereiche"]=($Block | Out-String)  -split '\r\n' }
+				"Benutzererklärung:" {$NewObject["Benutzererklärung"]=($Block | Out-String) -split '\r\n' }
+				"OK, Alle Infos ausgegeben*" {}
 				Default {Write-Verbose "default: $_"}
 			}
 		}

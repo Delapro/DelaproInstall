@@ -225,7 +225,18 @@ Install-LibreOffice
 
 ## Probleme ermitteln
 
-### Abstürzende Programme ausfindig machen
+### Probleme in Delapro ermitteln
+
+```Powershell
+# Delaprofehler vom letzten Jahr ermitteln
+Get-DelaproErrors| where {$_.Datum.date -gt (Get-Date).AddYears(-1)}|select datei, datum
+
+# Fehlerdateien in Notepad anschauen
+Get-DelaproErrors| where {$_.Datum.date -gt (Get-Date).AddYears(-1)}| % {notepad $_.Datei.Fullname}
+
+```
+
+### Abstürzende Programme in Windows ausfindig machen
 
 ```Powershell
 # alle verfügbaren Probleme ermitteln
