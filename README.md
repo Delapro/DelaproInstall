@@ -34,14 +34,17 @@ Install-MissingPowershellCmdlets
 ## Backup aktualisieren, Backup durchführen und DLPWinPr aktualisieren
 
 ```Powershell
-# Backup aktualisieren
-Update-Backup -DelaproPath $DLPPath -Verbose
-# Sicherung des aktuellen Programms durchführen
-Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -Verbose
-# Druckertreiber aktualisieren
-Update-DlpWinPr -DelaproPath $DLPPath -Verbose
-Update-DlpRawPr -DelaproPath $DLPPath -Verbose
-
+If (Test-DelaproNotRunning -Path $DlpPath) {
+    # Backup aktualisieren
+    Update-Backup -DelaproPath $DLPPath -Verbose
+    # Sicherung des aktuellen Programms durchführen
+    Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -Verbose
+    # Druckertreiber aktualisieren
+    Update-DlpWinPr -DelaproPath $DLPPath -Verbose
+    Update-DlpRawPr -DelaproPath $DLPPath -Verbose
+} else {
+    Write-Error "Delapro läuft noch!"
+}
 ```
 
 ## Druckertreiber einrichten
@@ -114,18 +117,21 @@ Invoke-CleanupDelapro -Verbose
 Dieses Beispiel funktioniert nur mit manuellen Updates, wo in C:\TEMP\ die Datei EXES.EXE abgelegt wurde.
 
 ```Powershell
-If (-Not (Test-Path "$($DlpPath)\Update")) {
-    New-Item "$($DlpPath)\Update" -Type Directory
+If (Test-DelaproNotRunning -Path $DlpPath) {
+    If (-Not (Test-Path "$($DlpPath)\Update")) {
+        New-Item "$($DlpPath)\Update" -Type Directory
+    }
+    Set-Location "$($DlpPath)\Update"
+    # \\Update wegen Match, sonst würde \U als RegEx von Match interpretiert!
+    If ((Get-Location) -match "\\Update") {
+        Remove-Item * -Force -Recurse
+        C:\temp\Exes.exe
+    }
+    Set-Location ..
+    .\update\update
+} else {
+    Write-Error "Delapro läuft noch!"
 }
-Set-Location "$($DlpPath)\Update"
-# \\Update wegen Match, sonst würde \U als RegEx von Match interpretiert!
-If ((Get-Location) -match "\\Update") {
-    Remove-Item * -Force -Recurse
-    C:\temp\Exes.exe
-}
-Set-Location ..
-.\update\update
-
 ```
 
 ## Acrobat Reader Seitenpanel abschalten
