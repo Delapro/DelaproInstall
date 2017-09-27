@@ -992,7 +992,7 @@ Function Get-NetFrameworkVersions {
 	Get-ItemProperty -name Version,Release -ErrorAction SilentlyContinue |
 	Where-Object { $_.PSChildName -match '^(?!S)\p{L}'} |
 	Select-Object PSChildName, Version, Release, @{
-	name="Product"
+	name="Product";
 	expression={
 		switch -regex ($_.Release) {
 			"378389" { [Version]"4.5" }
@@ -1001,7 +1001,9 @@ Function Get-NetFrameworkVersions {
 			"393295|393297" { [Version]"4.6" }
 			"394254|394271" { [Version]"4.6.1" }
 			"394802|394806" { [Version]"4.6.2" }
-			{$_ -gt 394806} { [Version]"Undocumented 4.6.2 or higher, please update script" }
+			"460798|460805" { [Version]"4.7" }
+			"461307" { [Version]"4.7.1" }
+			{$_ -gt 461307} { [Version]"Undocumented 4.7.1 or higher, please update script" }
 		}
 		}
 	}
