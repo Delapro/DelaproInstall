@@ -101,6 +101,33 @@ Function Test-DelaproInstalled {
 	$installed
 }
 
+# Prüft, ob Delapro bereits läuft, prüft Prozesse und ob die CDX-Dateien alle gelöscht werden können
+Function Test-DelaproNotRunning {
+	[CmdletBinding()]
+	Param(
+		[String]$Path = "C:\DELAPRO"
+	)
+
+	$result = $false
+	If (Get-Process DLP_*, Delapro -ErrorAction SilentlyContinue) {
+		$result = $false
+	} else {
+		If (Test-DelaproDirectoryExists -Path $Path) {
+			If (Test-Path "$($Path)\KillNTX.BAT") {
+				$oldPath = Get-Location
+				Set-Location $Path
+				Start-Process -Wait -FilePath "$($Path)\KillNTX.BAT"
+				Set-Location $oldPath
+				If (-Not (Get-Item "$($Path)\*.CDX")) {
+					$result = $true
+				}
+			}
+		}
+	}
+
+	$result
+}
+
 # Prüft ob das angegebene Delapro-Verzeichnis existiert
 Function Test-DelaproDirectoryExists {
 	[CmdletBinding()]
