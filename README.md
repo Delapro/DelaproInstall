@@ -234,6 +234,11 @@ Get-DelaproErrors| where {$_.Datum.date -gt (Get-Date).AddYears(-1)}|select date
 # Fehlerdateien in Notepad anschauen
 Get-DelaproErrors| where {$_.Datum.date -gt (Get-Date).AddYears(-1)}| % {notepad $_.Datei.Fullname}
 
+# Muster bei Fehlern erkennen, indem man nach dem Callstack groupiert
+Get-DelaproErrors| select *, @{Name="CallStackStr";Expression={($_.CallStack|out-string)}} | sort callstacker | sort CallstackStr | group callstackstr
+# zum Anschauen verwendet man dann eine bestimmte Gruppe aus dem Ergebnis
+(Get-DelaproErrors| select *, @{Name="CallStackStr";Expression={($_.CallStack|out-string)}} | sort callstacker | group callstackstr )[1].group
+
 ```
 
 ### Abstürzende Programme in Windows ausfindig machen
