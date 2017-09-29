@@ -245,6 +245,9 @@ Get-DelaproErrors| select *, @{Name="CallStackStr";Expression={($_.CallStack|out
 # zum Anschauen verwendet man dann eine bestimmte Gruppe aus dem Ergebnis
 (Get-DelaproErrors| select *, @{Name="CallStackStr";Expression={($_.CallStack|out-string)}} | sort callstacker | group callstackstr )[1].group
 
+# häufigsten Fehler ermitteln
+(Get-DelaproErrors| select *, @{Name="CallStackStr";Expression={($_.CallStack|out-string)}} | sort callstacker | sort CallstackStr | group callstackstr| where count -gt 1 | sort count -Descending)[0].Group|Out-GridView
+
 ```
 
 ### Abstürzende Programme in Windows ausfindig machen
