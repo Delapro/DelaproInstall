@@ -814,6 +814,45 @@ Function Convert-IPAddress {
 
 }
 
+# ein Redirect auflösen und die tatsächliche URL zurückgeben
+function Resolve-HttpUrlRedirect {
+    [CmdletBinding()]
+    Param(
+        #[Parameter(Mandatory)]
+        [string]$Uri
+    )
+
+    while (Test-HttpUrlRedirect -Url $uri) {
+        $rd=Invoke-WebRequest -Uri $Uri -MaximumRedirection 0 -UseBasicParsing -ErrorAction SilentlyContinue
+        Write-Verbose "$($rd.StatusCode) - $($rd.StatusDescription)"
+        If ($rd.StatusCode -eq 302) {
+            $Uri = $rd.Headers.Location
+            Write-Verbose "Nach: $Uri"
+        }
+    }
+
+    $Uri
+}
+
+# Prüfen, ob hinter einer URL ein Redirect stattfindet
+Function Test-HttpUrlRedirect {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Uri
+    )
+    $Req = [System.Net.WebRequest]::Create($Uri)
+    $Resp = $Req.GetResponse()
+    If ($Resp.ResponseUri.OriginalString –eq $Uri) {
+        $False
+    } else {
+        $True
+    }
+    $Resp.Close()
+    $Resp.Dispose()
+}
+
 # Installation von AcrobatDC
 Function Install-AcrobatDC {
 	[CmdletBinding()]
