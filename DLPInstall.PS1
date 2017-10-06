@@ -1431,6 +1431,22 @@ Function Show-ReliabilityMonitor {
 	}
 }
 
+# konvertiert die in einem Event enthaltenen Properties und macht diese zu direkten Properties des Powershell-Objekts
+Function Convert-EventData {
+	[CmdletBinding()]
+	Param(
+		[System.Diagnostics.Eventing.Reader.EventRecord]$Event
+	)
+
+	$eventXML = [xml]$Event.ToXml()
+    # Eventproperties anfügen
+    For ($i=0; $i -lt $eventXML.Event.EventData.Data.Count; $i++) {            
+        # Append these as object properties            
+        Add-Member -InputObject $Event -MemberType NoteProperty -Force -Name $eventXML.Event.EventData.Data[$i].name -Value $eventXML.Event.EventData.Data[$i].'#text'
+	}
+	$Event
+}
+
 # prüft, ob ein Printerport mit dem angegebenen Namen vorhanden ist
 Function Test-PrinterPort {
 	[CmdletBinding()]
