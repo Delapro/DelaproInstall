@@ -1425,6 +1425,9 @@ Function Show-ReliabilityMonitor {
 	$perfmon = Get-Command perfmon.exe
 	If ($perfmon) {
 		Start-Process -FilePath $perfmon.Source -ArgumentList "/rel"
+		# Alternative Aufrufvariante: control.exe /name Microsoft.ActionCenter /page pageReliabilityView
+		# in diesem Zusammenhang sind noch Get-CimInstance Win32_ReliabilityRecords|group sourcename
+		# Win32_Reliability und Win32_ReliabilityStabilityMetrics
 	}
 }
 

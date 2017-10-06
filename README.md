@@ -258,4 +258,15 @@ Get-EventLogApplicationErrors
 
 # Beachtung der Startzeit
 Get-EventLogApplicationErrors | Select TimeCreated, ID, @{N="Startzeit";E={Get-StartDateTimeFromEvent $_ }}, @{N="Laufzeit";E={$_.TimeCreated - (Get-StartDateTimeFromEvent $_) }}, Message | ft * -Autosize
+
+# Zuverlässigkeitsverlauf anzeigen
+Show-ReliabilityMonitor
+
+# Zuverlässigkeitsdaten per Powershell abrufen
+Get-CimInstance Win32_ReliabilityRecords|group sourcename
+
+# detaillierte Daten zu einem Zuverlässigkeitseintrag aus der Eventlog holen
+$rr = Get-CimInstance Win32_ReliabilityRecords|select -First 1
+Get-WinEvent -LogName "System" -FilterXPath "*[System[EventRecordID=$($rr.RecordNumber)]]"
+
 ```
