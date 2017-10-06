@@ -1417,6 +1417,17 @@ Function Get-StartDateTimeFromEvent {
 	}
 }
 
+# Zuverlässigkeitsmonitor anzeigen
+Function Show-ReliabilityMonitor {
+	[CmdletBinding()]
+	Param()
+
+	$perfmon = Get-Command perfmon.exe
+	If ($perfmon) {
+		Start-Process -FilePath $perfmon.Source -ArgumentList "/rel"
+	}
+}
+
 # prüft, ob ein Printerport mit dem angegebenen Namen vorhanden ist
 Function Test-PrinterPort {
 	[CmdletBinding()]
