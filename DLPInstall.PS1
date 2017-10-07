@@ -1541,7 +1541,7 @@ Function Install-DelaproMailerPrinter {
 						"10.0.10586" {$driverID = "d74c8d3824a210d1"}
 						"10.0.14393" {$driverID = "f9239fa24dfa8848"} 
 						"10.0.15063" {$driverID = "468bda717012acbd"}
-						"10.0.16291" {$driverID = "82cd960df4dce880"}
+						"10.0.16299" {$driverID = "34c0896eae1bf8d0"}
 					}
 				} else {
 					# zusätzlich gibt es unterschiede zwischen 32-Bit und 64-Bit
