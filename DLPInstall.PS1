@@ -822,7 +822,7 @@ function Resolve-HttpUrlRedirect {
         [string]$Uri
     )
 
-    while (Test-HttpUrlRedirect -Url $uri) {
+    while (Test-HttpUrlRedirect -Uri $uri) {
         $rd=Invoke-WebRequest -Uri $Uri -MaximumRedirection 0 -UseBasicParsing -ErrorAction SilentlyContinue
         Write-Verbose "$($rd.StatusCode) - $($rd.StatusDescription)"
         If ($rd.StatusCode -eq 302) {
