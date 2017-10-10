@@ -883,6 +883,55 @@ Function Install-AcrobatDC {
 #	}
 }
 
+# installiert die aktuelle JavaRE
+Function Install-Java {
+	[CmdletBinding()]
+	Param(
+		#[parameter(Mandatory=$true)]
+		[System.String]$tempDirectory="$Env:TEMP\"
+	)
+	
+	# aktuelle Version von: https://java.com/de/download/manual.jsp
+	$rrd = Resolve-HttpUrlRedirect -Uri http://javadl.oracle.com/webapps/download/AutoDL?BundleId=225355_090f390dda5b47b9b721c7dfaa008135
+	If ($rrd) {
+		$Dest = "$($tempDirectory)\Java.exe"
+		Write-Verbose "Lade $rrd nach $Dest"
+		Start-BitsTransfer -Source $rrd -Destination $Dest
+		# Silent-Install Parameter: https://www.java.com/de/download/help/silent_install.xml
+		Start-Process -Wait -FilePath $Dest -ArgumentList "INSTALL_SILENT=Enable"
+	} else {
+		Write-Error "Download-URL konnte nicht aufgelöst werden."
+	}
+
+}
+
+# Prüft ob Java vorhanden ist, dazu wird die aktuelleste JAVA.EXE ermittelt, gestartet und die Versionsinfo geholt
+Function Test-Java {
+	[CmdletBinding()]
+	Param(
+	)
+
+	$j = Get-ChildItem "$($env:ProgramFiles)\Java\Java.exe" -Recurse
+	If ($j) {
+		If ($j -is [array]) {
+			# TODO: Sortieren, damit man die neueste Version zurück bekommt
+			$j = $j[0]
+		}
+		Write-Verbose "Java: $j"
+		$t = New-TemporaryFile
+		Write-Verbose "Tempfile: $t"
+		Start-Process -Wait -FilePath $j -ArgumentList "-version" -RedirectStandardOutput $t
+		# die Idee war, die Java.exe zu starten und die Version auszulesen, dann konnte man davon
+		# ausgehen, dass Java verfügbar ist. Klappt aber leider nicht, wegen der direkten Ausgabe
+		# der Versionsinformationen am Bildschirm
+		$true
+		Write-Verbose "$(Get-Content $t)"
+		If ((Get-Content $t) -match "Java" ) {
+			$true
+		}
+	}
+}
+
 # Installation von Chrome
 Function Install-Chrome {
 	[CmdletBinding()]
