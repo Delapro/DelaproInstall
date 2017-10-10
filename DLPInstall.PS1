@@ -883,7 +883,7 @@ Function Install-AcrobatDC {
 #	}
 }
 
-# installiert die aktuelle JavaRE
+# installiert die aktuelle JavaRE 8
 Function Install-Java {
 	[CmdletBinding()]
 	Param(
@@ -902,10 +902,10 @@ Function Install-Java {
 	} else {
 		Write-Error "Download-URL konnte nicht aufgelöst werden."
 	}
-
+	
 }
 
-# Prüft ob Java vorhanden ist, dazu wird die aktuelleste JAVA.EXE ermittelt, gestartet und die Versionsinfo geholt
+# Prüft ob Java 8 vorhanden ist, dazu wird die aktuelleste JAVA.EXE ermittelt, gestartet und die Versionsinfo geholt
 Function Test-Java {
 	[CmdletBinding()]
 	Param(
@@ -918,16 +918,30 @@ Function Test-Java {
 			$j = $j[0]
 		}
 		Write-Verbose "Java: $j"
-		$t = New-TemporaryFile
-		Write-Verbose "Tempfile: $t"
-		Start-Process -Wait -FilePath $j -ArgumentList "-version" -RedirectStandardOutput $t
-		# die Idee war, die Java.exe zu starten und die Version auszulesen, dann konnte man davon
-		# ausgehen, dass Java verfügbar ist. Klappt aber leider nicht, wegen der direkten Ausgabe
-		# der Versionsinformationen am Bildschirm
-		$true
-		Write-Verbose "$(Get-Content $t)"
-		If ((Get-Content $t) -match "Java" ) {
+
+		# Folgender Code liegt dem RunCheck-Javaprogramm zugrunde:
+		<#
+			class RunCheck {
+				public static void main (String args[]){
+					//System.out.println("Hello Java");
+					System.exit(255);
+				}
+			}
+		#>
+		$JavaRunCheckClass = @"
+		yv66vgAAADQAEgoABAAKCgALAAwHAA0HAA4BAAY8aW5pdD4BAAMoKVYBAARDb2RlAQAEbWFpbgEAFihbTGphdmEvbGFuZy9TdHJpbmc7KVYMAAUABgcADwwA
+		EAARAQAIUnVuQ2hlY2sBABBqYXZhL2xhbmcvT2JqZWN0AQAQamF2YS9sYW5nL1N5c3RlbQEABGV4aXQBAAQoSSlWACAAAwAEAAAAAAACAAAABQAGAAEABwAA
+		ABEAAQABAAAABSq3AAGxAAAAAAAJAAgACQABAAcAAAATAAEAAQAAAAcRAP+4AAKxAAAAAAAA
+"@
+		$tempPath = $env:Temp
+		[System.Convert]::FromBase64String($JavaRunCheckClass) | Set-Content "$($tempPath)\RunCheck.Class" -Encoding Byte
+
+		# java.exe -cp C:\temp RunCheck
+		$p = Start-Process -Wait -FilePath $j -ArgumentList "-cp", $tempPath, "RunCheck" -PassThru
+		If ($p.ExitCode -eq 255) {
 			$true
+		} else {
+			$false
 		}
 	}
 }
