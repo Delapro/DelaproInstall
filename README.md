@@ -229,6 +229,13 @@ Install-AcrobatDC
 Install-LibreOffice
 ```
 
+### Java 8
+
+```Powershell
+Install-Java -Verbose
+Test-Java
+```
+
 ## Probleme ermitteln
 
 ### Probleme in Delapro ermitteln
@@ -269,4 +276,25 @@ Get-CimInstance Win32_ReliabilityRecords|group sourcename
 $rr = Get-CimInstance Win32_ReliabilityRecords|select -First 1
 Get-WinEvent -LogName "System" -FilterXPath "*[System[EventRecordID=$($rr.RecordNumber)]]"
 
+```
+
+### Probleme in Zusatzprogrammen
+
+#### eDocPrintPro
+
+```Powershell
+# Logging aktivieren
+Enable-eDocPrintProLogFile -Verbose
+
+# Logging ausschalten
+Disable-eDocPrintProLogFile
+
+# Logdatei anzeigen
+Show-eDocPrintProLogFile
+```
+
+#### List&Label
+
+```Powershell
+#TODO:
 ```
