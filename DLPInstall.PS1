@@ -919,7 +919,15 @@ Function Test-Java {
 		}
 		Write-Verbose "Java: $j"
 
-		# Folgender Code liegt dem RunCheck-Javaprogramm zugrunde:
+		# Folgender Code liegt dem RunCheck-Javaprogramm zugrunde. Um ihn kompilieren zu können benötigt
+		# man allerdings das JDK in der zugehörigen Version, hier JDK8: 
+		# http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+		# Man speichert das Programm als RunCheck.java und kompiliert man es dann mittels JavaC.EXE: 
+		# Javac.exe -g:none RunCheck.java
+		# Daraus resultiert die RunCheck.class welches dann mittels
+		# $base64=[System.Convert]::ToBase64String((Get-Content .\RunCheck.class -Encoding Byte))
+		# $base64.toString()
+		# umgewandelt wird.
 		<#
 			class RunCheck {
 				public static void main (String args[]){
