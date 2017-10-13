@@ -236,6 +236,12 @@ Install-Java -Verbose
 Test-Java
 ```
 
+### 7Zip
+
+```Powershell
+Install-7Zip -Verbose
+```
+
 ## Probleme ermitteln
 
 ### Probleme in Delapro ermitteln

@@ -956,6 +956,36 @@ Function Test-Java {
 	}
 }
 
+# ladet und installiert 7Zip
+Function Install-7Zip {
+	[CmdletBinding()]
+	Param(
+		#[parameter(Mandatory=$true)]
+		[System.String]$tempDirectory="$Env:TEMP\"
+	)
+
+	$Version = '1604'	# aktuelle offizielle Version: http://www.7-zip.org/
+	If (Test-64Bit) {
+		$url = "http://www.7-zip.org/a/7z$($Version)-x64.exe"
+		$Dest = "$($tempDirectory)\7z$($Version)-x64.exe"
+		$Sha256 = '9BB4DC4FAB2A2A45C15723C259DC2F7313C89A5AC55AB7C3F76BBA26EDC8BCAA'
+	} else {
+		$url = "http://www.7-zip.org/a/7z$($Version).exe"
+		$Dest = "$($tempDirectory)\7z$($Version).exe"
+		$Sha256 = 'DBB2B11DEA9F4432291E2CBEFE14EBE05E021940E983A37E113600EEE55DAA95'
+	}
+
+	Write-Verbose "Lade $url nach $Dest"
+	Start-BitsTransfer -Source $url -Destination $Dest
+	# Silent-Install Parameter: https://www.java.com/de/download/help/silent_install.xml
+	If ((Get-FileHash -Path $Dest -Algorithm SHA256).Hash -eq $Sha256) {
+		Start-Process -Wait -FilePath $Dest -ArgumentList "/S"
+	} else {
+		Write-Error "Heruntergeladene 7Zip-Version ist nicht sicher!"
+	}
+
+}
+
 # Installation von Chrome
 Function Install-Chrome {
 	[CmdletBinding()]
