@@ -1653,6 +1653,7 @@ Function Install-DelaproMailerPrinter {
 						"10.0.10586" {$driverID = "a3895815234f1110"}
 						"10.0.14393" {$driverID = "05a177376e5c60f5"}
 						"10.0.15063" {$driverID = "9265cc492d241846"}
+						"10.0.16299" {$driverID = "00521e6b8bf17036"}
 					}
 				}
 
