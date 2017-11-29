@@ -42,7 +42,7 @@ If (Test-DelaproNotRunning -Path $DlpPath) {
     # Druckertreiber aktualisieren
     Update-DlpWinPr -DelaproPath $DLPPath -Verbose
     Update-DlpRawPr -DelaproPath $DLPPath -Verbose
-    Update-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)"
+    Update-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -Verbose
 } else {
     Write-Error "Delapro läuft noch!"
 }

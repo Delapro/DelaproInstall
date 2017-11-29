@@ -1450,7 +1450,7 @@ Function Update-DlpRawPr {
 	}
 }
 
-# aktualisiert easyBackup32, wenn die Version älter ist, als die Version auf www.easysoftware.de/util
+# aktualisiert easyTeamviewerQS_de.wyw, wenn die lokal vorhandene Version älter ist, als die angegebene Buildnummer
 Function Update-Teamviewer {
 	[CmdletBinding()]
 	#[OutputType([System.Boolean])]
@@ -1460,7 +1460,7 @@ Function Update-Teamviewer {
 		[switch]$Force
 	)
 
-	$ExePath = Join-Path -Path $DelaproPath -ChildPath "Fernwartung\easyTeamviewerQS_de.EXE"
+	$ExePath = Join-Path -Path $DestinationPath -ChildPath "Fernwartung\easyTeamviewerQS_de.EXE"
 	If (Test-Path -Path $ExePath) {
 		$Version = (Get-Item $ExePath).VersionInfo.FileVersionRaw
 		Write-Verbose "Version $Version in $ExePath vorhanden"
