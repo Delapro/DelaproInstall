@@ -305,3 +305,17 @@ Show-eDocPrintProLogFile
 ```Powershell
 #TODO:
 ```
+
+# Script-Tests
+
+## Obfuscation Score ermitteln
+
+```Powershell
+# Scripte importieren
+Install-Module Revoke-Obfuscation
+Import-Module Revoke-Obfuscation
+
+# Obfuscation-Score ermitteln
+Measure-RvoObfuscation -Url 'https://raw.githubusercontent.com/Delapro/DelaproInstall/master/DLPInstall.PS1' -Verbose | Select Obf*, Hash
+
+```
