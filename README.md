@@ -306,9 +306,9 @@ Show-eDocPrintProLogFile
 #TODO:
 ```
 
-# Script-Tests
+## Script-Tests
 
-## Obfuscation Score ermitteln
+### Obfuscation Score ermitteln
 
 ```Powershell
 # Scripte importieren
