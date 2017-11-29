@@ -1450,6 +1450,36 @@ Function Update-DlpRawPr {
 	}
 }
 
+# aktualisiert easyBackup32, wenn die Version älter ist, als die Version auf www.easysoftware.de/util
+Function Update-Teamviewer {
+	[CmdletBinding()]
+	#[OutputType([System.Boolean])]
+	Param(
+		[System.String]$DestinationPath="C:\Delapro",
+		[System.String]$tempDirectory="$Env:TEMP\",
+		[switch]$Force
+	)
+
+	$ExePath = Join-Path -Path $DelaproPath -ChildPath "Fernwartung\easyTeamviewerQS_de.EXE"
+	If (Test-Path -Path $ExePath) {
+		$Version = (Get-Item $ExePath).VersionInfo.FileVersionRaw
+		Write-Verbose "Version $Version in $ExePath vorhanden"
+		If ($Version -lt [Version]"13.0.0.0" -or $Force) {
+			Write-Verbose "neuere Version wird heruntergeladen"
+			Start-BitsTransfer "http://www.easysoftware.de/download/easyTeamViewerQS_de.exe"  -Destination $tempDirectory
+			Unblock-File "$($tempDirectory)easyTeamViewerQS_de.exe"
+			Copy-Item $tempDirectory\easyTeamViewerQS_de.exe $DestinationPath\Fernwartung -Force			
+			$Version = (Get-Item $ExePath).VersionInfo.FileVersionRaw
+			Write-Verbose "Version $Version in $ExePath"
+		} else {
+			Write-Verbose "Keine neuere Version vorhanden"
+		}
+	} else {
+		Write-Verbose "Kein Teamviewer vorhanden, also Neuinstallation"
+		Install-Teamviewer -tempDirectory $tempDirectory -DestinationPath $DestinationPath
+	}
+}
+
 # ladet *.ERR-Dateien und erzeugt daraus Objekte, damit Fehler leichter abgefragt werden können
 Function Get-DelaproErrors {
 	[CmdletBinding()]
