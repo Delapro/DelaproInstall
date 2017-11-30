@@ -986,6 +986,42 @@ Function Install-7Zip {
 
 }
 
+# ladet und installiert Visual Studio Code
+Function Install-VisualStudioCode {
+	[CmdletBinding()]
+	Param(
+		#[parameter(Mandatory=$true)]
+		[System.String]$tempDirectory="$Env:TEMP\",
+		[Validateset("Powershell", "Harbour", "HarbourDebug")]
+		[string[]]$Extensions
+	)
+
+	$url = Resolve-HttpUrlRedirect https://go.microsoft.com/fwlink/?Linkid=852157
+	Write-Verbose "Lade $url"
+	Start-Bitstransfer $url -Destination "$($tempDirectory)\VsCode.EXE"
+	Start-Process -Wait -FilePath "$($tempDirectory)\VsCode.EXE" -ArgumentList "/VERYSILENT"
+
+	# TODO: Extensions in eigene Funktion ausgliedern zum nachträglich installieren
+	If ($Extensions) {
+		$codeEXE = 'C:\Program Files\Microsoft VS Code\Code.exe'
+		If (Test-Path $codeEXE) {
+			$codeEXE = 'C:\Program Files\Microsoft VS Code\bin\Code.cmd'
+			foreach ($ext in $Extensions) {
+				switch ($ext) {
+					"Powershell" 	{$installExt = "ms-vscode.PowerShell"}
+					"Harbour"		{$installExt = "ekon.harbour"}
+					"HarbourDebug"	{$installExt = "aperricone.harbour"}
+				}
+				# Start-Process -Wait -FilePath $codeEXE -ArgumentList "--install-extension", $installExt
+				& $codeExe --install-extension $installExt
+			}
+		} else {
+			Write-Error "VsCode unter $codeEXE nicht gefunden!"
+		}	
+	}
+
+}
+
 # Installation von Chrome
 Function Install-Chrome {
 	[CmdletBinding()]
