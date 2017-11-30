@@ -997,9 +997,8 @@ Function Install-VisualStudioCode {
 	)
 
 	$url = Resolve-HttpUrlRedirect https://go.microsoft.com/fwlink/?Linkid=852157
-	Write-Verbose "Lade $url"
 	Start-Bitstransfer $url -Destination "$($tempDirectory)\VsCode.EXE"
-	Start-Process -Wait -FilePath "$($tempDirectory)\VsCode.EXE" -ArgumentList "/VERYSILENT"
+	Start-Process -Wait -FilePath "$($tempDirectory)\VsCode.EXE" -ArgumentList "/SILENT"
 
 	# TODO: Extensions in eigene Funktion ausgliedern zum nachträglich installieren
 	If ($Extensions) {
@@ -1008,6 +1007,7 @@ Function Install-VisualStudioCode {
 			$codeEXE = 'C:\Program Files\Microsoft VS Code\bin\Code.cmd'
 			foreach ($ext in $Extensions) {
 				switch ($ext) {
+					# verfügbare Extensions mit code --list-extensions anzeigen
 					"Powershell" 	{$installExt = "ms-vscode.PowerShell"}
 					"Harbour"		{$installExt = "ekon.harbour"}
 					"HarbourDebug"	{$installExt = "aperricone.harbour"}

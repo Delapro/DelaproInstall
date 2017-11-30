@@ -243,6 +243,16 @@ Test-Java
 Install-7Zip -Verbose
 ```
 
+### Visual Studio Code
+
+```Powershell
+Install-VisualStudioCode -Verbose
+
+# oder gleich mit Extensions installieren:
+Install-VisualStudioCode -Extensions Powershell, Harbour -Verbose
+
+```
+
 ## Probleme ermitteln
 
 ### Probleme in Delapro ermitteln
