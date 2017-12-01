@@ -1125,16 +1125,22 @@ Function Install-Teamviewer {
 
 	# es macht Sinn, hier noch eine TV-Typ mit aufzunehmen um auch einen TV-Host installieren zu können
 
-	# Teamviewer Fernwartung einrichten
-	Start-BitsTransfer "http://www.easysoftware.de/download/easyTeamViewerQS_de.exe"  -Destination $tempDirectory
-	Unblock-File "$($tempDirectory)easyTeamViewerQS_de.exe"
-	If (! (Test-Path $DestinationPath\Fernwartung)) {
-		New-Item -path $DestinationPath\Fernwartung -Type Directory
+	If (Test-Path $DestinationPath) {
+		If (-not (Test-Path $tempDirectory)) {
+			New-Item $tempDirectory -ItemType Directory
+		}
+		# Teamviewer Fernwartung einrichten
+		Start-BitsTransfer "http://www.easysoftware.de/download/easyTeamViewerQS_de.exe"  -Destination $tempDirectory
+		Unblock-File "$($tempDirectory)easyTeamViewerQS_de.exe"
+		If (! (Test-Path $DestinationPath\Fernwartung)) {
+			New-Item -path $DestinationPath\Fernwartung -Type Directory
+		}
+		Copy-Item $tempDirectory\easyTeamViewerQS_de.exe $DestinationPath\Fernwartung -Force
+		# Link auf Desktop erstellen, Text: easy Internet Fernwartung (Teamviewer)
+		New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\easyTeamViewerQS_de.exe" -LinkFilename $CreateDesktopLink
+	} else {
+		Write-Error "$DestinationPath existiert nicht!"
 	}
-	Copy-Item $tempDirectory\easyTeamViewerQS_de.exe $DestinationPath\Fernwartung -Force
-	# Link auf Desktop erstellen, Text: easy Internet Fernwartung (Teamviewer)
-	New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\easyTeamViewerQS_de.exe" -LinkFilename $CreateDesktopLink
-
 }
 
 # diese Funktion übernimmt die Installation des .Net-Frameworks, wenn dieses nicht installiert sein sollte
@@ -1496,23 +1502,27 @@ Function Update-Teamviewer {
 		[switch]$Force
 	)
 
-	$ExePath = Join-Path -Path $DestinationPath -ChildPath "Fernwartung\easyTeamviewerQS_de.EXE"
-	If (Test-Path -Path $ExePath) {
-		$Version = (Get-Item $ExePath).VersionInfo.FileVersionRaw
-		Write-Verbose "Version $Version in $ExePath vorhanden"
-		If ($Version -lt [Version]"13.0.0.0" -or $Force) {
-			Write-Verbose "neuere Version wird heruntergeladen"
-			Start-BitsTransfer "http://www.easysoftware.de/download/easyTeamViewerQS_de.exe"  -Destination $tempDirectory
-			Unblock-File "$($tempDirectory)easyTeamViewerQS_de.exe"
-			Copy-Item $tempDirectory\easyTeamViewerQS_de.exe $DestinationPath\Fernwartung -Force			
+	If (Test-Path $DestinationPath -PathType Container) {
+		$ExePath = Join-Path -Path $DestinationPath -ChildPath "Fernwartung\easyTeamviewerQS_de.EXE"
+		If (Test-Path -Path $ExePath) {
 			$Version = (Get-Item $ExePath).VersionInfo.FileVersionRaw
-			Write-Verbose "Version $Version in $ExePath"
+			Write-Verbose "Version $Version in $ExePath vorhanden"
+			If ($Version -lt [Version]"13.0.0.0" -or $Force) {
+				Write-Verbose "neuere Version wird heruntergeladen"
+				Start-BitsTransfer "http://www.easysoftware.de/download/easyTeamViewerQS_de.exe"  -Destination $tempDirectory
+				Unblock-File "$($tempDirectory)easyTeamViewerQS_de.exe"
+				Copy-Item $tempDirectory\easyTeamViewerQS_de.exe $DestinationPath\Fernwartung -Force			
+				$Version = (Get-Item $ExePath).VersionInfo.FileVersionRaw
+				Write-Verbose "Version $Version in $ExePath"
+			} else {
+				Write-Verbose "Keine neuere Version vorhanden"
+			}
 		} else {
-			Write-Verbose "Keine neuere Version vorhanden"
+			Write-Verbose "Kein Teamviewer vorhanden, also Neuinstallation"
+			Install-Teamviewer -tempDirectory $tempDirectory -DestinationPath $DestinationPath
 		}
 	} else {
-		Write-Verbose "Kein Teamviewer vorhanden, also Neuinstallation"
-		Install-Teamviewer -tempDirectory $tempDirectory -DestinationPath $DestinationPath
+		Write-Error "$DestinationPath existiert nicht!"
 	}
 }
 
