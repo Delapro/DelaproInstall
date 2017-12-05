@@ -2482,6 +2482,7 @@ Start-Process -Wait "C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDoc
 Remove-Printer -Name eDocPrintPro
 
 Install-DelaproMailerPrinter
+Update-DelaproGhostscript -PathDelaproGhostscript "$($DLPPath)\LASER\GHOSTPDF.BAT" -Verbose
 Show-Printers
 
 Disable-Windows10DefaultPrinterRoaming
