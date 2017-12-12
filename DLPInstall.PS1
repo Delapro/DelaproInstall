@@ -24,7 +24,11 @@ Function Test-WindowsVista() {
 }
 
 Function Test-Windows7() {
-	(Get-CimInstance Win32_OperatingSystem).Caption -match "Windows 7"
+	If ($PSVersionTable.PSVersion -lt "3.0") {
+		(Get-WmiObject Win32_OperatingSystem).Caption -match "Windows 7"
+	} else {
+		(Get-CimInstance Win32_OperatingSystem).Caption -match "Windows 7"
+	}
 }
 
 # testet speziell auf Windows 8.0
@@ -1273,7 +1277,8 @@ Function Install-MissingPowershellCmdLets {
 			Function global:Remove-Printer ($Name) {
 				$Filter = "Name='$($Name)'"
 				# anstatt Name doch DeviceID?
-				$dlpprn = Get-CimInstance Win32_Printer -Filter $Filter
+				$dlpprn = Get-WmiObject Win32_Printer -Filter $Filter
+				# Get-CimInstance funktioniert hier nicht, weil es .Delete() nicht kennt!
 				$renres = $dlpprn.Delete()
 				# renres.ReturnValue == 5 wenn Access Denied, bei 0 erfolgreich
 			}
