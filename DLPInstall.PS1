@@ -2487,7 +2487,6 @@ Start-Process -Wait "C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDoc
 Remove-Printer -Name eDocPrintPro
 
 Install-DelaproMailerPrinter
-Update-DelaproGhostscript -PathDelaproGhostscript "$($DLPPath)\LASER\GHOSTPDF.BAT" -Verbose
 Show-Printers
 
 Disable-Windows10DefaultPrinterRoaming
@@ -2504,6 +2503,8 @@ Install-DelaproChartModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -Dow
 Install-DelaproPreisupdate -TempDirectory $DLPInstPath -DownloadUrl $easyBaseURI
 
 #>
+
+Update-DelaproGhostscript -PathDelaproGhostscript "$($DLPPath)\LASER\GHOSTPDF.BAT" -Verbose
 
 # Für Neuinstallation BEL2014.LOG anlegen, damit ein spezieller Hinweis erfolgt, falls diese nochmals eingespielt werden sollte
 "Neuinstallation" | Set-Content  "$($DlpPath)\BEL2014.LOG"
