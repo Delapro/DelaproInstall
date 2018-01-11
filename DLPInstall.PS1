@@ -641,16 +641,6 @@ Function Install-eDocPrintPro {
 		[System.String]$tempPath = "C:\Temp\DelaproInstall"
 	)
 
-	# eDocPrint Pro braucht .Net 3.5! Ist auf Windows 10 nicht automatisch vorhanden!
-	If (-Not (Test-NetFramework35Installed)) {
-		If (Test-WindowsServer) {
-			Install-WindowsFeature -name NET-Framework-Core
-		} else {
-			Enable-WindowsOptionalFeature  -Online  -FeatureName NetFx3
-		}
-		# TODO: wegen Reboot prüfen
-	}
-	
 	$eDocPrintProDir = Join-Path -Path $tempPath -ChildPath "eDocPrintPro"
 	$eDocPrintProDir = Join-Path -Path $eDocPrintProDir -ChildPath ""
 	Write-Verbose "Verzeichnis: $eDocPrintProDir"
