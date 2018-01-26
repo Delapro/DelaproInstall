@@ -521,6 +521,38 @@ Function Get-Ghostscript {
 	$gsDirs
 }
 
+# ermittelt den Pfad zur Konsolen-Ghostscript-EXE
+Function Get-GhostScriptExecutable {
+	[CmdletBinding()]
+	Param(
+		[ValidateScript({throw "Not yet implemented"})]
+		[version]$Version
+		)
+
+	$gs=Get-GhostScript
+	If ($gs) {
+		$GhostScriptBasePath=$gs[0].Fullname
+	}
+
+	If ($GhostScriptBasePath) {
+		$gsPath = join-Path (Join-Path $GhostScriptBasePath "Bin") ""
+		If (Test-Path "$($gsPath)gswin64c.exe") {
+			$gsPath = "$($gsPath)gswin64c.exe"
+		} else {
+			$gsPath = "$($gsPath)gswin32c.exe"
+		}
+		Write-Verbose "GsPath: $gsPath"
+		If (Test-Path $gsPath) {
+			$gsPath
+		} else {
+			Write-Error "Ghostscript-EXE nicht gefunden!"
+		}
+	} else {
+		Write-Error "Ghostscript-Verzeichnis nicht gefunden!"
+	}
+	
+}
+
 # setzt die Version von Ghostscript in der GHOSTSCRIPT.BAT-Datei auf die übergebene Version
 Function Update-DelaproGhostscript {
 	[CmdletBinding()]
@@ -581,7 +613,8 @@ Function Convert-PDF {
 		[parameter(Mandatory=$true)]
 		[String]$PDFFile,
 		[String]$OutFile=(& {$PDFfi=[System.IO.FileInfo](Convert-Path $PDFFile);"$($Env:Temp)\$($PDFfi.Name.Replace($PDFfi.Extension,".BMP"))"}),
-		[String]$GhostScriptBasePath=(& {$gs=Get-GhostScript; If ($gs) {$gs=$gs[0].Fullname}; $gs}),
+		[ValidateScript({throw "Not yet implemented"})]
+		[version]$Version,
 		[Switch]$Show,
 		[Switch]$ShowDir,
 		[String[]]$OptArgs
@@ -591,45 +624,32 @@ Function Convert-PDF {
 	Write-Verbose "PDF: $PDFFile"
 	Write-Verbose "Out: $OutFile"
 
-	If ($GhostScriptBasePath) {
-		$gsPath = join-Path (Join-Path $GhostScriptBasePath "Bin") ""
-		If (Test-Path "$($gsPath)gswin64c.exe") {
-			$gsPath = "$($gsPath)gswin64c.exe"
-		} else {
-			$gsPath = "$($gsPath)gswin32c.exe"
+	$gsPathExe = Get-GhostScriptExecutable  # TODO: Version noch durchreichen
+	If ($gsPathExe) {
+		$arg = @("-sOutputFile=""$OutFile""",
+					"-sDEVICE=bmp16m",
+					"-dNOPAUSE",
+					"-dTextAlphaBits=4",
+					"-dGraphicsAlphaBits=4",
+					"-dLastPage=1",
+					"-r300",
+					"-g2480x3508",
+					"-dBATCH"
+					)
+		If ($OptArgs) {
+			$arg += $OptArgs
 		}
-		Write-Verbose "GsPath: $gsPath"
-		If (Test-Path $gsPath) {
-			$arg = @("-sOutputFile=""$OutFile""",
-					 "-sDEVICE=bmp16m",
-					 "-dNOPAUSE",
-					 "-dTextAlphaBits=4",
-					 "-dGraphicsAlphaBits=4",
-					 "-dLastPage=1",
-					 "-r300",
-					 "-g2480x3508",
-					 "-dBATCH"
-					 )
-		    If ($OptArgs) {
-				$arg += $OptArgs
-			}
-			# wichtig, die PDF-Datei darf erst am Schluss kommen!
-			$arg += """$Pdffile"""
+		# wichtig, die PDF-Datei darf erst am Schluss kommen!
+		$arg += """$Pdffile"""
 
-			Write-Host """$gsPath"" $arg"
-			Start-Process -Wait -FilePath $gsPath -ArgumentList $arg -NoNewWindow
-			If ($Show) {
-				Start-Process $OutFile
-			}
-			If ($ShowDir) {
-				throw {"To be implemented!"}
-			}
-
-		} else {
-			Write-Error "Ghostscript-EXE nicht gefunden!"
+		Write-Host """$gsPath"" $arg"
+		Start-Process -Wait -FilePath $gsPath -ArgumentList $arg -NoNewWindow
+		If ($Show) {
+			Start-Process $OutFile
 		}
-	} else {
-		Write-Error "Ghostscript-Verzeichnis nicht gefunden!"
+		If ($ShowDir) {
+			Show-Folder -Filename $OutFile
+		}
 	}
 }
 
