@@ -189,6 +189,16 @@ Start-Process $bmp -Verb Edit
 
 ```
 
+### Texte aus PDF-Dateien extrahieren
+
+Es wird noch kein OCR unterstützt!
+
+```Powershell
+$pdf = "$DLPPath\Export\PDF\Delapro.PDF"
+$text = Invoke-PDFTextExtraction -PDFFile $pdf
+$text.Length
+```
+
 ## Delapro Autostart einrichten
 
 ```Powershell
