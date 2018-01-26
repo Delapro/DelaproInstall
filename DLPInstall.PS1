@@ -643,7 +643,7 @@ Function Convert-PDF {
 		$arg += """$Pdffile"""
 
 		Write-Host """$gsPath"" $arg"
-		Start-Process -Wait -FilePath $gsPath -ArgumentList $arg -NoNewWindow
+		Start-Process -Wait -FilePath $gsPathExe -ArgumentList $arg -NoNewWindow
 		If ($Show) {
 			Start-Process $OutFile
 		}
@@ -651,6 +651,43 @@ Function Convert-PDF {
 			Show-Folder -Filename $OutFile
 		}
 	}
+}
+
+# extrahiert den Text aus einem PDF-Dokument
+Function Invoke-PDFTextExtraction {
+	[CmdletBinding()]
+	Param(
+		[parameter(Mandatory=$true)]
+		[String]$PDFFile,
+		[ValidateScript({throw "Not yet implemented"})]
+		[version]$Version,
+		[String[]]$OptArgs
+	)
+
+	$PDFFile = Resolve-Path $PDFFile
+	$TxtFile = New-TemporaryFile
+	Write-Verbose "PDF: $PDFFile"
+	Write-Verbose "Text: $TXTFile"
+
+	$gsPathExe = Get-GhostScriptExecutable  # TODO: Version noch durchreichen
+	If ($gsPathExe) {
+		$arg = @("-sOutputFile=""$TXTFile""",
+					"-sDEVICE=txtwrite",
+					"-dTextFormat=3",  # UTF-8, see https://www.ghostscript.com/doc/current/VectorDevices.htm#TXT
+					"-dNOPAUSE",
+					"-dBATCH"
+					)
+		If ($OptArgs) {
+			$arg += $OptArgs
+		}
+		# wichtig, die PDF-Datei darf erst am Schluss kommen!
+		$arg += """$Pdffile"""
+
+		Write-Verbose """$gsPath"" $arg"
+		Start-Process -Wait -FilePath $gsPathExe -ArgumentList $arg -NoNewWindow
+		Get-Content $TxtFile -Encoding UTF8
+	}
+
 }
 
 # installiert eDocPrintPro
