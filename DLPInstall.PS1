@@ -686,6 +686,7 @@ Function Invoke-PDFTextExtraction {
 		Write-Verbose """$gsPath"" $arg"
 		Start-Process -Wait -FilePath $gsPathExe -ArgumentList $arg -NoNewWindow
 		Get-Content $TxtFile -Encoding UTF8
+		Remove-Item $TxtFile	
 	}
 
 }
