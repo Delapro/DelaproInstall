@@ -1016,15 +1016,15 @@ Function Install-7Zip {
 		[System.String]$tempDirectory="$Env:TEMP\"
 	)
 
-	$Version = '1604'	# aktuelle offizielle Version: http://www.7-zip.org/
+	$Version = '1801'	# aktuelle offizielle Version: http://www.7-zip.org/
 	If (Test-64Bit) {
 		$url = "http://www.7-zip.org/a/7z$($Version)-x64.exe"
 		$Dest = "$($tempDirectory)\7z$($Version)-x64.exe"
-		$Sha256 = '9BB4DC4FAB2A2A45C15723C259DC2F7313C89A5AC55AB7C3F76BBA26EDC8BCAA'
+		$Sha256 = '86670D63429281A4A65C36919CA0F3099E3F803E3096C3A9722D61B3D31E4A9F'
 	} else {
 		$url = "http://www.7-zip.org/a/7z$($Version).exe"
 		$Dest = "$($tempDirectory)\7z$($Version).exe"
-		$Sha256 = 'DBB2B11DEA9F4432291E2CBEFE14EBE05E021940E983A37E113600EEE55DAA95'
+		$Sha256 = 'C55C60A674114BE26CE470F43109D405A5ADCD2BD38E346D4A35C98727174EB0'
 	}
 
 	Write-Verbose "Lade $url nach $Dest"
