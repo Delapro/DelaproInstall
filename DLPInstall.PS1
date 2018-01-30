@@ -2404,9 +2404,17 @@ Function Invoke-CleanupDelapro {
 	Remove-Item "$($DelaproPath)\cm??18*.DLL"
 	Remove-Item "$($DelaproPath)\cm??18*.LNG"
 	
-	# dir cm??19*.*
-	# Remove-Item cm??19*.DLL
-	# Remove-Item cm??19*.LNG
+	#dir cm??19*.*
+	Remove-Item "$($DelaproPath)\cm??19*.DLL"
+	Remove-Item "$($DelaproPath)\cm??19*.LNG"
+
+	#dir cm??20*.*
+	Remove-Item "$($DelaproPath)\cm??20*.DLL"
+	Remove-Item "$($DelaproPath)\cm??20*.LNG"
+	
+	#dir cm??21*.*
+	Remove-Item "$($DelaproPath)\cm??21*.DLL"
+	Remove-Item "$($DelaproPath)\cm??21*.LNG"
 	
 	Get-ChildItem "$($DelaproPath)\cm*"
 	
