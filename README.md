@@ -105,14 +105,6 @@ Import-LastDelaproBackup -Verbose
 
 ```
 
-## Delapro-Verzeichnis aufräumen
-
-```Powershell
-Set-Location $DlpPath
-Invoke-CleanupDelapro -Verbose
-
-```
-
 ## Update einspielen
 
 Dieses Beispiel funktioniert nur mit manuellen Updates, wo in C:\TEMP\ die Datei EXES.EXE abgelegt wurde.
@@ -133,6 +125,14 @@ If (Test-DelaproNotRunning -Path $DlpPath) {
 } else {
     Write-Error "Delapro läuft noch!"
 }
+```
+
+## Delapro-Verzeichnis aufräumen
+
+```Powershell
+Set-Location $DlpPath
+Invoke-CleanupDelapro -Verbose
+
 ```
 
 ## Acrobat Reader Seitenpanel abschalten
