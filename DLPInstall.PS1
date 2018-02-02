@@ -1531,7 +1531,7 @@ Function Update-DlpRawPr {
 		[System.String]$DelaproPath="C:\Delapro"
 	)
 
-	$rawVersionNumber = "1.2.0"
+	$rawVersionNumber = "1.3.0"
 	$rawVersion = [version]$rawVersionNumber.Replace("-Pre", "")
 
 	$ExePath = Join-Path -Path $DelaproPath -ChildPath "Laser\DlpRawPr.EXE"
