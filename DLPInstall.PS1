@@ -600,7 +600,7 @@ Function Install-Ghostscript {
 	$ghostCall = Join-Path -Path $tempPath -ChildPath $ghostEXE
 
 	# Start-BitsTransfer $ghostUrl  $tempPath
-	Invoke-WebRequest -Uri $ghostUrl -OutFile $ghostCall
+	Invoke-WebRequest -UseBasicParsing -Uri $ghostUrl -OutFile $ghostCall
 	
 	## /S muss groß sein!
 	Start-Process -Wait $ghostcall -ArgumentList "/S"
@@ -722,7 +722,7 @@ Function Install-eDocPrintPro {
 	
 	#Start-BitsTransfer http://www.pdfprinter.at/de/download-links/download-edocprintpro.html $DLPInstPath
 	# FTP via http://technet.microsoft.com/en-us/library/hh849901.aspx laden
-	Invoke-WebRequest "ftp://download.may.co.at/Repository/msoftware/MAYComp/Current/RO/eDocPrintPro.zip"  -OutFile "$($eDocPrintProDir)eDocPrintPro.zip"
+	Invoke-WebRequest -UseBasicParsing "ftp://download.may.co.at/Repository/msoftware/MAYComp/Current/RO/eDocPrintPro.zip"  -OutFile "$($eDocPrintProDir)eDocPrintPro.zip"
 	# http://www.xkey.at/d/file.php?file=MAYComp/Current/RO/eDocPrintPro.zip
 	# http://www.xkey.at/d/file.php?file=MAYComp/Current/RO/eDocPrintPro.zip
 	# ftp://download.may.co.at/Repository/msoftware/MAYComp/Current/RO/eDocPrintPro.zip
@@ -1539,7 +1539,7 @@ Function Update-DlpRawPr {
 	$ExeVersion = [version](Get-Item $ExePath).VersionInfo.ProductVersion
 	If ($ExeVersion -lt $rawVersion) {
 		Write-Verbose "Version muss aktualisiert werden, von $($ExeVersion) auf $($rawVersion)"
-		Invoke-WebRequest -Uri https://github.com/Delapro/DlpRawPr/releases/download/v$($rawVersionNumber)/DlpRawPr.exe -OutFile (Join-Path -Path (Join-Path -Path $DelaproPath -ChildPath Laser) -ChildPath DLPRawPr.EXE) 
+		Invoke-WebRequest -UseBasicParsing -Uri https://github.com/Delapro/DlpRawPr/releases/download/v$($rawVersionNumber)/DlpRawPr.exe -OutFile (Join-Path -Path (Join-Path -Path $DelaproPath -ChildPath Laser) -ChildPath DLPRawPr.EXE) 
 	} else {
 		Write-Verbose "Version ist aktuell, $($ExeVersion)"
 	}
