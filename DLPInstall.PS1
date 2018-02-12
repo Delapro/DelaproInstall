@@ -681,19 +681,20 @@ Function Get-PDFInfo {
 					"-dDumpXML",
 					"-dDumpFontsUsed",
 					)
-		If ($OptArgs) {
+		  If ($OptArgs) {
 			$arg += $OptArgs
-		}
-		# wichtig, die PDF-Datei darf erst am Schluss kommen!
-		$arg += """$Pdffile"""
+		  }
+		  # wichtig, die PDF-Datei darf erst am Schluss kommen!
+		  $arg += """$Pdffile"""
 
-		Write-Host """$gsPath"" $arg"
-		Start-Process -Wait -FilePath $gsPathExe -ArgumentList $arg -NoNewWindow
-		If ($Show) {
+		  Write-Host """$gsPath"" $arg"
+		  Start-Process -Wait -FilePath $gsPathExe -ArgumentList $arg -NoNewWindow
+		  If ($Show) {
 			Start-Process $OutFile
-		}
-		If ($ShowDir) {
+		  }
+		  If ($ShowDir) {
 			Show-Folder -Filename $OutFile
+		  }
 		}
 	}
 }
