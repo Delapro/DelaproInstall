@@ -660,7 +660,8 @@ Function Get-PDFInfo {
 		[parameter(Mandatory=$true)]
 		[String]$PDFFile,
 		[ValidateScript({throw "Not yet implemented"})]
-		[version]$Version
+		[version]$Version,
+		[String[]]$OptArgs
 	)
 
 	$PDFFile = Resolve-Path $PDFFile
