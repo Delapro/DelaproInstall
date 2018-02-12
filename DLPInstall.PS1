@@ -675,18 +675,17 @@ Function Get-PDFInfo {
 		  $PSFile = New-TemporaryFile
 		  $wrs | Set-Content $PSFile
 		
-  		  $arg = @("-sFile=""$OutFile""",
+  		  $arg = @("-sFile=""$PdfFile""",
 					"-dDumpMediaSizes=true",
 					"-dDumpFontsNeeded=true",
 					"-dDumpXML",
-					"-dDumpFontsUsed",
-					"$PSFile"
+					"-dDumpFontsUsed"					
 					)
 		  If ($OptArgs) {
 			$arg += $OptArgs
 		  }
 		  # wichtig, die PDF-Datei darf erst am Schluss kommen!
-		  $arg += """$Pdffile"""
+		  $arg += """$PSfile"""
 
 		  Write-Host """$gsPath"" $arg"
 		  Start-Process -Wait -FilePath $gsPathExe -ArgumentList $arg -NoNewWindow
