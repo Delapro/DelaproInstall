@@ -653,6 +653,51 @@ Function Convert-PDF {
 	}
 }
 
+# gibt Infos zu einer PDF-Datei aus
+Function Get-PDFInfo {
+	[CmdletBinding()]
+	Param(
+		[parameter(Mandatory=$true)]
+		[String]$PDFFile,
+		[ValidateScript({throw "Not yet implemented"})]
+		[version]$Version,
+	)
+
+	$PDFFile = Resolve-Path $PDFFile
+	Write-Verbose "PDF: $PDFFile"
+
+	$gsPathExe = Get-GhostScriptExecutable  # TODO: Version noch durchreichen
+	If ($gsPathExe) {
+		# zuerst mal PDF_Info.PS herunterladen
+		$wr = Invoke-WebRequest -UseBasicParsing 'https://git.ghostscript.com/?p=ghostpdl.git;a=blob_plain;f=toolbin/pdf_info.ps;hb=HEAD'
+		If ($wr.StatusCode -eq 200) {
+		  $wrs = [System.Text.Encoding]::ASCII.GetString($wr.Content)
+		  $PSFile = New-TemporaryFile
+		  $wrs | Set-Content $PSFile
+		
+  		  $arg = @("-sFile=""$OutFile""",
+					"-dDumpMediaSizes=true",
+					"-dDumpFontsNeeded=true",
+					"-dDumpXML",
+					"-dDumpFontsUsed",
+					)
+		If ($OptArgs) {
+			$arg += $OptArgs
+		}
+		# wichtig, die PDF-Datei darf erst am Schluss kommen!
+		$arg += """$Pdffile"""
+
+		Write-Host """$gsPath"" $arg"
+		Start-Process -Wait -FilePath $gsPathExe -ArgumentList $arg -NoNewWindow
+		If ($Show) {
+			Start-Process $OutFile
+		}
+		If ($ShowDir) {
+			Show-Folder -Filename $OutFile
+		}
+	}
+}
+
 # extrahiert den Text aus einem PDF-Dokument
 Function Invoke-PDFTextExtraction {
 	[CmdletBinding()]
