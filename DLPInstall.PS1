@@ -679,7 +679,8 @@ Function Get-PDFInfo {
 					"-dDumpMediaSizes=true",
 					"-dDumpFontsNeeded=true",
 					"-dDumpXML",
-					"-dDumpFontsUsed"
+					"-dDumpFontsUsed",
+					"$PSFile"
 					)
 		  If ($OptArgs) {
 			$arg += $OptArgs
@@ -689,12 +690,7 @@ Function Get-PDFInfo {
 
 		  Write-Host """$gsPath"" $arg"
 		  Start-Process -Wait -FilePath $gsPathExe -ArgumentList $arg -NoNewWindow
-		  If ($Show) {
-			Start-Process $OutFile
-		  }
-		  If ($ShowDir) {
-			Show-Folder -Filename $OutFile
-		  }
+		  Remove-Item $PSFile
 		}
 	}
 }
