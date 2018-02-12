@@ -679,7 +679,7 @@ Function Get-PDFInfo {
 					"-dDumpMediaSizes=true",
 					"-dDumpFontsNeeded=true",
 					"-dDumpXML",
-					"-dDumpFontsUsed",
+					"-dDumpFontsUsed"
 					)
 		  If ($OptArgs) {
 			$arg += $OptArgs
