@@ -305,6 +305,14 @@ Get-WinEvent -LogName "System" -FilterXPath "*[System[EventRecordID=$($rr.Record
 
 ```
 
+### Hardwareprobleme erkennen
+
+```Powershell
+# Festplatteninfos ausgeben
+Get-PhysicalDisk
+Get-PhysicalDisk|% {Get-StorageReliabilityCounter -PhysicalDisk $_}|fl *
+```
+
 ### Probleme in Zusatzprogrammen
 
 #### eDocPrintPro
