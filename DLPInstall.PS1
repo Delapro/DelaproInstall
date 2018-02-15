@@ -1050,6 +1050,63 @@ Function Test-Java {
 	}
 }
 
+# installiert VeraPDF
+Function Install-VeraPDF {
+	[CmdletBinding()]
+	Param(
+		#[parameter(Mandatory=$true)]
+		[System.String]$tempDirectory="$Env:TEMP\"
+	)
+	
+	Write-Verbose "tempDirectory: $tempDirectory"
+	Start-BitsTransfer http://downloads.verapdf.org/rel/verapdf-installer.zip -Destination $tempDirectory\Verapdf-installer.zip
+	If (Test-Path $tempDirectory\Vera) {
+		Remove-Item $tempDirectory\Vera -Recurse
+	}
+	Expand-Archive $tempDirectory\Verapdf-installer.zip -DestinationPath $tempDirectory\Vera -Force
+
+        $AutoInstallXML = @"
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AutomatedInstallation langpack="eng">
+    <com.izforge.izpack.panels.htmlhello.HTMLHelloPanel id="welcome"/>
+    <com.izforge.izpack.panels.target.TargetPanel id="install_dir">
+        <installpath>C:\Users\admin\verapdf</installpath>
+    </com.izforge.izpack.panels.target.TargetPanel>
+    <com.izforge.izpack.panels.packs.PacksPanel id="sdk_pack_select">
+        <pack index="0" name="veraPDF GUI" selected="true"/>
+        <pack index="1" name="veraPDF Batch files" selected="true"/>
+        <pack index="2" name="veraPDF Corpus and Validation model" selected="false"/>
+        <pack index="3" name="veraPDF Documentation" selected="true"/>
+        <pack index="4" name="veraPDF Sample Plugins" selected="false"/>
+    </com.izforge.izpack.panels.packs.PacksPanel>
+    <com.izforge.izpack.panels.install.InstallPanel id="install"/>
+    <com.izforge.izpack.panels.finish.FinishPanel id="finish"/>
+</AutomatedInstallation>
+"@
+
+	$veraPath = "$($tempDirectory)\Vera\verapdf-greenfield-1.10.6"
+	$AutoInstallXML | Set-Content -Path $veraPath\auto-install.XML
+
+	# Javapfad ermitteln
+	$j = Get-ChildItem "$($env:ProgramFiles)\Java\Java.exe" -Recurse
+	If ($j) {
+		If ($j -is [array]) {
+			# TODO: Sortieren, damit man die neueste Version zurück bekommt
+			$j = $j[0]
+		}
+		Write-Verbose "Java: $j"
+
+		# java -jar "%BASEDIR%verapdf-izpack-installer-1.10.6.jar" auto-install.xml
+		$p = Start-Process -Wait -FilePath $j -ArgumentList "-jar", "$($veraPath)\verapdf-izpack-installer-1.10.6.jar", "$($veraPath)\auto-install.XML" -PassThru
+		If ($p.ExitCode -eq 255) {
+			$true
+		} else {
+			$false
+		}
+	}
+	
+}
+
 # ladet und installiert 7Zip
 Function Install-7Zip {
 	[CmdletBinding()]
