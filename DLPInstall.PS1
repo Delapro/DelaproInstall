@@ -1098,11 +1098,6 @@ Function Install-VeraPDF {
 
 		# java -jar "%BASEDIR%verapdf-izpack-installer-1.10.6.jar" auto-install.xml
 		$p = Start-Process -Wait -FilePath $j -ArgumentList "-jar", "$($veraPath)\verapdf-izpack-installer-1.10.6.jar", "$($veraPath)\auto-install.XML" -PassThru
-		If ($p.ExitCode -eq 255) {
-			$true
-		} else {
-			$false
-		}
 	}
 	
 }
