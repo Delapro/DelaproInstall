@@ -1065,12 +1065,13 @@ Function Install-VeraPDF {
 	}
 	Expand-Archive $tempDirectory\Verapdf-installer.zip -DestinationPath $tempDirectory\Vera -Force
 
+	$veraPDFInstallPath = $env:USERPROFILE\verapdf
         $AutoInstallXML = @"
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <AutomatedInstallation langpack="eng">
     <com.izforge.izpack.panels.htmlhello.HTMLHelloPanel id="welcome"/>
     <com.izforge.izpack.panels.target.TargetPanel id="install_dir">
-        <installpath>C:\Users\admin\verapdf</installpath>
+        <installpath>$veraPDFInstallPath</installpath>
     </com.izforge.izpack.panels.target.TargetPanel>
     <com.izforge.izpack.panels.packs.PacksPanel id="sdk_pack_select">
         <pack index="0" name="veraPDF GUI" selected="true"/>
