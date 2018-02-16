@@ -247,6 +247,12 @@ Install-Java -Verbose
 Test-Java
 ```
 
+### VeraPDF
+
+```Powershell
+Install-VeraPDF -Verbose
+```
+
 ### 7Zip
 
 ```Powershell
