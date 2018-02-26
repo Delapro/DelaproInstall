@@ -79,8 +79,8 @@ If ((@("gs9.00", "gs8.63", "gs8.64", "gs8.70", "gs8.71") -contains $gv[0].Name -
 # Ghostscript in GhostPDF.BAT korrekt setzen
 Update-DelaproGhostscript -PathDelaproGhostscript "$($DLPPath)\LASER\GHOSTPDF.BAT" -Verbose
 
-# DelaproMailer-Druckertreiber installieren
-Install-DelaproMailerPrinter -Verbose
+# DelaproMail-Druckertreiber installieren
+Install-DelaproMailPrinter -Verbose
 
 # evtl. bei Win10, wegen kaputtem Microsoft PS Standardtreiber (fehlende Ränder)
 Add-PrinterDriver -Name "Xerox PS Color Class Driver V1.1"
