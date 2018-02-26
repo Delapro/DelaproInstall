@@ -1824,8 +1824,8 @@ Function Get-InstalledWindowsPrinterDriver {
 	$printerDriver
 }
 
-# installiert den DelaproMailer Drucker, dazu werden Adminrechte benötigt!
-Function Install-DelaproMailerPrinter {
+# installiert den DelaproMail Drucker, dazu werden Adminrechte benötigt!
+Function Install-DelaproMailPrinter {
 	[CmdletBinding()]
 	Param(
 		[System.String]$DelaproPath = "C:\Delapro",
@@ -1833,7 +1833,7 @@ Function Install-DelaproMailerPrinter {
 		[System.String]$PrinterName = "DelaproMail"
 	)
 
-	# DelaproMailer-Port anlegen:
+	# DelaproMail-Port anlegen:
 	Write-Verbose "Lege $Portname an"
 	If (-Not (Test-PrinterPort -Portname $Portname)) {
 		New-PrinterPort -Portname $PortName
@@ -1844,7 +1844,7 @@ Function Install-DelaproMailerPrinter {
 		New-Item -Type Directory $DelaproPath\Export\PDF\Temp
 	}
 	
-	# DelaproMailer-Druckertreiber anlegen
+	# DelaproMail-Druckertreiber anlegen
 	# für künftige Aktionen GhostScript-Druckertreiber installieren:
 	# rundll32 printui.dll,PrintUIEntry /Gw /ia /m "Ghostscript PDF" /f "C:\program files\gs\gs9.18\lib\ghostpdf.inf"
 	# klappt aber noch nicht wegen der Zertifikate. Doch, wenn dies vorweg installiert wird: C:\Program Files\GS\gs9.18\lib>pnputil -i -a ghostpdf.inf
@@ -2647,7 +2647,7 @@ Start-Process -Wait "C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDoc
 # durch Aufruf von eDocPrintProUtil.EXE sind zwei Druckertreiber vorhanden, deshalb den Standard eDocPrintPro löschen
 Remove-Printer -Name eDocPrintPro
 
-Install-DelaproMailerPrinter
+Install-DelaproMailPrinter
 Show-Printers
 
 Disable-Windows10DefaultPrinterRoaming
