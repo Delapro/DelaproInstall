@@ -600,7 +600,10 @@ Function Install-Ghostscript {
 	$ghostCall = Join-Path -Path $tempPath -ChildPath $ghostEXE
 
 	# Start-BitsTransfer $ghostUrl  $tempPath
+	$prot = [Net.ServicePointManager]::SecurityProtocol
+	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12  # Github verlangt TLS 1.2
 	Invoke-WebRequest -UseBasicParsing -Uri $ghostUrl -OutFile $ghostCall
+	[Net.ServicePointManager]::SecurityProtocol = $prot
 	
 	## /S muss groß sein!
 	Start-Process -Wait $ghostcall -ArgumentList "/S"
@@ -1634,7 +1637,11 @@ Function Update-DlpRawPr {
 	$ExeVersion = [version](Get-Item $ExePath).VersionInfo.ProductVersion
 	If ($ExeVersion -lt $rawVersion) {
 		Write-Verbose "Version muss aktualisiert werden, von $($ExeVersion) auf $($rawVersion)"
+		# TLS 1.2 ist nun Pflicht, sonst kommt ein SSL/TLS Kanalfehler!
+		$prot = [Net.ServicePointManager]::SecurityProtocol
+		[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 		Invoke-WebRequest -UseBasicParsing -Uri https://github.com/Delapro/DlpRawPr/releases/download/v$($rawVersionNumber)/DlpRawPr.exe -OutFile (Join-Path -Path (Join-Path -Path $DelaproPath -ChildPath Laser) -ChildPath DLPRawPr.EXE) 
+		[Net.ServicePointManager]::SecurityProtocol = $prot
 	} else {
 		Write-Verbose "Version ist aktuell, $($ExeVersion)"
 	}
