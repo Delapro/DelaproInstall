@@ -1068,7 +1068,7 @@ Function Install-VeraPDF {
 	}
 	Expand-Archive $tempDirectory\Verapdf-installer.zip -DestinationPath $tempDirectory\Vera -Force
 
-	$veraPDFInstallPath = $env:USERPROFILE\verapdf
+	$veraPDFInstallPath = "$env:USERPROFILE\verapdf"
         $AutoInstallXML = @"
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <AutomatedInstallation langpack="eng">
