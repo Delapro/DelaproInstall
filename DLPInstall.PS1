@@ -1,6 +1,12 @@
 # wegen Win10 v1607 Edge.Problemen:
 # (Invoke-WebRequest -UseBasicParsing -Uri https://raw.githubusercontent.com/Delapro/DelaproInstall/master/DLPInstall.PS1).Content.Replace(""+[char]10,[char]13+[char]10)| Set-Clipboard; Notepad.EXE
 
+# damit Copy/Paste schneller funktioniert PSReadline ausschalten
+$PSReadlineActive=Get-Module PSReadline
+If($PSReadlineActive) {
+	Remove-Module PSReadline
+}
+
 # Prüfen, ob FullLanguage Mode aktiv ist, siehe auch "get-help about_language_modes"
 If (-Not ($ExecutionContext.SessionState.LanguageMode -eq "FullLanguage")) {
 	throw "Es ist zwingend der FullLanguage-Modus erforderlich!"
@@ -2540,6 +2546,11 @@ Function Invoke-CleanupDelapro {
 		Get-Item "$($DelaproPath)\backup\log\*.log" | Where-Object {$_.LastWriteTime -lt ((Get-Date).AddDays(-365))} | Remove-Item
 	}
 	
+}
+
+If($PSReadlineActive) {
+	# PSReadline wieder aktiveren, falls es vorher ausgeschaltet wurde.
+	Import-Module PSReadline
 }
 
 #
