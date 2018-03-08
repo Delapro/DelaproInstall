@@ -2,10 +2,10 @@
 # (Invoke-WebRequest -UseBasicParsing -Uri https://raw.githubusercontent.com/Delapro/DelaproInstall/master/DLPInstall.PS1).Content.Replace(""+[char]10,[char]13+[char]10)| Set-Clipboard; Notepad.EXE
 
 # damit Copy/Paste schneller funktioniert PSReadline ausschalten
-$PSReadlineActive=Get-Module PSReadline
-If($PSReadlineActive) {
-	Remove-Module PSReadline
-}
+# $PSReadlineActive=Get-Module PSReadline
+# If($PSReadlineActive) {
+#	Remove-Module PSReadline
+#}
 
 # Prüfen, ob FullLanguage Mode aktiv ist, siehe auch "get-help about_language_modes"
 If (-Not ($ExecutionContext.SessionState.LanguageMode -eq "FullLanguage")) {
@@ -2548,10 +2548,10 @@ Function Invoke-CleanupDelapro {
 	
 }
 
-If($PSReadlineActive) {
-	# PSReadline wieder aktiveren, falls es vorher ausgeschaltet wurde.
-	Import-Module PSReadline
-}
+#If($PSReadlineActive) {
+#	# PSReadline wieder aktiveren, falls es vorher ausgeschaltet wurde.
+#	Import-Module PSReadline
+#}
 
 #
 #
