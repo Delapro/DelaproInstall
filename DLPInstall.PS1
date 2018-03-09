@@ -679,7 +679,11 @@ Function Get-PDFInfo {
 	$gsPathExe = Get-GhostScriptExecutable  # TODO: Version noch durchreichen
 	If ($gsPathExe) {
 		# zuerst mal PDF_Info.PS herunterladen
+		$prot = [Net.ServicePointManager]::SecurityProtocol
+		[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12  # Github verlangt TLS 1.2
 		$wr = Invoke-WebRequest -UseBasicParsing 'https://git.ghostscript.com/?p=ghostpdl.git;a=blob_plain;f=toolbin/pdf_info.ps;hb=HEAD'
+		[Net.ServicePointManager]::SecurityProtocol = $prot
+	
 		If ($wr.StatusCode -eq 200) {
 		  $wrs = [System.Text.Encoding]::ASCII.GetString($wr.Content)
 		  $PSFile = New-TemporaryFile
