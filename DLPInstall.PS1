@@ -1239,8 +1239,11 @@ Function Install-LibreOffice {
 	If (-not (Test-LibreOffice)) {
 		# Infos zur aktuellen Version: https://de.libreoffice.org/download/release-notes/
 		# Installationsparameter: https://wiki.documentfoundation.org/Deployment_and_Migration
-		$loVersion = "5.3.7"
-		$url = "http://download.documentfoundation.org/libreoffice/stable/$loVersion/win/x86/LibreOffice_$($loVersion)_Win_x86.msi"
+		# Basispfad für Download der Versionen: https://downloadarchive.documentfoundation.org/libreoffice/old/
+		# TODO: 64-Bit
+		$loVersion = "5.3.7.2"
+		$base = 'https://downloadarchive.documentfoundation.org/libreoffice/old'
+		$url = "$($base)/$($loVersion)/win/x86/LibreOffice_$($loVersion)_Win_x86.msi"
 		Write-Verbose "Download von $url"
 		Start-BitsTransfer $url -Destination $tempDirectory
 		Start-Process -Wait "$($tempDirectory)\LibreOffice_$($loVersion)_Win_x86.msi"
