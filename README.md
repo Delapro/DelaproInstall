@@ -18,6 +18,13 @@ Befehle, wenn man [Delapro Administrationsscript](https://easysoftware.de/ps) Cm
 If ($PSVersionTable.PSVersion.Major -lt 4) {
     If (Test-NetFramework45Installed) {
         Install-Powershell
+    } else {
+        Install-NetFramework
+        If (Test-NetFramework45Installed) {
+            Install-Powershell
+        } else {
+            "Bitte nach Neustart nochmal aufrufen"
+        }
     }
 }
 
