@@ -1939,6 +1939,44 @@ Function Install-DelaproMailPrinter {
 
 }
 
+<#
+.Synopsis
+   Ruft das VDDS Prüfmodul auf und öffnet ein Explorer-Fenster mit der übergebenen Datei selektiert
+.DESCRIPTION
+   Ruft das VDDS Prüfmodul auf und öffnet ein Explorer-Fenster mit der übergebenen Datei selektiert
+.EXAMPLE
+   Ruft das VDDS-Prüfungstool für XML-Dateien auf, öffnet gleichzeitg noch ein Explorerfenster
+   mit der aktuell zu bearbeitenden XML-Datei
+
+   Invoke-VDDSCheckTool -File C:\TEMP\TEST.XML
+.EXAMPLE
+   Ein weiteres Beispiel für die Verwendung dieses Cmdlets
+#>
+Function Invoke-VDDSPruefTool
+{   
+    [CmdletBinding()]
+    [OutputType([void])]
+    Param
+    (
+        # Dateinamen
+        [Parameter(Mandatory=$true,
+                   Position=0)]
+        [String]
+        $KZBVXMLFile
+    )
+
+    & "$($env:ProgramFiles)\VDDS\ValidateLabXML.exe"
+    
+    # Klappt bei Leerzeichen nicht:
+    #Invoke-Expression "explorer /select,`"$KZBVXMLFile`""
+    # explorer /select,c:\windows\calc.exe
+    #explorer /select,$KZBVXMLFile
+    
+    $shell=New-Object -Com  "wscript.shell"
+    $shell.Run("explorer /select,`"$KZBVXMLFile`"")
+
+}
+
 # zur Installation des offiziellen VDDS-Prüftools für die XML-Dateien
 Function Install-VDDSPrueftool {
         [CmdletBinding()]
