@@ -1405,14 +1405,17 @@ Function Install-MissingPowershellCmdLets {
 		&{
 			function global:Expand-Archive($Path,$DestinationPath) {
 				# fallback for .net earlier than 4.5
-				$shell = (new-object -com shell.application -strict)
-				$zipfiles = $shell.namespace("$path").items()
+				$shell = (new-object -com shell.application -strict)				
 				If (-Not (Test-Path -Path $DestinationPath)) {
 					# Powershell 5.0 legt keine Verzeichnis bei Expand-Archive an
 					New-Item $DestinationPath -Type Directory
 				}
 				$DestinationPath = Resolve-Path $DestinationPath
-				$shell.namespace("$DestinationPath").copyHere($zipfiles, 4) # 4 = don't show progress dialog
+				$files=dir $path
+				foreach ($file in $files) {
+					$zipfiles = $shell.namespace("$file").items()
+					$shell.namespace("$DestinationPath").copyHere($zipfiles, 4) # 4 = don't show progress dialog
+				}
 			}
 		}
 	}
