@@ -1965,7 +1965,12 @@ Function Invoke-VDDSPruefTool
         $KZBVXMLFile
     )
 
-    & "$($env:ProgramFiles)\VDDS\ValidateLabXML.exe"
+    If (Test-64Bit) {
+      $ProgramsFolder = ${env:ProgramFiles(x86)}
+    } else {
+      $ProgramsFolder = $env:ProgramFiles
+    }
+    & "$($ProgramsFolder)\VDDS\ValidateLabXML.exe"
     
     # Klappt bei Leerzeichen nicht:
     #Invoke-Expression "explorer /select,`"$KZBVXMLFile`""
