@@ -26,7 +26,7 @@ Function Test-64Bit () {
 }
 
 Function Test-WindowsVista() {
-	(Get-CimInstance Win32_OperatingSystem).Caption -match "Vista"
+	(Get-WmiObject Win32_OperatingSystem).Caption -match "Vista"
 }
 
 Function Test-Windows7() {
