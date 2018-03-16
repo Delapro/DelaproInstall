@@ -1939,6 +1939,52 @@ Function Install-DelaproMailPrinter {
 
 }
 
+# zur Installation des offiziellen VDDS-Prüftools für die XML-Dateien
+Function Install-VDDSPrueftool {
+        [CmdletBinding()]
+	Param(
+		[String]$TempDir=$Env:TEMP
+	)
+	
+	$tempDir="$TempDir\VDDS"
+	If (Test-Path $tempDir) {
+	  Write-Verbose "Lösche $tempDir"
+	  rm $tempDir -Confirm:$false  -Recurse -Force
+	}
+	New-Item $tempDir -ItemType Directory
+
+	$filename="XML-Prueftool-Setup_1_06.zip"
+	Start-BitsTransfer -Source "http://www.vdds.de/documents/$filename" -Destination $tempDir
+	Expand-Archive "$tempDir\$($filename)" -DestinationPath "$tempDir\Entpackt"
+
+	# spezielle Vorgehensweise wegen dem ü in ...Prüf...
+	$file=dir "$tempDir\Entpackt" -File
+	If ($file) {
+	  $filename=$file[0].FullName
+	  If ($filename) {
+	    # Setup ist mit InoSetup erstellt worden, /SILENT sorgt für automatische Installation
+	    Start-Process -Wait -FilePath $filename -ArgumentList "/SILENT"
+
+	    # nach der Installation den Pfad von VDDS ermitteln
+	    If (Test-64Bit) {
+	      $ProgramsFolder = ${env:ProgramFiles(x86)}
+	    } else {
+	      $ProgramsFolder = $env:ProgramFiles
+	    }
+	    $XSDFolder="$($ProgramsFolder)\VDDS\xsd"
+
+	    If (Test-Path $XSDFolder) {
+	      # die fehlenden XSD-Versionen herunterladen und in das Verzeichnis kopieren
+	      Start-BitsTransfer -Source 'http://www.vdds.de/documents/Laborabrechnungsdaten_(KZBV-VDZI-VDDS)_(V4-4).zip' -Destination $tempDir
+	      Expand-Archive "$tempDir\Laborabrechnungsdaten*.zip" -DestinationPath $tempDir
+	      $XSDfile=dir "$tempDir\*.xsd" -Recurse
+	      Copy-Item $XSDFile $XSDFolder
+	    }
+	  }
+	}
+
+}
+
 Function Install-XeroxUniversalDriver {
 	[CmdletBinding()]
 	Param(
