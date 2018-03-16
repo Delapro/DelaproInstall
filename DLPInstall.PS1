@@ -1309,7 +1309,9 @@ Function Install-Teamviewer {
 # diese Funktion übernimmt die Installation des .Net-Frameworks, wenn dieses nicht installiert sein sollte
 Function Install-NetFramework {
 	[CmdletBinding()]
-	Param()
+	Param(
+		[System.String]$tempDirectory="$Env:TEMP\"
+	)
 
 	# Allerdings muss bei Windows 7 und Windows Vista vorher geprüft werden, ob Net 4.5 bereits verfügbar ist
 	# https://msdn.microsoft.com/en-us/library/ee942965(v=vs.110).aspx
@@ -1319,15 +1321,15 @@ Function Install-NetFramework {
 			 Write-Verbose "Vista erkannt, installiere .Net Framework 4.6"
 	                # Vista unterstützt maximal 4.6 und das war es dann!
 		     # Wenn Net 4.5 nicht vorhanden ist, wird gleich 4.6 heruntergeladen und installiert
-		     (New-Object Net.WebClient).DownloadFile("http://go.microsoft.com/fwlink/?LinkId=528222",  "$($DLPInstPath)NDP46-KB3045560-Web.exe")
+		     (New-Object Net.WebClient).DownloadFile("http://go.microsoft.com/fwlink/?LinkId=528222",  "$($tempDirectory)NDP46-KB3045560-Web.exe")
 		      # Invoke-Item .\NDP46-KB3045560-Web.exe
-		      Start-Process -Wait .\NDP46-KB3045560-Web.exe
+		      Start-Process -Wait "$($tempDirectory)NDP46-KB3045560-Web.exe"
 	     } else {
 			 Write-Verbose "Installiere .Net Framework 4.6.1"
 		     # Unter Windows 7 gleich .NET 4.6.1 installieren
-		     (New-Object Net.WebClient).DownloadFile("http://go.microsoft.com/fwlink/?LinkId=671728",  "$($DLPInstPath)NDP461-KB3088520.exe")
+		     (New-Object Net.WebClient).DownloadFile("http://go.microsoft.com/fwlink/?LinkId=671728",  "$($tempDirectory)NDP461-KB3088520.exe")
 		      # Invoke-Item .\NDP461-KB3088520.exe
-		      Start-Process -Wait .\NDP461-KB3088520.exe
+		      Start-Process -Wait "$($tempDirectory)NDP461-KB3088520.exe"
 	     }
 	}
 
