@@ -240,6 +240,12 @@ Install-AcrobatDC
 Install-LibreOffice
 ```
 
+### VDDS-XML-Dateien-Prüftool
+
+```Powershell
+Install-VDDSPrueftool
+```
+
 ### Java 8
 
 ```Powershell
