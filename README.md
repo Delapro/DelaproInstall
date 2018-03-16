@@ -244,6 +244,7 @@ Install-LibreOffice
 
 ```Powershell
 Install-VDDSPrueftool
+Invoke-VDDSPruefTool -KZBVXMLFile .\KZBV-VDDS-Testdatei.XML
 ```
 
 ### Java 8
