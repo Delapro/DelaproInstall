@@ -1189,7 +1189,7 @@ EnableSymlinks=Disabled
 	Write-Verbose "SetupInf: $setupInf"
 	$setupInfData | Set-Content -Path $setupInf
 	
-	Start-Process -Wait -Path "$tempDirectory\$Filename" -ArgumentList "/LOADINF=""$setupInf"""
+	Start-Process -Wait -FilePath "$tempDirectory\$Filename" -ArgumentList "/LOADINF=""$setupInf"""
 }
 
 # ladet und installiert Visual Studio Code
