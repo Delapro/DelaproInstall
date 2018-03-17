@@ -1001,7 +1001,8 @@ Function Install-Java {
 	# aktuelle Version von: https://java.com/de/download/manual.jsp
 	# noch Hinweise zu Cryptoänderungen in Java: https://www.java.com/en/jre-jdk-cryptoroadmap.html
 	# Java EOL-Hinweise: http://www.oracle.com/technetwork/java/eol-135779.html
-	$rrd = Resolve-HttpUrlRedirect -Uri http://javadl.oracle.com/webapps/download/AutoDL?BundleId=225355_090f390dda5b47b9b721c7dfaa008135
+	# aktuell Version 8 Update 161:
+	$rrd = Resolve-HttpUrlRedirect -Uri http://javadl.oracle.com/webapps/download/AutoDL?BundleId=230542_2f38c3b165be4555a1fa6e98c45e0808
 	If ($rrd) {
 		$Dest = "$($tempDirectory)\Java.exe"
 		Write-Verbose "Lade $rrd nach $Dest"
