@@ -1307,6 +1307,21 @@ Function Install-Teamviewer {
 	}
 }
 
+Function Invoke-SysInternalTool {
+  [CmdletBinding()]
+  Param(
+    [System.String]$tempDirectory="$Env:TEMP\",
+    [Validateset("Autonruns", "Procmon", "Procexp")]
+    [string[]]$Tool
+  )
+
+  $url = "https://live.sysinternals.com/"
+  Start-BitsTransfer -Source "$url/$($Tool).exe" -Destination $tempDirectory
+  Unblock-File "$tempDirectory\$($Tool).exe"
+  Start-Process "$tempDirectory\$($Tool).exe"
+
+}
+
 # diese Funktion übernimmt die Installation des .Net-Frameworks, wenn dieses nicht installiert sein sollte
 Function Install-NetFramework {
 	[CmdletBinding()]
