@@ -1162,7 +1162,7 @@ Function Install-Git {
 		$filename="Git-($version)-32-bit.exe"
 	}
 	$url = "https://github.com/git-for-windows/git/releases/download/v$($version).windows.1/$filename"
-	Start-BitsTransfer -Source $url -Desctination $tempDirectory
+	Start-BitsTransfer -Source $url -Destination $tempDirectory
 	
 	$setupInfData=@"
 [Setup]
