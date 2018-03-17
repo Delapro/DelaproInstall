@@ -273,6 +273,12 @@ Install-VeraPDF -Verbose
 Install-7Zip -Verbose
 ```
 
+### Git
+
+```Powershell
+Install-Git -Verbose
+```
+
 ### Visual Studio Code
 
 ```Powershell
