@@ -1157,11 +1157,12 @@ Function Install-Git {
 	# aktuelle Version: https://git-scm.com/download/win
 	$version = "2.16.2"
 	If (Test-64Bit) {
-		$filename="Git-($version)-64-bit.exe"		
+		$filename="Git-$($version)-64-bit.exe"		
 	} else {
-		$filename="Git-($version)-32-bit.exe"
+		$filename="Git-$($version)-32-bit.exe"
 	}
 	$url = "https://github.com/git-for-windows/git/releases/download/v$($version).windows.1/$filename"
+	$url = Resolve-HttpUrlRedirect $Url
 	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 	Start-BitsTransfer -Source $url -Destination $tempDirectory
 	
