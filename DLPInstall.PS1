@@ -1147,6 +1147,49 @@ Function Install-7Zip {
 
 }
 
+# ladet und installiert Git
+Function Install-Git {
+	[CmdletBinding()]
+	Param(
+		[System.String]$tempDirectory="$Env:TEMP\"
+	)
+	
+	# aktuelle Version: https://git-scm.com/download/win
+	$version = "2.16.2"
+	If (Test-64Bit) {
+		$filename="Git-($version)-64-bit.exe"		
+	} else {
+		$filename="Git-($version)-32-bit.exe"
+	}
+	$url = "https://github.com/git-for-windows/git/releases/download/v$($version).windows.1/$filename"
+	Start-BitsTransfer -Source $url -Desctination $tempDirectory
+	
+	$setupInfData=@"
+[Setup]
+Lang=default
+Dir=C:\Program Files\Git
+Group=Git
+NoIcons=0
+SetupType=default
+Components=gitlfs,assoc,assoc_sh
+Tasks=
+EditorOption=VisualStudioCode
+PathOption=Cmd
+SSHOption=OpenSSH
+CURLOption=WinSSL
+CRLFOption=CRLFAlways
+BashTerminalOption=ConHost
+PerformanceTweaksFSCache=Enabled
+UseCredentialManager=Enabled
+EnableSymlinks=Disabled               	
+"@
+
+        $setupInf = New-TemporaryFile
+	$setupInfData | Set-Content -Path $setupInf
+	
+	Start-Process -Wait -Path "$tempDirectory\$Filename" -ArgumentList "/LOADINF=""$setupInf"""
+}
+
 # ladet und installiert Visual Studio Code
 Function Install-VisualStudioCode {
 	[CmdletBinding()]
