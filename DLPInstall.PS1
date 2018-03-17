@@ -1164,7 +1164,8 @@ Function Install-Git {
 	$url = "https://github.com/git-for-windows/git/releases/download/v$($version).windows.1/$filename"
 	$url = Resolve-HttpUrlRedirect $Url
 	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-	Start-BitsTransfer -Source $url -Destination $tempDirectory
+	# geht mal wieder nicht: Start-BitsTransfer -Source $url -Destination "$tempDirectory\$($filename)"
+	(New-Object Net.WebClient).DownloadFile($url,"$tempDirectory$($Filename)")
 	
 	$setupInfData=@"
 [Setup]
