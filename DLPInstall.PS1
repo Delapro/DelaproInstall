@@ -1162,6 +1162,7 @@ Function Install-Git {
 		$filename="Git-($version)-32-bit.exe"
 	}
 	$url = "https://github.com/git-for-windows/git/releases/download/v$($version).windows.1/$filename"
+	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 	Start-BitsTransfer -Source $url -Destination $tempDirectory
 	
 	$setupInfData=@"
@@ -1185,6 +1186,7 @@ EnableSymlinks=Disabled
 "@
 
         $setupInf = New-TemporaryFile
+	Write-Verbose "SetupInf: $setupInf"
 	$setupInfData | Set-Content -Path $setupInf
 	
 	Start-Process -Wait -Path "$tempDirectory\$Filename" -ArgumentList "/LOADINF=""$setupInf"""
