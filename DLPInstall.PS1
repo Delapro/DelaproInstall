@@ -1986,7 +1986,7 @@ Function Invoke-VDDSPruefTool
         $KZBVXMLFile
     )
 
-    If (-Not ([System.IO.Path]::IsPathRooted((Resolve-Path $KZBVXMLFile))) {
+    If (-Not ([System.IO.Path]::IsPathRooted((Resolve-Path $KZBVXMLFile)))) {
     	$KZBVXMLFile = Resolve-Path $KZBVXMLFile
     }
     
