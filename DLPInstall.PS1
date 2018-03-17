@@ -1477,7 +1477,16 @@ Function Install-MissingPowershellCmdLets {
 			}
 		}
 	}
-
+	
+	# New-TemporaryFile gibt es erst ab Powershell 5.0
+	if (-not (Get-Command New-TemporaryFile -ErrorAction SilentlyContinue)) {
+		# damit die Function verfügbar wird, muss sie mittels & ausgeführt werden und mit dem Scope global: versehen werden
+		&{
+			Function global:New-TemporaryFile () {
+				Get-Item -Path ([System.IO.Path]::GetTempFilename())
+			}
+		}
+	}
 
 }
 
