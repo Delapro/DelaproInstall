@@ -331,6 +331,21 @@ Get-WinEvent -LogName "System" -FilterXPath "*[System[EventRecordID=$($rr.Record
 # Festplatteninfos ausgeben
 Get-PhysicalDisk
 Get-PhysicalDisk|% {Get-StorageReliabilityCounter -PhysicalDisk $_}|fl *
+
+```
+
+### Sysinternals Tools
+
+```Powershell
+# ladet und startet Autoruns
+Invoke-SysInternalTool -Tool AutoRuns
+
+# ladet und startet Prozessmonitor
+Invoke-SysInternalTool -Tool Procmon
+
+# ladet und startet Prozessexplorer
+Invoke-SysInternalTool -Tool ProcExp
+
 ```
 
 ### Probleme in Zusatzprogrammen
