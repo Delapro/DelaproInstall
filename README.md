@@ -340,6 +340,14 @@ Get-PhysicalDisk|% {Get-StorageReliabilityCounter -PhysicalDisk $_}|fl *
 
 ```
 
+### Thunderbird Logging
+
+```Powershell
+Start-ThunderbirdLogging -Modules IMAP,POP3,SMTP -AddTimeStamp -Verbose
+# zur Auswertung
+Get-Content $Env:Temp\Thunderbird.Log | Out-GridView
+```
+
 ### Sysinternals Tools
 
 ```Powershell
