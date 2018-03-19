@@ -200,6 +200,73 @@ Function Test-VersionOrHigher ([string]$version, [int]$requestedVersionMajor,[in
 	$return
 }
 
+# Öffnet die Aufgabenverwaltung
+Function Show-ScheduledTasks {
+	control.exe schedtasks
+}
+
+# Fügt einen ScheduledTask hinzu, der nach einem Neustart nach der Anmeldung des Benutzers eine Powershell-Eingabeaufforderung
+# aufmacht und gleich die easy-Homepage mit den Powershellscripten anfährt. Ist primär für Win7 gedacht, wenn Powershell oder
+# das .Net-Framework einen Neustart verlanden.
+Function Add-ScheduledTaskPowershellRunOnceAfterLogin {
+	[CmdletBinding()]
+	Param(
+
+	)
+
+	# TODO: Der Taskname sollte eindeutig gemacht werden
+	$Taskname = "PowershellRunOnce"
+	$TempFile = New-TemporaryFile
+	$RunOnceFile = $TempFile.Fullname.Replace('.tmp','.PS1')
+	Rename-Item -Path $TempFile -NewName $RunOnceFile
+	
+	# TODO: Die RestartAction sollte noch austauschbar gemacht werden...
+	$RestartAction = @"
+Start http://easysoftware.de/ps
+schtasks /delete /F /tn $Taskname
+"@
+	$RestartAction | Set-Content -Path $RunOnceFile
+
+	# TODO: Es sollten andere Trigger möglich sein, oder klar gemacht werden, dass es nur einen Trigger nach einer
+	# Anmeldung gibt
+	New-ScheduledTaskSimpleAfterLogin -Taskname $Taskname -RunAsAdmin -Action "$env:SystemRoot\System32\WindowsPowershell\v1.0\Powershell.exe -NoExit -ExecutionPolicy ByPass -File $RunOnceFile"
+}
+
+Function Remove-ScheduledTaskSimple {
+	[CmdletBinding()]
+	Param(
+		[String]$Taskname
+	)
+
+	$args = @(
+		"/Delete",
+		"/TN", $Taskname  	# Name des Tasks
+	)
+
+	Start-Process -FilePath "SchTasks.EXE" -ArgumentList $args
+}
+
+Function New-ScheduledTaskSimpleAfterLogin {
+	[CmdletBinding()]
+	Param(
+		[String]$Taskname,
+		[Switch]$RunAsAdmin,
+		[String]$Action
+	)
+
+	$argList = @(
+		"/Create",
+		"/TN", $Taskname,  		# Name des Tasks
+		"/SC", "BEIANMELDUNG",	# Trigger
+		"/TR", """$Action"""  	# auszuführende Aufgabe
+	)
+	If ($RunAsAdmin) {
+		$argList += @("/RL", "HÖCHSTE")
+	}
+	Start-Process -FilePath "SchTasks.EXE" -ArgumentList $argList
+
+}
+
 # erzeugt auf dem Öffentlichen Desktop einen Link zu einer Datei, benötigt dazu Adminrechte!
 Function New-FileShortcut {
 	[CmdletBinding()]
