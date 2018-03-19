@@ -951,6 +951,52 @@ function Show-eDocPrintProLogFile {
 	}
 }
 
+# startet Thunderbird mit speziellen Umgebungsvariablen fürs Logging
+Function Start-ThunderbirdLogging {
+	[CmdletBinding()]
+	Param(
+		[String]$LogFile="$($Env:TEMP)\Thunderbird.LOG",
+		[Validateset("IMAP", "POP3", "SMTP")]
+		[String[]]$Modules,
+		[Switch]$SelectProfile,
+		[Switch]$AddTimeStamp
+	)
+
+	If (Get-Process Thunderbird -EA SilentlyContinue) {
+		Write-Error "Bitte vorher Thunderbird beenden"
+	} else {
+
+		# Mögliche weitere LogModule, siehe: https://wiki.mozilla.org/MailNews:Logging
+		# und 
+		$LogModules = ""
+		If ($AddTimeStamp) {
+			$LogModules += "timestamp,"
+		}
+		foreach($Module in $Modules) {
+			$LogModules += "$($Module):5,"
+		}
+		If ($LogModules.Substring($LogModules.Length-1) -eq ',') {
+			$LogModules = $LogModules.Substring(0, $LogModules.Length-1)
+		}
+
+		Write-Verbose "Logging: $LogModules"
+		Write-Verbose "To: $LogFile"
+		[System.Environment]::SetEnvironmentVariable("NSPR_LOG_FILE", $LogFile)
+		[System.Environment]::SetEnvironmentVariable("NSPR_LOG_MODULES", $LogModules)
+
+		$ArgList = @()
+		If ($SelectProfile) {
+			$ArgList += "-p"
+		}
+
+		If ($ArgList) {
+			Start-Process -Wait -FilePath Thunderbird -ArgumentList $ArgList
+		} else {
+			Start-Process -Wait -FilePath Thunderbird
+		}
+	}
+}
+
 # Gibt zu einer IPv4-Adresse die zugehörige IPv6-Adresse und umgekehrt zurück
 Function Convert-IPAddress {
 	[CmdletBinding()]
