@@ -2063,17 +2063,16 @@ Function Invoke-VDDSPruefTool
 
 }
 
-# zur Installation des offiziellen VDDS-Prüftools für die XML-Dateien
 Function Install-VDDSPrueftool {
-        [CmdletBinding()]
+		[CmdletBinding()]
 	Param(
 		[String]$TempDir=$Env:TEMP
 	)
-	
+
 	$tempDir="$TempDir\VDDS"
 	If (Test-Path $tempDir) {
-	  Write-Verbose "Lösche $tempDir"
-	  rm $tempDir -Confirm:$false  -Recurse -Force
+		Write-Verbose "Lösche $tempDir"
+		Remove-Item $tempDir -Confirm:$false  -Recurse -Force
 	}
 	New-Item $tempDir -ItemType Directory
 
@@ -2082,29 +2081,37 @@ Function Install-VDDSPrueftool {
 	Expand-Archive "$tempDir\$($filename)" -DestinationPath "$tempDir\Entpackt"
 
 	# spezielle Vorgehensweise wegen dem ü in ...Prüf...
-	$file=dir "$tempDir\Entpackt" -File
+	$file=Get-ChildItem "$tempDir\Entpackt" -File
 	If ($file) {
-	  $filename=$file[0].FullName
-	  If ($filename) {
-	    # Setup ist mit InoSetup erstellt worden, /SILENT sorgt für automatische Installation
-	    Start-Process -Wait -FilePath $filename -ArgumentList "/SILENT"
+		$filename=$file[0].FullName
+		If ($filename) {
+			# Setup ist mit InoSetup erstellt worden, /SILENT sorgt für automatische Installation
+			Start-Process -Wait -FilePath $filename -ArgumentList "/SILENT"
 
-	    # nach der Installation den Pfad von VDDS ermitteln
-	    If (Test-64Bit) {
-	      $ProgramsFolder = ${env:ProgramFiles(x86)}
-	    } else {
-	      $ProgramsFolder = $env:ProgramFiles
-	    }
-	    $XSDFolder="$($ProgramsFolder)\VDDS\xsd"
+			# nach der Installation den Pfad von VDDS ermitteln
+			If (Test-64Bit) {
+				$ProgramsFolder = ${env:ProgramFiles(x86)}
+			} else {
+				$ProgramsFolder = $env:ProgramFiles
+			}
+			$XSDFolder="$($ProgramsFolder)\VDDS\xsd"
 
-	    If (Test-Path $XSDFolder) {
-	      # die fehlenden XSD-Versionen herunterladen und in das Verzeichnis kopieren
-	      Start-BitsTransfer -Source 'http://www.vdds.de/documents/Laborabrechnungsdaten_(KZBV-VDZI-VDDS)_(V4-4).zip' -Destination $tempDir
-	      Expand-Archive "$tempDir\Laborabrechnungsdaten*.zip" -DestinationPath $tempDir
-	      $XSDfile=dir "$tempDir\*.xsd" -Recurse
-	      Copy-Item $XSDFile $XSDFolder
-	    }
-	  }
+			If (Test-Path $XSDFolder) {
+				# die fehlenden XSD-Versionen herunterladen und in das Verzeichnis kopieren
+				Start-BitsTransfer -Source 'http://www.vdds.de/documents/Laborabrechnungsdaten_(KZBV-VDZI-VDDS)_(V4-4).zip' -Destination $tempDir
+				Expand-Archive "$tempDir\Laborabrechnungsdaten*.zip" -DestinationPath $tempDir
+				$XSDfile=Get-ChildItem "$tempDir\*.xsd" -Recurse
+				Copy-Item $XSDFile $XSDFolder
+			}
+
+			# zu guter letzt noch die neue XSD-Version dem Prüftool als Vorgabe hinterlegen
+			$confFile = "$($ProgramsFolder)\VDDS\VDDSXMLPrüfmodul.CONF"
+			If (Test-Path $confFile) {
+				$confContent = Get-Content -Path $confFile
+				$confContent = $confContent -replace "^default.xsd=.*;$", "default.xsd=$($XSDFile.Name);"
+				$confContent | Set-Content $confFile
+			}
+		}
 	}
 
 }
