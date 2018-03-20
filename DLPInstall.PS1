@@ -1089,8 +1089,9 @@ Function Install-AcrobatDC {
 	# Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/11.x/11.0.10/de_DE/AdbeRdr11010_de_DE.exe
 	# DC Release-Infos: http://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html
 	# WICHTIG: Nur die Planned Updates können verwendet werden!!
-	$dcVersion = "18.011.20036".Replace(".", "")
-	Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/$dcVersion/AcroRdrDC$($dcVersion)_de_DE.exe -Destination $tempDirectory
+	$dcVersion = "18.011.20035".Replace(".", "")
+	$url = "http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/$dcVersion/AcroRdrDC$($dcVersion)_de_DE.exe"
+	Start-BitsTransfer -Source $url -Destination $tempDirectory
 	# Adobe Reader Silent Install mit Progressbar
 	# Start-Process  -Wait .\AdbeRdr11010_de_DE.exe /sPB
 	Start-Process  -Wait "$($tempDirectory)\AcroRdrDC$($dcVersion)_de_DE.exe" -ArgumentList "/sPB"
