@@ -273,12 +273,6 @@ Install-VeraPDF -Verbose
 Install-7Zip -Verbose
 ```
 
-### Git
-
-```Powershell
-Install-Git -Verbose
-```
-
 ### Visual Studio Code
 
 ```Powershell
@@ -287,6 +281,13 @@ Install-VisualStudioCode -Verbose
 # oder gleich mit Extensions installieren:
 Install-VisualStudioCode -Extensions Powershell, Harbour -Verbose
 
+```
+
+### Git
+
+```Powershell
+# sollte nach Installation von Visual Studio Code erfolgen, ansonsten passt die Zuordnung des Editors nicht
+Install-Git -Verbose
 ```
 
 ## Probleme ermitteln
