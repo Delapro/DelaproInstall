@@ -1322,6 +1322,16 @@ Function Install-VisualStudioCode {
 	Start-Bitstransfer $url -Destination "$($tempDirectory)\VsCode.EXE"
 	Start-Process -Wait -FilePath "$($tempDirectory)\VsCode.EXE" -ArgumentList "/SILENT"
 
+	# Keyboard-Settings vornehmen
+	$KeyboardSettings = @"
+// Platzieren Sie Ihre Tastenzuordnungen in dieser Datei, um die Standardwerte zu überschreiben.
+[
+    {"key": "ctrl+shift+down", "command": "editor.action.moveSelectionToNextFindMatch", "when": "editor.TextFocus"},
+    {"key": "ctrl+shift+up", "command": "editor.action.moveSelectionToPreviousFindMatch", "when": "editor.TextFocus"}
+]
+"@
+	$KeyboardSettings | Set-Content $env:APPDATA\Roaming\Code\User\keybindings.json
+
 	# TODO: Extensions in eigene Funktion ausgliedern zum nachträglich installieren
 	If ($Extensions) {
 		$codeEXE = 'C:\Program Files\Microsoft VS Code\Code.exe'
