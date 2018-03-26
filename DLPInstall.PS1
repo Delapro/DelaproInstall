@@ -1311,7 +1311,7 @@ Function Install-VisualStudioCode {
 	Param(
 		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\",
-		[Validateset("Powershell", "Harbour", "HarbourDebug", "CSharp", "Pyhthon", "XML", "Java")]
+		[Validateset("Powershell", "Harbour", "HarbourDebug", "CSharp", "Pyhthon", "XML", "Java", "CSV" )]
 		[string[]]$Extensions
 	)
 
@@ -1343,7 +1343,8 @@ Function Install-VisualStudioCode {
 					"CSharp"		{$installExt = "ms-vscode.CSharp"}
 					"Python"		{$installExt = "ms-python.python"}
 					"XML"			{$installExt = "DotJoshJonson.xml"}
-					"Java"		{$installExt = "vscjava.vscode-java-pack"}
+					"Java"			{$installExt = "vscjava.vscode-java-pack"}
+					"CSV"			{$installExt = "mechatroner.rainbow-csv"}
 				}
 				# Start-Process -Wait -FilePath $codeEXE -ArgumentList "--install-extension", $installExt
 				& $codeExe --install-extension $installExt
