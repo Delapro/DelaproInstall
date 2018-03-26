@@ -22,8 +22,12 @@ $DlpGamePath = "C:\DelaGame"
 $easyBaseURI = "http://www.easysoftware.de"
 
 # TLS1.2 hinzufügen ist generell sinnvoll, SSL3 kann weg
-[Net.ServicePointManager]::SecurityProtocol += [Net.SecurityProtocolType]::Tls12
-[Net.ServicePointManager]::SecurityProtocol -= [Net.SecurityProtocolType]::Ssl3
+If (-Not ([System.Net.ServicePointManager]::SecurityProtocol -band [System.Net.SecurityProtocolType]::Tls12)) {
+	[System.Net.ServicePointManager]::SecurityProtocol += [System.Net.SecurityProtocolType]::Tls12
+}
+If ([System.Net.ServicePointManager]::SecurityProtocol -band [System.Net.SecurityProtocolType]::Ssl3) {
+	[System.Net.ServicePointManager]::SecurityProtocol -= [System.Net.SecurityProtocolType]::Ssl3
+}
 
 Function Test-64Bit () {
 	[System.IntPtr]::Size -eq 8
