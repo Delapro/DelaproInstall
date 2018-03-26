@@ -1311,7 +1311,7 @@ Function Install-VisualStudioCode {
 	Param(
 		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\",
-		[Validateset("Powershell", "Harbour", "HarbourDebug")]
+		[Validateset("Powershell", "Harbour", "HarbourDebug", "CSharp", "Pyhthon", "XML", "Java")]
 		[string[]]$Extensions
 	)
 
@@ -1340,6 +1340,10 @@ Function Install-VisualStudioCode {
 					"Powershell" 	{$installExt = "ms-vscode.PowerShell"}
 					"Harbour"		{$installExt = "ekon.harbour"}
 					"HarbourDebug"	{$installExt = "aperricone.harbour"}
+					"CSharp"		{$installExt = "ms-vscode.CSharp"}
+					"Python"		{$installExt = "ms-python.python"}
+					"XML"			{$installExt = "DotJoshJonson.xml"}
+					"Java"		{$installExt = "vscjava.vscode-java-pack"}
 				}
 				# Start-Process -Wait -FilePath $codeEXE -ArgumentList "--install-extension", $installExt
 				& $codeExe --install-extension $installExt
