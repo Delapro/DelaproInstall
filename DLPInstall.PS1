@@ -1599,7 +1599,7 @@ Function Install-MissingPowershellCmdLets {
 					New-Item $DestinationPath -Type Directory
 				}
 				$DestinationPath = Resolve-Path $DestinationPath
-				$files=dir $path
+				$files=Get-ChildItem $path
 				foreach ($file in $files) {
 					$zipfiles = $shell.namespace("$file").items()
 					$shell.namespace("$DestinationPath").copyHere($zipfiles, 4) # 4 = don't show progress dialog
