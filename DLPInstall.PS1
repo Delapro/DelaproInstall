@@ -21,6 +21,10 @@ $DlpGamePath = "C:\DelaGame"
 # Pfad für Webseite
 $easyBaseURI = "http://www.easysoftware.de"
 
+# TLS1.2 hinzufügen ist generell sinnvoll, SSL3 kann weg
+[Net.ServicePointManager]::SecurityProtocol += [Net.SecurityProtocolType]::Tls12
+[Net.ServicePointManager]::SecurityProtocol -= [Net.SecurityProtocolType]::Ssl3
+
 Function Test-64Bit () {
 	[System.IntPtr]::Size -eq 8
 }
@@ -673,10 +677,7 @@ Function Install-Ghostscript {
 	$ghostCall = Join-Path -Path $tempPath -ChildPath $ghostEXE
 
 	# Start-BitsTransfer $ghostUrl  $tempPath
-	$prot = [Net.ServicePointManager]::SecurityProtocol
-	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12  # Github verlangt TLS 1.2
 	Invoke-WebRequest -UseBasicParsing -Uri $ghostUrl -OutFile $ghostCall
-	[Net.ServicePointManager]::SecurityProtocol = $prot
 	
 	## /S muss groß sein!
 	Start-Process -Wait $ghostcall -ArgumentList "/S"
@@ -746,10 +747,7 @@ Function Get-PDFInfo {
 	$gsPathExe = Get-GhostScriptExecutable  # TODO: Version noch durchreichen
 	If ($gsPathExe) {
 		# zuerst mal PDF_Info.PS herunterladen
-		$prot = [Net.ServicePointManager]::SecurityProtocol
-		[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12  # Github verlangt TLS 1.2
 		$wr = Invoke-WebRequest -UseBasicParsing 'https://git.ghostscript.com/?p=ghostpdl.git;a=blob_plain;f=toolbin/pdf_info.ps;hb=HEAD'
-		[Net.ServicePointManager]::SecurityProtocol = $prot
 	
 		If ($wr.StatusCode -eq 200) {
 		  $wrs = [System.Text.Encoding]::ASCII.GetString($wr.Content)
@@ -1277,7 +1275,6 @@ Function Install-Git {
 	}
 	$url = "https://github.com/git-for-windows/git/releases/download/v$($version).windows.1/$filename"
 	$url = Resolve-HttpUrlRedirect $Url
-	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 	# geht mal wieder nicht: Start-BitsTransfer -Source $url -Destination "$tempDirectory\$($filename)"
 	(New-Object Net.WebClient).DownloadFile($url,"$tempDirectory$($Filename)")
 	
@@ -1851,11 +1848,7 @@ Function Update-DlpRawPr {
 	$ExeVersion = [version](Get-Item $ExePath).VersionInfo.ProductVersion
 	If ($ExeVersion -lt $rawVersion) {
 		Write-Verbose "Version muss aktualisiert werden, von $($ExeVersion) auf $($rawVersion)"
-		# TLS 1.2 ist nun Pflicht, sonst kommt ein SSL/TLS Kanalfehler!
-		$prot = [Net.ServicePointManager]::SecurityProtocol
-		[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 		Invoke-WebRequest -UseBasicParsing -Uri https://github.com/Delapro/DlpRawPr/releases/download/v$($rawVersionNumber)/DlpRawPr.exe -OutFile (Join-Path -Path (Join-Path -Path $DelaproPath -ChildPath Laser) -ChildPath DLPRawPr.EXE) 
-		[Net.ServicePointManager]::SecurityProtocol = $prot
 	} else {
 		Write-Verbose "Version ist aktuell, $($ExeVersion)"
 	}
