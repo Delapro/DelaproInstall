@@ -2683,12 +2683,17 @@ Function Import-LastDelaproBackup {
 		}
 	
 		# -Force zum überschreiben von alten Dateien aber vorher mit Polyfill abklären
-		# wenn es hier einen Fehler gibt ein nichts entpackt wird, sollte $Error.Exception.HResult überprüft werden, wenn
-		# HResult -2146233087 liefert, ist die ZIP-Datei nicht in Ordnung
+		# wenn es hier einen Fehler gibt und nichts entpackt wird, sollte $Error[0].Exception.HResult überprüft 
+		# werden, wenn HResult -2146233087 liefert, ist die ZIP-Datei nicht in Ordnung
+		# Entpackt man bei obigen Fehler die ZIP-Datei per GUI dann erscheint Fehler 0x80004005
 		Expand-Archive "$($ds.Fullname)" $TempPath
-		# jetzt die Daten übernehmen
-		Import-OldDlpVersion -SourcePath $TempPath -DestinationPath $DestinationPath
-		# TODO: Laufwerksbuchstaben des Sicherungsstick im Programmverteiler setzen
+		If ($Error[0].Exception.HResult -eq -2146233087) {
+			Writer-Error "Fehler beim Entpacken der ZIP-Datei!"
+		} else {
+			# jetzt die Daten übernehmen
+			Import-OldDlpVersion -SourcePath $TempPath -DestinationPath $DestinationPath
+			# TODO: Laufwerksbuchstaben des Sicherungsstick im Programmverteiler setzen
+		}
 	} else {
 		# Bitte Daten manuell einspielen
 		break
