@@ -2678,7 +2678,7 @@ Function Import-LastDelaproBackup {
 		Write-Verbose "Sicherung: $ds"
 		If (Test-Path $TempPath) {
 			# damit kein Datenkuddelmuddel entsteht, altes Sicherungsverzeichnis löschen, falls vorhanden
-			Write-Verbose "Temppfad löschen"
+			Write-Verbose "Temppfad löschen: $TempPath"
 			Remove-Item $TempPath -Force -Recurse
 		}
 	
