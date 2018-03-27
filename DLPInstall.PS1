@@ -2688,7 +2688,7 @@ Function Import-LastDelaproBackup {
 		# Entpackt man bei obigen Fehler die ZIP-Datei per GUI dann erscheint Fehler 0x80004005
 		Expand-Archive "$($ds.Fullname)" $TempPath
 		If ($Error[0].Exception.HResult -eq -2146233087) {
-			Writer-Error "Fehler beim Entpacken der ZIP-Datei!"
+			Write-Error "Fehler beim Entpacken der ZIP-Datei!"
 		} else {
 			# jetzt die Daten übernehmen
 			Import-OldDlpVersion -SourcePath $TempPath -DestinationPath $DestinationPath
