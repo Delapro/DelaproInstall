@@ -23,7 +23,9 @@ If ($PSVersionTable.PSVersion.Major -lt 4) {
         If (Test-NetFramework45Installed) {
             Install-Powershell
         } else {
-            "Bitte nach Neustart nochmal aufrufen"
+            # startet nach dem Neustart gleich wieder Powershell und öffnet die /PS-Webseite
+            Add-ScheduledTaskPowershellRunOnceAfterLogin
+            "Bitte Neustart durchführen"
         }
     }
 }
