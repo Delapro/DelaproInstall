@@ -670,7 +670,7 @@ Function Install-Ghostscript {
 	)
 
 	# Infos zur aktuellen Version: http://ghostscript.com/Releases.html
-	$ghostVersion="gs922"
+	$ghostVersion="gs923"
 	If (Test-64Bit) {
 		$ghostPlatform = "w64"
 	} else {
