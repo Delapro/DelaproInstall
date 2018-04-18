@@ -103,6 +103,20 @@ Set-Printer -Name "DelaproMail" -Drivername "Xerox Global Print Driver PS"
 
 ```
 
+### Druckertreiber kopieren
+
+Bietet die vorhandenen Druckerwarteschlangen zur Auswahl an, wählt man eine aus, dann wird nach einem neuen Namen für eine neue Druckerwarteschlange gefragt. Wird dieser angegeben, dann wird eine neue Druckerwarteschlange angelegt.
+
+```Powershell
+$p = Get-Printer | Out-Gridview -Title "zu kopierenden Drucker auswählen" -PassThru
+If ($p) {
+    $pNewName = Read-Host -Prompt "neuer Druckername"
+    If ($pNewName.Length -gt 0) {
+        Add-Printer -Name $pNewName -DriverName $p.DriverName -PortName $p.PortName
+    }
+}
+```
+
 ## Importieren einer Delapro-Datensicherung
 
 ```Powershell
