@@ -121,7 +121,7 @@ If ($p) {
 
 ```Powershell
 # durchsucht die vorhandenen Laufwerke nach einer Datensicherung und spielt diese ein
-Import-LastDelaproBackup -Verbose
+Import-LastDelaproBackup $DlpPath -Verbose
 # zum Direkt einspielen
 # Import-OldDLPVersion -SourcePath G:\Delapro\ -DestinationPath "$($DLPPath)"
 # Invoke-CleanupDelapro -Verbose
