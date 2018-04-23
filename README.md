@@ -40,6 +40,12 @@ Install-MissingPowershellCmdlets
 
 ```
 
+### wenn es Probleme mit Start-BitsTransfer wegen fehleneder Rechte oder bei Benutzung von Powershell Core gibt
+```Powershell
+# rüstet eine einfache Variante von Start-BitsTransfer nach
+Install-StartBitsTransfer
+``` 
+
 ## Backup aktualisieren, Backup durchführen und DLPWinPr aktualisieren
 
 ```Powershell

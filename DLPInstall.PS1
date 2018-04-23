@@ -1666,6 +1666,77 @@ Function Install-MissingPowershellCmdLets {
 		}
 	}
 
+	# Pseudo-Ersatz für Start-BitsTransfer für Powershell Core und bei Problemen mit Rechten, wegen Fehler 0x800704DD
+	#
+	# Start-BitsTransfer -Source 
+	# liefert
+	# $e=$Error[0]
+	# $e.Exception.ErrorCode -eq -2147023651
+	#
+	#
+	# Function Start-BitsTransfer ($Source, $Destination) {
+	# 
+	#   If (Test-Path -Type Container $Destination) {
+	#     $Destination = Join-Path -Path $Destination -ChildPath ([System.IO.Path]::GetFilename($Source))
+	#   }
+	#
+	#   try {
+	#     $wc = New-Object -Typename System.Net.WebClient
+	#     $wc.DownloadFile($Source, $Destination)
+	#   } 
+	#   finally {
+	#     $wc.Dispose()
+	#   }
+	# }	
+
+}
+
+# Baut Install-StartBitsTransfer in der einfachsten Variante nach, diese Funktion kann bei Powershell Core
+# benutzt werden oder wenn es Rechteprobleme wegen der Fehlermeldung 0x800704DD bzw. -2147023651 gibt.
+# Start-BitsTransfer -Source 
+# liefert
+# $e=$Error[0]
+# $e.Exception.ErrorCode -eq -2147023651
+Function Install-StartBitsTransfer {
+
+	# damit die Function verfügbar wird, muss sie mittels & ausgeführt werden und mit dem Scope global: versehen werden
+	&{
+		Function global:Start-BitsTransfer {
+			[CmdletBinding()]
+			Param(
+				$Source, $Destination
+		
+			)
+
+			If (-Not $Destination) {
+				$Destination = $PWD
+			}
+			If (Test-Path -Type Container $Destination) {
+				$Destination = Join-Path -Path $Destination -ChildPath ([System.IO.Path]::GetFilename($Source))
+			}
+
+			$wc = New-Object System.Net.WebClient
+
+			$job1 = Register-ObjectEvent -InputObject $wc -EventName DownloadProgressChanged -SourceIdentifier WebClient.DownloadProgressChanged -MessageData $Source -Action {Write-Progress "Downloading: $($EventArgs.ProgressPercentage)% Completed" -Status $event.MessageData -PercentComplete $EventArgs.ProgressPercentage; }
+			$job2 = Register-ObjectEvent -InputObject $wc -EventName DownloadFileCompleted -SourceIdentifier WebClient.DownloadFileComplete -MessageData $Destination -Action {Write-Host "Download Complete - $($event.MessageData)"; Unregister-Event -SourceIdentifier WebClient.DownloadProgressChanged; Unregister-Event -SourceIdentifier WebClient.DownloadFileComplete; }
+		  
+			try {
+			  $wc.DownloadFileAsync($Source, $Destination)
+			} catch [System.Net.WebException] {
+			  Write-Host "Cannot download $Source"
+			} finally {
+			  $wc.Dispose()
+			}
+		  
+			while ($job1.state -ne "Stopped" -and $job2.state -ne "Stopped") {
+			  Start-Sleep -Milliseconds 100
+			}
+		  
+			Remove-Job $job1, $Job2
+					  
+		}
+	}
+
 }
 
 # Delapro installieren, muss schon heruntergeladen sein und in $TempDirectory liegen
