@@ -1697,6 +1697,8 @@ Function Install-MissingPowershellCmdLets {
 # liefert
 # $e=$Error[0]
 # $e.Exception.ErrorCode -eq -2147023651
+# Falls man nach Aufruf von Install-StartBitsTransfer doch die Originalvariante aufrufen möchte, muss man
+# Bitstransfer\Start-BitsTransfer verwenden!
 Function Install-StartBitsTransfer {
 
 	# damit die Function verfügbar wird, muss sie mittels & ausgeführt werden und mit dem Scope global: versehen werden
