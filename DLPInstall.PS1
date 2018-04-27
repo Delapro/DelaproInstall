@@ -1331,7 +1331,7 @@ Function Install-VisualStudioCode {
     {"key": "ctrl+shift+up", "command": "editor.action.moveSelectionToPreviousFindMatch", "when": "editor.TextFocus"}
 ]
 "@
-	$KeyboardSettings | Set-Content $env:APPDATA\Roaming\Code\User\keybindings.json
+	$KeyboardSettings | Set-Content $env:APPDATA\Code\User\keybindings.json
 
 	# TODO: Extensions in eigene Funktion ausgliedern zum nachträglich installieren
 	If ($Extensions) {
