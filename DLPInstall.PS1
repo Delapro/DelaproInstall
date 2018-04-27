@@ -1327,8 +1327,8 @@ Function Install-VisualStudioCode {
 	$KeyboardSettings = @"
 // Platzieren Sie Ihre Tastenzuordnungen in dieser Datei, um die Standardwerte zu überschreiben.
 [
-    {"key": "ctrl+shift+down", "command": "editor.action.moveSelectionToNextFindMatch", "when": "editor.TextFocus"},
-    {"key": "ctrl+shift+up", "command": "editor.action.moveSelectionToPreviousFindMatch", "when": "editor.TextFocus"}
+    {"key": "ctrl+shift+down", "command": "editor.action.moveSelectionToNextFindMatch", "when": "editorTextFocus"},
+    {"key": "ctrl+shift+up", "command": "editor.action.moveSelectionToPreviousFindMatch", "when": "editorTextFocus"}
 ]
 "@
 	$KeyboardSettings | Set-Content $env:APPDATA\Code\User\keybindings.json
