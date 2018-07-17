@@ -101,7 +101,7 @@ Function Test-NetFramework35Installed()
 		# $nf35version sollte sowas haben: ".NET CLR 3.5.build number"
 		#$nf35version = $nf35version.Version.Substring(9)
 		#Test-VersionOrHigher -version $nf35version -requestedVersionMajor 3 -requestedVersionMinor 5 -requestedVersionBuild 21022 -requestedVersionRevision 8
-		
+
 		# muss noch abgeklärt werden, ist nicht eindeutig!
 		$true
 	}
@@ -118,7 +118,7 @@ Function Test-DelaproInstalled {
 	} else {
 		$installed=Test-Path 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\windows\CurrentVersion\Uninstall\{61DB59C0-0B0E-11D4-B878-00A0C91D65AB}'
 	}
-	
+
 	$installed
 }
 
@@ -156,23 +156,23 @@ Function Test-DelaproDirectoryExists {
 		#[Parameter(Mandatory=$true][String]$Path
 		[String]$Path = "C:\DELAPRO"
 	)
-	
+
 	Test-Path $Path
 }
 
 # Mal sehen, ob es was bringt unter alten Windowsversionen
 Function Copy-FileWithDateTime ($source, $dest) {
-	
+
 	Function Copy-OneFileWithDateTime ($source, $dest) {
 		$meta = Get-ChildItem $source
 		$file = Copy-Item $source $dest -PassThru
 		$file.LastWriteTime = $meta.LastWriteTime
 	}
-	
+
 	If ([System.Management.Automation.WildcardPattern]::ContainsWildcardCharacters($source)) {
 		$source = Resolve-Path $source
 	}
-	
+
 	If ($source -is [Array]) {
 		$source | ForEach-Object {Copy-OneFileWithDateTime $_.Path $dest}
 	} else {
@@ -230,7 +230,7 @@ Function Add-ScheduledTaskPowershellRunOnceAfterLogin {
 	$TempFile = New-TemporaryFile
 	$RunOnceFile = $TempFile.Fullname.Replace('.tmp','.PS1')
 	Rename-Item -Path $TempFile -NewName $RunOnceFile
-	
+
 	# TODO: Die RestartAction sollte noch austauschbar gemacht werden...
 	$RestartAction = @"
 Start http://easysoftware.de/ps
@@ -288,7 +288,7 @@ Function New-FileShortcut {
 		[String]$Description,
 		[String]$Folder=(Get-DesktopFolder -AllUsers)
 	)
-	
+
 	$Shell = New-Object -ComObject Wscript.Shell
 	Write-Verbose "Pfad: $folder"
 	If (-Not $LinkFilename.ToUpper().EndsWith(".LNK")) {
@@ -300,7 +300,7 @@ Function New-FileShortcut {
 	$link.WorkingDirectory = $WorkingDirectory
 	$link.Description = $Description
 	$link.Save()
-	
+
 }
 
 # druckt eine Windowstestseite vom angegebenen Drucker
@@ -328,7 +328,7 @@ Function Invoke-PrinterTestPage {
 	{ @('name') -contains $_}	{
 						Write-Verbose "PrinterName: $PrinterName"
 						$PrinterName = $PrinterName
-					} 
+					}
 	{ @('object') -contains $_}	{
 						Write-Verbose "PrinterObject: $PrinterObject"
 						$PrinterName = $PrinterObject.Name
@@ -355,7 +355,7 @@ Function Get-DefaultPrinter {
 	# Prüfen, ob StandardCimV2 verfügbar ist, wenn ja kann man von ausgehen, dass man Win8 oder neuer hat, wo CIM
 	# auf jeden Fall verfügbar ist
 	$useCIM = Get-CimInstance -Namespace root -Class __NAMESPACE | Where-Object {$_.Name -eq "StandardCimv2"}
-	
+
 	$default = Get-CIMInstance -Classname Win32_Printer
 	If ($default) {
 		$default = $default | Where-Object {$_.Default -eq $true}
@@ -363,7 +363,7 @@ Function Get-DefaultPrinter {
 		# man aber MSFT_Printer verwenden, damit man kompatibel zu den *-Print* Cmdlets ist, welche MSFT_Printer verwenden
 		If ($useCIM) {
 			$default = Get-CIMInstance -Namespace root\StandardCimV2 -Classname MSFT_Printer | Where-Object {$_.Name -eq $default.Name}
-		}	
+		}
 		$default
 	}
 }
@@ -372,7 +372,7 @@ Function Get-DefaultPrinter {
 Function Get-AcrobatReaderDCEXE {
 	[CmdletBinding()]
 	Param()
-	
+
 	# Pfad für Reader DC holen
 	$ftype = Cmd /c Ftype  acrobat
 	Write-Verbose "FType: $ftype"
@@ -388,7 +388,7 @@ Function Get-AcrobatReaderDCEXE {
 }
 
 # Schaltet beim Acrobat ReaderDC die rechte Leiste ab, muss mit Admin-Rechten laufen
-Function Set-AcrobatReaderDCViewerRightPaneOff { 
+Function Set-AcrobatReaderDCViewerRightPaneOff {
 	[CmdletBinding()]
 	Param(
 		[System.IO.FileInfo]$AcrobatReaderDCEXE
@@ -412,7 +412,7 @@ Function Set-AcrobatReaderDCViewerRightPaneOff {
 		# $viewer.OuterXml
 		# Ergebnis speichern, geht nur mit Adminrechten!
 		$viewer.Save($viewerFile)
-	}	
+	}
 }
 
 # versucht die verfügbaren Delaprobackups zu ermitteln, in der Regel sollte es die USB-Sticks mit den Sicherungen finden
@@ -420,13 +420,13 @@ Function Set-AcrobatReaderDCViewerRightPaneOff {
 Function Get-DelaproBackups {
 	[CmdletBinding()]
 	Param(
-		
+
 	)
 
 	# Laufwerksbuchstaben ermitteln
 	$dl = Get-Volume| Where-Object {$_.Driveletter -ne $null} | Where-Object {$_.OperationalStatus -eq "OK"} |  Select-Object -ExpandProperty Driveletter
 	#  Sicherungen ermitteln und nach Datum sortieren
-	$ds = $dl | ForEach-Object {Get-ChildItem "$($_):\Delapro*.ZIP"} 
+	$ds = $dl | ForEach-Object {Get-ChildItem "$($_):\Delapro*.ZIP"}
 	# Sortieren mit neuester zuerst
 	$ds = $ds| Sort-Object -Descending Name
 	$ds
@@ -440,7 +440,7 @@ Function Import-OldDLPVersion {
 		[parameter(Mandatory=$true)]
 		[String]$DestinationPath
 	)
-	
+
 	Write-Verbose "SourcePfad: $SourcePath"
 	Write-Verbose "DestinationPfad: $DestinationPath"
 
@@ -452,7 +452,7 @@ Function Import-OldDLPVersion {
 	Copy-Item "$SourcePath\Laser\*.BMP" "$($DestinationPath)\Laser" -Force -Verbose
 	Copy-Item "$SourcePath\Laser\*.JPG" "$($DestinationPath)\Laser" -Force -Verbose
 	Copy-Item "$SourcePath\Laser\*.PDF" "$($DestinationPath)\Laser" -Force -Verbose
-	
+
 	Write-Verbose "Windowsformulare vorhanden?"
 	If (Test-Path "$SourcePath\XMLForm") {
 		Copy-Item -Path "$SourcePath\XMLForm" "$($DestinationPath)" -Force -Verbose -Recurse
@@ -482,7 +482,7 @@ Function Test-Chrome {
 	[CmdletBinding()]
 	[OutputType([System.Boolean])]
 	Param ()
-	
+
 	$ret = $false
 	$regLoc = @('Registry::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe',
 	  	    	'Registry::HKEY_CURRENT_USER\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe',
@@ -497,7 +497,7 @@ Function Test-Thunderbird {
 	[CmdletBinding()]
 	[OutputType([System.Boolean])]
 	Param ()
-	
+
 	$ret = $false
 	$regLoc = @('Registry::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\thunderbird.exe',
 	  	    	'Registry::HKEY_CURRENT_USER\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\thunderbird.exe',
@@ -512,7 +512,7 @@ Function Test-LibreOffice {
 	[CmdletBinding()]
 	[OutputType([System.Boolean])]
 	Param ()
-	
+
 	$ret = $false
 	# TODO: To be implemented!
 	$ret
@@ -523,7 +523,7 @@ Function Test-AcrobatReader {
 	[CmdletBinding()]
 	[OutputType([System.Boolean])]
 	Param ()
-	
+
 	$ret = $false
 	$regLoc = @('Registry::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\AcroRd32.exe',
 	  	    	'Registry::HKEY_CURRENT_USER\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\AcroRd32.exe',
@@ -544,11 +544,11 @@ Function Set-DlpUi {
 		[string]$Fontname,
 		[int]$FontWeight
 	)
-	
+
 	$regBase = 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings'
 
 	switch ($PSCmdlet.ParameterSetName) {
-		"Reset" {				
+		"Reset" {
 					Remove-ItemProperty $regBase -Name "Height" -ErrorAction SilentlyContinue
 					Remove-ItemProperty $regBase -Name "Width" -ErrorAction SilentlyContinue
 					Remove-ItemProperty $regBase -Name "FontSize" -ErrorAction SilentlyContinue
@@ -559,7 +559,7 @@ Function Set-DlpUi {
 		"Set" {
 			# Hinweis zu Fonts in der Console: https://support.microsoft.com/en-us/kb/247815
 			If ($Fontname) { Set-ItemProperty $regBase -Name "FontName" -Value $Fontname }
-			If ($FontWeight) { Set-ItemProperty $regBase -Name "FontWeight" -Value $FontWeight }			
+			If ($FontWeight) { Set-ItemProperty $regBase -Name "FontWeight" -Value $FontWeight }
 		}
 	}
 
@@ -571,17 +571,17 @@ Function Get-DlpUi {
 	#[OutputType([System.IO.DirectoryInfo])]
 	Param (
 	)
-	
+
 	$regBase = 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings'
 
 	[PSCustomObject]@{
 						PSTypeName = "Delapro.UI.Settings";
-						Height = (Get-ItemProperty $regBase -Name "Height" -ErrorAction SilentlyContinue).Height; 
-						Width = (Get-ItemProperty $regBase -Name "Width" -ErrorAction SilentlyContinue).Width; 
-						FontSize = (Get-ItemProperty $regBase -Name "FontSize" -ErrorAction SilentlyContinue).FontSize; 
-						FontWidth = (Get-ItemProperty $regBase -Name "FontWidth" -ErrorAction SilentlyContinue).FontWidth; 
-						FontName = (Get-ItemProperty $regBase -Name "FontName" -ErrorAction SilentlyContinue).FontName; 
-						FontWeight = (Get-ItemProperty $regBase -Name "FontWeight" -ErrorAction SilentlyContinue).FontWeight; 
+						Height = (Get-ItemProperty $regBase -Name "Height" -ErrorAction SilentlyContinue).Height;
+						Width = (Get-ItemProperty $regBase -Name "Width" -ErrorAction SilentlyContinue).Width;
+						FontSize = (Get-ItemProperty $regBase -Name "FontSize" -ErrorAction SilentlyContinue).FontSize;
+						FontWidth = (Get-ItemProperty $regBase -Name "FontWidth" -ErrorAction SilentlyContinue).FontWidth;
+						FontName = (Get-ItemProperty $regBase -Name "FontName" -ErrorAction SilentlyContinue).FontName;
+						FontWeight = (Get-ItemProperty $regBase -Name "FontWeight" -ErrorAction SilentlyContinue).FontWeight;
 					 }
 }
 
@@ -590,9 +590,9 @@ Function Get-Ghostscript {
 	[CmdletBinding()]
 	[OutputType([System.IO.DirectoryInfo])]
 	Param ()
-	
+
 	$gsDirs = @()
-	
+
 	If ($PSVersionTable.PSVersion -eq "2.0")
 	{
 		$gsDirs += Get-ChildItem "$($Env:ProgramFiles)\GS" -ErrorAction SilentlyContinue -Exclude Fonts | Where-Object { $_.PSIsContainer}
@@ -634,7 +634,7 @@ Function Get-GhostScriptExecutable {
 	} else {
 		Write-Error "Ghostscript-Verzeichnis nicht gefunden!"
 	}
-	
+
 }
 
 # setzt die Version von Ghostscript in der GHOSTSCRIPT.BAT-Datei auf die übergebene Version
@@ -685,7 +685,7 @@ Function Install-Ghostscript {
 
 	# Start-BitsTransfer $ghostUrl  $tempPath
 	Invoke-WebRequest -UseBasicParsing -Uri $ghostUrl -OutFile $ghostCall
-	
+
 	## /S muss groß sein!
 	Start-Process -Wait $ghostcall -ArgumentList "/S"
 }
@@ -755,17 +755,17 @@ Function Get-PDFInfo {
 	If ($gsPathExe) {
 		# zuerst mal PDF_Info.PS herunterladen
 		$wr = Invoke-WebRequest -UseBasicParsing 'https://git.ghostscript.com/?p=ghostpdl.git;a=blob_plain;f=toolbin/pdf_info.ps;hb=HEAD'
-	
+
 		If ($wr.StatusCode -eq 200) {
 		  $wrs = [System.Text.Encoding]::ASCII.GetString($wr.Content)
 		  $PSFile = New-TemporaryFile
 		  $wrs | Set-Content $PSFile
-		
+
   		  $arg = @("-sFile=""$PdfFile""",
 					"-dDumpMediaSizes=true",
 					"-dDumpFontsNeeded=true",
 					"-dDumpXML",
-					"-dDumpFontsUsed"					
+					"-dDumpFontsUsed"
 					)
 		  If ($OptArgs) {
 			$arg += $OptArgs
@@ -813,7 +813,7 @@ Function Invoke-PDFTextExtraction {
 		Write-Verbose """$gsPath"" $arg"
 		Start-Process -Wait -FilePath $gsPathExe -ArgumentList $arg -NoNewWindow
 		Get-Content $TxtFile -Encoding UTF8
-		Remove-Item $TxtFile	
+		Remove-Item $TxtFile
 	}
 
 }
@@ -838,25 +838,25 @@ Function Install-eDocPrintPro {
 	# Unterverzeichnis anlegen, um entpackte Dateien aus ZIP-Archiven reinzulegen
 	New-Item $eDocPrintProDir -Type Directory
 	New-Item "$($eDocPrintProDir)eDocPrintPro" -Type Directory
-	
+
 	#
 	## Download direkt von PDFPrinter.at
 	#$ghostUrl = "ftp://download.may.co.at/Repository/msoftware/MAYComp/Current/RO/$ghostscriptFn.zip"
 	#Invoke-WebRequest $ghostUrl  -OutFile "$($DLPInstPath)$($ghostscriptFn).zip"
 	#Expand-Archive "$($DLPInstPath)$($ghostscriptFn).zip" "eDocPrintPro"
 	#
-	
-	
+
+
 	#Start-BitsTransfer http://www.pdfprinter.at/de/download-links/download-edocprintpro.html $DLPInstPath
 	# FTP via http://technet.microsoft.com/en-us/library/hh849901.aspx laden
 	Invoke-WebRequest -UseBasicParsing "ftp://download.may.co.at/Repository/msoftware/MAYComp/Current/RO/eDocPrintPro.zip"  -OutFile "$($eDocPrintProDir)eDocPrintPro.zip"
 	# http://www.xkey.at/d/file.php?file=MAYComp/Current/RO/eDocPrintPro.zip
 	# http://www.xkey.at/d/file.php?file=MAYComp/Current/RO/eDocPrintPro.zip
 	# ftp://download.may.co.at/Repository/msoftware/MAYComp/Current/RO/eDocPrintPro.zip
-	
+
 	Expand-Archive "$($eDocPrintProDir)eDocPrintPro.zip" "$($eDocPrintProDir)eDocPrintPro"
 	Start-Process -Wait "$($eDocPrintProDir)\eDocPrintPro\eDocPrintPro.exe" -ArgumentList @("/exenoui","/qn")
-	
+
 	# Jetzt noch Delapro.ESFx einspielen, muss in C:\Users\All Users\eDocPrintPro und C:\Programdata\eDocPrintPro
 	# eine .ESFx-Datei ist eine einfache XML-Datei
 	# $b64 = [System.Convert]::ToBase64String(Get-Content Delapro.ESXF -Encoding Byte)
@@ -900,11 +900,11 @@ Function Install-eDocPrintPro {
 	Lz48UHJvcGVydHkgTmFtZT0iSnBlZ1F1YWxpdHkiIFR5cGU9IlNjYWxhciIgVmFsdWU9IjAiLz48UHJvcGVydHkgTmFtZT0iQXV0b1BhZ2UiIFR5cGU9IlNj
 	YWxhciIgVmFsdWU9IjAiLz48L0V4dGVuc2lvbj48L1NXRj48L0FkZC1vbnM+PFBsdWdpbi1jaGFpbnMgQ3VycmVudD0iIi8+PC9lRG9jUHJpbnRQcm8+
 "@
-	
+
 	[System.Convert]::FromBase64String($DelaproESF) | Set-Content "C:\Users\All Users\eDocPrintPro\DelaproPDF.ESFX" -Encoding Byte
 	[System.Convert]::FromBase64String($DelaproESF) | Set-Content "C:\ProgramData\eDocPrintPro\DelaproPDF.ESFX" -Encoding Byte
 	reg add "HKCU\SOFTWARE\MAY Computer\eDocPrintPro\DelaproPDF\Standard" /v "Esf" /t "reg_sz" /d "DelaproPDF"  /f
-	
+
 	# zum Aktivieren der ESF-Datei
 	Start-Process -Wait 'C:\Program Files\Common Files\MAYComputer\eDocPrintPro\ApplyESF.EXE'
 
@@ -972,7 +972,7 @@ Function Start-ThunderbirdLogging {
 	} else {
 
 		# Mögliche weitere LogModule, siehe: https://wiki.mozilla.org/MailNews:Logging
-		# und 
+		# und
 		$LogModules = ""
 		If ($AddTimeStamp) {
 			$LogModules += "timestamp,"
@@ -1016,10 +1016,10 @@ Function Convert-IPAddress {
 	$nIPs = $neighbors |Where-Object LinkLayerAddress -ne "" | Sort-Object LinkLayerAddress
 
 	# MAC-Adresse zur gesuchten IP-Adresse ermitteln
-	$MAC = $nIPs | Where-Object IpAddress -eq $IPAdresse.IPAddressToString 
+	$MAC = $nIPs | Where-Object IpAddress -eq $IPAdresse.IPAddressToString
 	Write-Verbose "erkannte MAC-Adresse: $($Mac.LinkLayerAddress)"
 
-	# alle IP-Adressen zur MAC holen: 
+	# alle IP-Adressen zur MAC holen:
 	$result = $nIPs | Where-Object LinkLayerAddress -eq $MAC.LinkLayerAddress
 
 	# angefragte IP-Adresse aus Ergebnismenge entfernen
@@ -1035,7 +1035,7 @@ Function Convert-IPAddress {
 			($result).IpAddress
 	} else {
 		Write-Error "unbekannte Adressestruktur"
-  	}  
+  	}
 
 }
 
@@ -1116,7 +1116,7 @@ Function Install-Java {
 		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\"
 	)
-	
+
 	# aktuelle Version von: https://java.com/de/download/manual.jsp
 	# noch Hinweise zu Cryptoänderungen in Java: https://www.java.com/en/jre-jdk-cryptoroadmap.html
 	# Java EOL-Hinweise: http://www.oracle.com/technetwork/java/eol-135779.html
@@ -1131,7 +1131,7 @@ Function Install-Java {
 	} else {
 		Write-Error "Download-URL konnte nicht aufgelöst werden."
 	}
-	
+
 }
 
 # Prüft ob Java 8 vorhanden ist, dazu wird die aktuelleste JAVA.EXE ermittelt, gestartet und die Versionsinfo geholt
@@ -1149,9 +1149,9 @@ Function Test-Java {
 		Write-Verbose "Java: $j"
 
 		# Folgender Code liegt dem RunCheck-Javaprogramm zugrunde. Um ihn kompilieren zu können benötigt
-		# man allerdings das JDK in der zugehörigen Version, hier JDK8: 
+		# man allerdings das JDK in der zugehörigen Version, hier JDK8:
 		# http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-		# Man speichert das Programm als RunCheck.java und kompiliert man es dann mittels JavaC.EXE: 
+		# Man speichert das Programm als RunCheck.java und kompiliert man es dann mittels JavaC.EXE:
 		# Javac.exe -g:none RunCheck.java
 		# Daraus resultiert die RunCheck.class welches dann mittels
 		# $base64=[System.Convert]::ToBase64String((Get-Content .\RunCheck.class -Encoding Byte))
@@ -1190,7 +1190,7 @@ Function Install-VeraPDF {
 		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\"
 	)
-	
+
 	Write-Verbose "tempDirectory: $tempDirectory"
 	Start-BitsTransfer http://downloads.verapdf.org/rel/verapdf-installer.zip -Destination $tempDirectory\Verapdf-installer.zip
 	If (Test-Path $tempDirectory\Vera) {
@@ -1233,7 +1233,7 @@ Function Install-VeraPDF {
 		# java -jar "%BASEDIR%verapdf-izpack-installer-1.10.6.jar" auto-install.xml
 		$p = Start-Process -Wait -FilePath $j -ArgumentList "-jar", "$($veraPath)\verapdf-izpack-installer-1.10.6.jar", "$($veraPath)\auto-install.XML" -PassThru
 	}
-	
+
 }
 
 # ladet und installiert 7Zip
@@ -1272,11 +1272,11 @@ Function Install-Git {
 	Param(
 		[System.String]$tempDirectory="$Env:TEMP\"
 	)
-	
+
 	# aktuelle Version: https://git-scm.com/download/win
 	$version = "2.16.2"
 	If (Test-64Bit) {
-		$filename="Git-$($version)-64-bit.exe"		
+		$filename="Git-$($version)-64-bit.exe"
 	} else {
 		$filename="Git-$($version)-32-bit.exe"
 	}
@@ -1284,7 +1284,7 @@ Function Install-Git {
 	$url = Resolve-HttpUrlRedirect $Url
 	# geht mal wieder nicht: Start-BitsTransfer -Source $url -Destination "$tempDirectory\$($filename)"
 	(New-Object Net.WebClient).DownloadFile($url,"$tempDirectory$($Filename)")
-	
+
 	$setupInfData=@"
 [Setup]
 Lang=default
@@ -1302,13 +1302,13 @@ CRLFOption=CRLFAlways
 BashTerminalOption=ConHost
 PerformanceTweaksFSCache=Enabled
 UseCredentialManager=Enabled
-EnableSymlinks=Disabled               	
+EnableSymlinks=Disabled
 "@
 
         $setupInf = New-TemporaryFile
 	Write-Verbose "SetupInf: $setupInf"
 	$setupInfData | Set-Content -Path $setupInf
-	
+
 	Start-Process -Wait -FilePath "$tempDirectory\$Filename" -ArgumentList "/LOADINF=""$setupInf"""
 }
 
@@ -1359,7 +1359,7 @@ Function Install-VisualStudioCode {
 			}
 		} else {
 			Write-Error "VsCode unter $codeEXE nicht gefunden!"
-		}	
+		}
 	}
 
 }
@@ -1407,7 +1407,7 @@ Function Install-Thunderbird {
 		Write-Verbose "Installiere $Filename"
 		Start-Process -Wait $Filename -ArgumentList "/S"
 	}
-	
+
 }
 
 # Installation von LibreOffice
@@ -1430,7 +1430,7 @@ Function Install-LibreOffice {
 		Start-BitsTransfer $url -Destination $tempDirectory
 		Start-Process -Wait "$($tempDirectory)\LibreOffice_$($loVersion)_Win_x86.msi"
 	}
-	
+
 }
 
 <#
@@ -1440,7 +1440,7 @@ Function Install-LibreOffice {
     Install-Teamviewer ladet die aktuell auf der easy-Homepage hinterlegte
 	Teamviewer-Version herunter. Zusätzlich wird ein Link auf dem Desktop
 	erstellt.
-	Es werden Admin-Rechte benötigt. 
+	Es werden Admin-Rechte benötigt.
 .PARAMETER tempDirectory
 	Temporäres Verzeichnis, wo der Teamviewer beim Download gespeichert werden kann
 	Vorgabe: C:\Temp\
@@ -1457,7 +1457,7 @@ Function Install-LibreOffice {
 
     Installiert den Teamviewer im Verzeichnis C:\Delapro\Fernwartung, beim
 	Herunterladen wird die Fernwartungs-EXE im Verzeichnis C:\Temp zwischengespeichert.
-	Es wird automatisch der Link "easy Internet Fernwartung (Teamviewer).lnk" 
+	Es wird automatisch der Link "easy Internet Fernwartung (Teamviewer).lnk"
 	auf dem Desktop erzeugt.
 #>
 Function Install-Teamviewer {
@@ -1564,7 +1564,7 @@ Function Install-Powershell {
 
 	# Hinweis zu Windows 7 und den ewigen Updates. Wenn man das WMF Update direkt ladet
 	# und manuell installiert, geht es schneller: https://support.microsoft.com/en-us/kb/934307
-	# Bei 64Bit Win7 also: 
+	# Bei 64Bit Win7 also:
 	# expand.exe -f:* .\Windows6.1-KB2819745-x64-MultiPkg.msu %TEMP%
 	# pkgmgr.exe /n:%temp%\Windows6.1-KB2819745-x64-MultiPkg.xml
 
@@ -1596,14 +1596,14 @@ Function Install-Powershell {
 # es wird aber das Cmdlet nicht komplett nachgebildet, sondern nur die Funktion
 # die im Rahmen dieses Skripts benötigt wird!!
 Function Install-MissingPowershellCmdLets {
-	
+
 	# Expand-Archive gibt’s erst ab Powershell 5/Windows 10
 	if (-not (Get-Command Expand-Archive -ErrorAction SilentlyContinue)) {
 		# damit die Function verfügbar wird, muss sie mittels & ausgeführt werden und mit dem Scope global: versehen werden
 		&{
 			function global:Expand-Archive($Path,$DestinationPath) {
 				# fallback for .net earlier than 4.5
-				$shell = (new-object -com shell.application -strict)				
+				$shell = (new-object -com shell.application -strict)
 				If (-Not (Test-Path -Path $DestinationPath)) {
 					# Powershell 5.0 legt keine Verzeichnis bei Expand-Archive an
 					New-Item $DestinationPath -Type Directory
@@ -1659,7 +1659,7 @@ Function Install-MissingPowershellCmdLets {
 			}
 		}
 	}
-	
+
 	# New-TemporaryFile gibt es erst ab Powershell 5.0
 	if (-not (Get-Command New-TemporaryFile -ErrorAction SilentlyContinue)) {
 		# damit die Function verfügbar wird, muss sie mittels & ausgeführt werden und mit dem Scope global: versehen werden
@@ -1672,14 +1672,14 @@ Function Install-MissingPowershellCmdLets {
 
 	# Pseudo-Ersatz für Start-BitsTransfer für Powershell Core und bei Problemen mit Rechten, wegen Fehler 0x800704DD
 	#
-	# Start-BitsTransfer -Source 
+	# Start-BitsTransfer -Source
 	# liefert
 	# $e=$Error[0]
 	# $e.Exception.ErrorCode -eq -2147023651
 	#
 	#
 	# Function Start-BitsTransfer ($Source, $Destination) {
-	# 
+	#
 	#   If (Test-Path -Type Container $Destination) {
 	#     $Destination = Join-Path -Path $Destination -ChildPath ([System.IO.Path]::GetFilename($Source))
 	#   }
@@ -1687,17 +1687,17 @@ Function Install-MissingPowershellCmdLets {
 	#   try {
 	#     $wc = New-Object -Typename System.Net.WebClient
 	#     $wc.DownloadFile($Source, $Destination)
-	#   } 
+	#   }
 	#   finally {
 	#     $wc.Dispose()
 	#   }
-	# }	
+	# }
 
 }
 
 # Baut Install-StartBitsTransfer in der einfachsten Variante nach, diese Funktion kann bei Powershell Core
 # benutzt werden oder wenn es Rechteprobleme wegen der Fehlermeldung 0x800704DD bzw. -2147023651 gibt.
-# Start-BitsTransfer -Source 
+# Start-BitsTransfer -Source
 # liefert
 # $e=$Error[0]
 # $e.Exception.ErrorCode -eq -2147023651
@@ -1711,7 +1711,7 @@ Function Install-StartBitsTransfer {
 			[CmdletBinding()]
 			Param(
 				$Source, $Destination
-		
+
 			)
 
 			If (-Not $Destination) {
@@ -1725,7 +1725,7 @@ Function Install-StartBitsTransfer {
 
 			$job1 = Register-ObjectEvent -InputObject $wc -EventName DownloadProgressChanged -SourceIdentifier WebClient.DownloadProgressChanged -MessageData $Source -Action {Write-Progress "Downloading: $($EventArgs.ProgressPercentage)% Completed" -Status $event.MessageData -PercentComplete $EventArgs.ProgressPercentage; }
 			$job2 = Register-ObjectEvent -InputObject $wc -EventName DownloadFileCompleted -SourceIdentifier WebClient.DownloadFileComplete -MessageData $Destination -Action {Write-Host "Download Complete - $($event.MessageData)"; Unregister-Event -SourceIdentifier WebClient.DownloadProgressChanged; Unregister-Event -SourceIdentifier WebClient.DownloadFileComplete; }
-		  
+
 			try {
 			  $wc.DownloadFileAsync($Source, $Destination)
 			} catch [System.Net.WebException] {
@@ -1733,13 +1733,13 @@ Function Install-StartBitsTransfer {
 			} finally {
 			  $wc.Dispose()
 			}
-		  
+
 			while ($job1.state -ne "Stopped" -and $job2.state -ne "Stopped") {
 			  Start-Sleep -Milliseconds 100
 			}
-		  
+
 			Remove-Job $job1, $Job2
-					  
+
 		}
 	}
 
@@ -1765,7 +1765,7 @@ Function Install-DelaproChartModul {
 		[string]$DelaproPath="C:\Delapro",
 		[string]$DownloadUrl="http://www.easysoftware.de/"
 	)
-	
+
 	Start-BitsTransfer "$($DownloadUrl)/util/dlpwinchart.exe" $TempDirectory
 	Start-Process -Wait "$($TempDirectory)\dlpwinchart.exe" -ArgumentList "-a", "-pathDelapro=$($DelaproPath)"
 	Start-BitsTransfer "$($DownloadUrl)/util/DlpWinCt.EXE" $TempDirectory
@@ -1833,7 +1833,7 @@ Function Backup-Delapro {
 		[System.String]$BackupPath="C:\Temp\DelaproSicherung",
 		[Switch]$IgnoreBilder
 	)
-	
+
 	Write-Verbose "Sichere $DelaproPath nach $BackupPath"
 	$Argumente = @("*.*", "/S", "/V", "/AUTO", $BackupPath)
 	If ($IgnoreBilder) {
@@ -1852,10 +1852,10 @@ Function Update-Backup {
 
 	# TODO: sollte noch $easyURI angepasst werden!
 	$c=Invoke-WebRequest -Uri http://www.easysoftware.de/util -UseBasicParsing
-	
+
 	# so sieht ein Eintrag aus, es geht ums Datum wo vor dem Eintrag steht!
 	# ...<A HREF="/util/EasyBackup32.exe">EasyBackup32.exe</A><br> 12/6/2013 10:07 PM        77824 <A HREF="...
-	
+
 	# Link mit easybackup32.exe ermitteln
 	$backup=($c.Links|Where-Object outerhtml -match easybackup).outerhtml
 	# betreffende Eintragung ausschneiden, zuerst den Rest weg
@@ -1868,7 +1868,7 @@ Function Update-Backup {
 	$backup=$backup.substring(0, $backup.LastIndexOf(" "))
 	# Datum ermitteln
 	$FileDate = Get-Date $backup
-	
+
 	$ExePath = Join-Path -Path $DelaproPath -ChildPath "Backup\EasyBackup32.EXE"
 	Write-Verbose "Prüfe $ExePath"
 	$ExeDate = (Get-Item $ExePath).LastWriteTime
@@ -1891,10 +1891,10 @@ Function Update-DlpWinPr {
 
 	# TODO: sollte noch $easyURI angepasst werden!
 	$c=Invoke-WebRequest -Uri http://www.easysoftware.de/util -UseBasicParsing
-	
+
 	# so sieht ein Eintrag aus, es geht ums Datum wo vor dem Eintrag steht!
 	# ...<A HREF="/util/EasyBackup32.exe">EasyBackup32.exe</A><br> 12/6/2013 10:07 PM        77824 <A HREF="...
-	
+
 	# Link mit dlpwinpr.exe ermitteln
 	$backup=($c.Links|Where-Object outerhtml -match "dlpwinpr.exe").outerhtml
 	# betreffende Eintragung ausschneiden, zuerst den Rest weg
@@ -1907,7 +1907,7 @@ Function Update-DlpWinPr {
 	$backup=$backup.substring(0, $backup.LastIndexOf(" "))
 	# Datum ermitteln
 	$FileDate = Get-Date $backup
-	
+
 	$ExePath = Join-Path -Path $DelaproPath -ChildPath "Laser\DlpWinPr.EXE"
 	Write-Verbose "Prüfe $ExePath"
 	$ExeDate = (Get-Item $ExePath).LastWriteTime
@@ -1935,7 +1935,7 @@ Function Update-DlpRawPr {
 	$ExeVersion = [version](Get-Item $ExePath).VersionInfo.ProductVersion
 	If ($ExeVersion -lt $rawVersion) {
 		Write-Verbose "Version muss aktualisiert werden, von $($ExeVersion) auf $($rawVersion)"
-		Invoke-WebRequest -UseBasicParsing -Uri https://github.com/Delapro/DlpRawPr/releases/download/v$($rawVersionNumber)/DlpRawPr.exe -OutFile (Join-Path -Path (Join-Path -Path $DelaproPath -ChildPath Laser) -ChildPath DLPRawPr.EXE) 
+		Invoke-WebRequest -UseBasicParsing -Uri https://github.com/Delapro/DlpRawPr/releases/download/v$($rawVersionNumber)/DlpRawPr.exe -OutFile (Join-Path -Path (Join-Path -Path $DelaproPath -ChildPath Laser) -ChildPath DLPRawPr.EXE)
 	} else {
 		Write-Verbose "Version ist aktuell, $($ExeVersion)"
 	}
@@ -1960,7 +1960,7 @@ Function Update-Teamviewer {
 				Write-Verbose "neuere Version wird heruntergeladen"
 				Start-BitsTransfer "http://www.easysoftware.de/download/easyTeamViewerQS_de.exe"  -Destination $tempDirectory
 				Unblock-File "$($tempDirectory)easyTeamViewerQS_de.exe"
-				Copy-Item $tempDirectory\easyTeamViewerQS_de.exe $DestinationPath\Fernwartung -Force			
+				Copy-Item $tempDirectory\easyTeamViewerQS_de.exe $DestinationPath\Fernwartung -Force
 				$Version = (Get-Item $ExePath).VersionInfo.FileVersionRaw
 				Write-Verbose "Version $Version in $ExePath"
 			} else {
@@ -1987,7 +1987,7 @@ Function Get-DelaproErrors {
 
 	$Errors = @()
 	$Files | Select-Object -ExpandProperty Path | ForEach-Object { Write-Verbose $_; $Errors += (Get-DelaproErrorObject ($_)) }
-	$Errors 
+	$Errors
 
 }
 
@@ -2009,7 +2009,7 @@ Function Get-DelaproErrorObject {
 		$NewObject["Datei"]=Get-Item $Filename
 		for ($item = 0; $item -lt $p.Count; $item++) {
 			$von = $p[$item].LineNumber   # zählt von 1, dadurch wird Sektionsstring gleich übersprungen
-			$bis = $p[$Item+1].LineNumber-2  # zählt von 1 und 
+			$bis = $p[$Item+1].LineNumber-2  # zählt von 1 und
 			Write-Verbose "$von - $Bis"
 			$Block = $ErrorData[$von..$Bis]
 			switch -wildcard ($p[$item].Line) {
@@ -2069,8 +2069,8 @@ Function Convert-EventData {
 
 	$eventXML = [xml]$Event.ToXml()
     # Eventproperties anfügen
-    For ($i=0; $i -lt $eventXML.Event.EventData.Data.Count; $i++) {            
-        # Append these as object properties            
+    For ($i=0; $i -lt $eventXML.Event.EventData.Data.Count; $i++) {
+        # Append these as object properties
         Add-Member -InputObject $Event -MemberType NoteProperty -Force -Name $eventXML.Event.EventData.Data[$i].name -Value $eventXML.Event.EventData.Data[$i].'#text'
 	}
 	$Event
@@ -2099,9 +2099,9 @@ Function New-PrinterPort {
 	Param(
 		[System.String]$Portname
 	)
-	
+
 	$PrinterPorts = 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Ports'
-	
+
 	Set-ItemProperty $PrinterPorts -Name $Portname -Value "" -Force
 	Write-Verbose "$($PrinterPorts)$Portname angelegt"
 	# wie geht Set-ItemProperty mit Reg_SZ?
@@ -2114,11 +2114,11 @@ Function Get-InstalledWindowsPrinterDriver {
 	[CmdletBinding()]
 	Param(
 		[String]$Vendor,
-		[String]$Driver 
+		[String]$Driver
 	)
 
 	# alle Druckertreiber ermitteln
-	$vendorPrinter = Get-WindowsDriver -Online -All | Where-Object classname -eq Printer|Where-Object providername -eq  $Vendor 
+	$vendorPrinter = Get-WindowsDriver -Online -All | Where-Object classname -eq Printer|Where-Object providername -eq  $Vendor
 	# davon die passenden Treiber ermitteln
 	$printerDriver = $vendorPrinter |  ForEach-Object {Get-WindowsDriver -Online -driver $_.originalfilename} | Where-Object hardwaredescription -eq $Driver
 	# Treiber ausgeben
@@ -2139,12 +2139,12 @@ Function Install-DelaproMailPrinter {
 	If (-Not (Test-PrinterPort -Portname $Portname)) {
 		New-PrinterPort -Portname $PortName
 	}
-	
+
 	If (-Not (Test-Path $DelaproPath\Export\PDF\Temp)) {
 		Write-Verbose "Lege Tempverzeichnis für Export an $DelaproPath\Export\PDF\Temp"
 		New-Item -Type Directory $DelaproPath\Export\PDF\Temp
 	}
-	
+
 	# DelaproMail-Druckertreiber anlegen
 	# für künftige Aktionen GhostScript-Druckertreiber installieren:
 	# rundll32 printui.dll,PrintUIEntry /Gw /ia /m "Ghostscript PDF" /f "C:\program files\gs\gs9.18\lib\ghostpdf.inf"
@@ -2168,7 +2168,7 @@ Function Install-DelaproMailPrinter {
 					switch ($winBuild) {
 						"10.0.10240" {$driverID = "865ce515acd2fce4"}
 						"10.0.10586" {$driverID = "d74c8d3824a210d1"}
-						"10.0.14393" {$driverID = "f9239fa24dfa8848"} 
+						"10.0.14393" {$driverID = "f9239fa24dfa8848"}
 						"10.0.15063" {$driverID = "468bda717012acbd"}
 						"10.0.16299" {$driverID = "34c0896eae1bf8d0"}
 						"10.0.17134" {$driverID = "c43129a734557745"}
@@ -2202,10 +2202,10 @@ Function Install-DelaproMailPrinter {
 						$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_$($driverID)\prnms005.inf"
 					}
 				}
-				
+
 			} else {
 				# Win8
-				
+
 				# PRÜFEN! Alternative Xerox PS Color Class Driver V1.1, Oder HP Laserjet 2500 PS wird von Parallels verwendet
 				# oder Class Driver V1.2
 				$driverName = "Microsoft PS Class Driver"
@@ -2216,7 +2216,7 @@ Function Install-DelaproMailPrinter {
 					# 32-Bit!
 					$driverInf ="C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_b69a5a93baea1ad3\prnms005.inf"
 				}
-				
+
 			}
 			Write-Verbose "Installiere Druckertreiber unter Win8/Win10 $driverName $driverInf"
 			Add-PrinterDriver -name $driverName -InfPath $driverInf
@@ -2241,7 +2241,7 @@ Function Install-DelaproMailPrinter {
    Ein weiteres Beispiel für die Verwendung dieses Cmdlets
 #>
 Function Invoke-VDDSPruefTool
-{   
+{
     [CmdletBinding()]
     [OutputType([void])]
     Param
@@ -2256,19 +2256,19 @@ Function Invoke-VDDSPruefTool
     If (-Not ([System.IO.Path]::IsPathRooted((Resolve-Path $KZBVXMLFile)))) {
     	$KZBVXMLFile = Resolve-Path $KZBVXMLFile
     }
-    
+
     If (Test-64Bit) {
       $ProgramsFolder = ${env:ProgramFiles(x86)}
     } else {
       $ProgramsFolder = $env:ProgramFiles
     }
     & "$($ProgramsFolder)\VDDS\ValidateLabXML.exe"
-    
+
     # Klappt bei Leerzeichen nicht:
     #Invoke-Expression "explorer /select,`"$KZBVXMLFile`""
     # explorer /select,c:\windows\calc.exe
     #explorer /select,$KZBVXMLFile
-    
+
     $shell=New-Object -Com  "wscript.shell"
     $shell.Run("explorer /select,`"$KZBVXMLFile`"")
 
@@ -2488,12 +2488,12 @@ Function Enable-SystemRestore {
 	Param(
 		[System.String]$Drive = "$($Env:SystemDrive)\"
 	)
-	
+
 	$Drive=Join-Path -Path $Drive -ChildPath ""
 	If (Test-Path $Drive) {
 		# https://msdn.microsoft.com/en-us/library/windows/desktop/aa378858(v=vs.85).aspx
 		$cr=Invoke-CimMethod -Namespace root/DEFAULT -ClassName SystemRestore -MethodName Enable -Arguments @{Drive="$Drive"}
-		
+
 	} else {
 		Throw "$DriveToProtect not valid."
 	}
@@ -2508,7 +2508,7 @@ Function Disable-SystemRestore {
 	Param(
 		[System.String]$Drive = "$($Env:SystemDrive)\"
 	)
-	
+
 	$Drive=Join-Path -Path $Drive -ChildPath ""
 	If (Test-Path $Drive) {
 		# https://msdn.microsoft.com/en-us/library/windows/desktop/aa378852(v=vs.85).aspx
@@ -2528,8 +2528,8 @@ Function Set-SystemRestore {
 		[System.String]$SizePercent = 10,
 		[System.String]$SizeMB
 	)
-	
-	# vssadmin.exe Resize ShadowStorage /For=$Drive /On=$Drive /Maxsize=320MB 
+
+	# vssadmin.exe Resize ShadowStorage /For=$Drive /On=$Drive /Maxsize=320MB
 
 }
 
@@ -2538,14 +2538,14 @@ Function Get-DefaultEMailClient {
 	[CmdletBinding()]
 	#[OutputType([System.Boolean])]
 	Param(
-		
+
 	)
-	
-	# Grundlage sind diese Artikel: 
+
+	# Grundlage sind diese Artikel:
 	# Default Startmenu-EMail-Client: https://msdn.microsoft.com/en-us/library/windows/desktop/dd203067(v=vs.85).aspx#email_reg
 	# Default E-Mail  https://msdn.microsoft.com/en-us/library/windows/desktop/cc144154(v=vs.85).aspx
 	# Default MAPI-Client: https://msdn.microsoft.com/en-us/library/windows/desktop/ee909492(v=vs.85).aspx
-	
+
 	# damit hat Windows 7 Probleme:
 	#$mailClient = (Get-ItemProperty HKCU:\SOFTWARE\Clients\Mail\ -Name "(default)").'(default)' -ErrorAction SilentlyContinue
 	#If (! $mailClient) {
@@ -2553,11 +2553,11 @@ Function Get-DefaultEMailClient {
 	#}
 	$mailClient = (Get-ItemProperty Registry::HKEY_CURRENT_USER\SOFTWARE\Clients\Mail\ -Name "(default)" -ErrorAction SilentlyContinue).'(default)'
 	If (! $mailClient) {
-		$mailClient = (Get-ItemProperty Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Clients\Mail\ -Name "(default)" -ErrorAction SilentlyContinue).'(default)' 
+		$mailClient = (Get-ItemProperty Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Clients\Mail\ -Name "(default)" -ErrorAction SilentlyContinue).'(default)'
 	}
 
 	$mailClient
-	
+
 }
 
 # prüft, ob MAPI korrekt verfügbar ist
@@ -2565,7 +2565,7 @@ Function Test-MAPI {
 	[CmdletBinding()]
 	#[OutputType([System.Boolean])]
 	Param(
-		
+
 	)
 
 	# https://support.microsoft.com/en-us/kb/141061
@@ -2578,7 +2578,7 @@ Function Show-MAPIProfiles {
 	[CmdletBinding()]
 	#[OutputType([System.Boolean])]
 	Param(
-		
+
 	)
 
 	# Suche nach MLCFG32.CPL
@@ -2613,7 +2613,7 @@ Function Show-StartupFolder {
 	If ($AllUsers) {
 		Start-Process "shell:common startup"
 	} else {
-		Start-Process "shell:startup"		
+		Start-Process "shell:startup"
 	}
 
 }
@@ -2664,9 +2664,9 @@ Function Get-AntiMalware {
 	[CmdletBinding()]
 	#[OutputType([System.Boolean])]
 	Param(
-		
+
 	)
-	
+
 	$av = Get-CimInstance -Namespace root/SecurityCenter2 -Class AntivirusProduct
 	If ($av -eq $null) {
 		# kein Virenscanner installiert, also Security Essentials holen
@@ -2684,7 +2684,7 @@ Function Set-DefenderPreferences {
 	[CmdletBinding()]
 	#[OutputType([System.Boolean])]
 	Param(
-		
+
 	)
 
 	# Wechseldatenträger überprüfen:
@@ -2717,7 +2717,7 @@ Function Invoke-DefenderSetupAndScan {
 	Import-Module defender -ErrorAction SilentlyContinue
 	# Get-Command -Module defender
 	If (Get-MpComputerStatus -ErrorAction SilentlyContinue) {
-		# Fehlermeldung, wenn Kaspersky oder wahrscheinlich anderer Virenscanner aktiv ist bzw vorher aktiv war und deinstalliert wurde: 
+		# Fehlermeldung, wenn Kaspersky oder wahrscheinlich anderer Virenscanner aktiv ist bzw vorher aktiv war und deinstalliert wurde:
 		# Get-MpComputerStatus : Die extrinsische Methode konnte nicht ausgeführt werden.
 		# In Zeile:1 Zeichen:1
 		# + Get-MpComputerStatus
@@ -2740,7 +2740,7 @@ Function Invoke-DefenderSetupAndScan {
 		Update-MpSignature
 		Start-MpScan -ScanType QuickScan
 	}
-}	
+}
 
 # importiert das neueste Delapro-Backup, entweder aus einer ZIP-Datei von easyBackup32 oder aus einem Pfad
 # wo Delapro.EXE und eine aktuelle AUFTRAG.DBF liegt
@@ -2765,9 +2765,9 @@ Function Import-LastDelaproBackup {
 			Write-Verbose "Temppfad löschen: $TempPath"
 			Remove-Item $TempPath -Force -Recurse
 		}
-	
+
 		# -Force zum überschreiben von alten Dateien aber vorher mit Polyfill abklären
-		# wenn es hier einen Fehler gibt und nichts entpackt wird, sollte $Error[0].Exception.HResult überprüft 
+		# wenn es hier einen Fehler gibt und nichts entpackt wird, sollte $Error[0].Exception.HResult überprüft
 		# werden, wenn HResult -2146233087 liefert, ist die ZIP-Datei nicht in Ordnung
 		# Entpackt man bei obigen Fehler die ZIP-Datei per GUI dann erscheint Fehler 0x80004005
 		Expand-Archive "$($ds.Fullname)" $TempPath
@@ -2792,7 +2792,7 @@ Function Copy-Delagame {
 		[System.String]$DelaproPath,
 		[System.String]$DelaGamePath
 	)
-	
+
 	If (-Not (Test-Path $DelaGamePath)) {
 		New-Item -Type Directory $DelaGamePath
 	}
@@ -2814,7 +2814,7 @@ Function Test-FormulareFertigteile {
 		$fp = Get-Content $formPrei -Encoding Oem
 		If (($fp | Select-String -Pattern "(?<![_])Fertigteile")) {
 			$true
-		} 
+		}
 	} else {
 		Write-Verbose "FormPrei.txt nicht gefunden!"
 	}
@@ -2869,7 +2869,7 @@ Function Invoke-CleanupDelapro {
 	#If (-Not ((Get-Location).Path -eq "$($DlpPath)")) {
 	#  CD $DlpPath
 	#}
-	
+
 	# Aufräumarbeiten
 	$toRemove = @("Report.EXE",
 	              "TXTPrev.EXE",
@@ -2900,28 +2900,28 @@ Function Invoke-CleanupDelapro {
 	              "COMPILE.BAT"
 	             )
 	$toRemove | ForEach-Object {Remove-Item "$($DelaproPath)\$_" -ErrorAction SilentlyContinue}
-	
+
 	# Export-KZBV-Temp und PDF-Temp-Verzeichnis löschen
 	# COPY-Verzeichnis aufräumen, vor allem auch bei LL-Versionen
-	
+
 	#Dir *.BAK | group LastWriteTime
 	Remove-Item "$($DelaproPath)\*.BAK"
-	
+
 	#Dir *.TBK | group LastWriteTime
 	Remove-Item "$($DelaproPath)\*.TBK"
-	
+
 	# alte Backupdateien löschen
 	Remove-Item "$($DelaproPath)\*.PDB"
-	
+
 	#dir cm??17*.*
 	Remove-Item "$($DelaproPath)\cm??17*.DLL"
 	Remove-Item "$($DelaproPath)\cm??17*.LNG"
 	Remove-Item "$($DelaproPath)\cm??17*.OCX"
-	
+
 	#dir cm??18*.*
 	Remove-Item "$($DelaproPath)\cm??18*.DLL"
 	Remove-Item "$($DelaproPath)\cm??18*.LNG"
-	
+
 	#dir cm??19*.*
 	Remove-Item "$($DelaproPath)\cm??19*.DLL"
 	Remove-Item "$($DelaproPath)\cm??19*.LNG"
@@ -2929,23 +2929,23 @@ Function Invoke-CleanupDelapro {
 	#dir cm??20*.*
 	Remove-Item "$($DelaproPath)\cm??20*.DLL"
 	Remove-Item "$($DelaproPath)\cm??20*.LNG"
-	
+
 	#dir cm??21*.*
 	Remove-Item "$($DelaproPath)\cm??21*.DLL"
 	Remove-Item "$($DelaproPath)\cm??21*.LNG"
-	
+
 	Get-ChildItem "$($DelaproPath)\cm*"
-	
+
 	# DLP.LOG-Datei verkleinern
 	If (Test-Path "$($DelaproPath)\dlp.log") {
 		(get-content "$($DelaproPath)\dlp.log")[-300..-1] | set-content "$($DelaproPath)\dlp.log"
 	}
-	
+
 	# Alte Backup-Logdateien löschen, wo älter als ein Jahr sind:
 	If (Test-Path "$($DelaproPath)\backup\log\*.log") {
 		Get-Item "$($DelaproPath)\backup\log\*.log" | Where-Object {$_.LastWriteTime -lt ((Get-Date).AddDays(-365))} | Remove-Item
 	}
-	
+
 }
 
 #If($PSReadlineActive) {
@@ -2996,7 +2996,7 @@ Set-Location $DLPInstPath
 # Wegen Unblock-File sollte MF4 installiert werden: http://www.microsoft.com/de-de/download/details.aspx?id=40855
 # direkter Download: http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu
 If (-not (Get-Command Unblock-File -ErrorAction SilentlyContinue)) {
-	
+
 	# Wenn kein Unblock-File da ist, dann fehlt auch Invoke-WebRequest!
 	# Invoke-WebRequest "http://www.microsoft.com/de-de/download/details.aspx?id=40855"
 	# Start-BitsTransfer "http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu"
@@ -3036,10 +3036,10 @@ CheckPoint-Computer "vor Delapro Installation"
 # deaktiviert ist oder ihm keine aktivierten Geräte zugeordnet sind.
 # Dabei enthält $Error.Exception.HResult den Wert -2147024809
 
-Control System 
+Control System
 
 # hier gibt es die passenden WMI-Klassen für SystemRestore: https://msdn.microsoft.com/en-us/library/windows/desktop/aa378986(v=vs.85).aspx
-# (gwmi -Namespace root/default -Class SystemRestoreConfig).RPSessionInterval -eq 1 
+# (gwmi -Namespace root/default -Class SystemRestoreConfig).RPSessionInterval -eq 1
 # fragt ab, ob die Systemwiederherstellung überhaupt aktiv ist.
 
 # zunächst mal die Cmdlets nachbauen, welche benötigt werden und evtl. nicht da sind
@@ -3071,7 +3071,7 @@ Show-Printers
 Disable-Windows10DefaultPrinterRoaming
 
 # eigentliche Delaproinstallation
-Install-DelaproHauptmodul -TempDirectory $DLPInstPath -DelaproPath $DlpPath 
+Install-DelaproHauptmodul -TempDirectory $DLPInstPath -DelaproPath $DlpPath
 
 Install-DelaproBildarchivierungModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI
 Install-DelaproZertifikatModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI
@@ -3112,7 +3112,7 @@ If (-Not ((Get-Location).Path -eq "$($DlpPath)")) {
 
 If (-Not (Test-Path $DlpGamePath)) {
 	# Spielprogramm anlegen und Daten rüberkopieren
-	Copy-Delagame -DelaproPath $($DlpPath) -DelagamePath $DlpGamePath 
+	Copy-Delagame -DelaproPath $($DlpPath) -DelagamePath $DlpGamePath
 }
 
 # Um die Standardprogramme einzusehen:
