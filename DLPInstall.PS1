@@ -400,7 +400,7 @@ Function Set-AcrobatReaderDCViewerRightPaneOff {
 	$viewer = [xml](Get-Content $viewerFile)
 	# Layout auskommentieren, hier die ausführliche Variante: http://stackoverflow.com/questions/6328288/how-to-comment-a-line-of-a-xml-file-in-c-sharp-with-system-xml
 	$layout = $viewer.Application.Layouts.Layout
-	If ($layout -eq $null) {
+	If ($null -eq $layout) {
 		# $viewer.Application.Layouts.'#comment'
 		# würde den Kommentar enthalten
 		Write-Error "Kann Viewerlayout nicht ändern, entsprechendes Layout-Element nicht gefunden. Evtl. bereits auskommentiert."
@@ -424,7 +424,7 @@ Function Get-DelaproBackups {
 	)
 
 	# Laufwerksbuchstaben ermitteln
-	$dl = Get-Volume| Where-Object {$_.Driveletter -ne $null} | Where-Object {$_.OperationalStatus -eq "OK"} |  Select-Object -ExpandProperty Driveletter
+	$dl = Get-Volume| Where-Object {$null -ne $_.Driveletter} | Where-Object {$_.OperationalStatus -eq "OK"} |  Select-Object -ExpandProperty Driveletter
 	#  Sicherungen ermitteln und nach Datum sortieren
 	$ds = $dl | ForEach-Object {Get-ChildItem "$($_):\Delapro*.ZIP"}
 	# Sortieren mit neuester zuerst
@@ -1655,7 +1655,7 @@ Function Install-MissingPowershellCmdLets {
 				$vol = Get-CimInstance Win32_Volume
 				$vol | Select-Object @{Label="Driveletter";Expression={$_.Driveletter.SubString(0, 1)}},
 									 @{Label="FileSystemType";Expression={$_.FileSystem}},
-				                     @{Label="OperationalStatus";Expression={If ($_.FileSystem -ne $null) {"OK"} else {""} }}
+				                     @{Label="OperationalStatus";Expression={If ($null -ne $_.FileSystem) {"OK"} else {""} }}
 			}
 		}
 	}
@@ -2084,7 +2084,7 @@ Function Test-PrinterPort {
 	)
 
 	$PrinterPorts = 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Ports'
-	If ((Get-ItemProperty $PrinterPorts -Name "$Portname" -ErrorAction SilentlyContinue).$Portname -eq $null) {
+	If ($null -eq (Get-ItemProperty $PrinterPorts -Name "$Portname" -ErrorAction SilentlyContinue).$Portname) {
 		$false
 	} else {
 		$true
@@ -2363,7 +2363,7 @@ Function Disable-Windows10DefaultPrinterRoaming {
 	# Standarddrucker macht ausschalten
 	If (Test-Windows10) {
 		# Key vorhanden?
-		If ((Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows' -Name LegacyDefaultPrinterMode).LegacyDefaultPrinterMode -ne $null) {
+		If ($null -ne (Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows' -Name LegacyDefaultPrinterMode).LegacyDefaultPrinterMode) {
 			If ((Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows' -Name LegacyDefaultPrinterMode).LegacyDefaultPrinterMode -eq 0) {
 				Set-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows' -Name LegacyDefaultPrinterMode -Value 1
 				"LegacyDefaultPrinterMode modifiziert"
@@ -2668,7 +2668,7 @@ Function Get-AntiMalware {
 	)
 
 	$av = Get-CimInstance -Namespace root/SecurityCenter2 -Class AntivirusProduct
-	If ($av -eq $null) {
+	If ($null -eq $av) {
 		# kein Virenscanner installiert, also Security Essentials holen
 		Start-Process https://www.microsoft.com/de-de/download/details.aspx?id=5201
 	}
