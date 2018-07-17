@@ -354,6 +354,15 @@ Get-WinEvent -LogName "System" -FilterXPath "*[System[EventRecordID=$($rr.Record
 
 ```
 
+### Prozessdump erstellen
+
+```Powershell
+Invoke-SysInternalTool -Tool ProcDump -Verbose
+# wartet auf das Eintreten einer Exception beim Ausführen von KZBVExp und schreibt den Prozessdump
+# in die Datei c:\Temp\kzbvExp.Dmp
+$Env:Temp\ProcDump.Exe -accepteula -e -w -ma KZBVExp -o C:\Temp\KzbvExp.DMP
+```
+
 ### Hardwareprobleme erkennen
 
 ```Powershell
