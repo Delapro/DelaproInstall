@@ -28,6 +28,9 @@ If (-Not ([System.Net.ServicePointManager]::SecurityProtocol -band [System.Net.S
 If ([System.Net.ServicePointManager]::SecurityProtocol -band [System.Net.SecurityProtocolType]::Ssl3) {
 	[System.Net.ServicePointManager]::SecurityProtocol -= [System.Net.SecurityProtocolType]::Ssl3
 }
+# wenn alle Stricke reißen: Win8, Win7 und so:
+# [System.Net.ServicePointManager]::SecurityProtocol = 3024
+# oder [System.Net.ServicePointManager]::SecurityProtocol.value__ = 3024
 
 Function Test-64Bit () {
 	[System.IntPtr]::Size -eq 8
