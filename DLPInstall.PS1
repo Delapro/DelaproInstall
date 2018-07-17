@@ -1492,7 +1492,7 @@ Function Invoke-SysInternalTool {
   [CmdletBinding()]
   Param(
     [System.String]$tempDirectory="$Env:TEMP\",
-    [Validateset("Autonruns", "Procmon", "Procexp")]
+    [Validateset("Autonruns", "Procmon", "Procexp", "ProcDump")]
     [string[]]$Tool
   )
 
@@ -1500,6 +1500,7 @@ Function Invoke-SysInternalTool {
   Start-BitsTransfer -Source "$url/$($Tool).exe" -Destination $tempDirectory
   Unblock-File "$tempDirectory\$($Tool).exe"
   Start-Process "$tempDirectory\$($Tool).exe"
+  Write-Verbose "TempPfad: $tempDirectory"
 
 }
 
