@@ -22,7 +22,7 @@ $DlpGamePath = "C:\DelaGame"
 $easyBaseURI = "http://www.easysoftware.de"
 
 # TLS 1.2 wird zwingend wegen Github benötigt
-Add-Tls12InSession
+Add-Tls12InSession -Verbose
 
 # Credit: https://github.com/Microsoft/vsts-tasks/blob/d052c35e5abfe5400341323a50826b9ca795166c/Tasks/Common/TlsHelper_/TlsHelper_.psm1
 function Add-Tls12InSession {
@@ -36,14 +36,14 @@ function Add-Tls12InSession {
             $securityProtocol+=[Net.SecurityProtocolType]3072
             [Net.ServicePointManager]::SecurityProtocol=$securityProtocol
 
-            Write-Host (Get-VstsLocString -Key TLS12AddedInSession)
+            Write-Host "TLS12AddedInSession succeeded"
         }
         else {
             Write-Verbose 'TLS 1.2 already present in session.'
         }
     }
     catch {
-        Write-Host (Get-VstsLocString -Key "UnableToAddTls12InSession" -ArgumentList $($_.Exception.Message))
+        Write-Host "UnableToAddTls12InSession $($_.Exception.Message)"
     }
 }
 
