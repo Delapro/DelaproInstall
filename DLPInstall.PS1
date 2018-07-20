@@ -21,16 +21,30 @@ $DlpGamePath = "C:\DelaGame"
 # Pfad für Webseite
 $easyBaseURI = "http://www.easysoftware.de"
 
-# TLS1.2 hinzufügen ist generell sinnvoll, SSL3 kann weg
-If (-Not ([System.Net.ServicePointManager]::SecurityProtocol -band [System.Net.SecurityProtocolType]::Tls12)) {
-	[System.Net.ServicePointManager]::SecurityProtocol += [System.Net.SecurityProtocolType]::Tls12
+# TLS 1.2 wird zwingend wegen Github benötigt
+Add-Tls12InSession
+
+function Add-Tls12InSession {
+    [CmdletBinding()]
+    param()
+
+    try {
+        if ([Net.ServicePointManager]::SecurityProtocol.ToString().Split(',').Trim() -notcontains 'Tls12') {
+            $securityProtocol=@()
+            $securityProtocol+=[Net.ServicePointManager]::SecurityProtocol
+            $securityProtocol+=[Net.SecurityProtocolType]3072
+            [Net.ServicePointManager]::SecurityProtocol=$securityProtocol
+
+            Write-Host (Get-VstsLocString -Key TLS12AddedInSession)
+        }
+        else {
+            Write-Verbose 'TLS 1.2 already present in session.'
+        }
+    }
+    catch {
+        Write-Host (Get-VstsLocString -Key "UnableToAddTls12InSession" -ArgumentList $($_.Exception.Message))
+    }
 }
-If ([System.Net.ServicePointManager]::SecurityProtocol -band [System.Net.SecurityProtocolType]::Ssl3) {
-	[System.Net.ServicePointManager]::SecurityProtocol -= [System.Net.SecurityProtocolType]::Ssl3
-}
-# wenn alle Stricke reißen: Win8, Win7 und so:
-# [System.Net.ServicePointManager]::SecurityProtocol = 3024
-# oder [System.Net.ServicePointManager]::SecurityProtocol.value__ = 3024
 
 Function Test-64Bit () {
 	[System.IntPtr]::Size -eq 8
