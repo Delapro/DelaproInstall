@@ -24,6 +24,7 @@ $easyBaseURI = "http://www.easysoftware.de"
 # TLS 1.2 wird zwingend wegen Github benötigt
 Add-Tls12InSession
 
+# Credit: https://github.com/Microsoft/vsts-tasks/blob/d052c35e5abfe5400341323a50826b9ca795166c/Tasks/Common/TlsHelper_/TlsHelper_.psm1
 function Add-Tls12InSession {
     [CmdletBinding()]
     param()
