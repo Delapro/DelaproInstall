@@ -21,9 +21,6 @@ $DlpGamePath = "C:\DelaGame"
 # Pfad für Webseite
 $easyBaseURI = "http://www.easysoftware.de"
 
-# TLS 1.2 wird zwingend wegen Github benötigt
-Add-Tls12InSession -Verbose
-
 # Credit: https://github.com/Microsoft/vsts-tasks/blob/d052c35e5abfe5400341323a50826b9ca795166c/Tasks/Common/TlsHelper_/TlsHelper_.psm1
 function Add-Tls12InSession {
     [CmdletBinding()]
@@ -46,6 +43,9 @@ function Add-Tls12InSession {
         Write-Host "UnableToAddTls12InSession $($_.Exception.Message)"
     }
 }
+
+# TLS 1.2 wird zwingend wegen Github benötigt
+Add-Tls12InSession -Verbose
 
 Function Test-64Bit () {
 	[System.IntPtr]::Size -eq 8
