@@ -2928,26 +2928,11 @@ Function Invoke-CleanupDelapro {
 	# alte Backupdateien löschen
 	Remove-Item "$($DelaproPath)\*.PDB"
 
-	#dir cm??17*.*
-	Remove-Item "$($DelaproPath)\cm??17*.DLL"
-	Remove-Item "$($DelaproPath)\cm??17*.LNG"
-	Remove-Item "$($DelaproPath)\cm??17*.OCX"
-
-	#dir cm??18*.*
-	Remove-Item "$($DelaproPath)\cm??18*.DLL"
-	Remove-Item "$($DelaproPath)\cm??18*.LNG"
-
-	#dir cm??19*.*
-	Remove-Item "$($DelaproPath)\cm??19*.DLL"
-	Remove-Item "$($DelaproPath)\cm??19*.LNG"
-
-	#dir cm??20*.*
-	Remove-Item "$($DelaproPath)\cm??20*.DLL"
-	Remove-Item "$($DelaproPath)\cm??20*.LNG"
-
-	#dir cm??21*.*
-	Remove-Item "$($DelaproPath)\cm??21*.DLL"
-	Remove-Item "$($DelaproPath)\cm??21*.LNG"
+	Invoke-CleanupLL -DelaproPath $DelaproPath -Version "17"
+	Invoke-CleanupLL -DelaproPath $DelaproPath -Version "18"
+	Invoke-CleanupLL -DelaproPath $DelaproPath -Version "19"
+	Invoke-CleanupLL -DelaproPath $DelaproPath -Version "20"
+	Invoke-CleanupLL -DelaproPath $DelaproPath -Version "21"
 
 	Get-ChildItem "$($DelaproPath)\cm*"
 
@@ -2960,6 +2945,21 @@ Function Invoke-CleanupDelapro {
 	If (Test-Path "$($DelaproPath)\backup\log\*.log") {
 		Get-Item "$($DelaproPath)\backup\log\*.log" | Where-Object {$_.LastWriteTime -lt ((Get-Date).AddDays(-365))} | Remove-Item
 	}
+
+}
+
+Function Invoke-CleanupLL {
+	[CmdLetBinding()]
+	Param(
+		[System.String]$DelaproPath="C:\Delapro",
+		[System.String]$Version
+	)
+
+	# TODO: Prüfen ob eine Nachfolgerversion vorhanden ist!
+	Remove-Item "$($DelaproPath)\cm??$($Version)*.DLL"
+	Remove-Item "$($DelaproPath)\cm??$($Version)*.LNG"
+	Remove-Item "$($DelaproPath)\cm??$($Version)*.OCX" -ErrorAction SilentlyContinue
+	# TODO: 64-Bit-Dateien?
 
 }
 
