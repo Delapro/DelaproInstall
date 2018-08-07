@@ -93,6 +93,9 @@ If ((@("gs9.00", "gs8.63", "gs8.64", "gs8.70", "gs8.71") -contains $gv[0].Name -
 
 # Ghostscript in GhostPDF.BAT korrekt setzen
 Update-DelaproGhostscript -PathDelaproGhostscript "$($DLPPath)\LASER\GHOSTPDF.BAT" -Verbose
+If (Test-Path "$($DLPPath)\LASER\GHOSTPDFX.BAT") {
+    Update-DelaproGhostscript -PathDelaproGhostscript "$($DLPPath)\LASER\GHOSTPDFX.BAT" -Verbose
+}
 
 # DelaproMail-Druckertreiber installieren
 Install-DelaproMailPrinter -Verbose
