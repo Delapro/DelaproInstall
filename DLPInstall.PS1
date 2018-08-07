@@ -471,6 +471,7 @@ Function Import-OldDLPVersion {
 	Write-Verbose "Windowsformulare vorhanden?"
 	If (Test-Path "$SourcePath\XMLForm") {
 		Copy-Item -Path "$SourcePath\XMLForm" "$($DestinationPath)" -Force -Verbose -Recurse
+		# TODO: Abklären was mit LASER\GHOSTPDFX.BAT passieren soll!
 	}
 
 	Write-Verbose "Bildarchivierung vorhanden?"
