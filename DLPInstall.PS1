@@ -1413,7 +1413,7 @@ Function Install-Thunderbird {
 	If (-not (Test-Thunderbird)) {
 		# Infos zur aktuellen Version: https://www.mozilla.org/en-US/thunderbird/notes/
 		# Alle Versionen von Thunderbird zu finden unter: https://ftp.mozilla.org/pub/thunderbird/releases/
-		$tbVersion = "52.9.1"
+		$tbVersion = "60.0"
 		#Start-BitsTransfer http://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe
 		$Filename = "Thunderbird Setup $tbVersion.exe"
 		Write-Verbose "Download $tbVersion, Dateiname: $Filename"
