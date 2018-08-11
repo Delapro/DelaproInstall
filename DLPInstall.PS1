@@ -1426,6 +1426,35 @@ Function Install-Thunderbird {
 
 }
 
+# Installation von Enigmail
+Function Install-Enigmail {
+	[CmdletBinding()]
+	Param(
+		#[parameter(Mandatory=$true)]
+		[System.String]$tempDirectory="$Env:TEMP\"
+	)
+
+	If (Test-Thunderbird) {
+		# Infos zur aktuellen Version: https://www.enigmail.net/index.php/en/download/changelog
+		$emVersion = "2.0.8"
+		$Filename = "enigmail-$($emVersion)-sm+tb.xpi"
+		Write-Verbose "Download $emVersion, Dateiname: $Filename"
+		$urlFilename = [uri]::EscapeUriString($Filename)
+		Start-BitsTransfer https://www.enigmail.net/download/release/2.0/$Filename -Destination $tempDirectory
+		$Filename = Join-Path -path "$($tempDirectory)" -ChildPath $urlFilename
+		Write-Verbose "Installiere $Filename"
+		#Start-Process -Wait $Filename -ArgumentList "/S"
+		Write-Error "TODO: User oder Global Install"
+		# XPI als ZIP-Datei entpacken
+		# aus der Install.RDF die ID auslesen
+		# Pfad zu Thunderbird holen
+		# Pfad mit ID anlegen und Dateien aus XPI reinkopieren
+	} else {
+		Write-Error "Thunderbird scheint nicht installiert zu sein!"
+	}
+
+}
+
 # Installation von LibreOffice
 Function Install-LibreOffice {
 	[CmdletBinding()]
