@@ -1130,14 +1130,32 @@ Function Install-Java {
 	[CmdletBinding()]
 	Param(
 		#[parameter(Mandatory=$true)]
-		[System.String]$tempDirectory="$Env:TEMP\"
+		[System.String]$tempDirectory="$Env:TEMP\",
+		[Validateset("x64", "x86")]
+		[System.String]$Platform="x64",
+		[Validateset("10", "8")]
+		[System.String]$Version="10"
 	)
 
 	# aktuelle Version von: https://java.com/de/download/manual.jsp
 	# noch Hinweise zu Cryptoänderungen in Java: https://www.java.com/en/jre-jdk-cryptoroadmap.html
 	# Java EOL-Hinweise: http://www.oracle.com/technetwork/java/eol-135779.html
-	# aktuell Version 8 Update 161:
-	$rrd = Resolve-HttpUrlRedirect -Uri http://javadl.oracle.com/webapps/download/AutoDL?BundleId=230542_2f38c3b165be4555a1fa6e98c45e0808
+	# mit Java 10 gibt es keine x86 Version mehr! https://stackoverflow.com/questions/49976684/java-10-and-following-on-32-bit-systems
+	# aktuell Version 8 Update 181:
+	If ($Version -eq "10") {
+		If ($Platform -eq "x64") {
+			$rrd = Resolve-HttpUrlRedirect -Uri http://download.oracle.com/otn-pub/java/jdk/10.0.2+13/19aef61b38124481863b1413dce1855f/jre-10.0.2_windows-x64_bin.exe
+		} else {
+			Write-Error "Oracle Java 10 unterstützt keine x86 Versionen mehr!"
+		}
+	} else {
+		If ($Platform -eq "x64") {
+			$rrd = Resolve-HttpUrlRedirect -Uri http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jre-8u181-windows-x64.exe
+		} else {
+			$rrd = Resolve-HttpUrlRedirect -Uri http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jre-8u181-windows-i586.exe
+		}
+	}
+
 	If ($rrd) {
 		$Dest = "$($tempDirectory)\Java.exe"
 		Write-Verbose "Lade $rrd nach $Dest"
