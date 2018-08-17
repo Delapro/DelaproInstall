@@ -2637,6 +2637,22 @@ Function Get-EMailClients {
 	Get-ChildItem Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Clients\Mail | Select-Object -ExpandProperty PSChildName
 }
 
+# setzt den Standard-E-Mail Client
+Function Set-DefaultEMailClient {
+	[CmdletBinding()]
+	Param(
+		[String]$DefaultClient,
+		[switch]$System
+	)
+
+	If ($System) {
+		$regKey = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Clients\Mail\"
+	} else {
+		$regKey = "Registry::HKEY_CURRENT_USER\SOFTWARE\Clients\Mail\"
+	}
+	Set-ItemProperty -Path $regKey -Name "(default)" -ErrorAction SilentlyContinue -Value $defaultClient
+}
+
 # prüft, ob MAPI korrekt verfügbar ist
 Function Test-MAPI {
 	[CmdletBinding()]
