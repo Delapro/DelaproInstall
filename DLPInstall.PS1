@@ -2634,7 +2634,7 @@ Function Get-EMailClients {
 
 	)
 
-	Get-ChildItem Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Clients\Mail | Select -ExpandProperty PSChildName
+	Get-ChildItem Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Clients\Mail | Select-Object -ExpandProperty PSChildName
 }
 
 # prüft, ob MAPI korrekt verfügbar ist
