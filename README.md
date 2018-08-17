@@ -341,6 +341,16 @@ Get-DelaproErrors| select *, @{Name="CallStackStr";Expression={($_.CallStack|out
 
 ```
 
+### Probleme mit Windows Standard E-Mailprogramm
+```Powershell
+# gibt den aktuellen Standard-E-Mail-Client aus
+Get-DefaultEMailClient
+# listet die verfügbaren E-Mail-Clients auf
+Get-EMailClients
+# setzt den Standard-E-Mail-Client auf den angegebenen Client
+Set-DefaultEMailClient "Mozilla Thunderbird"
+```
+
 ### Abstürzende Programme in Windows ausfindig machen
 
 ```Powershell
