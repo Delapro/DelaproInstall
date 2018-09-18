@@ -154,6 +154,7 @@ If (Test-DelaproNotRunning -Path $DlpPath) {
     }
     Set-Location ..
     .\update\update
+    Invoke-CleanupDelapro $DlpPath -Verbose
 } else {
     Write-Error "Delapro läuft noch!"
 }
