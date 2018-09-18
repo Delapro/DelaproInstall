@@ -662,6 +662,7 @@ Function Update-DelaproGhostscript {
 		[System.String]$PathGhostscript = (Get-GhostScript)[0].Fullname
 	)
 
+	Write-Verbose "Aktualisiere $PathDelaproGhostscript"
 	Write-Verbose "Ermittelter Ghostscriptpfad: $PathGhostScript"
 	$matches = Get-Content $PathDelaproGhostscript | Select-String "SET GSDIR"
 	If ($matches) {
