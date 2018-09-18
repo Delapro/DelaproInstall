@@ -1889,13 +1889,16 @@ Function Install-DelaproPreisupdate {
 }
 
 # legt ein Backup eines Delapro-Verzeichnis mittels easyBackup32.exe an
+# der Parameter SecureBackup sorgt nur für das Umbenennen der ZIP-Datei in eyBZIP um sie gegenüber
+# anderen Dateien abzugrenzen
 Function Backup-Delapro {
 	[CmdletBinding()]
 	#[OutputType([System.Boolean])]
 	Param(
 		[System.String]$DelaproPath="C:\Delapro",
 		[System.String]$BackupPath="C:\Temp\DelaproSicherung",
-		[Switch]$IgnoreBilder
+		[Switch]$IgnoreBilder,
+		[Switch]$SecureBackup
 	)
 
 	Write-Verbose "Sichere $DelaproPath nach $BackupPath"
@@ -1904,6 +1907,20 @@ Function Backup-Delapro {
 		$Argumente += "/IB"
 	}
 	Start-Process -Wait (Join-Path -Path $($DelaproPath) -ChildPath "Backup\easyBackup32.EXE") -ArgumentList $Argumente -WorkingDirectory $DelaproPath
+
+	If ($SecureBackup) {
+		# Dateinamen des letzten Backups ermitteln
+		$backups = Get-ChildItem "$($BackupPath)\Delapro*.ZIP"
+		# Sortieren mit neuester zuerst
+		$backups = $backups| Sort-Object -Descending Name
+		If ($backups -is [Array]) {
+			$backups = $backups[0]
+		}
+		# umbenennen
+		If (Test-Path) {
+			Rename-Item -Path $backups.FullName -NewName [System.IO.Path]::ChangeExtension($backups.FullName, "eyBZIP")
+		}
+	}
 }
 
 # aktualisiert easyBackup32, wenn die Version älter ist, als die Version auf www.easysoftware.de/util
