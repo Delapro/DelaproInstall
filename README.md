@@ -133,7 +133,7 @@ If ($p) {
 Import-LastDelaproBackup $DlpPath -Verbose
 # zum Direkt einspielen
 # Import-OldDLPVersion -SourcePath G:\Delapro\ -DestinationPath "$($DLPPath)"
-# Invoke-CleanupDelapro -Verbose
+# Invoke-CleanupDelapro $DlpPath -Verbose
 
 ```
 
@@ -163,7 +163,7 @@ If (Test-DelaproNotRunning -Path $DlpPath) {
 
 ```Powershell
 Set-Location $DlpPath
-Invoke-CleanupDelapro -Verbose
+Invoke-CleanupDelapro $DlpPath -Verbose
 
 ```
 
