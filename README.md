@@ -393,6 +393,9 @@ $Env:Temp\ProcDump.Exe -accepteula -e -w -ma KZBVExp -o C:\Temp\KzbvExp.DMP
 Get-PhysicalDisk
 Get-PhysicalDisk|% {Get-StorageReliabilityCounter -PhysicalDisk $_}|fl *
 
+# für tiefergehende Infos bzw. genaueren Analyse smartmontools verwenden
+# www.smartmontools.org
+
 ```
 
 ### Thunderbird Logging
