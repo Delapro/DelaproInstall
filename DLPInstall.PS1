@@ -441,7 +441,7 @@ Function Get-DelaproBackups {
 	# Laufwerksbuchstaben ermitteln
 	$dl = Get-Volume| Where-Object {$null -ne $_.Driveletter} | Where-Object {$_.OperationalStatus -eq "OK"} |  Select-Object -ExpandProperty Driveletter
 	#  Sicherungen ermitteln und nach Datum sortieren
-	$ds = $dl | ForEach-Object {Get-ChildItem "$($_):\Delapro*.ZIP"}
+	$ds = $dl | ForEach-Object {Get-ChildItem ("$($_):\Delapro*.ZIP", "$($_):\Delapro*.eyBZIP")}
 	# Sortieren mit neuester zuerst
 	$ds = $ds| Sort-Object -Descending Name
 	$ds
