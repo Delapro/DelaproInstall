@@ -53,7 +53,7 @@ If (Test-DelaproNotRunning -Path $DlpPath) {
     # Backup aktualisieren
     Update-Backup -DelaproPath $DLPPath -Verbose
     # Sicherung des aktuellen Programms durchführen
-    Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -IgnoreBilder -Verbose
+    Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -IgnoreBilder -SecureBackup -Verbose
     # Druckertreiber aktualisieren
     Update-DlpWinPr -DelaproPath $DLPPath -Verbose
     Update-DlpRawPr -DelaproPath $DLPPath -Verbose

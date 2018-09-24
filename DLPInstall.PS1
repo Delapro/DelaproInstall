@@ -1919,8 +1919,8 @@ Function Backup-Delapro {
 			$backups = $backups[0]
 		}
 		# umbenennen
-		If (Test-Path) {
-			Rename-Item -Path $backups.FullName -NewName [System.IO.Path]::ChangeExtension($backups.FullName, "eyBZIP")
+		If (Test-Path $backups.FullName) {
+			Rename-Item -Path $backups.FullName -NewName ([System.IO.Path]::ChangeExtension($backups.FullName, "eyBZIP"))
 		}
 	}
 }
