@@ -2887,7 +2887,7 @@ Function Import-LastDelaproBackup {
 
 		# da Expand-Archive nur mit .ZIP-Endungen umgehen kann, muss eine evtl. .eyBZIP-Endung vorher in ZIP geändert werden
 		If (([System.IO.Path]::GetExtension($ds.Fullname)).ToLower() -eq ".eybzip") {
-			Rename-Item -Path $ds.FullName -NewName ([System.IO.Path]::ChangeExtension($ds.FullName, "ZIP"))
+			$ds = Rename-Item -Path $ds.FullName -NewName ([System.IO.Path]::ChangeExtension($ds.FullName, "ZIP")) -PassThru
 		}
 
 		# -Force zum überschreiben von alten Dateien aber vorher mit Polyfill abklären
