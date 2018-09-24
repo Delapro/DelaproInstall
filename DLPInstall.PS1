@@ -1426,10 +1426,11 @@ Function Install-Thunderbird {
 	[CmdletBinding()]
 	Param(
 		#[parameter(Mandatory=$true)]
-		[System.String]$tempDirectory="$Env:TEMP\"
+		[System.String]$tempDirectory="$Env:TEMP\",
+		[switch]$Force
 	)
 
-	If (-not (Test-Thunderbird)) {
+	If ((-not (Test-Thunderbird)) -or $Force) {
 		# Infos zur aktuellen Version: https://www.mozilla.org/en-US/thunderbird/notes/
 		# Alle Versionen von Thunderbird zu finden unter: https://ftp.mozilla.org/pub/thunderbird/releases/
 		$tbVersion = "60.0"

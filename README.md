@@ -256,7 +256,7 @@ Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -C
 ### Thunderbird
 
 ```Powershell
-Install-Thunderbird
+Install-Thunderbird -Force -Verbose
 ```
 
 ### Chrome
