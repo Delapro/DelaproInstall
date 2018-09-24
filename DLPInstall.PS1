@@ -2885,6 +2885,11 @@ Function Import-LastDelaproBackup {
 			Remove-Item $TempPath -Force -Recurse
 		}
 
+		# da Expand-Archive nur mit .ZIP-Endungen umgehen kann, muss eine evtl. .eyBZIP-Endung vorher in ZIP geändert werden
+		If (([System.IO.Path]::GetExtension($ds.Fullname)).ToLower() -eq ".eybzip") {
+			Rename-Item -Path $ds.FullName -NewName ([System.IO.Path]::ChangeExtension($ds.FullName, "ZIP"))
+		}
+
 		# -Force zum überschreiben von alten Dateien aber vorher mit Polyfill abklären
 		# wenn es hier einen Fehler gibt und nichts entpackt wird, sollte $Error[0].Exception.HResult überprüft
 		# werden, wenn HResult -2146233087 liefert, ist die ZIP-Datei nicht in Ordnung
