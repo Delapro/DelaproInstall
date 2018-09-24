@@ -2871,7 +2871,7 @@ Function Import-LastDelaproBackup {
 
 	#Delapro Daten von Datensicherung einspielen
 	If (Test-Path (Get-Item $BackupFile).Fullname) {
-		$ds = @((Get-Item $BackupFile).Fullname)
+		$ds = @(Get-Item $BackupFile)
 	} else {
 		$ds = Get-DelaproBackups
 	}
