@@ -1615,7 +1615,8 @@ Function Get-NetFrameworkVersions {
 				"394802|394806" { [Version]"4.6.2" }
 				"460798|460805" { [Version]"4.7" }
 				"461308|461310" { [Version]"4.7.1" }
-				{$_ -gt 461310} { [Version]"Undocumented 4.7.1 or higher, please update script" }
+				"461808|461814" { [Version]"4.7.2" }
+				{$_ -gt 461814} { "Undocumented 4.7.2 or higher, please update script" }
 				# neuere Versionen: https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed
 			}
 		}
