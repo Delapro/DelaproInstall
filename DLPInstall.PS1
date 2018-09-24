@@ -2862,14 +2862,19 @@ Function Import-LastDelaproBackup {
 	[CmdletBinding()]
 	Param(
 		[System.String]$TempPath="$($Env:Temp)\DelaproImport",
-		[System.String]$DestinationPath="C:\Delapro"
+		[System.String]$DestinationPath="C:\Delapro",
+		[System.String]$BackupFile
 	)
 
 	Write-Verbose $TempPath
 	Write-Verbose $DestinationPath
 
 	#Delapro Daten von Datensicherung einspielen
-	$ds = Get-DelaproBackups
+	If (Test-Path (Get-Item ($BackupFile).Fullname)) {
+		$ds = @((Get-Item $BackupFile).Fullname)
+	} else {
+		$ds = Get-DelaproBackups
+	}
 	If ($ds.length -ge 1) {
 		# also eine Datensicherung gefunden, diese entpacken
 		$ds = $ds[0]
