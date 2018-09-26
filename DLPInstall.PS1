@@ -1086,7 +1086,7 @@ Function Test-HttpUrlRedirect {
     )
     $Req = [System.Net.WebRequest]::Create($Uri)
     $Resp = $Req.GetResponse()
-    If ($Resp.ResponseUri.OriginalString –eq $Uri) {
+    If ($Resp.ResponseUri.OriginalString -eq $Uri) {
         $False
     } else {
         $True
