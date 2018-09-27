@@ -1488,7 +1488,7 @@ Function Install-LibreOffice {
 		# Installationsparameter: https://wiki.documentfoundation.org/Deployment_and_Migration
 		# Basispfad für Download der Versionen: https://downloadarchive.documentfoundation.org/libreoffice/old/
 		# TODO: 64-Bit
-		$loVersion = "5.3.7.2"
+		$loVersion = "6.0.6.2"
 		$base = 'https://downloadarchive.documentfoundation.org/libreoffice/old'
 		$url = "$($base)/$($loVersion)/win/x86/LibreOffice_$($loVersion)_Win_x86.msi"
 		Write-Verbose "Download von $url"
