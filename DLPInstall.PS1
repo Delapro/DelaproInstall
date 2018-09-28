@@ -1492,7 +1492,7 @@ Function Install-LibreOffice {
 		$loVersion = "6.0.6.2"
 		$base = 'https://downloadarchive.documentfoundation.org/libreoffice/old'
 		If ($PlatformX64) {
-			$url = "$($base)/$($loVersion)/win/x86_x64/LibreOffice_$($loVersion)_Win_x64.msi"
+			$url = "$($base)/$($loVersion)/win/x86_64/LibreOffice_$($loVersion)_Win_x64.msi"
 			Write-Verbose "Download von $url"
 			Start-BitsTransfer $url -Destination $tempDirectory
 			Start-Process -Wait "$($tempDirectory)\LibreOffice_$($loVersion)_Win_x64.msi"	
