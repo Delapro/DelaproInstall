@@ -1480,7 +1480,8 @@ Function Install-LibreOffice {
 	[CmdletBinding()]
 	Param(
 		#[parameter(Mandatory=$true)]
-		[System.String]$tempDirectory="$Env:TEMP\"
+		[System.String]$tempDirectory="$Env:TEMP\",
+		[Switch]$PlatformX64
 	)
 
 	If (-not (Test-LibreOffice)) {
@@ -1490,10 +1491,18 @@ Function Install-LibreOffice {
 		# TODO: 64-Bit
 		$loVersion = "6.0.6.2"
 		$base = 'https://downloadarchive.documentfoundation.org/libreoffice/old'
-		$url = "$($base)/$($loVersion)/win/x86/LibreOffice_$($loVersion)_Win_x86.msi"
-		Write-Verbose "Download von $url"
-		Start-BitsTransfer $url -Destination $tempDirectory
-		Start-Process -Wait "$($tempDirectory)\LibreOffice_$($loVersion)_Win_x86.msi"
+		If ($PlatformX64) {
+			$url = "$($base)/$($loVersion)/win/x86_x64/LibreOffice_$($loVersion)_Win_x64.msi"
+			Write-Verbose "Download von $url"
+			Start-BitsTransfer $url -Destination $tempDirectory
+			Start-Process -Wait "$($tempDirectory)\LibreOffice_$($loVersion)_Win_x64.msi"	
+		} else {
+			$url = "$($base)/$($loVersion)/win/x86/LibreOffice_$($loVersion)_Win_x86.msi"
+			Write-Verbose "Download von $url"
+			Start-BitsTransfer $url -Destination $tempDirectory
+			Start-Process -Wait "$($tempDirectory)\LibreOffice_$($loVersion)_Win_x86.msi"
+	
+		}
 	}
 
 }
