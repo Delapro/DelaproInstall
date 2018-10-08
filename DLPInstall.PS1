@@ -1279,7 +1279,7 @@ Function Install-7Zip {
 		[System.String]$tempDirectory="$Env:TEMP\"
 	)
 
-	$Version = '1801'	# aktuelle offizielle Version: http://www.7-zip.org/
+	$Version = '1805'	# aktuelle offizielle Version: http://www.7-zip.org/
 	If (Test-64Bit) {
 		$url = "http://www.7-zip.org/a/7z$($Version)-x64.exe"
 		$Dest = "$($tempDirectory)\7z$($Version)-x64.exe"
