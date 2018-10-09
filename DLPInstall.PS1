@@ -2442,19 +2442,19 @@ Function Install-XeroxUniversalDriver {
 
 	If (Test-64Bit) {
 		# trotz Win10 im Link ist die gleiche Datei für Win7!
-  		$download="http://download.support.xerox.com/pub/drivers/GLOBALPRINTDRIVER/drivers/win10x64/ar/$($prefix)_$($xeroxVersion)_PS_x64.exe"
+  		$download="http://download.support.xerox.com/pub/drivers/GLOBALPRINTDRIVER/drivers/win10x64/ar/$($prefix)_$($xeroxVersion)_PS_x64.zip"
 		$platform='x64'
 	} else {
 		# trotz Win10 im Link ist die gleiche Datei für Win7!
-  		$download="http://download.support.xerox.com/pub/drivers/GLOBALPRINTDRIVER/drivers/win10/ar/$($prefix)_$($xeroxVersion)_PS_x86.exe"
+  		$download="http://download.support.xerox.com/pub/drivers/GLOBALPRINTDRIVER/drivers/win10/ar/$($prefix)_$($xeroxVersion)_PS_x86.zip"
 		$platform='x86'
 	}
 
 	Start-BitsTransfer $download $TempDirectory
-	$setupFile="$($prefix)_$($xeroxVersion)_PS_$($platform).exe"
-	Start-Process -Wait -FilePath "$TempDirectory\$($setupFile)" -ArgumentList "/S"
+	$setupFile="$($prefix)_$($xeroxVersion)_PS_$($platform).zip"
+	Expand-Archive -Path "$($TempDirectory)\$($setupFile)" -DestinationPath "$TempDirectory\Xerox\$($setupFile)" -Force
 	# DISM /Online /Add-Driver "C:\Xerox\UNIV_$xeroxVersion_PS_x64_Driver.inf\x2UNIVP.inf"
-	pnputil.exe -a "C:\Xerox\$($prefix)_$($xeroxVersion)_PS_$($platform)_Driver.inf\x2UNIVP.inf"
+	pnputil.exe -a "$($TempDirectory)\Xerox\$($setupFile)\$($prefix)_$($xeroxVersion)_PS_$($platform)_Driver\x3UNIVP.inf"
 	# verfügbare Treiber einer .INF-Datei ausgeben, so kann man den Namen für Add-PrinterDriver ermitteln
 	# Get-WindowsDriver -Online -Driver "C:\Xerox\UNIV_5.548.8.0_PS_x64_Driver.inf\x2UNIVP.inf" |Select-Object Hardwaredescription -Unique
 	Add-PrinterDriver -Name "Xerox Global Print Driver PS"
