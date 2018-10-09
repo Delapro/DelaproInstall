@@ -2454,7 +2454,11 @@ Function Install-XeroxUniversalDriver {
 	$setupFile="$($prefix)_$($xeroxVersion)_PS_$($platform).zip"
 	Expand-Archive -Path "$($TempDirectory)\$($setupFile)" -DestinationPath "$TempDirectory\Xerox\$($setupFile)" -Force
 	# DISM /Online /Add-Driver "C:\Xerox\UNIV_$xeroxVersion_PS_x64_Driver.inf\x2UNIVP.inf"
-	$inf = "$($TempDirectory)\Xerox\$($setupFile)\$($prefix)_$($xeroxVersion)_PS_$($platform)_Driver.inf\x3UNIVP.inf"
+	If ($Version -eq "V3") {
+		$inf = "$($TempDirectory)\Xerox\$($setupFile)\$($prefix)_$($xeroxVersion)_PS_$($platform)_Driver.inf\x3UNIVP.inf"
+	} else {
+		$inf = "$($TempDirectory)\Xerox\$($setupFile)\XeroxGlobalPrinterDriver_PS.inf"
+	}
 	pnputil.exe -a $inf
 	# verfügbare Treiber einer .INF-Datei ausgeben, so kann man den Namen für Add-PrinterDriver ermitteln
 	# Get-WindowsDriver -Online -Driver $inf |Select-Object Hardwaredescription -Unique
