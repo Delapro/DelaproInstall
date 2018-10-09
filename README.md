@@ -109,6 +109,10 @@ Set-Printer -Name "DelaproMail" -Drivername "Xerox PS Color Class Driver V1.1"
 Install-XeroxUniversalDriver -Verbose
 Set-Printer -Name "DelaproMail" -Drivername "Xerox Global Print Driver PS"
 
+# alternativ die V4-Version, aber Vorsicht randlos scheint noch nicht zu gehen!
+Install-XeroxUniversalDriver -Verbose -Version V4
+Set-Printer -Name "DelaproMail" -Drivername "Xerox Global Print Driver V4 PS"
+
 
 ```
 
