@@ -2457,12 +2457,16 @@ Function Install-XeroxUniversalDriver {
 	If ($Version -eq "V3") {
 		$inf = "$($TempDirectory)\Xerox\$($setupFile)\$($prefix)_$($xeroxVersion)_PS_$($platform)_Driver.inf\x3UNIVP.inf"
 	} else {
-		$inf = "$($TempDirectory)\Xerox\$($setupFile)\XeroxGlobalPrinterDriver_PS.inf"
+		$inf = "$($TempDirectory)\Xerox\$($setupFile)\XeroxGlobalPrintDriver_PS.inf"
 	}
 	pnputil.exe -a $inf
 	# verfügbare Treiber einer .INF-Datei ausgeben, so kann man den Namen für Add-PrinterDriver ermitteln
 	# Get-WindowsDriver -Online -Driver $inf |Select-Object Hardwaredescription -Unique
-	Add-PrinterDriver -Name "Xerox Global Print Driver PS"
+	If ($Version -eq "V3") {
+		Add-PrinterDriver -Name "Xerox Global Print Driver PS"
+	} else {
+		Add-PrinterDriver -Name "Xerox Global Print Driver V4 PS"
+	}
 
 }
 
