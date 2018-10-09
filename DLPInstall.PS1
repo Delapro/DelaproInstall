@@ -2424,27 +2424,37 @@ Function Install-VDDSPrueftool {
 Function Install-XeroxUniversalDriver {
 	[CmdletBinding()]
 	Param(
-		[String]$TempDirectory=$Env:TEMP
+		[String]$TempDirectory=$Env:TEMP,
+		[ValidateSet("V3","V4")]$Version="V3"
 		)
 
 	# Bei Xerox direkt gibt es einen Treiber der auch echten randlosen Druck unterstützt!
 	# kann hier gefunden werden: http://www.support.xerox.com/support/global-printer-driver/downloads/enus.html?operatingSystem=win10x64&fileLanguage=de
 	# Xerox Randlos Installation
-	$xeroxVersion = "5.617.7.0"
+	If ($Version -eq "V3") {
+		$xeroxVersion = "5.617.7.0"
+		$prefix = "UNIV"
+	} else {
+		# V4
+		$xeroxVersion = "7.59.0.0"
+		$prefix = "XeroxGlobalPrintDriver"
+	}
+
 	If (Test-64Bit) {
 		# trotz Win10 im Link ist die gleiche Datei für Win7!
-  		$download="http://download.support.xerox.com/pub/drivers/GLOBALPRINTDRIVER/drivers/win10x64/ar/UNIV_$($xeroxVersion)_PS_x64.exe"
+  		$download="http://download.support.xerox.com/pub/drivers/GLOBALPRINTDRIVER/drivers/win10x64/ar/$($prefix)_$($xeroxVersion)_PS_x64.exe"
 		$platform='x64'
 	} else {
 		# trotz Win10 im Link ist die gleiche Datei für Win7!
-  		$download="http://download.support.xerox.com/pub/drivers/GLOBALPRINTDRIVER/drivers/win10/ar/UNIV_$($xeroxVersion)_PS_x86.exe"
+  		$download="http://download.support.xerox.com/pub/drivers/GLOBALPRINTDRIVER/drivers/win10/ar/$($prefix)_$($xeroxVersion)_PS_x86.exe"
 		$platform='x86'
 	}
+
 	Start-BitsTransfer $download $TempDirectory
-	$setupFile="UNIV_$($xeroxVersion)_PS_$($platform).exe"
+	$setupFile="$($prefix)_$($xeroxVersion)_PS_$($platform).exe"
 	Start-Process -Wait -FilePath "$TempDirectory\$($setupFile)" -ArgumentList "/S"
 	# DISM /Online /Add-Driver "C:\Xerox\UNIV_$xeroxVersion_PS_x64_Driver.inf\x2UNIVP.inf"
-	pnputil.exe -a "C:\Xerox\UNIV_$($xeroxVersion)_PS_$($platform)_Driver.inf\x2UNIVP.inf"
+	pnputil.exe -a "C:\Xerox\$($prefix)_$($xeroxVersion)_PS_$($platform)_Driver.inf\x2UNIVP.inf"
 	# verfügbare Treiber einer .INF-Datei ausgeben, so kann man den Namen für Add-PrinterDriver ermitteln
 	# Get-WindowsDriver -Online -Driver "C:\Xerox\UNIV_5.548.8.0_PS_x64_Driver.inf\x2UNIVP.inf" |Select-Object Hardwaredescription -Unique
 	Add-PrinterDriver -Name "Xerox Global Print Driver PS"
