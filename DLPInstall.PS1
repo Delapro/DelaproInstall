@@ -1231,6 +1231,10 @@ Function Install-VeraPDF {
 	If (Test-Path $tempDirectory\Vera) {
 		Remove-Item $tempDirectory\Vera -Recurse
 	}
+	If (Test-Path -Path $tempDirectory\Vera) {
+		# alte Vera-Versionen entfernen
+		Remove-Item -Path $tempDirectory\Vera -Force -Recurse
+	}
 	Expand-Archive $tempDirectory\Verapdf-installer.zip -DestinationPath $tempDirectory\Vera -Force
 
 	$veraPDFInstallPath = "$env:USERPROFILE\verapdf"
@@ -1253,22 +1257,28 @@ Function Install-VeraPDF {
 </AutomatedInstallation>
 "@
 
-	$veraPath = "$($tempDirectory)\Vera\verapdf-greenfield-1.10.6"
-	$AutoInstallXML | Set-Content -Path $veraPath\auto-install.XML
+	$ExpandedFilesPath = (Get-ChildItem "$($tempDirectory)\Vera\" -Attribute Directory)
+	If (Test-Path $ExpandedFilesPath) {
+		$veraPath = $ExpandedFilesPath.FullName
+		$veraJarFile = Join-Path -Path $verPath -ChildPath $ExpandedFilesPath.Name 
+		$AutoInstallXML | Set-Content -Path $veraPath\auto-install.XML
 
-	# Javapfad ermitteln
-	$j = Get-ChildItem "$($env:ProgramFiles)\Java\Java.exe" -Recurse
-	If ($j) {
-		If ($j -is [array]) {
-			# TODO: Sortieren, damit man die neueste Version zurück bekommt
-			$j = $j[0]
+		# Javapfad ermitteln
+		$j = Get-ChildItem "$($env:ProgramFiles)\Java\Java.exe" -Recurse
+		If ($j) {
+			If ($j -is [array]) {
+				# TODO: Sortieren, damit man die neueste Version zurück bekommt
+				$j = $j[0]
+			}
+			Write-Verbose "Java: $j"
+
+			# java -jar "%BASEDIR%verapdf-izpack-installer-1.10.6.jar" auto-install.xml
+			$p = Start-Process -Wait -FilePath $j -ArgumentList "-jar", $veraJarFile, "$($veraPath)\auto-install.XML" -PassThru
+			Write-Verbose $p.ExitCode
 		}
-		Write-Verbose "Java: $j"
-
-		# java -jar "%BASEDIR%verapdf-izpack-installer-1.10.6.jar" auto-install.xml
-		$p = Start-Process -Wait -FilePath $j -ArgumentList "-jar", "$($veraPath)\verapdf-izpack-installer-1.10.6.jar", "$($veraPath)\auto-install.XML" -PassThru
+	} else {
+		Write-Error "Keine entpackten Dateien gefunden."
 	}
-
 }
 
 # ladet und installiert 7Zip
