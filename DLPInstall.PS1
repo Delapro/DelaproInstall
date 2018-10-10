@@ -1258,9 +1258,9 @@ Function Install-VeraPDF {
 "@
 
 	$ExpandedFilesPath = (Get-ChildItem "$($tempDirectory)\Vera\" -Attribute Directory)
-	If (Test-Path $ExpandedFilesPath) {
+	If (Test-Path $ExpandedFilesPath.FullName) {
 		$veraPath = $ExpandedFilesPath.FullName
-		$veraJarFile = Join-Path -Path $verPath -ChildPath $ExpandedFilesPath.Name 
+		$veraJarFile = Join-Path -Path $veraPath -ChildPath $ExpandedFilesPath.Name 
 		$AutoInstallXML | Set-Content -Path $veraPath\auto-install.XML
 
 		# Javapfad ermitteln
