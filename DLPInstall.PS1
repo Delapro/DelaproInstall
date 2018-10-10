@@ -2452,6 +2452,10 @@ Function Install-XeroxUniversalDriver {
 
 	Start-BitsTransfer $download $TempDirectory
 	$setupFile="$($prefix)_$($xeroxVersion)_PS_$($platform).zip"
+	If (Test-Path -Path "$TempDirectory\Xerox\") {
+		# alte Tempdateien vorher entfernen
+		Remove-Item -Path "$TempDirectory\Xerox\" -Force -Recurse
+	}
 	Expand-Archive -Path "$($TempDirectory)\$($setupFile)" -DestinationPath "$TempDirectory\Xerox\$($setupFile)" -Force
 	# DISM /Online /Add-Driver "C:\Xerox\UNIV_$xeroxVersion_PS_x64_Driver.inf\x2UNIVP.inf"
 	If ($Version -eq "V3") {
