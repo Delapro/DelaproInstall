@@ -1169,11 +1169,10 @@ Function Install-Java {
 
 }
 
-# Prüft ob Java 8 vorhanden ist, dazu wird die aktuelleste JAVA.EXE ermittelt, gestartet und die Versionsinfo geholt
-Function Test-Java {
+# ermittelt die aktuellste Java-Version und gibt den Pfad der JAVA.EXE zurück
+Function Get-Java {
 	[CmdletBinding()]
-	Param(
-	)
+	Param()
 
 	$j = Get-ChildItem "$($env:ProgramFiles)\Java\Java.exe" -Recurse
 	If ($j) {
@@ -1182,7 +1181,18 @@ Function Test-Java {
 			$j = $j[0]
 		}
 		Write-Verbose "Java: $j"
+		$j
+	}
+}
 
+# Prüft ob Java 8 vorhanden ist, dazu wird die aktuelleste JAVA.EXE ermittelt, gestartet und die Versionsinfo geholt
+Function Test-Java {
+	[CmdletBinding()]
+	Param(
+	)
+
+	$j = Get-Java
+	If ($j) {
 		# Folgender Code liegt dem RunCheck-Javaprogramm zugrunde. Um ihn kompilieren zu können benötigt
 		# man allerdings das JDK in der zugehörigen Version, hier JDK8:
 		# http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
@@ -1264,17 +1274,11 @@ Function Install-VeraPDF {
 		$AutoInstallXML | Set-Content -Path $veraPath\auto-install.XML
 
 		# Javapfad ermitteln
-		$j = Get-ChildItem "$($env:ProgramFiles)\Java\Java.exe" -Recurse
+		$j = Get-Java
 		If ($j) {
-			If ($j -is [array]) {
-				# TODO: Sortieren, damit man die neueste Version zurück bekommt
-				$j = $j[0]
-			}
-			Write-Verbose "Java: $j"
-
 			# java -jar "%BASEDIR%verapdf-izpack-installer-1.10.6.jar" auto-install.xml
 			$p = Start-Process -Wait -FilePath $j -ArgumentList "-jar", $veraJarFile, "$($veraPath)\auto-install.XML" -PassThru
-			Write-Verbose $p.ExitCode
+			Write-Verbose "0=Erfolgreich, alles andere Fehler: $p.ExitCode"
 		}
 	} else {
 		Write-Error "Keine entpackten Dateien gefunden."
