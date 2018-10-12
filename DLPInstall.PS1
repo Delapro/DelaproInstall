@@ -1297,11 +1297,11 @@ Function Install-7Zip {
 	If (Test-64Bit) {
 		$url = "http://www.7-zip.org/a/7z$($Version)-x64.exe"
 		$Dest = "$($tempDirectory)\7z$($Version)-x64.exe"
-		$Sha256 = '86670D63429281A4A65C36919CA0F3099E3F803E3096C3A9722D61B3D31E4A9F'
+		$Sha256 = 'C1E42D8B76A86EA1890AD080E69A04C75A5F2C0484BDCD838DC8FA908DD4A84C'
 	} else {
 		$url = "http://www.7-zip.org/a/7z$($Version).exe"
 		$Dest = "$($tempDirectory)\7z$($Version).exe"
-		$Sha256 = 'C55C60A674114BE26CE470F43109D405A5ADCD2BD38E346D4A35C98727174EB0'
+		$Sha256 = '647A9A621162CD7A5008934A08E23FF7C1135D6F1261689FD954AA17D50F9729'
 	}
 
 	Write-Verbose "Lade $url nach $Dest"
