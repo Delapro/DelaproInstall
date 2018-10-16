@@ -3068,7 +3068,8 @@ Function Invoke-CleanupDelapro {
 	              "BTX.BAT",
 	              "BTX.PRN",
 	              "BTX_UEBE.BAT",
-	              "COMPILE.BAT"
+				  "COMPILE.BAT",
+				  "Laser\HPPcxLd2.EXE"
 	             )
 	$toRemove | ForEach-Object {Remove-Item "$($DelaproPath)\$_" -ErrorAction SilentlyContinue}
 
