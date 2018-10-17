@@ -430,6 +430,7 @@ Function Set-AcrobatReaderDCViewerRightPaneOff {
 	}
 }
 
+# schaltet unnötige Features beim Freigeben ab, dadurch wird der Zugang zum Mailen vereinfacht
 Function Disable-AcrobatReaderDCSendAndTrack {
 	[CmdletBinding()]
 	Param(
@@ -441,7 +442,7 @@ Function Disable-AcrobatReaderDCSendAndTrack {
 		New-Item -Path $regBase -Name "cServices" 
 	}
 
-	New-ItemProperty -Path "$regBase\cServices" -Name "bToggleSendAndTrack" -Value 0 -Force
+	New-ItemProperty -Path "$regBase\cServices" -Name "bToggleSendAndTrack" -Value 1 -Force
 }	
 
 # versucht die verfügbaren Delaprobackups zu ermitteln, in der Regel sollte es die USB-Sticks mit den Sicherungen finden
@@ -3279,6 +3280,7 @@ Install-AcrobatDC -TempDirectory $DLPInstPath
 # Pfad für Reader DC holen
 $dcFile = Get-AcrobatReaderDCEXE
 Set-AcrobatReaderDCViewerRightPaneOff $dcFile
+Disable-AcrobatReaderDCSendAndTrack
 
 Install-Thunderbird -TempDirectory $DLPInstPath
 

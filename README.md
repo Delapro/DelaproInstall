@@ -184,6 +184,11 @@ Set-AcrobatReaderDCViewerRightPaneOff -AcrobatReaderDCExe $dc
 
 ```
 
+## Acrobat Reader Freigebenmenü vereinfachen
+```Powershell
+Disable-AcrobatReaderDCSendAndTrack
+```
+
 ## Einstellungen für Bildschirmdarstellung
 
 ```Powershell
