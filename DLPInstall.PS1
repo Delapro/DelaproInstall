@@ -436,6 +436,7 @@ Function Disable-AcrobatReaderDCSendAndTrack {
 	Param(
 	)
 
+	# passende Einträge sind hier dokumentiert: https://www.adobe.com/devnet-docs/acrobatetk/tools/Wizard/WizardDC/online.html#acrobat-dc-services-integration
 	$regBase = 'registry::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown'
 
 	If (-Not (Test-Path "$regBase\cServices")) {
