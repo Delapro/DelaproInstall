@@ -430,6 +430,20 @@ Function Set-AcrobatReaderDCViewerRightPaneOff {
 	}
 }
 
+Function Disable-AcrobatReaderDCSendAndTrack {
+	[CmdletBinding()]
+	Param(
+	)
+
+	$regBase = 'registry::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown'
+
+	If (-Not (Test-Path "$regBase\cServices")) {
+		New-Item -Path $regBase -Name "cServices" 
+	}
+
+	New-ItemProperty -Path "$regBase\cServices" -Name "bToggleSendAndTrack" -Value 0 -Force
+}	
+
 # versucht die verfügbaren Delaprobackups zu ermitteln, in der Regel sollte es die USB-Sticks mit den Sicherungen finden
 # wenn mehrere Sicherungen gefunden werden, werden alle zurückgegeben, die neueste Sicherung als erstes Element des Arrays
 Function Get-DelaproBackups {
