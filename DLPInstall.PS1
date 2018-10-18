@@ -1505,6 +1505,39 @@ Function Install-Enigmail {
 
 }
 
+# list eine INI-Datei ein und gibt ein Array von Key,Value,Section zurück
+Function Get-IniFile {
+	[CmdletBinding()]
+	Param(
+		[string]$Path
+	)
+
+	If (Test-Path $Path) {
+		$iniFile = Get-Content $Path
+		$result=@()
+
+		foreach ($line in $iniFile) {
+			If ($line[0] -eq ';' -or $line[0] -eq '#') {
+				# Kommentarzeile ignorieren
+			} elseif ($line[0] -eq '[') {
+				$segment = $line.replace('[','').replace(']','')
+			} elseif ($line -like "*=*") {
+				$result += New-Object PSObject -Property @{
+				   segment  = $segment
+				   Key = $line.split('=')[0]
+				   value    = $line.split('=')[1]
+				}
+			} else {
+				# Leerzeile
+			}
+
+		}
+
+		$result
+	}
+
+}
+
 # Installation von LibreOffice
 Function Install-LibreOffice {
 	[CmdletBinding()]
