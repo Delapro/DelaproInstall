@@ -1476,6 +1476,35 @@ Function Install-Thunderbird {
 
 }
 
+# gibt die verfügbaren Thunderbird Profile zurück
+Function Get-ThunderbirdProfile {
+	[CmdletBinding()]
+	Param(
+
+	)
+
+	$profileINI = "$Env:APPDATA\Thunderbird\Profiles.ini"
+	If ($profileINI) {
+		$profiles = Get-IniFile -Path $profileINI
+		$profiles
+	}
+}
+
+# ermittelt den Pfad zur Thunderbird-EXE oder zum Basispfad
+Function Get-ThunderbirdEXE {
+	[CmdletBinding()]
+	Param(
+		[switch]$Path
+	)
+
+	# TODO: verfeinern und für andere Platformen bereit machen
+	$tbPath = Get-ChildItem "C:\Program Files (x86)\Mozilla Thunderbird\Thunderbird.exe"
+	If ($tbPath -and $Path) {
+		$tbPath.Directory.Fullname
+	}
+
+}
+
 # Installation von Enigmail
 Function Install-Enigmail {
 	[CmdletBinding()]
