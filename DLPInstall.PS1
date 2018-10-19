@@ -1485,8 +1485,16 @@ Function Get-ThunderbirdProfile {
 
 	$profileINI = "$Env:APPDATA\Thunderbird\Profiles.ini"
 	If ($profileINI) {
-		$profiles = Get-IniFile -Path $profileINI
-		$profiles
+		$profilesFile = Get-IniFile -Path $profileINI
+		$profiles = $profilesFile | Where-Object Segment -match "Profile\d*" | Select-Object -Unique
+		$ProfilesNew = @()
+		$profiles | ForEach-Object {$segment = $_.Segment; $ProfilesNew += [PSCustomObject]@{
+				Name = ($profilesFile | Where-Object Segment -eq $segment) | Where-Object Key -eq "Name"| Select-Object -ExpandProperty Value;
+				IsRelative = (($profilesFile | Where-Object Segment -eq $segment) | where-object Key -eq "IsRelative" | Select-Object -ExpandProperty Value) -eq '1';
+				Path = ($profilesFile | Where-Object Segment -eq $segment) | Where-Object Key -eq "Path" | Select-Object -ExpandProperty Value;
+				Default = (($profilesFile | Where-Object Segment -eq $segment) | Where-Object Key -eq "Default" | Select-Object -ExpandProperty Value) -eq '1'
+			}
+		}
 	}
 }
 
