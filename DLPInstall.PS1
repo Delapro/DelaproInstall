@@ -2124,7 +2124,11 @@ Function Update-DlpRawPr {
 
 	$ExePath = Join-Path -Path $DelaproPath -ChildPath "Laser\DlpRawPr.EXE"
 	Write-Verbose "Prüfe $ExePath"
-	$ExeVersion = [version](Get-Item $ExePath).VersionInfo.ProductVersion
+	If (Test-Path $ExePath) {
+		$ExeVersion = [version](Get-Item $ExePath).VersionInfo.ProductVersion
+	} else {
+		$ExeVersion = [version]"0.0.0.0"
+	}
 	If ($ExeVersion -lt $rawVersion) {
 		Write-Verbose "Version muss aktualisiert werden, von $($ExeVersion) auf $($rawVersion)"
 		Invoke-WebRequest -UseBasicParsing -Uri https://github.com/Delapro/DlpRawPr/releases/download/v$($rawVersionNumber)/DlpRawPr.exe -OutFile (Join-Path -Path (Join-Path -Path $DelaproPath -ChildPath Laser) -ChildPath DLPRawPr.EXE)
