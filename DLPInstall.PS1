@@ -2098,7 +2098,8 @@ Function Update-DlpWinPr {
 	# Dateigröße entfernen
 	$backup=$backup.substring(0, $backup.LastIndexOf(" "))
 	# Datum ermitteln
-	$FileDate = Get-Date $backup
+	# $FileDate = Get-Date $backup funktioniert leider nicht, wegen dem amerikanischen Datumsformat, also:
+	$FileDate = [datetime]::Parse($backup, [System.Globalization.CultureInfo]::GetCultureInfo("en-US"))
 
 	$ExePath = Join-Path -Path $DelaproPath -ChildPath "Laser\DlpWinPr.EXE"
 	Write-Verbose "Prüfe $ExePath"
