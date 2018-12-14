@@ -1523,7 +1523,7 @@ Function Install-Enigmail {
 
 	If (Test-Thunderbird) {
 		# Infos zur aktuellen Version: https://www.enigmail.net/index.php/en/download/changelog
-		$emVersion = "2.0.8"
+		$emVersion = "2.0.9"
 		$Filename = "enigmail-$($emVersion)-sm+tb.xpi"
 		Write-Verbose "Download $emVersion, Dateiname: $Filename"
 		$urlFilename = [uri]::EscapeUriString($Filename)
