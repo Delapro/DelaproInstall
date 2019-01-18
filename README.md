@@ -254,6 +254,12 @@ Show-StartupFolder
 
 ```
 
+## Windows Passwortabfrage abschalten
+
+```Powershell
+control userpasswords2
+```
+
 ## Installation von zusätzlichen Programmen
 
 ### Teamviewer - easy Quicksupport
