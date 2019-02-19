@@ -63,6 +63,41 @@ If (Test-DelaproNotRunning -Path $DlpPath) {
 }
 ```
 
+## Update einspielen
+
+Dieses Beispiel funktioniert nur mit manuellen Updates, wo in C:\TEMP\ die Datei EXES.EXE abgelegt wurde.
+
+```Powershell
+If (Test-DelaproNotRunning -Path $DlpPath) {
+    If (-Not (Test-Path "$($DlpPath)\Update")) {
+        New-Item "$($DlpPath)\Update" -Type Directory
+    }
+    Set-Location "$($DlpPath)\Update"
+    # \\Update wegen Match, sonst würde \U als RegEx von Match interpretiert!
+    If ((Get-Location) -match "\\Update") {
+        Remove-Item * -Force -Recurse
+        C:\temp\Exes.exe
+    }
+    Set-Location ..
+    .\update\update
+    Invoke-CleanupDelapro $DlpPath -Verbose
+} else {
+    If (Test-Path $DlpPath) {
+        Write-Error "Delapro läuft noch!"
+    } else {
+        Write-Error "Delapro nicht unter $DLPPath gefunden!!"
+    }
+}
+```
+
+## Delapro-Verzeichnis aufräumen
+
+```Powershell
+Set-Location $DlpPath
+Invoke-CleanupDelapro $DlpPath -Verbose
+
+```
+
 ## Druckertreiber einrichten
 
 ### DelaproPDF für Ansicht einrichten
@@ -138,41 +173,6 @@ Import-LastDelaproBackup -DestinationPath $DlpPath -Verbose
 # zum Direkt einspielen
 # Import-OldDLPVersion -SourcePath G:\Delapro\ -DestinationPath "$($DLPPath)"
 # Invoke-CleanupDelapro $DlpPath -Verbose
-
-```
-
-## Update einspielen
-
-Dieses Beispiel funktioniert nur mit manuellen Updates, wo in C:\TEMP\ die Datei EXES.EXE abgelegt wurde.
-
-```Powershell
-If (Test-DelaproNotRunning -Path $DlpPath) {
-    If (-Not (Test-Path "$($DlpPath)\Update")) {
-        New-Item "$($DlpPath)\Update" -Type Directory
-    }
-    Set-Location "$($DlpPath)\Update"
-    # \\Update wegen Match, sonst würde \U als RegEx von Match interpretiert!
-    If ((Get-Location) -match "\\Update") {
-        Remove-Item * -Force -Recurse
-        C:\temp\Exes.exe
-    }
-    Set-Location ..
-    .\update\update
-    Invoke-CleanupDelapro $DlpPath -Verbose
-} else {
-    If (Test-Path $DlpPath) {
-        Write-Error "Delapro läuft noch!"
-    } else {
-        Write-Error "Delapro nicht unter $DLPPath gefunden!!"
-    }
-}
-```
-
-## Delapro-Verzeichnis aufräumen
-
-```Powershell
-Set-Location $DlpPath
-Invoke-CleanupDelapro $DlpPath -Verbose
 
 ```
 
