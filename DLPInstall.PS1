@@ -3005,8 +3005,8 @@ Function Import-LastDelaproBackup {
 		[System.String]$BackupFile
 	)
 
-	Write-Verbose $TempPath
-	Write-Verbose $DestinationPath
+	Write-Verbose "Temp-Verzeichnis: $($TempPath)"
+	Write-Verbose "Zielverzeichnis: $($DestinationPath)"
 
 	#Delapro Daten von Datensicherung einspielen
 	If ($BackupFile -and (Test-Path (Get-Item $BackupFile).Fullname)) {
@@ -3017,15 +3017,16 @@ Function Import-LastDelaproBackup {
 	If ($ds.length -ge 1) {
 		# also eine Datensicherung gefunden, diese entpacken
 		$ds = $ds[0]
-		Write-Verbose "Sicherung: $ds"
 		If (Test-Path $TempPath) {
 			# damit kein Datenkuddelmuddel entsteht, altes Sicherungsverzeichnis löschen, falls vorhanden
 			Write-Verbose "Temppfad löschen: $TempPath"
 			Remove-Item $TempPath -Force -Recurse
 		}
+		Write-Verbose "verwende Sicherung: $ds"
 
 		# da Expand-Archive nur mit .ZIP-Endungen umgehen kann, muss eine evtl. .eyBZIP-Endung vorher in ZIP geändert werden
 		If (([System.IO.Path]::GetExtension($ds.Fullname)).ToLower() -eq ".eybzip") {
+			Write-Verbose "eyBZip-Datei erkannt"
 			$ds = Rename-Item -Path $ds.FullName -NewName ([System.IO.Path]::ChangeExtension($ds.FullName, "ZIP")) -PassThru
 		}
 
