@@ -1246,6 +1246,64 @@ Function Test-Java {
 	}
 }
 
+Function Get-OpenJDK {
+	[CmdletBinding()]
+	Param()
+
+	$j = Get-ChildItem "$($env:ProgramFiles)\OpenJDK\Java.exe" -Recurse
+	If ($j) {
+		If ($j -is [array]) {
+			# TODO: Sortieren, damit man die neueste Version zurück bekommt
+			$j = $j[0]
+		}
+		Write-Verbose "Java: $j"
+		$j
+	}
+}
+
+# Prüft ob Java 8 vorhanden ist, dazu wird die aktuelleste JAVA.EXE ermittelt, gestartet und die Versionsinfo geholt
+Function Test-OpenJDK {
+	[CmdletBinding()]
+	Param(
+	)
+
+	$j = Get-OpenJDK
+	If ($j) {
+		# Folgender Code liegt dem RunCheck-Javaprogramm zugrunde. Um ihn kompilieren zu können benötigt
+		# man allerdings das JDK in der zugehörigen Version, hier JDK8:
+		# http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+		# Man speichert das Programm als RunCheck.java und kompiliert man es dann mittels JavaC.EXE:
+		# Javac.exe -g:none RunCheck.java
+		# Daraus resultiert die RunCheck.class welches dann mittels
+		# $base64=[System.Convert]::ToBase64String((Get-Content .\RunCheck.class -Encoding Byte))
+		# $base64.toString()
+		# umgewandelt wird.
+		<#
+			class RunCheck {
+				public static void main (String args[]){
+					//System.out.println("Hello Java");
+					System.exit(255);
+				}
+			}
+		#>
+		$JavaRunCheckClass = @"
+		yv66vgAAADQAEgoABAAKCgALAAwHAA0HAA4BAAY8aW5pdD4BAAMoKVYBAARDb2RlAQAEbWFpbgEAFihbTGphdmEvbGFuZy9TdHJpbmc7KVYMAAUABgcADwwA
+		EAARAQAIUnVuQ2hlY2sBABBqYXZhL2xhbmcvT2JqZWN0AQAQamF2YS9sYW5nL1N5c3RlbQEABGV4aXQBAAQoSSlWACAAAwAEAAAAAAACAAAABQAGAAEABwAA
+		ABEAAQABAAAABSq3AAGxAAAAAAAJAAgACQABAAcAAAATAAEAAQAAAAcRAP+4AAKxAAAAAAAA
+"@
+		$tempPath = $env:Temp
+		[System.Convert]::FromBase64String($JavaRunCheckClass) | Set-Content "$($tempPath)\RunCheck.Class" -Encoding Byte
+
+		# java.exe -cp C:\temp RunCheck
+		$p = Start-Process -Wait -FilePath $j -ArgumentList "-cp", $tempPath, "RunCheck" -PassThru
+		If ($p.ExitCode -eq 255) {
+			$true
+		} else {
+			$false
+		}
+	}
+}
+
 # installiert VeraPDF
 Function Install-VeraPDF {
 	[CmdletBinding()]
