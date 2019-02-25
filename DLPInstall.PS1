@@ -1085,6 +1085,10 @@ function Resolve-HttpUrlRedirect {
     while (Test-HttpUrlRedirect -Uri $uri) {
         $rd=Invoke-WebRequest -Uri $Uri -MaximumRedirection 0 -UseBasicParsing -ErrorAction SilentlyContinue
         Write-Verbose "$($rd.StatusCode) - $($rd.StatusDescription)"
+        If ($rd.StatusCode -eq 301) {
+            $Uri = $rd.Headers.Location
+            Write-Verbose "Permanent nach: $Uri"
+        }
         If ($rd.StatusCode -eq 302) {
             $Uri = $rd.Headers.Location
             Write-Verbose "Nach: $Uri"
