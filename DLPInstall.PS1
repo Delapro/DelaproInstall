@@ -1346,6 +1346,7 @@ Function Install-VeraPDF {
 	$ExpandedFilesPath = (Get-ChildItem "$($tempDirectory)\Vera\" -Attribute Directory)
 	If (Test-Path $ExpandedFilesPath.FullName) {
 		$veraPath = $ExpandedFilesPath.FullName
+		Write-Verbose "veraPath: $veraPath"
 		$veraJarFile = Join-Path -Path $veraPath -ChildPath $ExpandedFilesPath.Name 
 		$AutoInstallXML | Set-Content -Path $veraPath\auto-install.XML
 
@@ -1354,7 +1355,7 @@ Function Install-VeraPDF {
 		If ($j) {
 			# java -jar "%BASEDIR%verapdf-izpack-installer-1.10.6.jar" auto-install.xml
 			$p = Start-Process -Wait -FilePath $j -ArgumentList "-jar", $veraJarFile, "$($veraPath)\auto-install.XML" -PassThru
-			Write-Verbose "0=Erfolgreich, alles andere Fehler: $p.ExitCode"
+			Write-Verbose "0=Erfolgreich, alles andere Fehler: $($p.ExitCode)"
 		}
 	} else {
 		Write-Error "Keine entpackten Dateien gefunden."
