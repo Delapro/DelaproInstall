@@ -1549,7 +1549,8 @@ Function Get-ThunderbirdProfile {
 
 	)
 
-	$profileINI = "$Env:APPDATA\Thunderbird\Profiles.ini"
+	$thunderbirdBasePath = "$Env:APPDATA\Thunderbird"
+	$profileINI = "$thunderbirdBasePath\Profiles.ini"
 	If ($profileINI) {
 		$profilesFile = Get-IniFile -Path $profileINI
 		$profiles = $profilesFile | Where-Object Segment -match "Profile\d*" | Select-Object -Unique
@@ -1558,7 +1559,8 @@ Function Get-ThunderbirdProfile {
 				Name = ($profilesFile | Where-Object Segment -eq $segment) | Where-Object Key -eq "Name"| Select-Object -ExpandProperty Value;
 				IsRelative = (($profilesFile | Where-Object Segment -eq $segment) | where-object Key -eq "IsRelative" | Select-Object -ExpandProperty Value) -eq '1';
 				Path = ($profilesFile | Where-Object Segment -eq $segment) | Where-Object Key -eq "Path" | Select-Object -ExpandProperty Value;
-				Default = (($profilesFile | Where-Object Segment -eq $segment) | Where-Object Key -eq "Default" | Select-Object -ExpandProperty Value) -eq '1'
+				Default = (($profilesFile | Where-Object Segment -eq $segment) | Where-Object Key -eq "Default" | Select-Object -ExpandProperty Value) -eq '1';
+				FullPathName = (Join-Path $thunderbirdBasePath (($profilesFile | Where-Object Segment -eq $segment) | Where-Object Key -eq "Path" | Select-Object -ExpandProperty Value))
 			}
 		}
 		$ProfilesNew
