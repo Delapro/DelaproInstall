@@ -1578,6 +1578,8 @@ Function Get-ThunderbirdEXE {
 	$tbPath = Get-ChildItem "C:\Program Files (x86)\Mozilla Thunderbird\Thunderbird.exe"
 	If ($tbPath -and $Path) {
 		$tbPath.Directory.Fullname
+	} else {
+		$tbPath
 	}
 
 }
