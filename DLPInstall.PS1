@@ -1528,6 +1528,7 @@ Function Install-Thunderbird {
 	If ((-not (Test-Thunderbird)) -or $Force) {
 		# Infos zur aktuellen Version: https://www.mozilla.org/en-US/thunderbird/notes/
 		# Alle Versionen von Thunderbird zu finden unter: https://ftp.mozilla.org/pub/thunderbird/releases/
+		# z. B. 60.50.0 unter: https://ftp.mozilla.org/pub/thunderbird/releases/60.5.0/win32/de/
 		$tbVersion = "60.5.2"
 		#Start-BitsTransfer http://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe
 		$Filename = "Thunderbird Setup $tbVersion.exe"
@@ -1560,6 +1561,7 @@ Function Get-ThunderbirdProfile {
 				Default = (($profilesFile | Where-Object Segment -eq $segment) | Where-Object Key -eq "Default" | Select-Object -ExpandProperty Value) -eq '1'
 			}
 		}
+		$ProfilesNew
 	}
 }
 
