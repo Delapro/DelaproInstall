@@ -1571,13 +1571,16 @@ Function Get-ThunderbirdProfile {
 Function Get-ThunderbirdEXE {
 	[CmdletBinding()]
 	Param(
-		[switch]$Path
+		[switch]$Path,
+		[switch]$ExtensionPath
 	)
 
 	# TODO: verfeinern und für andere Platformen bereit machen
 	$tbPath = Get-ChildItem "C:\Program Files (x86)\Mozilla Thunderbird\Thunderbird.exe"
 	If ($tbPath -and $Path) {
 		$tbPath.Directory.Fullname
+	} elseif ($tbPath -and $ExtensionPath) {
+		"$($tbPath.Directory.FullName)\Extensions" 
 	} else {
 		$tbPath
 	}
@@ -1599,14 +1602,28 @@ Function Install-Enigmail {
 		Write-Verbose "Download $emVersion, Dateiname: $Filename"
 		$urlFilename = [uri]::EscapeUriString($Filename)
 		Start-BitsTransfer https://www.enigmail.net/download/release/2.0/$Filename -Destination $tempDirectory
-		$Filename = Join-Path -path "$($tempDirectory)" -ChildPath $urlFilename
-		Write-Verbose "Installiere $Filename"
-		#Start-Process -Wait $Filename -ArgumentList "/S"
+		$DestFilename = Join-Path -path "$($tempDirectory)" -ChildPath $urlFilename
+		Write-Verbose "Installiere $DestFilename"
+		$DestZIP = $DestFilename.Replace('.xpi', '.zip')
+		IF (Test-Path $DestZIP) {
+			Remove-Item $DestZIP
+		}
+		Rename-Item $DestFilename -NewName $DestZIP
+		$XPIDir = "$tempDirectory\XPI-Install"
+		If (Test-Path -Path $XPIDir) {
+			Remove-Item $XPIDir -Force -Confirm:$false  -Recurse
+		}
+		Expand-Archive $DestZIP -DestinationPath $XPIDir
+		If (Test-Path $XPIDir\install.rdf) {
+			$rdf = [xml](Get-Content $XPIDir\install.rdf)
+			$id = $rdf.RDF.Description.id
+			# Pfad zu Thunderbird holen
+			$extPath = Get-ThunderbirdEXE -ExtensionPath
+			# Pfad mit ID anlegen und Dateien aus XPI reinkopieren
+			$xpiExtPath = "$($extPath)\$($id).xpi"
+			Move-Item $DestZIP -Destination $xpiExtPath
+		}
 		Write-Error "TODO: User oder Global Install"
-		# XPI als ZIP-Datei entpacken
-		# aus der Install.RDF die ID auslesen
-		# Pfad zu Thunderbird holen
-		# Pfad mit ID anlegen und Dateien aus XPI reinkopieren
 	} else {
 		Write-Error "Thunderbird scheint nicht installiert zu sein!"
 	}
