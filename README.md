@@ -40,7 +40,7 @@ Install-MissingPowershellCmdlets
 
 ```
 
-### wenn es Probleme mit Start-BitsTransfer wegen fehleneder Rechte oder bei Benutzung von Powershell Core gibt
+### wenn es Probleme mit Start-BitsTransfer wegen fehlender Rechte oder bei Benutzung von Powershell Core gibt
 ```Powershell
 # rüstet eine einfache Variante von Start-BitsTransfer nach
 Install-StartBitsTransfer
