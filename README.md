@@ -287,6 +287,9 @@ Install-Thunderbird -Version '60.3.3' -Force -Verbose
 # Thunderbird-Profile abrufen
 Get-ThunderbirdProfile
 
+# Thunderbird Update-Chronik ermitteln
+Get-ThunderbirdUpdates
+
 ```
 
 ### OpenGPG

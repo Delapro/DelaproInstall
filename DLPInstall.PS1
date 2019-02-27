@@ -1578,6 +1578,22 @@ Function Get-ThunderbirdProfile {
 	}
 }
 
+# ermittelt die updates.xml-Datei von Thunderbird mit Informationen zu den eingespielten Updates, in der UI unter Update-Chronik zu finden
+Function Get-ThunderbirdUpdates {
+	[CmdletBinding()]
+	Param(
+
+	)
+
+	$thunderbirdBasePath = "$env:LOCALAPPDATA\Thunderbird\updates"
+	$thunderbirdTempPath = (Get-ChildItem $thunderbirdBasePath -Directory).FullName
+	$updateXMLFile = Join-Path $thunderbirdTempPath -ChildPath "updates.xml"
+	If (Test-Path $updateXMLFile) {
+		$updates = [xml](Get-Content $updateXMLFile)
+		$updates.updates.update
+	}
+}
+
 # ermittelt den Pfad zur Thunderbird-EXE oder zum Basispfad
 Function Get-ThunderbirdEXE {
 	[CmdletBinding()]
