@@ -1587,6 +1587,26 @@ Function Get-ThunderbirdEXE {
 
 }
 
+Function Install-OpenGPG {
+	[CmdletBinding()]
+	Param(
+		#[parameter(Mandatory=$true)]
+		[System.String]$tempDirectory="$Env:TEMP\"
+	)
+
+	# andere Platformen unterstützten
+	$gpgVersion = "3.1.5"
+
+	$Filename = "gpg4win-$($gpgVersion).exe"
+	Write-Verbose "Download $gpgVersion, Dateiname: $Filename"
+	$urlFilename = [uri]::EscapeUriString($Filename)
+	Start-BitsTransfer https://files.gpg4win.org/$UrlFilename -Destination $tempDirectory
+	$Filename = Join-Path -path "$($tempDirectory)" -ChildPath $urlFilename
+	Write-Verbose "Installiere $Filename"
+	Start-Process -Wait $Filename -ArgumentList "/S"
+	
+}
+
 # Installation von Enigmail
 Function Install-Enigmail {
 	[CmdletBinding()]

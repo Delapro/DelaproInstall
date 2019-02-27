@@ -274,6 +274,12 @@ Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -C
 Install-Thunderbird -Force -Verbose
 ```
 
+### OpenGPG
+
+```Powershell
+Install-OpenGPG -Verbose
+```
+
 ### Chrome
 
 ```Powershell
