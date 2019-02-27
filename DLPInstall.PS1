@@ -1578,6 +1578,16 @@ Function Get-ThunderbirdProfile {
 	}
 }
 
+# ruft den Thunderbird Profilmanager auf
+Function Invoke-ThunderbirdProfileManager {
+	[CmdletBinding()]
+	Param(
+
+	)
+
+	start thunderbird "-profilemanager"
+}
+
 # ermittelt die updates.xml-Datei von Thunderbird mit Informationen zu den eingespielten Updates, in der UI unter Update-Chronik zu finden
 Function Get-ThunderbirdUpdates {
 	[CmdletBinding()]
