@@ -1404,7 +1404,7 @@ Function Install-Git {
 	)
 
 	# aktuelle Version: https://git-scm.com/download/win
-	$version = "2.20.1"
+	$version = "2.21.0"
 	If (Test-64Bit) {
 		$filename="Git-$($version)-64-bit.exe"
 	} else {
