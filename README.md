@@ -271,7 +271,15 @@ Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -C
 ### Thunderbird
 
 ```Powershell
+# aktuelle Thunderbird Version installieren
 Install-Thunderbird -Force -Verbose
+
+# installiert Version 60.3.3 und führt im Zweifel ein Downgrade einer bestehenden Version durch! Ab der 60er Version sind die wichtigsten, ab 60.5.2 alle Versionen Tab-bar
+Install-Thunderbird -Version '60.3.3' -Force -Verbose
+
+# welche Version von Thunderbird ist installiert?
+(Get-ThunderbirdEXE).VersionInfo.ProductVersion
+
 ```
 
 ### OpenGPG

@@ -1522,19 +1522,30 @@ Function Install-Thunderbird {
 	Param(
 		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\",
-		[switch]$Force
+		[switch]$Force,
+		[Validateset("60.5.2", "60.5.1", "60.5.0", "60.4.0", "60.3.3", "60.2.1", "60.0")]
+		[string[]]$Version
+	
 	)
 
-	If ((-not (Test-Thunderbird)) -or $Force) {
-		# Infos zur aktuellen Version: https://www.mozilla.org/en-US/thunderbird/notes/
-		# Alle Versionen von Thunderbird zu finden unter: https://ftp.mozilla.org/pub/thunderbird/releases/
-		# z. B. 60.50.0 unter: https://ftp.mozilla.org/pub/thunderbird/releases/60.5.0/win32/de/
+	# Infos zur aktuellen Version: https://www.mozilla.org/en-US/thunderbird/notes/
+	# Alle Versionen von Thunderbird zu finden unter: https://ftp.mozilla.org/pub/thunderbird/releases/
+	# z. B. 60.50.0 unter: https://ftp.mozilla.org/pub/thunderbird/releases/60.5.0/win32/de/
+	If ($null -eq $Version) {
+		# aktuelle Version
 		$tbVersion = "60.5.2"
+		$downloadUrlBase = "https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion"
+	} else {
+		$tbVersion = $Version
+		$downloadUrlBase = "https://ftp.mozilla.org/pub/thunderbird/releases/$tbVersion"
+	}
+
+	If ((-not (Test-Thunderbird)) -or $Force) {
 		#Start-BitsTransfer http://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe
 		$Filename = "Thunderbird Setup $tbVersion.exe"
 		Write-Verbose "Download $tbVersion, Dateiname: $Filename"
 		$urlFilename = [uri]::EscapeUriString($Filename)
-		Start-BitsTransfer https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/$UrlFilename -Destination $tempDirectory
+		Start-BitsTransfer "$($downloadUrlBase)/win32/de/$UrlFilename" -Destination $tempDirectory
 		$Filename = Join-Path -path "$($tempDirectory)" -ChildPath $urlFilename
 		Write-Verbose "Installiere $Filename"
 		Start-Process -Wait $Filename -ArgumentList "/S"
