@@ -290,6 +290,9 @@ Get-ThunderbirdProfile
 # Thunderbird Update-Chronik ermitteln
 Get-ThunderbirdUpdates
 
+# Thunderbird Profilmanager aufrufen
+Invoke-ThunderbirdProfileManager
+
 ```
 
 ### OpenGPG
