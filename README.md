@@ -286,6 +286,9 @@ Disable-ThunderbirdUpdates -Verbose
 # welche Version von Thunderbird ist installiert?
 (Get-ThunderbirdEXE).VersionInfo.ProductVersion
 
+# die etwas besondere Art die Commandline-Parameter anzuzeigen | Out-Host muss sein!
+& (Get-ThunderbirdEXE).fullname "-help" | Out-Host
+
 # Thunderbird-Profile abrufen
 Get-ThunderbirdProfile
 
