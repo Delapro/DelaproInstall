@@ -1504,6 +1504,15 @@ Function Install-VisualStudioCodeExtension {
 
 }
 
+# installiert Apache Maven
+Function Install-Maven {
+
+	Write-Error "To be implemented!"
+	# benötigt zuerst eine JAVA-Runtime
+	# siehe https://stackoverflow.com/questions/46671308/how-to-create-a-java-maven-project-that-works-in-visual-studio-code
+	# https://maven.apache.org/install.html
+}
+
 # Installation von Chrome
 Function Install-Chrome {
 	[CmdletBinding()]
