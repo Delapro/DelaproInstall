@@ -1604,6 +1604,31 @@ Function Get-ThunderbirdUpdates {
 	}
 }
 
+# erzeugt eine user.js mit Einstellungen, dass Updates unterdrückt werden sollen
+# Achtung: überschreibt eine evtl. bereits bestehende user.js!!
+Function Disable-ThunderbirdUpdates {
+	[CmdletBinding()]
+	Param(
+
+	)
+
+	$userJS = @"
+	// Mozilla User Preferences
+
+	user_pref("app.update.auto", false);
+	user_pref("app.update.disable_button.showUpdateHistory", false);
+	user_pref("app.update.enabled", false);
+	user_pref("app.update.service.enabled", false);
+"@
+
+	$profile = Get-ThunderbirdProfile| Where-Object name -eq "default"
+	If (Test-Path $profile.FullPathName) {
+		$userJSPath = Join-Path -Path $profile.FullPathName -ChildPath "user.js"
+		$userJS | Set-Content -Path $userJSPath
+	}
+
+}
+
 # ermittelt den Pfad zur Thunderbird-EXE oder zum Basispfad
 Function Get-ThunderbirdEXE {
 	[CmdletBinding()]
