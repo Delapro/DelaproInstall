@@ -1447,9 +1447,7 @@ Function Install-VisualStudioCode {
 	[CmdletBinding()]
 	Param(
 		#[parameter(Mandatory=$true)]
-		[System.String]$tempDirectory="$Env:TEMP\",
-		[Validateset("Powershell", "Harbour", "HarbourDebug", "CSharp", "Pyhthon", "XML", "Java", "CSV", "CPlusPlus" )]
-		[string[]]$Extensions
+		[System.String]$tempDirectory="$Env:TEMP\"
 	)
 
 	$url = Resolve-HttpUrlRedirect https://go.microsoft.com/fwlink/?Linkid=852157
@@ -1466,7 +1464,18 @@ Function Install-VisualStudioCode {
 "@
 	$KeyboardSettings | Set-Content $env:APPDATA\Code\User\keybindings.json
 
-	# TODO: Extensions in eigene Funktion ausgliedern zum nachträglich installieren
+}
+
+# installiert Visual Studio Code Erweiterungen
+Function Install-VisualStudioCodeExtension {
+	[CmdletBinding()]
+	Param(
+		#[parameter(Mandatory=$true)]
+		[System.String]$tempDirectory="$Env:TEMP\",
+		[Validateset("Powershell", "Harbour", "HarbourDebug", "CSharp", "Pyhthon", "XML", "Java", "CSV", "CPlusPlus" )]
+		[string[]]$Extension
+	)
+
 	If ($Extensions) {
 		$codeEXE = 'C:\Program Files\Microsoft VS Code\Code.exe'
 		If (Test-Path $codeEXE) {

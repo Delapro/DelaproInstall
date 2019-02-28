@@ -360,8 +360,8 @@ Install-7Zip -Verbose
 ```Powershell
 Install-VisualStudioCode -Verbose
 
-# oder gleich mit Extensions installieren:
-Install-VisualStudioCode -Extensions Powershell, Harbour -Verbose
+# VSCode Extensions installieren
+Install-VisualStudioCodeExtension -Extension Powershell, Harbour -Verbose
 
 ```
 
