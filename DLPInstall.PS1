@@ -1485,6 +1485,7 @@ Function Install-VisualStudioCode {
 					"CPlusPlus"		{$installExt = "ms-vscode.cpptools"}
 				}
 				# Start-Process -Wait -FilePath $codeEXE -ArgumentList "--install-extension", $installExt
+				Write-Verbose "Installiere Erweiterung: $installExt"
 				& $codeExe --install-extension $installExt
 			}
 		} else {
