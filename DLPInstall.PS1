@@ -1148,6 +1148,36 @@ Function Install-AcrobatDC {
 #	}
 }
 
+# installiert Amazons Corretto OpenJDK
+Function Install-OpenJDK {
+	[CmdletBinding()]
+	Param(
+		[System.String]$tempDirectory="$Env:TEMP\",
+		[Validateset("x64", "x86")]
+		[System.String]$Platform="x64",
+		[Validateset("11", "8")]
+		[System.String]$Version="8"
+	)
+
+	# Infos: https://docs.aws.amazon.com/de_de/corretto/latest/corretto-8-ug/downloads-list.html
+	# Source: https://github.com/corretto/corretto-8
+	$JavaVersion = "8.202.08.2"
+
+	# https://d2znqt9b1bc64u.cloudfront.net/amazon-corretto-8.202.08.2-windows-x64.msi
+	If ($Version -eq "8" -and $Platform -eq "x64") {
+		$url = "https://d2znqt9b1bc64u.cloudfront.net/amazon-corretto-$($JavaVersion)-windows-x64.msi"
+		Start-BitsTransfer $url -Destination $tempDirectory
+		$msi = Join-Path -Path $tempDirectory -ChildPath "amazon-corretto-$($JavaVersion)-windows-x64.msi"
+		# mögliche Features zum installieren: ADDLOCAL=FeatureMain,FeatureSetupJavaHome,FeatureSetupEnv,FeatureAddPath
+		If (Test-Path $msi) {
+			Write-Verbose "Installiere $msi"
+			Start-Process -Wait "msiexec.exe" -ArgumentList "/i", $msi, "/qn"
+		}
+	} else {
+		Write-Error "Wird noch nicht unterstützt."
+	}
+}
+
 # installiert die aktuelle JavaRE 8
 Function Install-Java {
 	[CmdletBinding()]
