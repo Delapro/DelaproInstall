@@ -1612,6 +1612,8 @@ Function Disable-ThunderbirdUpdates {
 
 	)
 
+	# Doku zu Handhabung von Einstellungen wie prefs.js und ueser.js
+	# https://developer.mozilla.org/en-US/docs/Mozilla/Preferences/A_brief_guide_to_Mozilla_preferences
 	$userJS = @"
 	// Mozilla User Preferences
 
@@ -1624,6 +1626,11 @@ Function Disable-ThunderbirdUpdates {
 	$profile = Get-ThunderbirdProfile| Where-Object name -eq "default"
 	If (Test-Path $profile.FullPathName) {
 		$userJSPath = Join-Path -Path $profile.FullPathName -ChildPath "user.js"
+		If (Test-Path $userJSPath) {
+			Write-Verbose "$userJSPath existiert bereits lege .js.bak-Datei an"
+			Copy-Item $userJSPath -Destination $userJSPath.Replace('.js', '.js.bak') -Force
+		}
+		Write-Verbose "Schreibe $userJSPath"
 		$userJS | Set-Content -Path $userJSPath
 	}
 
