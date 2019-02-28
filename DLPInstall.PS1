@@ -1536,11 +1536,29 @@ Function Install-VisualStudioCodeExtension {
 
 # installiert Apache Maven
 Function Install-Maven {
+	[CmdletBinding()]
+	Param(
+		[System.String]$TempDirectory = $env:TEMP,
+		[System.String]$InstallDir = "C:\Tools"
+	)
 
-	Write-Error "To be implemented!"
 	# benötigt zuerst eine JAVA-Runtime
 	# siehe https://stackoverflow.com/questions/46671308/how-to-create-a-java-maven-project-that-works-in-visual-studio-code
 	# https://maven.apache.org/install.html
+	If (-Not ($Env:JAVA_HOME)) {
+		$Java = Get-Java
+	}
+	# sowas sollte vorhanden sein: $env:JAVA_HOME= 'C:\Program Files\Amazon Corretto\jdk1.8.0_202'
+	$version = "3.6.0"
+	$url = "http://apache.uvigo.es/maven/maven-3/$($version)/binaries/apache-maven-$($version)-bin.zip"
+	$file = Join-Path $TempDirectory -ChildPath "apache-maven-$($version)-bin.zip"
+	Start-BitsTransfer -Source $url -Destination $TempDirectory
+	If (Test-Path $file) {
+		Expand-Archive -Path $file -DestinationPath $InstallDir -Force
+	}
+	# TODO: M2_HOME mit Maven-Pfad anlegen 
+
+	# VSCode braucht den kompletten Pfad zu C:\Tools\Maven\apache-maven-3.6.0\bin\mvn.cmd in den Settings
 }
 
 # Installation von Chrome
