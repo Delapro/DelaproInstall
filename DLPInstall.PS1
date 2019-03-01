@@ -2074,6 +2074,7 @@ Function Install-MissingPowershellCmdLets {
 				$vol = Get-CimInstance Win32_Volume
 				$vol | Select-Object @{Label="Driveletter";Expression={$_.Driveletter.SubString(0, 1)}},
 									 @{Label="FileSystemType";Expression={$_.FileSystem}},
+									 @{Label="Path";Expression={$_.DeviceID}},
 				                     @{Label="OperationalStatus";Expression={If ($null -ne $_.FileSystem) {"OK"} else {""} }}
 			}
 		}
@@ -3235,6 +3236,39 @@ Function Invoke-DefenderSetupAndScan {
 		# Scanlauf starten
 		Update-MpSignature
 		Start-MpScan -ScanType QuickScan
+	}
+}
+
+# fügt den Volumepfad eines Laufwerks zur Backup.XML für die Datensicherung hinzu
+Function Add-VolumeToBackupXML {
+	[cmdletBinding()]
+	Param(
+		[System.String]$DestinationPath="C:\Delapro",
+		[Parameter(Mandatory=$true)][System.String]$Drive
+	)
+
+	If (Test-Path $DestinationPath) {
+		$backXMLFile = Join-Path $DestinationPath -ChildPath "Backup\Backup.XML"
+		If (Test-Path $backXMLFile) {
+			$backupXML = [xml](Get-Content $backXMLFile)
+		} else {
+			$backupXML = [xml]@"
+			<?xml version="1.0" encoding="ISO-8859-1"?>
+			<DELAPRO>
+			  <EASYBACKUP32 Version="1">
+				<BackupVolumeGUIDs Comment="Hier VolumeGUIDS anhängen"/>
+			  </EASYBACKUP32>
+			</DELAPRO>			
+"@
+		}
+
+		$Volume = Get-Volume| Where-Object {$Drive -eq $_.Driveletter} | Where-Object {$_.OperationalStatus -eq "OK"} |  Select-Object -ExpandProperty Path
+		Write-Verbose "Drive: $Drive  Volume: $Volume"
+		$guid = $backupXML.CreateElement("GUID")
+		$guid.InnerText = $Volume
+		$backupXML.Delapro.easybackup32.BackupVolumeGUIDs.AppendChild($guid)
+		Write-Verbose "Speichere $backXMLFile"
+		$backupXML.OuterXml | Set-Content $backXMLFile
 	}
 }
 
