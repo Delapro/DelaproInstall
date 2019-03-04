@@ -3266,7 +3266,7 @@ Function Add-VolumeToBackupXML {
 
 		$Volume = Get-Volume| Where-Object {$Drive -eq $_.Driveletter} | Where-Object {$_.OperationalStatus -eq "OK"} |  Select-Object -ExpandProperty Path
 		Write-Verbose "Drive: $Drive  Volume: $Volume"
-		
+
 		$guid = $backupXML.CreateElement("GUID")
 		$guid.InnerText = $Volume
 		# TODO: prüfen, ob GUID schon vorhanden ist
@@ -3276,8 +3276,6 @@ Function Add-VolumeToBackupXML {
 	} else {
 		Write-Error "$DestinationPath nicht gefunden"
 	}
-
-	# TODO: Hinweis auf Aufruf in Programmverteiler: CALL BACKUP.BAT .\BACKUP\backup.xml *.*
 }
 
 # importiert das neueste Delapro-Backup, entweder aus einer ZIP-Datei von easyBackup32 oder aus einem Pfad

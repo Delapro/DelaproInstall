@@ -165,7 +165,9 @@ If ($p) {
 }
 ```
 
-## Importieren einer Delapro-Datensicherung
+## Rund um Backups
+
+### Importieren einer Delapro-Datensicherung
 
 ```Powershell
 # durchsucht die vorhandenen Laufwerke nach einer Datensicherung und spielt diese ein
@@ -174,6 +176,18 @@ Import-LastDelaproBackup -DestinationPath $DlpPath -Verbose
 # Import-OldDLPVersion -SourcePath G:\Delapro\ -DestinationPath "$($DLPPath)"
 # Invoke-CleanupDelapro $DlpPath -Verbose
 
+```
+
+### Einrichtung von bestimmten Backup-Laufwerken
+
+```Powershell
+# fügt die VolumeGUID von Laufwerk F: zur $DlpPath\Backup\Backup.XML-Datei hinzu
+ Add-VolumeToBackupXML -Drive F -DestinationPath $DlpPath -Verbose
+
+ # wie oben aber explizite Angabe der Backup.XML-Datei
+ Add-VolumeToBackupXML -Drive F -BackupConfigFile "Backup\Backup.XML" -DestinationPath $DlpPath -Verbose
+
+ # Programmverteileraufruf: CALL BACKUP.BAT .\BACKUP\backup.xml *.*
 ```
 
 ## Acrobat Reader Seitenpanel abschalten
