@@ -3243,12 +3243,14 @@ Function Invoke-DefenderSetupAndScan {
 Function Add-VolumeToBackupXML {
 	[cmdletBinding()]
 	Param(
-		[System.String]$DestinationPath="C:\Delapro",
-		[Parameter(Mandatory=$true)][System.String]$Drive
+		[Parameter(Mandatory=$true)][System.String]$Drive,
+		[System.String]$BackupConfigFile="Backup\Backup.XML",
+		[System.String]$DestinationPath="C:\Delapro"
+
 	)
 
 	If (Test-Path $DestinationPath) {
-		$backXMLFile = Join-Path $DestinationPath -ChildPath "Backup\Backup.XML"
+		$backXMLFile = Join-Path $DestinationPath -ChildPath $BackupConfigFile
 		If (Test-Path $backXMLFile) {
 			$backupXML = [xml](Get-Content $backXMLFile)
 		} else {
@@ -3256,7 +3258,7 @@ Function Add-VolumeToBackupXML {
 			<?xml version="1.0" encoding="ISO-8859-1"?>
 			<DELAPRO>
 			  <EASYBACKUP32 Version="1">
-				<BackupVolumeGUIDs Comment="Hier VolumeGUIDS anhängen"/>
+				<BackupVolumeGUIDs Comment="Hier Volume-GUIDS anhängen"/>
 			  </EASYBACKUP32>
 			</DELAPRO>			
 "@
@@ -3264,12 +3266,18 @@ Function Add-VolumeToBackupXML {
 
 		$Volume = Get-Volume| Where-Object {$Drive -eq $_.Driveletter} | Where-Object {$_.OperationalStatus -eq "OK"} |  Select-Object -ExpandProperty Path
 		Write-Verbose "Drive: $Drive  Volume: $Volume"
+		
 		$guid = $backupXML.CreateElement("GUID")
 		$guid.InnerText = $Volume
+		# TODO: prüfen, ob GUID schon vorhanden ist
 		$backupXML.Delapro.easybackup32.BackupVolumeGUIDs.AppendChild($guid)
 		Write-Verbose "Speichere $backXMLFile"
 		$backupXML.OuterXml | Set-Content $backXMLFile
+	} else {
+		Write-Error "$DestinationPath nicht gefunden"
 	}
+
+	# TODO: Hinweis auf Aufruf in Programmverteiler: CALL BACKUP.BAT .\BACKUP\backup.xml *.*
 }
 
 # importiert das neueste Delapro-Backup, entweder aus einer ZIP-Datei von easyBackup32 oder aus einem Pfad
