@@ -1751,6 +1751,9 @@ Function Install-Enigmail {
 		[System.String]$tempDirectory="$Env:TEMP\"
 	)
 
+	# TODO: XPI-Installation extrahieren
+	# TODO: Installation von Erweiterungen unter Ubuntu: http://bernaerts.dyndns.org/linux/74-ubuntu/271-ubuntu-firefox-thunderbird-addon-commandline
+	
 	If (Test-Thunderbird) {
 		# Infos zur aktuellen Version: https://www.enigmail.net/index.php/en/download/changelog
 		$emVersion = "2.0.9"
