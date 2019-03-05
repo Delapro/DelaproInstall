@@ -2052,8 +2052,10 @@ Function Install-MissingPowershellCmdLets {
 				# anstatt Name doch DeviceID?
 				$dlpprn = Get-WmiObject Win32_Printer -Filter $Filter
 				# Get-CimInstance funktioniert hier nicht, weil es .Rename() nicht kennt!
-				$renres = $dlpprn.RenamePrinter($NewName)
-				# renres.ReturnValue == 5 wenn Access Denied, bei 0 erfolgreich
+				$dlpprn.RenamePrinter($NewName)
+				If ($Error[0].Exception.InnerException.ErrorCode.value__ -eq -2147217405) {
+					throw "Access Denied"
+				}
 			}
 		}
 	}
@@ -2067,8 +2069,10 @@ Function Install-MissingPowershellCmdLets {
 				# anstatt Name doch DeviceID?
 				$dlpprn = Get-WmiObject Win32_Printer -Filter $Filter
 				# Get-CimInstance funktioniert hier nicht, weil es .Delete() nicht kennt!
-				$renres = $dlpprn.Delete()
-				# renres.ReturnValue == 5 wenn Access Denied, bei 0 erfolgreich
+				$dlpprn.Delete()
+				If ($Error[0].Exception.InnerException.ErrorCode.value__ -eq -2147217405) {
+					throw "Access Denied"
+				}
 			}
 		}
 	}
