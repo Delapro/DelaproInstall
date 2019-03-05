@@ -2050,7 +2050,8 @@ Function Install-MissingPowershellCmdLets {
 			Function global:Rename-Printer ($Name, $NewName) {
 				$Filter = "Name='$($Name)'"
 				# anstatt Name doch DeviceID?
-				$dlpprn = Get-CimInstance Win32_Printer -Filter $Filter
+				$dlpprn = Get-WmiObject Win32_Printer -Filter $Filter
+				# Get-CimInstance funktioniert hier nicht, weil es .Rename() nicht kennt!
 				$renres = $dlpprn.RenamePrinter($NewName)
 				# renres.ReturnValue == 5 wenn Access Denied, bei 0 erfolgreich
 			}
