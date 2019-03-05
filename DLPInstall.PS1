@@ -1655,7 +1655,7 @@ Function Invoke-ThunderbirdProfileManager {
 
 	)
 
-	start thunderbird "-profilemanager"
+	Start-Process -FilePath "Thunderbird" -ArgumentList "-ProfileManager"
 }
 
 # ermittelt die updates.xml-Datei von Thunderbird mit Informationen zu den eingespielten Updates, in der UI unter Update-Chronik zu finden
