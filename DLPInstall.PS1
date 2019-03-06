@@ -2730,6 +2730,18 @@ Function Invoke-VDDSPruefTool
 
 }
 
+# installiert die Digitale Planungshilfe
+Function Install-DPF {
+	[CmdletBinding()]
+	Param(
+
+	)
+
+	Start-Process "https://www.kzbv.de/digitale-planungshilfe-dpf.336.de.html"
+
+	# TODO: mit Leben erfüllen und automatisieren
+}
+
 Function Install-VDDSPrueftool {
 		[CmdletBinding()]
 	Param(
