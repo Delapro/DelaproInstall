@@ -3103,6 +3103,7 @@ Function Show-MAPIProfiles {
 	)
 
 	# Suche nach MLCFG32.CPL
+	throw "to be implemented!"
 
 }
 
