@@ -2742,6 +2742,34 @@ Function Install-DPF {
 	# TODO: mit Leben erfüllen und automatisieren
 }
 
+# installiert ffmpeg
+Function Install-FFMpeg {
+	[CmdletBinding()]
+	Param(
+		[String]$TempDir=$Env:TEMP
+	)
+
+	# https://github.com/FFmpeg/FFmpeg/releases
+	# etwas schwierig die Versionen, weil die Windows Builds automatisch erstellt
+	# werden und quasi nightly Builds darstellen, deshalb ist nie klar, welche 
+	# Version zu einem Release gehört, aus diesem Grund wird eine Version nach einem
+	# Release Hash verwendet. Für 4.1.1 ist das am nächsten liegende Build 20190210-d20902f
+	$version = "4.1.1"
+	$date = "20190210"
+	$gitShortHash = "d20902f"
+	$platform = "win64"
+	$filename = "ffmpeg-$($date)-$($gitShortHash)-$platform-static.zip"
+	$url = "https://ffmpeg.zeranoe.com/builds/$platform/static/$filename"
+
+	Write-Verbose "Lade $url"
+	Start-BitsTransfer -Source $url -Destination $TempDir\ffmpeg.Zip
+	Expand-Archive $TempDir\ffmpeg.Zip -DestinationPath $env:ProgramFiles -Force
+	$programPath = Join-Path -path $env:ProgramFiles -ChildPath $filename.Replace('.zip', '')
+	If (Test-Path ($programPath)) {
+		Write-Verbose "vorhanden: $programPath, Version: $version oder neuer"
+	} 
+}
+
 Function Install-VDDSPrueftool {
 		[CmdletBinding()]
 	Param(
