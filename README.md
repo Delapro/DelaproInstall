@@ -386,6 +386,23 @@ Install-VisualStudioCodeExtension -Extension Powershell, Harbour -Verbose
 Install-Git -Verbose
 ```
 
+### FFMpeg
+```Powershell
+Install-FFMpeg -Verbose
+
+# mögliche verfügbare FFMpeg-Versionen ermitteln
+Get-FFMpeg
+
+# Infos über die verfügbaren Optionen der FFMpeg-Version ausgeben
+& (dir "$((Get-FFMpeg)[0].FullName)\bin\ffmpeg.exe") -buildconf
+
+# Hilfe von FFMpeg ausgeben
+& (dir "$((Get-FFMpeg)[0].FullName)\bin\ffmpeg.exe") -help
+
+# Hilfe von FFProbe ausgeben
+& (dir "$((Get-FFMpeg)[0].FullName)\bin\ffprobe.exe") -help
+```
+
 ## Probleme ermitteln
 
 ### Probleme in Delapro ermitteln

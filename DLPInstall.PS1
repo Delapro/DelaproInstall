@@ -2802,6 +2802,7 @@ Function Install-FFMpeg {
 	} 
 }
 
+# liefert mögliche ffmpeg Verzeichnisse, es sollte darin ein bin-Verzeichnis geben wo ffmpeg.exe usw. liegen
 Function Get-FFMpeg {
 	[CmdletBinding()]
 	[OutputType([System.IO.DirectoryInfo])]
