@@ -2815,7 +2815,6 @@ Function Get-FFMpeg {
 	$dirs
 }
 
-}
 Function Install-VDDSPrueftool {
 		[CmdletBinding()]
 	Param(
