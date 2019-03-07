@@ -3125,6 +3125,15 @@ Function Show-Folder {
 	}
 }
 
+# öffnet die Windows 10 Einstellungsseite welche Programme automatisch gestartet werden
+Function Show-StartSettings {
+	[CmdletBinding()]
+	Param()
+
+	Start-Process "ms-settings:startupapps"
+
+}
+
 # Öffnet den Ordner mit den Verknüpfungen zu den Autostarteintragungen
 Function Show-StartupFolder {
 	[CmdletBinding()]
