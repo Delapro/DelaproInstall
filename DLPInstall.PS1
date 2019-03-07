@@ -2827,7 +2827,8 @@ Function Start-FFMpeg {
 		[switch]$EnumerateDevices,
 		[System.String]$ffmpegRuntime="$((Get-FFMpeg)[0].FullName)\bin\ffmpeg.exe",
 		[System.String]$Framerate=30,
-		[System.String]$Title
+		[System.String]$Title,
+		[System.String[]]$Metadata
 	)
 
 	$a = @()
@@ -2852,6 +2853,10 @@ Function Start-FFMpeg {
 			$a += '-f', 'dshow'
 			$a += '-i', "audio=`"$AudioDevice`""
 		}
+		If ($Metadata) {
+			# -metadata "title=AIR Recording"  -metadata "genre=AIR TRIAGE CAPTURE" -metadata "composer=AIR TRIAGE PROGRAM v99.111 by DENNIS BAREIS" -metadata "album=AIR TRIAGE PROGRAM v99.111 by DENNIS BAREIS" -metadata "author=CN-DENNIS-MBOX\Dennis on CN-DENNIS-MBOX" -metadata "album_artist=CN-DENNIS-MBOX" -metadata "comment=User comment that was entered into a dialog"
+			$Metadata | ForEach-Object {$a += ('-metadata', "`"$_`"") }
+		}
 		$a += "`"$Path`""
 	}
 	Write-Verbose "Runtime: $ffmpegRuntime"
@@ -2859,6 +2864,27 @@ Function Start-FFMpeg {
 	Write-Verbose "Parameter: $($a|ForEach-Object {$_})"
 
 	Start-Process -Wait -FilePath $ffmpegRuntime -ArgumentList $a -NoNewWindow
+}
+
+Function New-FFMpegMetadata {
+	[CmdletBinding()]
+	Param(
+		[string]$Title,
+		[string]$Genre,
+		[string]$Composer,
+		[string]$Author,
+		[string]$AlbumArtist,
+		[string]$Comment
+	)
+
+	$m = @()
+	If ($Title) {$m += "title=$Title"}
+	If ($Genre) {$m += "genre=$Genre"}
+	If ($Composer) {$m += "composer=$Composer"}
+	If ($Author) {$m += "author=$Author"}
+	If ($AlbumArtist) {$m += "album_artist=$AlbumArtist"}
+	If ($Comment) {$m += "comment=$Comment"}
+	$m
 }
 
 # Sendet ein CTRL+C an einen bestimmten Prozess

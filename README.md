@@ -410,6 +410,9 @@ Start-FFMpeg -RecordMouse
 
 # verfügbare Geräte ausgeben, z. B. um ein Mikrofon zu ermitteln
 Start-FFMpeg -EnumerateDevices
+
+# Aufnahme des Delapro-Fensters mit Metadaten
+Start-FFMpeg -Title Delapro -Verbose -Metadata (New-FFMpegMetadata -Title "Kunden anlegen" -Genre "Delapro Schulungsvideo" -Composer "FFMPEG Delapro" -Author "easy innovative software" -AlbumArtist "Artist" -Comment "Kurzes Schulungsvideo")
 ```
 
 ## Probleme ermitteln
