@@ -2802,6 +2802,20 @@ Function Install-FFMpeg {
 	} 
 }
 
+Function Get-FFMpeg {
+	[CmdletBinding()]
+	[OutputType([System.IO.DirectoryInfo])]
+	Param ()
+
+	$dirs = @()
+
+	$dirs += Get-ChildItem "$($Env:ProgramFiles)\ffmpeg*" -Directory -ErrorAction SilentlyContinue
+	$dirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\ffmpeg*" -Directory -ErrorAction SilentlyContinue
+	$dirs = $dirs | Sort-Object Name -Descending
+	$dirs
+}
+
+}
 Function Install-VDDSPrueftool {
 		[CmdletBinding()]
 	Param(
