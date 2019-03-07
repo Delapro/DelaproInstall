@@ -2823,22 +2823,28 @@ Function Start-FFMpeg {
 		[System.String]$Path="$env:USERPROFILE\Videos\Video-$(Get-Date -Format "yyyy-MM-dd=HH-mm-ss").mp4",
 		[System.String]$AudioDevice="",
 		[switch]$RecordMouse,
+		[switch]$EnumerateDevices,
 		[System.String]$ffmpegRuntime="$((Get-FFMpeg)[0].FullName)\bin\ffmpeg.exe"
 	)
 
 	$a = @()
-	$a += '-f', 'gdigrab'
-	If ($RecordMouse) {
-		$a += '-draw_mouse', '1'
-	}
-	$a += '-framerate', '30'
-	$a += '-i', 'desktop'
-	If ($AudioDevice) {
+	If ($EnumerateDevices) {
+		$a += '-list_devices', 'true'
 		$a += '-f', 'dshow'
-		$a += '-i', "audio=`"$AudioDevice`""
+		$a += '-i', '"dummy'
+	} else {
+		$a += '-f', 'gdigrab'
+		If ($RecordMouse) {
+			$a += '-draw_mouse', '1'
+		}
+		$a += '-framerate', '30'
+		$a += '-i', 'desktop'
+		If ($AudioDevice) {
+			$a += '-f', 'dshow'
+			$a += '-i', "audio=`"$AudioDevice`""
+		}
+		$a += "`"$Path`""
 	}
-	$a += "`"$Path`""
-
 	Write-Verbose "Runtime: $ffmpegRuntime"
 	Write-Verbose "Outputfile: $path"
 	Write-Verbose "Parameter: $($a|ForEach-Object {$_})"

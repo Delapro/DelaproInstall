@@ -401,6 +401,15 @@ Get-FFMpeg
 
 # Hilfe von FFProbe ausgeben
 & (dir "$((Get-FFMpeg)[0].FullName)\bin\ffprobe.exe") -help
+
+# Einfache Desktopaufnahme starten, Aufnahme wird beim aktuellen Benutzer im Video-Verzeichnis gespeichert
+Start-FFMpeg
+
+# Einfache Desktopaufnahme starten mit Maus
+Start-FFMpeg -RecordMouse
+
+# verfügbare Geräte ausgeben, z. B. um ein Mikrofon zu ermitteln
+Start-FFMpeg -EnumerateDevices
 ```
 
 ## Probleme ermitteln
