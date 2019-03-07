@@ -1591,7 +1591,7 @@ Function Install-Thunderbird {
 		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\",
 		[switch]$Force,
-		[Validateset("60.5.2", "60.5.1", "60.5.0", "60.4.0", "60.3.3", "60.2.1", "60.0")]
+		[Validateset("60.5.3", "60.5.2", "60.5.1", "60.5.0", "60.4.0", "60.3.3", "60.2.1", "60.0")]
 		[string[]]$Version
 	
 	)
@@ -1601,7 +1601,7 @@ Function Install-Thunderbird {
 	# z. B. 60.50.0 unter: https://ftp.mozilla.org/pub/thunderbird/releases/60.5.0/win32/de/
 	If ($null -eq $Version) {
 		# aktuelle Version
-		$tbVersion = "60.5.2"
+		$tbVersion = "60.5.3"
 		$downloadUrlBase = "https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion"
 	} else {
 		$tbVersion = $Version
