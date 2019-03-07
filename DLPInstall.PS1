@@ -1584,6 +1584,38 @@ Function Install-Chrome {
 
 }
 
+# installiert List&Label Debwin legt dazu ein eigenes Verzeichnis mit Namen combitProblemLösung an
+function Install-DebWin {
+	[CmdletBinding()]
+	Param(
+		[System.String]$DelaproPath="C:\Delapro",
+		[System.String]$Version="4",
+		[System.String]$tempDirectory="$Env:Temp"
+	)
+
+	If (Test-Path $DelaproPath) {
+		$path = Join-Path -Path $DelaproPath -ChildPath "combitProblemLösung"
+		If (-not (Test-Path $path)) {
+			New-Item -Path $path -ItemType Directory
+		}
+		If (Test-Path $path) {
+			If ($Version -eq "4") {
+				Start-BitsTransfer "$easyBaseURI/util/debwin4.exe" -Destination $path
+				$debwin4 = Join-Path -Path $path -ChildPath "DebWin4.exe"
+				Unblock-File $debwin4
+				If (Test-Path ($debwin4)) {
+					Write-Verbose "Debwin4 verfügbar: $debwin4"
+				}
+			} else {
+				throw "momentan wird nur Version 4 unterstützt"
+			}
+
+		} else {
+			Write-Error "Verzeichnis $path konnte nicht angelegt werden!"
+		}
+	}
+}
+
 # Installation von Thunderbird
 Function Install-Thunderbird {
 	[CmdletBinding()]
