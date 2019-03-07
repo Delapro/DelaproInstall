@@ -2816,6 +2816,110 @@ Function Get-FFMpeg {
 	$dirs
 }
 
+# startet FFMpeg zur Aufnahme des Desktops
+Function Start-FFMpeg {
+	[CmdletBinding()]
+	Param(
+		[System.String]$Path="$env:USERPROFILE\Videos\Video-$(Get-Date -Format "yyyy-MM-dd=HH-mm-ss").mp4",
+		[System.String]$AudioDevice="",
+		[switch]$RecordMouse,
+		[System.String]$ffmpegRuntime="$((Get-FFMpeg)[0].FullName)\bin\ffmpeg.exe"
+	)
+
+	$a = @()
+	$a += '-f', 'gdigrab'
+	If ($RecordMouse) {
+		$a += '-draw_mouse', '1'
+	}
+	$a += '-framerate', '30'
+	$a += '-i', 'desktop'
+	If ($AudioDevice) {
+		$a += '-f', 'dshow'
+		$a += '-i', "audio=`"$AudioDevice`""
+	}
+	$a += "`"$Path`""
+
+	Write-Verbose "Runtime: $ffmpegRuntime"
+	Write-Verbose "Outputfile: $path"
+	Write-Verbose "Parameter: $($a|ForEach-Object {$_})"
+
+	Start-Process -Wait -FilePath $ffmpegRuntime -ArgumentList $a -NoNewWindow
+}
+
+# Sendet ein CTRL+C an einen bestimmten Prozess
+Function Invoke-SendControlCToProcess ($pidToSendTo)
+{
+
+    $t = @"
+            using System;
+            using System.Diagnostics;
+            using System.IO;
+            using System.Runtime.InteropServices;
+            using System.Threading;
+            namespace PowerStopper
+            {
+                public static class Stopper
+                {
+                    // Delegate type to be used as the Handler Routine for SCCH
+                    delegate Boolean ConsoleCtrlDelegate(CtrlTypes type);
+
+                    [DllImport("kernel32.dll", SetLastError = true)]
+                    static extern bool AttachConsole(uint dwProcessId);
+            
+                    [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+                    static extern bool FreeConsole();
+
+                    // Enumerated type for the control messages sent to the handler routine
+                    enum CtrlTypes : uint
+                    {
+                        CTRL_C_EVENT = 0,
+                        CTRL_BREAK_EVENT,
+                        CTRL_CLOSE_EVENT,
+                        CTRL_LOGOFF_EVENT = 5,
+                        CTRL_SHUTDOWN_EVENT
+                    }
+
+        
+                    [DllImport("kernel32.dll")]
+                    [return: MarshalAs(UnmanagedType.Bool)]
+                    private static extern bool GenerateConsoleCtrlEvent(CtrlTypes dwCtrlEvent, uint dwProcessGroupId);
+                    [DllImport("kernel32.dll")]
+                    static extern bool SetConsoleCtrlHandler(ConsoleCtrlDelegate HandlerRoutine, bool Add);
+
+
+                    public static void StopProgram(uint pid)
+                    {
+                        // It's impossible to be attached to 2 consoles at the same time,
+                        // so release the current one.
+                        FreeConsole();
+                    
+                        // This does not require the console window to be visible.
+                        if (AttachConsole(pid))
+                        {
+                            // Disable Ctrl-C handling for our program
+                            SetConsoleCtrlHandler(null, true);
+                            GenerateConsoleCtrlEvent(CtrlTypes.CTRL_C_EVENT, 0);
+                    
+                            // Must wait here. If we don't and re-enable Ctrl-C
+                            // handling below too fast, we might terminate ourselves.
+                            Thread.Sleep(2000);
+                    
+                            FreeConsole();
+                    
+                            // Re-enable Ctrl-C handling or any subsequently started
+                            // programs will inherit the disabled state.
+                            SetConsoleCtrlHandler(null, false);
+                        }
+                    }
+                }
+            }
+"@
+
+    Add-Type -TypeDefinition $t
+
+    [PowerStopper.Stopper]::StopProgram($pidToKill)
+}
+
 Function Install-VDDSPrueftool {
 		[CmdletBinding()]
 	Param(
