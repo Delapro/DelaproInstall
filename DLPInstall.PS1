@@ -2820,11 +2820,14 @@ Function Get-FFMpeg {
 Function Start-FFMpeg {
 	[CmdletBinding()]
 	Param(
+		# TODO: Parameter richtig strukturieren!
 		[System.String]$Path="$env:USERPROFILE\Videos\Video-$(Get-Date -Format "yyyy-MM-dd=HH-mm-ss").mp4",
 		[System.String]$AudioDevice="",
 		[switch]$RecordMouse,
 		[switch]$EnumerateDevices,
-		[System.String]$ffmpegRuntime="$((Get-FFMpeg)[0].FullName)\bin\ffmpeg.exe"
+		[System.String]$ffmpegRuntime="$((Get-FFMpeg)[0].FullName)\bin\ffmpeg.exe",
+		[System.String]$Framerate=30,
+		[System.String]$Title
 	)
 
 	$a = @()
@@ -2836,9 +2839,15 @@ Function Start-FFMpeg {
 		$a += '-f', 'gdigrab'
 		If ($RecordMouse) {
 			$a += '-draw_mouse', '1'
+		} else {
+			$a += '-draw_mouse', '0'
 		}
-		$a += '-framerate', '30'
-		$a += '-i', 'desktop'
+		$a += '-framerate', "$Framerate"
+		If ($Title) {
+			$a += '-i', "title=$Title"
+		} else {
+			$a += '-i', 'desktop'
+		}
 		If ($AudioDevice) {
 			$a += '-f', 'dshow'
 			$a += '-i', "audio=`"$AudioDevice`""
