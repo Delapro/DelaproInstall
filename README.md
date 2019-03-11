@@ -314,8 +314,9 @@ Get-ThunderbirdUpdates
 
 # Thunderbird Profilmanager aufrufen
 Invoke-ThunderbirdProfileManager
-
 ```
+
+Weitere Möglichkeiten mit Thunderbird: [Thunderbird Logging](#thunderbird-logging)
 
 ### OpenGPG
 
