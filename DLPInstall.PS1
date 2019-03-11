@@ -423,7 +423,7 @@ Function Set-AcrobatReaderDCViewerRightPaneOff {
 		$layoutComment = $viewer.CreateComment($layout.OuterXml)
 		# Layout-Element durch das Element mit dem Kommentar ersetzen
 		$layout.ParentNode.ReplaceChild($layoutComment, $layout)
-		# so würde das Ergebnis aussehen:
+		0# so würde das Ergebnis aussehen:
 		# $viewer.OuterXml
 		# Ergebnis speichern, geht nur mit Adminrechten!
 		$viewer.Save($viewerFile)
@@ -446,13 +446,13 @@ Function Disable-AcrobatReaderDCSendAndTrack {
 	New-ItemProperty -Path "$regBase\cServices" -Name "bToggleSendAndTrack" -Value 1 -Force
 }	
 
-Function Get-VolumeSelection {
+Function Get-VolumeDriveLetter {
 	[CmdletBinding()]
 	Param(
 		[System.String]$Titel="Bitte Laufwerk auswählen:"
 	)
 
-	Get-Volume| Where-Object {$null -ne $_.Driveletter} | Where-Object {$_.OperationalStatus -eq "OK"}|Out-GridView -PassThru -Title $Titel
+	(Get-Volume| Where-Object {$null -ne $_.Driveletter} | Where-Object {$_.OperationalStatus -eq "OK"}|Out-GridView -PassThru -Title $Titel) | Select-Object -ExpandProperty DriveLetter
 }
 
 # versucht die verfügbaren Delaprobackups zu ermitteln, in der Regel sollte es die USB-Sticks mit den Sicherungen finden
