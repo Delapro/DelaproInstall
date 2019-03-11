@@ -446,7 +446,7 @@ Function Disable-AcrobatReaderDCSendAndTrack {
 	New-ItemProperty -Path "$regBase\cServices" -Name "bToggleSendAndTrack" -Value 1 -Force
 }	
 
-# dient zur Auswahl eines oder mehrere Laufwerke, es werden nur Laufwerke angezeigt, 
+# dient zur Auswahl eines oder mehrerer Laufwerke, es werden nur Laufwerke angezeigt, 
 # welche einen Laufwerksbuchstaben haben und keine Fehler aufweisen
 Function Get-VolumeDriveLetter {
 	[CmdletBinding()]
