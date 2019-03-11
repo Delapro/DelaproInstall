@@ -446,6 +446,15 @@ Function Disable-AcrobatReaderDCSendAndTrack {
 	New-ItemProperty -Path "$regBase\cServices" -Name "bToggleSendAndTrack" -Value 1 -Force
 }	
 
+Function Get-VolumeSelection {
+	[CmdletBinding()]
+	Param(
+		[System.String]$Titel="Bitte Laufwerk auswählen:"
+	)
+
+	Get-Volume| Where-Object {$null -ne $_.Driveletter} | Where-Object {$_.OperationalStatus -eq "OK"}|Out-GridView -PassThru -Title $Titel
+}
+
 # versucht die verfügbaren Delaprobackups zu ermitteln, in der Regel sollte es die USB-Sticks mit den Sicherungen finden
 # wenn mehrere Sicherungen gefunden werden, werden alle zurückgegeben, die neueste Sicherung als erstes Element des Arrays
 Function Get-DelaproBackups {
