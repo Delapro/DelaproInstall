@@ -476,7 +476,7 @@ Get-WinEvent -LogName "System" -FilterXPath "*[System[EventRecordID=$($rr.Record
 Invoke-SysInternalTool -Tool ProcDump -Verbose
 # wartet auf das Eintreten einer Exception beim Ausführen von KZBVExp und schreibt den Prozessdump
 # in die Datei c:\Temp\kzbvExp.Dmp
-$Env:Temp\ProcDump.Exe -accepteula -e -w -ma KZBVExp -o C:\Temp\KzbvExp.DMP
+& $Env:Temp\ProcDump.Exe -accepteula -e -w -ma KZBVExp -o C:\Temp\KzbvExp.DMP
 ```
 
 ### Hardwareprobleme erkennen
@@ -511,6 +511,8 @@ Invoke-SysInternalTool -Tool Procmon
 # ladet und startet Prozessexplorer
 Invoke-SysInternalTool -Tool ProcExp
 
+# wenn mein heruntergeladenes Programm direkt starten möchte, kann man mit den Standardeinstellungen dieses Konstrukt verwenden
+& $Env:Temp\AutoRuns.Exe
 ```
 
 ### Probleme in Zusatzprogrammen
