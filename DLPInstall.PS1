@@ -446,6 +446,8 @@ Function Disable-AcrobatReaderDCSendAndTrack {
 	New-ItemProperty -Path "$regBase\cServices" -Name "bToggleSendAndTrack" -Value 1 -Force
 }	
 
+# dient zur Auswahl eines oder mehrere Laufwerke, es werden nur Laufwerke angezeigt, 
+# welche einen Laufwerksbuchstaben haben und keine Fehler aufweisen
 Function Get-VolumeDriveLetter {
 	[CmdletBinding()]
 	Param(
@@ -3507,7 +3509,7 @@ Function Invoke-DefenderSetupAndScan {
 Function Add-VolumeToBackupXML {
 	[cmdletBinding()]
 	Param(
-		[Parameter(Mandatory=$true)][System.String]$Drive,
+		[Parameter(Mandatory=$true)][System.String[]]$Drive,
 		[System.String]$BackupConfigFile="Backup\Backup.XML",
 		[System.String]$DestinationPath="C:\Delapro"
 
@@ -3528,13 +3530,16 @@ Function Add-VolumeToBackupXML {
 "@
 		}
 
-		$Volume = Get-Volume| Where-Object {$Drive -eq $_.Driveletter} | Where-Object {$_.OperationalStatus -eq "OK"} |  Select-Object -ExpandProperty Path
-		Write-Verbose "Drive: $Drive  Volume: $Volume"
+		$Drive | ForEach-Object {
+			$dl = $_
+			$Volume = Get-Volume| Where-Object {$dl -eq $_.Driveletter} | Where-Object {$_.OperationalStatus -eq "OK"} |  Select-Object -ExpandProperty Path
+			Write-Verbose "Drive: $dl  Volume: $Volume"
 
-		$guid = $backupXML.CreateElement("GUID")
-		$guid.InnerText = $Volume
-		# TODO: prüfen, ob GUID schon vorhanden ist
-		$backupXML.Delapro.easybackup32.BackupVolumeGUIDs.AppendChild($guid)
+			$guid = $backupXML.CreateElement("GUID")
+			$guid.InnerText = $Volume
+			# TODO: prüfen, ob GUID schon vorhanden ist
+			$backupXML.Delapro.easybackup32.BackupVolumeGUIDs.AppendChild($guid)
+		}
 		Write-Verbose "Speichere $backXMLFile"
 		$backupXML.OuterXml | Set-Content $backXMLFile
 	} else {

@@ -187,6 +187,9 @@ Import-LastDelaproBackup -DestinationPath $DlpPath -Verbose
  # wie oben aber explizite Angabe der Backup.XML-Datei
  Add-VolumeToBackupXML -Drive F -BackupConfigFile "Backup\Backup.XML" -DestinationPath $DlpPath -Verbose
 
+# Auswahl der Laufwerke die hinzugefügt werden sollen
+Add-VolumeToBackupXML -Drive (Get-VolumeDriveLetter) -DestinationPath $DlpPath -Verbose
+
  # Programmverteileraufruf: CALL BACKUP.BAT .\BACKUP\backup.xml *.*
 ```
 
