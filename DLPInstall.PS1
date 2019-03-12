@@ -3730,11 +3730,12 @@ Function Invoke-CleanupDelapro {
 	# alte Backupdateien löschen
 	Remove-Item "$($DelaproPath)\*.PDB"
 
-	Invoke-CleanupLL -DelaproPath $DelaproPath -Version "17"
-	Invoke-CleanupLL -DelaproPath $DelaproPath -Version "18"
-	Invoke-CleanupLL -DelaproPath $DelaproPath -Version "19"
-	Invoke-CleanupLL -DelaproPath $DelaproPath -Version "20"
-	Invoke-CleanupLL -DelaproPath $DelaproPath -Version "21"
+	# neueste vorhandene LL-Version ermitteln und von da aus rückwärts alle alten Versionen entfernen
+	$llMaxVersion = Get-LLVersion $DelaproPath -HighestVersion -VersionNumber
+	while ($llMaxVersion -gt "16") {
+		$llMaxVersion = ($llMaxVersion -1).ToString()
+		Invoke-CleanupLL -DelaproPath $DelaproPath -Version $llMaxVersion
+	}
 
 	Get-ChildItem "$($DelaproPath)\cm*"
 
@@ -3757,7 +3758,6 @@ Function Invoke-CleanupLL {
 		[System.String]$Version
 	)
 
-	# TODO: Prüfen ob eine Nachfolgerversion vorhanden ist!
 	Remove-Item "$($DelaproPath)\cm??$($Version)*.DLL"
 	Remove-Item "$($DelaproPath)\cm??$($Version)*.LNG"
 	Remove-Item "$($DelaproPath)\cm??$($Version)*.OCX" -ErrorAction SilentlyContinue
