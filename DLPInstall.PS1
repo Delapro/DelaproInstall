@@ -3601,7 +3601,7 @@ Function Import-LastDelaproBackup {
 
 }
 
-# Kopier die Daten ins Spielprogramm
+# Kopiert die Daten ins Spielprogramm
 Function Copy-Delagame {
 	[CmdletBinding()]
 	Param(
