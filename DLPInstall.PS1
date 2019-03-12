@@ -3761,7 +3761,9 @@ Function Invoke-CleanupLL {
 	Remove-Item "$($DelaproPath)\cm??$($Version)*.DLL"
 	Remove-Item "$($DelaproPath)\cm??$($Version)*.LNG"
 	Remove-Item "$($DelaproPath)\cm??$($Version)*.OCX" -ErrorAction SilentlyContinue
-	# TODO: 64-Bit-Dateien?
+	# 64-Bit Unterstützungsdateien löschen
+	Remove-Item "$($DelaproPath)\cx??$($Version)*.EXE" -ErrorAction SilentlyContinue
+	Remove-Item "$($DelaproPath)\cm??$($Version)*.EXE" -ErrorAction SilentlyContinue
 
 }
 
