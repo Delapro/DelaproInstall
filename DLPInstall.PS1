@@ -3767,6 +3767,27 @@ Function Invoke-CleanupLL {
 
 }
 
+# ermittelt die verfügbaren List&Label Versionen aus einem bestimmten Verzeichnis
+Function Get-LLVersion {
+	[CmdLetBinding()]
+	Param(
+		[System.String]$DelaproPath="C:\Delapro",
+		[switch]$HighestVersion,
+		[switch]$VersionNumber
+	)
+
+	$versions = Get-ChildItem "$($DelaproPath)\cmll[1-9][0-9]*.DLL"| Select-Object Name | Sort-Object Name -Descending
+	If ($HighestVersion) {
+		If ($VersionNumber) {
+			$versions[0].Name.Substring(4,2)
+		} else {
+			$versions[0]
+		}
+	} else {
+		$versions
+	}
+}
+
 #If($PSReadlineActive) {
 #	# PSReadline wieder aktiveren, falls es vorher ausgeschaltet wurde.
 #	Import-Module PSReadline
