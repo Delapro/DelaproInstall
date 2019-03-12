@@ -864,6 +864,63 @@ Function Invoke-PDFTextExtraction {
 
 }
 
+Function Get-DelaproLicense {
+	[CmdletBinding()]
+	Param(
+		[ValidateSet('Main', 'Conf')][System.String]$Part='Main',
+		[System.String]$DelaproPath="C:\Delapro",
+		[switch]$CompareParts
+	)
+
+	If ($CompareParts) {
+		Write-Verbose "Vergleichmodus"
+		$c = Get-DelaproLicense -Part Conf -DelaproPath $DelaproPath
+		$m = Get-DelaproLicense -Part Main -DelaproPath $DelaproPath
+		If ((Compare-Object -ReferenceObject @($m.psobject.properties) -DifferenceObject  @($c.psobject.properties) -Property Value).Length -eq 0) {
+			$m
+		} else {
+			throw "Lizensunterschiede entdeckt C: $c, M: $m"
+		}
+	} else {
+		If ($Part -eq 'Conf') {
+			$exeFile = Join-Path -Path $DelaproPath -ChildPath 'dlp_conf.exe'
+		} else {
+			$exeFile = Join-Path -Path $DelaproPath -ChildPath 'dlp_main.exe'
+		}
+		$licFile = Join-Path -Path $DelaproPath -ChildPath 'dlp_main.lic'
+		If ($licFile) {
+			Remove-Item -Path $licFile -Force
+		}
+		Write-Verbose "Start $exeFile"
+		Start-Process -Wait -FilePath $exeFile -ArgumentList '/GetLicense'
+		If (Test-Path $licFile) {
+			$lic = Get-Content -Path $licFile
+			Write-Verbose "License gefunden: $lic"
+			If ($lic[-1][-1] -eq 0x1a) {
+				$l1 = $lic[0]
+				If ($l1[0] -eq 'D') {
+					$l1 = $l1.Substring(1)
+					$y = (($l1 -split '-')[0]).ToCharArray()
+					[Array]::Reverse($y)
+					$y = $y -join ''
+					$m = (($l1 -split '-')[1]).ToCharArray()
+					[Array]::Reverse($m)
+					$m = ($m -join '').TrimStart()
+					$s = ($l1 -split '-')[2]
+					$l2 = $lic[1].Substring(0, $lic[1].Length -1)
+					$licObj = [PSCustomObject]@{
+						SerialNr = $s;
+						Year = $y;
+						Month = $m;
+						Licensee = ($l2 -split '@')
+					}
+					$licObj
+				}
+			}
+		}
+	}
+}
+
 # installiert eDocPrintPro
 Function Install-eDocPrintPro {
 	[CmdletBinding()]
