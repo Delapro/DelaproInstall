@@ -1460,6 +1460,7 @@ Function Install-VeraPDF {
 			# java -jar "%BASEDIR%verapdf-izpack-installer-1.10.6.jar" auto-install.xml
 			$p = Start-Process -Wait -FilePath $j -ArgumentList "-jar", $veraJarFile, "$($veraPath)\auto-install.XML" -PassThru -NoNewWindow
 			Write-Verbose "0=Erfolgreich, alles andere Fehler: $($p.ExitCode)"
+			Write-Verbose "InstallPath: $veraPDFInstallPath"
 		}
 	} else {
 		Write-Error "Keine entpackten Dateien gefunden."
