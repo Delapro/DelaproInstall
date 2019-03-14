@@ -1481,8 +1481,8 @@ Function Test-VeraPDF {
 Function Invoke-VeraPDFCheck {
 	[CmdletBinding()]
 	Param(
-		[System.String]$VeraPDFPath="$env:USERPROFILE\veraPDF",
-		[System.String]$pdfFile
+		[System.String]$pdfFile,
+		[System.String]$VeraPDFPath="$env:USERPROFILE\veraPDF"
 	)
 
 	$veraPdf = Join-Path -Path $VeraPDFPath -ChildPath 'verapdf.bat'
