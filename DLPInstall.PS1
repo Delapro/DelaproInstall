@@ -1467,6 +1467,35 @@ Function Install-VeraPDF {
 	}
 }
 
+Function Test-VeraPDF {
+	[CmdletBinding()]
+	Param(
+		[System.String]$VeraPDFPath="$env:USERPROFILE\veraPDF"
+	)
+
+	If (Test-Path (Join-Path -Path $VeraPDFPath -ChildPath 'verapdf.bat')) {
+		$true
+	}
+}
+
+Function Invoke-VeraPDFCheck {
+	[CmdletBinding()]
+	Param(
+		[System.String]$VeraPDFPath="$env:USERPROFILE\veraPDF",
+		[System.String]$pdfFile
+	)
+
+	$veraPdf = Join-Path -Path $VeraPDFPath -ChildPath 'verapdf.bat'
+
+	If (Test-VeraPDF $VeraPDFPath) {
+		$arg = @('--format', 'xml', $Pdffile)
+		Write-Verbose "Args $arg"
+		# Start-Process -Wait -PassThru -FilePath $veraPdf -ArgumentList $arg -NoNewWindow | Out-String -OutVariable erg
+		& '.\verapdf.bat' --format xml $pdfFile | Out-String -OutVariable erg
+		[xml]$erg
+	}
+}
+
 # ladet und installiert 7Zip
 Function Install-7Zip {
 	[CmdletBinding()]
