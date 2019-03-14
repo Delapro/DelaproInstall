@@ -1993,7 +1993,7 @@ Function Install-Teamviewer {
 		[System.String]$CreateDesktopLink="easy Internet Fernwartung (Teamviewer).lnk"
 	)
 
-	# es macht Sinn, hier noch eine TV-Typ mit aufzunehmen um auch einen TV-Host installieren zu können
+	# TODO: es macht Sinn, hier noch eine TV-Typ mit aufzunehmen um auch einen TV-Host installieren zu können
 
 	If (Test-Path $DestinationPath) {
 		If (-not (Test-Path $tempDirectory)) {
@@ -2008,6 +2008,32 @@ Function Install-Teamviewer {
 		Copy-Item $tempDirectory\easyTeamViewerQS_de.exe $DestinationPath\Fernwartung -Force
 		# Link auf Desktop erstellen, Text: easy Internet Fernwartung (Teamviewer)
 		New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\easyTeamViewerQS_de.exe" -LinkFilename $CreateDesktopLink
+	} else {
+		Write-Error "$DestinationPath existiert nicht!"
+	}
+}
+
+Function Install-AnyDesk {
+	[CmdletBinding()]
+	Param(
+		[System.String]$tempDirectory="$Env:TEMP\",
+		[System.String]$DestinationPath="C:\Delapro",
+		[System.String]$CreateDesktopLink="easy Internet Fernwartung (AnyDesk).lnk"
+	)
+
+	If (Test-Path $DestinationPath) {
+		If (-not (Test-Path $tempDirectory)) {
+			New-Item $tempDirectory -ItemType Directory
+		}
+		# AnyDesk Fernwartung einrichten
+		Start-BitsTransfer 'https://download.anydesk.com/AnyDesk.exe'  -Destination $tempDirectory
+		Unblock-File "$($tempDirectory)AnyDesk.exe"
+		If (! (Test-Path $DestinationPath\Fernwartung)) {
+			New-Item -path $DestinationPath\Fernwartung -Type Directory
+		}
+		Copy-Item $tempDirectory\AnyDesk.exe $DestinationPath\Fernwartung -Force
+		# Link auf Desktop erstellen, Text: easy Internet Fernwartung (AnyDesk)
+		New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\AnyDesk.exe" -LinkFilename $CreateDesktopLink
 	} else {
 		Write-Error "$DestinationPath existiert nicht!"
 	}
@@ -2495,7 +2521,7 @@ Function Update-DlpRawPr {
 	}
 }
 
-# aktualisiert easyTeamviewerQS_de.wyw, wenn die lokal vorhandene Version älter ist, als die angegebene Buildnummer
+# aktualisiert easyTeamviewerQS_de.exe, wenn die lokal vorhandene Version älter ist, als die angegebene Buildnummer
 Function Update-Teamviewer {
 	[CmdletBinding()]
 	#[OutputType([System.Boolean])]
