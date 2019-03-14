@@ -1449,14 +1449,16 @@ Function Install-VeraPDF {
 	If (Test-Path $ExpandedFilesPath.FullName) {
 		$veraPath = $ExpandedFilesPath.FullName
 		Write-Verbose "veraPath: $veraPath"
-		$veraJarFile = Join-Path -Path $veraPath -ChildPath $ExpandedFilesPath.Name 
+		$veraInst = Get-ChildItem $veraPath -Filter '*.jar'
+		$veraJarFile = $veraInst[0].FullName
+		Write-Verbose "veraJarFile: $veraJarFile"
 		$AutoInstallXML | Set-Content -Path $veraPath\auto-install.XML
 
 		# Javapfad ermitteln
 		$j = Get-Java
 		If ($j) {
 			# java -jar "%BASEDIR%verapdf-izpack-installer-1.10.6.jar" auto-install.xml
-			$p = Start-Process -Wait -FilePath $j -ArgumentList "-jar", $veraJarFile, "$($veraPath)\auto-install.XML" -PassThru
+			$p = Start-Process -Wait -FilePath $j -ArgumentList "-jar", $veraJarFile, "$($veraPath)\auto-install.XML" -PassThru -NoNewWindow
 			Write-Verbose "0=Erfolgreich, alles andere Fehler: $($p.ExitCode)"
 		}
 	} else {
