@@ -1488,8 +1488,9 @@ Function Invoke-VeraPDFCheck {
 	$veraPdf = Join-Path -Path $VeraPDFPath -ChildPath 'verapdf.bat'
 
 	If (Test-VeraPDF $VeraPDFPath) {
-		$arg = @('--format', 'xml', $Pdffile)
-		Write-Verbose "Args $arg"
+		# $arg = @('--format', 'xml', $Pdffile)
+		Write-Verbose "Starte $veraPdf"
+		# Write-Verbose "Args $arg"
 		# Start-Process -Wait -PassThru -FilePath $veraPdf -ArgumentList $arg -NoNewWindow | Out-String -OutVariable erg
 		& $veraPdf --format xml $pdfFile | Out-String -OutVariable erg
 		[xml]$erg
