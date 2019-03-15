@@ -1491,7 +1491,7 @@ Function Invoke-VeraPDFCheck {
 		$arg = @('--format', 'xml', $Pdffile)
 		Write-Verbose "Args $arg"
 		# Start-Process -Wait -PassThru -FilePath $veraPdf -ArgumentList $arg -NoNewWindow | Out-String -OutVariable erg
-		& '.\verapdf.bat' --format xml $pdfFile | Out-String -OutVariable erg
+		& $veraPdf --format xml $pdfFile | Out-String -OutVariable erg
 		[xml]$erg
 	}
 }
