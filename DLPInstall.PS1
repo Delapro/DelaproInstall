@@ -2900,7 +2900,7 @@ Function Install-DPF {
 
 	# TODO: mit Leben erfüllen und automatisieren
 }
-
+ffmpe
 # installiert ffmpeg
 Function Install-FFMpeg {
 	[CmdletBinding()]
@@ -2925,7 +2925,7 @@ Function Install-FFMpeg {
 	Expand-Archive $TempDir\ffmpeg.Zip -DestinationPath $env:ProgramFiles -Force
 	$programPath = Join-Path -path $env:ProgramFiles -ChildPath $filename.Replace('.zip', '')
 	If (Test-Path ($programPath)) {
-		Write-Verbose "vorhanden: $programPath, Version: $version oder neuer"
+		Write-Verbose "nun verfügbar: $programPath, Version: $version oder neuer"
 	} 
 }
 
