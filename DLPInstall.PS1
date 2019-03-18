@@ -3651,10 +3651,13 @@ Function Add-VolumeToBackupXML {
 			$Volume = Get-Volume| Where-Object {$dl -eq $_.Driveletter} | Where-Object {$_.OperationalStatus -eq "OK"} |  Select-Object -ExpandProperty Path
 			Write-Verbose "Drive: $dl  Volume: $Volume"
 
-			$guid = $backupXML.CreateElement("GUID")
-			$guid.InnerText = $Volume
-			# TODO: prüfen, ob GUID schon vorhanden ist
-			$backupXML.Delapro.easybackup32.BackupVolumeGUIDs.AppendChild($guid)
+			# Prüfen, ob das Volume schon hinterlegt ist
+			$exist = $backupXML.Delapro.easybackup32.BackupVolumeGUIDs.ChildNodes| ForEach-Object {$_.innertext -eq $Volume}
+			If (-Not $exist) {
+				$guid = $backupXML.CreateElement("GUID")
+				$guid.InnerText = $Volume
+				$backupXML.Delapro.easybackup32.BackupVolumeGUIDs.AppendChild($guid)
+			}
 		}
 		Write-Verbose "Speichere $backXMLFile"
 		$backupXML.OuterXml | Set-Content $backXMLFile
