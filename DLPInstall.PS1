@@ -175,6 +175,21 @@ Function Test-DelaproDirectoryExists {
 	Test-Path $Path
 }
 
+# gibt $True zurück, wenn das Delapro-Verzeichnis ein aktuelles Verzeichnis ist, geprüft wird anhand
+# von AuftrPos.dbf bzw. Auftrag.dbf
+Function Test-DelaproActive {
+	[CmdletBinding()]
+	Param (
+		[int]$TolerateDays=1,
+		[String]$Path = 'C:\DELAPRO'
+	)
+
+        $Pos = (Get-Item (Join-Path -Path $Path -ChildPath 'auftrpos.dbf')).LastWriteTime -gt ((Get-Date).AddDays($TolerateDays * -1))
+        $Main = (Get-Item (Join-Path -Path $Path -ChildPath 'auftrag.dbf')).LastWriteTime -gt ((Get-Date).AddDays($TolerateDays * -1))
+
+	$Pos -or $Main
+}
+
 # Mal sehen, ob es was bringt unter alten Windowsversionen
 Function Copy-FileWithDateTime ($source, $dest) {
 
