@@ -2425,28 +2425,63 @@ Function Backup-Delapro {
 		[System.String]$DelaproPath="C:\Delapro",
 		[System.String]$BackupPath="C:\Temp\DelaproSicherung",
 		[Switch]$IgnoreBilder,
-		[Switch]$SecureBackup
+		[Switch]$SecureBackup,
+		[Switch]$Zip64
 	)
 
 	Write-Verbose "Sichere $DelaproPath nach $BackupPath"
-	$Argumente = @("*.*", "/S", "/V", "/AUTO", $BackupPath)
-	If ($IgnoreBilder) {
-		$Argumente += "/IB"
-	}
-	Start-Process -Wait (Join-Path -Path $($DelaproPath) -ChildPath "Backup\easyBackup32.EXE") -ArgumentList $Argumente -WorkingDirectory $DelaproPath
 
-	If ($SecureBackup) {
-		# Dateinamen des letzten Backups ermitteln
-		$backups = Get-ChildItem "$($BackupPath)\Delapro*.ZIP"
-		# Sortieren mit neuester zuerst
-		$backups = $backups| Sort-Object -Descending Name
-		If ($backups -is [Array]) {
-			$backups = $backups[0]
+	If ($Zip64) {
+		# easyBackup32 unterstützt keine Dateien >4GB also tar verwenden
+		$tarEXE = Join-Path -Path (Join-Path -Path $env:SystemRoot -ChildPath 'system32') -ChildPath 'tar.exe'
+		If (Test-Path -Path $tarEXE) {
+			$Argumente = @('--verbose', '--exclude', 'copy', '--exclude', 'copy',
+						   '--exclude', 'Fernwartung', '--exclude', 'Export/KZBV/Temp')
+			If ($IgnoreBilder) {
+				# alle möglichen Varianten abdecken
+				$Argumente += '--exclude', 'bilder'
+				$Argumente += '--exclude', 'BILDER'
+				$Argumente += '--exclude', 'Bilder'
+			}
+			$Argumente += '--format=zip', '-cf'
+			$BackupFile = "Delapro_FULL_$(get-date -format "yyyyMMdd_HHmm")"
+			$BackupFile = Join-Path -Path $BackupPath -ChildPath $BackupFile
+			If ($SecureBackup) {
+				$BackupFile += '.eyBZip'
+			} else {
+				$BackupFile += '.zip'
+			}
+			$Argumente += $BackupFile
+			$Argumente += "*.*"
+			Write-Verbose "Argumente: $Argumente"
+			Write-Verbose "Starte $tarEXE"
+			Write-Verbose "Kommandozeilenlänge: $(($Argumente|ForEach-Object{$l=0}{$l+=$_.length;$l+=1}{$l}) + $tarEXE.Length)"
+			Start-Process -Wait $tarEXE -ArgumentList $Argumente -WorkingDirectory $DelaproPath
+		} else {
+			Write-Error "tar.exe konnte nicht gefunden werden (benötigt Win >= 1803)"
 		}
-		# umbenennen
-		If (Test-Path $backups.FullName) {
-			Rename-Item -Path $backups.FullName -NewName ([System.IO.Path]::ChangeExtension($backups.FullName, "eyBZIP"))
+	} else {
+		# normales Backup über easyBackup32
+		$Argumente = @("*.*", "/S", "/V", "/AUTO", $BackupPath)
+		If ($IgnoreBilder) {
+			$Argumente += "/IB"
 		}
+		Start-Process -Wait (Join-Path -Path $($DelaproPath) -ChildPath "Backup\easyBackup32.EXE") -ArgumentList $Argumente -WorkingDirectory $DelaproPath
+
+		If ($SecureBackup) {
+			# Dateinamen des letzten Backups ermitteln
+			$backups = Get-ChildItem "$($BackupPath)\Delapro*.ZIP"
+			# Sortieren mit neuester zuerst
+			$backups = $backups| Sort-Object -Descending Name
+			If ($backups -is [Array]) {
+				$backups = $backups[0]
+			}
+			# umbenennen
+			If (Test-Path $backups.FullName) {
+				Rename-Item -Path $backups.FullName -NewName ([System.IO.Path]::ChangeExtension($backups.FullName, "eyBZIP"))
+			}
+		}
+
 	}
 }
 
