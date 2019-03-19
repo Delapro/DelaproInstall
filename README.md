@@ -48,6 +48,12 @@ Install-StartBitsTransfer
 
 ## Backup aktualisieren, Backup durchführen und DLPWinPr aktualisieren
 
+Zum setzen des aktuellen Delapro-Pfads verwendet man
+
+```Powershell
+$DlpPath=(Resolve-Path .).Path
+```
+
 ```Powershell
 If (Test-DelaproNotRunning -Path $DlpPath) {
     # Backup aktualisieren
