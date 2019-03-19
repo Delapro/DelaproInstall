@@ -167,6 +167,16 @@ If ($p) {
 
 ## Rund um Backups
 
+### Erstellen von Backups
+
+```Powershell
+# normale, schnelle Sicherung erstellen mit eyBZip-Endung
+Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -IgnoreBilder -SecureBackup -Verbose
+
+# komplette Sicherung erstellen, inkl. Bilder
+Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -Zip64 -SecureBackup -Verbose
+```
+
 ### Importieren einer Delapro-Datensicherung
 
 ```Powershell
