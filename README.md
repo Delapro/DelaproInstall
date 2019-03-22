@@ -159,7 +159,19 @@ Set-Printer -Name "DelaproMail" -Drivername "Xerox Global Print Driver PS"
 Install-XeroxUniversalDriver -Verbose -Version V4
 Set-Printer -Name "DelaproMail" -Drivername "Xerox Global Print Driver V4 PS"
 
+```
 
+### Ghostscript ältere Versionen unterstützen
+
+Manchmal gibt es eine Konstellation, wo man mit den Ghostscript-Versionen tricksen
+muss, ohne dass man die Version tatsächlich installieren möchte. Man kann sich über
+symbolische Links von Windows behelfen.
+
+```Powershell
+cd $env:programfiles\gs
+# erzeugt einen Link von gs.15 auf die aktuelle Version 9.26
+# MKLink funktioniert in Powershell nicht direkt!
+cmd.exe /c mklink /D gs9.15 gs9.26 
 ```
 
 ### Druckertreiber kopieren
