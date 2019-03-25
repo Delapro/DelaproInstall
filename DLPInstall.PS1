@@ -2454,9 +2454,7 @@ Function Backup-Delapro {
 						   '--exclude', 'Fernwartung', '--exclude', 'Export/KZBV/Temp')
 			If ($IgnoreBilder) {
 				# alle möglichen Varianten abdecken
-				$Argumente += '--exclude', 'bilder'
-				$Argumente += '--exclude', 'BILDER'
-				$Argumente += '--exclude', 'Bilder'
+				$Argumente += '--exclude', '[bB][iI][lL][dD][eE][rR]'
 			}
 			$Argumente += '--format=zip', '-cf'
 			$BackupFile = "Delapro_FULL_$(get-date -format "yyyyMMdd_HHmm")"
