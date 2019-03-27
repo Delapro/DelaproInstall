@@ -903,7 +903,7 @@ Function Get-DelaproLicense {
 			$exeFile = Join-Path -Path $DelaproPath -ChildPath 'dlp_main.exe'
 		}
 		$licFile = Join-Path -Path $DelaproPath -ChildPath 'dlp_main.lic'
-		If ($licFile) {
+		If (Test-Path $licFile) {
 			Remove-Item -Path $licFile -Force
 		}
 		Write-Verbose "Start $exeFile"
