@@ -2948,7 +2948,7 @@ Function Install-DPF {
 
 	# TODO: mit Leben erfüllen und automatisieren
 }
-ffmpe
+
 # installiert ffmpeg
 Function Install-FFMpeg {
 	[CmdletBinding()]
