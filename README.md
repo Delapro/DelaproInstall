@@ -56,7 +56,7 @@ $DlpPath=(Resolve-Path .).Path
 
 ```Powershell
 $DlpAlterInTagen=1
-If (Test-DelaproActive -TolerateDays $DlpAlterInTagen) {
+If (Test-DelaproActive -Path $DlpPath -TolerateDays $DlpAlterInTagen) {
     If (Test-DelaproNotRunning -Path $DlpPath) {
         # Backup aktualisieren
         Update-Backup -DelaproPath $DLPPath -Verbose
