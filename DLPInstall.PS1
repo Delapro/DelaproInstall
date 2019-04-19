@@ -2150,7 +2150,8 @@ Function Get-NetFrameworkVersions {
 				"460798|460805" { [Version]"4.7" }
 				"461308|461310" { [Version]"4.7.1" }
 				"461808|461814" { [Version]"4.7.2" }
-				{$_ -gt 461814} { "Undocumented 4.7.2 or higher, please update script" }
+				"528040|528049" { [Version]"4.8" }
+				{$_ -gt 528049} { "Undocumented 4.8 or higher, please update script" }
 				# neuere Versionen: https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed
 			}
 		}
@@ -2834,6 +2835,7 @@ Function Install-DelaproMailPrinter {
 						"10.0.16299" {$driverID = "34c0896eae1bf8d0"}
 						"10.0.17134" {$driverID = "c43129a734557745"}
 						"10.0.17763" {$driverID = "6c1071b47c60ba60"}
+						"10.0.18362" {$driverID = "0074e542b81fb408"}
 					}
 				} else {
 					# zusätzlich gibt es unterschiede zwischen 32-Bit und 64-Bit
@@ -2845,6 +2847,7 @@ Function Install-DelaproMailPrinter {
 						"10.0.16299" {$driverID = "00521e6b8bf17036"}
 						"10.0.17134" {$driverID = "90475034b6bba97d"}
 						"10.0.17763" {$driverID = "38a0c03601c7c0b3"}
+						"10.0.18362" {$driverID = "ccd0ba5b543d779d"}
 					}
 				}
 
@@ -4072,7 +4075,7 @@ Start-Process -Wait "C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDoc
 # durch Aufruf von eDocPrintProUtil.EXE sind zwei Druckertreiber vorhanden, deshalb den Standard eDocPrintPro löschen
 Remove-Printer -Name eDocPrintPro
 
-Install-DelaproMailPrinter
+Install-DelaproMailPrinter -Verbose
 Show-Printers
 
 Disable-Windows10DefaultPrinterRoaming
