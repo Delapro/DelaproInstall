@@ -2642,13 +2642,18 @@ Function Update-Teamviewer {
 }
 
 # ladet *.ERR-Dateien und erzeugt daraus Objekte, damit Fehler leichter abgefragt werden können
-Function Get-DelaproErrors {
+Function Get-DelaproError {
 	[CmdletBinding()]
 	Param(
+		[switch]$Last,
 		[String[]]$Pfad = (Join-Path -Path (Get-Location) -ChildPath "*.ERR")
 	)
 
 	$Files = Resolve-Path $Pfad
+	If ($Last) {
+		$Files = ($Files | Sort-Object LastWriteTime)[0]
+	}
+
 	Write-Verbose "Dateien: $Files"
 
 	$Errors = @()

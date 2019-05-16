@@ -458,18 +458,18 @@ Start-FFMpeg -Title Delapro -Verbose -Metadata (New-FFMpegMetadata -Title "Kunde
 
 ```Powershell
 # Delaprofehler vom letzten Jahr ermitteln
-Get-DelaproErrors| where {$_.Datum.date -gt (Get-Date).AddYears(-1)}|select datei, datum
+Get-DelaproError| where {$_.Datum.date -gt (Get-Date).AddYears(-1)}|select datei, datum
 
 # Fehlerdateien in Notepad anschauen
-Get-DelaproErrors| where {$_.Datum.date -gt (Get-Date).AddYears(-1)}| % {notepad $_.Datei.Fullname}
+Get-DelaproError| where {$_.Datum.date -gt (Get-Date).AddYears(-1)}| % {notepad $_.Datei.Fullname}
 
 # Muster bei Fehlern erkennen, indem man nach dem Callstack groupiert
-Get-DelaproErrors| select *, @{Name="CallStackStr";Expression={($_.CallStack|out-string)}} | sort callstacker | sort CallstackStr | group callstackstr
+Get-DelaproError| select *, @{Name="CallStackStr";Expression={($_.CallStack|out-string)}} | sort callstacker | sort CallstackStr | group callstackstr
 # zum Anschauen verwendet man dann eine bestimmte Gruppe aus dem Ergebnis
-(Get-DelaproErrors| select *, @{Name="CallStackStr";Expression={($_.CallStack|out-string)}} | sort callstacker | group callstackstr )[1].group
+(Get-DelaproError| select *, @{Name="CallStackStr";Expression={($_.CallStack|out-string)}} | sort callstacker | group callstackstr )[1].group
 
 # häufigsten Fehler ermitteln
-(Get-DelaproErrors| select *, @{Name="CallStackStr";Expression={($_.CallStack|out-string)}} | sort callstacker | sort CallstackStr | group callstackstr| where count -gt 1 | sort count -Descending)[0].Group|Out-GridView
+(Get-DelaproError| select *, @{Name="CallStackStr";Expression={($_.CallStack|out-string)}} | sort callstacker | sort CallstackStr | group callstackstr| where count -gt 1 | sort count -Descending)[0].Group|Out-GridView
 
 ```
 
