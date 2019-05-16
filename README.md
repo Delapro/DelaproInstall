@@ -457,6 +457,9 @@ Start-FFMpeg -Title Delapro -Verbose -Metadata (New-FFMpegMetadata -Title "Kunde
 ### Probleme in Delapro ermitteln
 
 ```Powershell
+# den letzten aufgetretenen Fehler im Editor anzeigen
+Show-DelaproError
+
 # Delaprofehler vom letzten Jahr ermitteln
 Get-DelaproError| where {$_.Datum.date -gt (Get-Date).AddYears(-1)}|select datei, datum
 

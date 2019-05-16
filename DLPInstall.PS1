@@ -2662,6 +2662,15 @@ Function Get-DelaproError {
 
 }
 
+Function Show-DelaproError {
+	[CmdletBinding()]
+	Param(
+		[String[]]$Pfad = (Join-Path -Path (Get-Location) -ChildPath "*.ERR")
+	)
+
+	NotePad.exe (Get-DelaproError -Pfad $Pfad -Last).Datei
+}
+
 Function Get-DelaproErrorObject {
 	[CmdletBinding()]
 	Param(
