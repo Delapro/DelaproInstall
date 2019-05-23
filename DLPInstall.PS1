@@ -281,7 +281,7 @@ Function Remove-ScheduledTaskSimple {
 
 	$args = @(
 		"/Delete",
-		"/TN", $Taskname  	# Name des Tasks
+		"/TN", $Taskname  # Name des Tasks
 	)
 
 	Start-Process -FilePath "SchTasks.EXE" -ArgumentList $args
