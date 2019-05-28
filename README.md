@@ -452,6 +452,12 @@ Start-FFMpeg -EnumerateDevices
 Start-FFMpeg -Title Delapro -Verbose -Metadata (New-FFMpegMetadata -Title "Kunden anlegen" -Genre "Delapro Schulungsvideo" -Composer "FFMPEG Delapro" -Author "easy innovative software" -AlbumArtist "Artist" -Comment "Kurzes Schulungsvideo")
 ```
 
+### ImageMagick
+```Powershell
+Install-ImageMagick -Verbose
+
+```
+
 ## Probleme ermitteln
 
 ### Probleme in Delapro ermitteln
