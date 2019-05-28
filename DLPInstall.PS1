@@ -1516,6 +1516,44 @@ Function Invoke-VeraPDFCheck {
 	}
 }
 
+# installiert die Windowsversion von ImageMagick
+Function Install-ImageMagick {
+	[CmdletBinding()]
+	Param(
+		[System.String]$tempDirectory="$Env:TEMP\",
+		[String]$BitsPerPixel="Q16",
+		[Switch]$HighDynamicRangeImaging,
+		[Switch]$StaticVersion
+	)
+
+	# aktuelle Version: https://imagemagick.org/script/download.php
+	# ImageMagick-7.0.8-47-Q16-x64-dll.exe
+	$version = "7.0.8-47"
+	If (Test-64Bit) {
+		$platform = "x64"
+	} else {
+		$platform = "x86"
+	}
+	If ($HighDynamicRangeImaging) {
+		$HDRI = "HDRI-"
+	}
+	If ($StaticVersion) {
+		$static = "static"
+	} else {
+		$static = "dll"
+	}
+
+	$filename = "ImageMagick-$version-$BitsPerPixel-$platform-$HDRI$static.exe"
+	Write-Verbose $filename
+	$url = "https://imagemagick.org/download/binaries/$filename"
+	Write-Verbose $url
+
+	Start-BitsTransfer -Source $url -Destination "$($temp)\$filename"
+
+	Start-Process "$($temp)\$filename"
+
+}
+
 # ladet und installiert 7Zip
 Function Install-7Zip {
 	[CmdletBinding()]
