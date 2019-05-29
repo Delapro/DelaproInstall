@@ -28,6 +28,9 @@ If ($PSVersionTable.PSVersion.Major -lt 4) {
             "Bitte Neustart durchführen"
         }
     }
+} else {
+    # Bei Windows 7 fehlende, evtl. benötigte Cmdlets aktivieren
+    Install-MissingPowershellCmdlets
 }
 
 ```
@@ -40,10 +43,16 @@ Install-MissingPowershellCmdlets
 
 ```
 
-### wenn es Probleme mit Start-BitsTransfer wegen fehlender Rechte oder bei Benutzung von Powershell Core gibt
+### wenn es Probleme mit Start-BitsTransfer wegen fehlender Rechte oder bei Benutzung von Powershell Core gibt, oder wenn es Streß mit Windows 7 gibt
 ```Powershell
-# rüstet eine einfache Variante von Start-BitsTransfer nach
-Install-StartBitsTransfer
+cd $env:temp
+Import-Module BitsTransfer
+Start-Bitstransfer https://easysoftware.de/util/dlpwinpr.exe
+If ($Error[0].Exception.HResult -eq -2146233088) {
+    # rüstet eine einfache Variante von Start-BitsTransfer nach
+    Install-StartBitsTransfer
+}
+
 ``` 
 
 ## Backup aktualisieren, Backup durchführen und DLPWinPr aktualisieren
@@ -52,6 +61,7 @@ Zum setzen des aktuellen Delapro-Pfads verwendet man
 
 ```Powershell
 $DlpPath=(Resolve-Path .).Path
+$DlpPath
 ```
 
 ```Powershell
