@@ -18,6 +18,9 @@ Befehle, wenn man [Delapro Administrationsscript](https://easysoftware.de/ps) Cm
 If ($PSVersionTable.PSVersion.Major -lt 4) {
     If (Test-NetFramework45Installed) {
         Install-Powershell
+        # startet nach dem Neustart gleich wieder Powershell und öffnet die /PS-Webseite
+        Add-ScheduledTaskPowershellRunOnceAfterLogin
+        "Bitte Neustart durchführen"
     } else {
         Install-NetFramework
         If (Test-NetFramework45Installed) {
@@ -30,7 +33,17 @@ If ($PSVersionTable.PSVersion.Major -lt 4) {
     }
 } else {
     # Bei Windows 7 fehlende, evtl. benötigte Cmdlets aktivieren
-    Install-MissingPowershellCmdlets
+    If (Test-Windows7) {
+        Install-MissingPowershellCmdlets
+        Import-Module BitsTransfer
+    }
+    # prüfen, ob Start-Bitstransfer einsatzbereit ist
+    cd $env:temp
+    Start-Bitstransfer https://easysoftware.de/util/dlpwinpr.exe
+    If ($Error[0].Exception.HResult -eq -2146233088) {
+        # rüstet eine einfache Variante von Start-BitsTransfer nach
+        Install-StartBitsTransfer
+    }
 }
 
 ```
