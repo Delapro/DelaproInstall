@@ -305,6 +305,14 @@ $text = Invoke-PDFTextExtraction -PDFFile $pdf
 $text.Length
 ```
 
+### Syncfusion aktivieren für Verschlüsselung
+
+```Powershell
+Copy-Item .\SynCompB.dll Syncfusion.Compression.Base.dll
+Copy-Item .\SynPDFB.dll Syncfusion.Pdf.Base.dll
+Notepad EncrPdf.Ps1
+```
+
 ## Delapro Autostart einrichten
 
 ```Powershell
