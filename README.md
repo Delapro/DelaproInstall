@@ -152,6 +152,18 @@ Update-DelaproGhostscript -PathDelaproGhostscript "$($DLPPath)\LASER\GHOSTPDF.BA
 If (Test-Path "$($DLPPath)\LASER\GHOSTPDFX.BAT") {
     Update-DelaproGhostscript -PathDelaproGhostscript "$($DLPPath)\LASER\GHOSTPDFX.BAT" -Verbose
 }
+If (Test-Path "$($DLPPath)\LASER\XGHOSTPDF.BAT") {
+    Update-DelaproGhostscript -PathDelaproGhostscript "$($DLPPath)\LASER\XGHOSTPDF.BAT" -Verbose
+}
+If (Test-Path "$($DLPPath)\LASER\XXGHOSTPDF.BAT") {
+    Update-DelaproGhostscript -PathDelaproGhostscript "$($DLPPath)\LASER\XXGHOSTPDF.BAT" -Verbose
+}
+If (Test-Path "$($DLPPath)\LASER\XGHOSTPDFX.BAT") {
+    Update-DelaproGhostscript -PathDelaproGhostscript "$($DLPPath)\LASER\XGHOSTPDFX.BAT" -Verbose
+}
+If (Test-Path "$($DLPPath)\LASER\XXGHOSTPDFX.BAT") {
+    Update-DelaproGhostscript -PathDelaproGhostscript "$($DLPPath)\LASER\XXGHOSTPDFX.BAT" -Verbose
+}
 
 # DelaproMail-Druckertreiber installieren
 Install-DelaproMailPrinter -Verbose
