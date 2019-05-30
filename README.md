@@ -438,6 +438,10 @@ Test-Java
 # Installiert die neueste Java 8 Runtime als 32-Bit Version
 Install-Java -Platform x86 -Version 8 -Verbose
 Test-Java
+
+# Maven installieren
+Install-Maven -Verbose  # noch nicht komplett implementiert!
+
 ```
 
 ### VeraPDF
