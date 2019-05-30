@@ -1371,7 +1371,7 @@ Function Get-OpenJDK {
 	[CmdletBinding()]
 	Param()
 
-	$j = Get-ChildItem "$($env:ProgramFiles)\OpenJDK\Java.exe" -Recurse
+	$j = Get-ChildItem "$($env:ProgramFiles)\Amazon Corretto\" "Java.exe" -Recurse
 	If ($j) {
 		If ($j -is [array]) {
 			# TODO: Sortieren, damit man die neueste Version zurück bekommt
@@ -1388,7 +1388,7 @@ Function Test-OpenJDK {
 	Param(
 	)
 
-	$j = Get-OpenJDK
+	$j = (Get-OpenJDK).Fullname
 	If ($j) {
 		# Folgender Code liegt dem RunCheck-Javaprogramm zugrunde. Um ihn kompilieren zu können benötigt
 		# man allerdings das JDK in der zugehörigen Version, hier JDK8:
