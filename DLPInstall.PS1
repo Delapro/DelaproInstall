@@ -1907,6 +1907,9 @@ Function Get-ThunderbirdEXE {
 
 	# TODO: verfeinern und für andere Platformen bereit machen
 	$tbPath = Get-ChildItem "C:\Program Files (x86)\Mozilla Thunderbird\Thunderbird.exe"
+	If (-Not (Test-Path $tbPath)) {
+		$tbPath = Get-ChildItem "C:\Program Files\Mozilla Thunderbird\Thunderbird.exe"
+	}
 	If ($tbPath -and $Path) {
 		$tbPath.Directory.Fullname
 	} elseif ($tbPath -and $ExtensionPath) {
