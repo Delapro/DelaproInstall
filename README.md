@@ -114,18 +114,18 @@ If (Test-DelaproActive -Path $DlpPath -TolerateDays $DlpAlterInTagen) {
         # \\Update wegen Match, sonst würde \U als RegEx von Match interpretiert!
         If ((Get-Location) -match "\\Update") {
             Remove-Item * -Force -Recurse
-            If (Test-Path $DlpUpdateFile) {
-                Start-Process -Wait -FilePath $DlpUpdateFile -NoNewWindow
-                If (-Not ($LastExitCode -eq 0)) {
-                    throw "Fehler beim Entpacken der Delapro-Updatedatei!"
-                }
-            } else {
-                Write-Error "$DlpUpdateFile nicht vorhanden."
-            }
         }
-        Set-Location ..
-        .\update\update
-        Invoke-CleanupDelapro $DlpPath -Verbose
+        If (Test-Path $DlpUpdateFile) {
+            Start-Process -Wait -FilePath $DlpUpdateFile -NoNewWindow
+            If (-Not ($LastExitCode -eq $null) -and (-Not ($LastExitCode -eq 0)) {
+                throw "Fehler beim Entpacken der Delapro-Updatedatei!"
+            }
+            Set-Location ..
+            .\update\update
+            Invoke-CleanupDelapro $DlpPath -Verbose
+        } else {
+            Write-Error "$DlpUpdateFile nicht vorhanden."
+        }
     } else {
         If (Test-Path $DlpPath) {
             Write-Error "Delapro läuft noch!"
