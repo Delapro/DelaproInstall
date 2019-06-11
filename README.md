@@ -117,7 +117,7 @@ If (Test-DelaproActive -Path $DlpPath -TolerateDays $DlpAlterInTagen) {
         }
         If (Test-Path $DlpUpdateFile) {
             Start-Process -Wait -FilePath $DlpUpdateFile -NoNewWindow
-            If (-Not ($LastExitCode -eq $null) -and (-Not ($LastExitCode -eq 0)) {
+            If (-Not ($LastExitCode -eq $null) -and -Not ($LastExitCode -eq 0)) {
                 throw "Fehler beim Entpacken der Delapro-Updatedatei!"
             }
             Set-Location ..
