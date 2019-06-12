@@ -303,7 +303,7 @@ Set-DlpUi -Reset
 ### Prüfen, ob man es mit neuen Formularen zu tun hat
 
 ```Powershell
-Test-NeueFormulare
+Test-NeueFormulare -Path $DlpPath
 ```
 
 ### Fertigteile in Sonstiges ändern
