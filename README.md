@@ -554,6 +554,15 @@ Get-EMailClients
 Set-DefaultEMailClient "Mozilla Thunderbird"
 ```
 
+Wenn das E-Mailprogramm ein 64-Bit E-Mailprogramm ist, muss ein MAPI-Proxy von List&Label aktiviert werden. Dies geschieht durch Aufruf dieser Befehle:
+
+```Powershell
+.\CMMP24.EXE /regserver
+.\CXMP24.EXE /regserver
+
+# TODO: noch abklären, was es mit cxCT24.DLL, cxUT24.DLL und cxMX.DLL auf sich hat
+```
+
 ### Abstürzende Programme in Windows ausfindig machen
 
 ```Powershell
