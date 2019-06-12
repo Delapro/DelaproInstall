@@ -555,6 +555,20 @@ Function Test-Chrome {
 	$ret
 }
 
+Function Test-NeueFormulare {
+	[CmdletBinding()]
+	Param(
+		[String]$Path = "C:\DELAPRO"
+	)
+
+	If (Test-Path "$($Path)\ExtFSup.BAT") {
+		$true
+	} else {
+		$false
+	}
+
+}
+
 # prüft, ob Thunderbird installiert ist, entweder System- oder Userlevel, egal ob 32-Bit oder 64-Bit, gibt $true oder $false zurück
 Function Test-Thunderbird {
 	[CmdletBinding()]

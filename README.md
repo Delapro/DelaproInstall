@@ -300,6 +300,12 @@ Set-DlpUi -Reset
 
 ## Formulare überprüfen und aktualisieren
 
+### Prüfen, ob man es mit neuen Formularen zu tun hat
+
+```Powershell
+Test-NeueFormulare
+```
+
 ### Fertigteile in Sonstiges ändern
 
 ```Powershell
