@@ -536,6 +536,12 @@ Function Import-OldDLPVersion {
 		Copy-Item -Path "$SourcePath\Zert" "$($DestinationPath)" -Force -Verbose -Recurse
 	}
 
+	Write-Verbose "Marker für neue Formulare vorhanden?"
+	If (-Not (Test-Path "$SourcePath\ExtFSup.BAT")) {
+		Remove-Item -Path "$(DestinationPath)\ExtFSup.BAT"
+		Write-Verbose "Marker für neue Formulare in $DestinationPath gelöscht"
+	}
+
 	# TODO: Zeiterfassung
 }
 
