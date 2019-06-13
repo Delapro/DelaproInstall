@@ -117,12 +117,18 @@ If (Test-DelaproActive -Path $DlpPath -TolerateDays $DlpAlterInTagen) {
         }
         If (Test-Path $DlpUpdateFile) {
             Start-Process -Wait -FilePath $DlpUpdateFile -NoNewWindow
-            If (-Not ($LastExitCode -eq $null) -and -Not ($LastExitCode -eq 0)) {
-                throw "Fehler beim Entpacken der Delapro-Updatedatei!"
+            If ($?) {
+                $lec = $LastExitcode
+                If (-Not ($lec -eq 0)) {
+                   throw "Fehler $lec beim Entpacken der Delapro-Updatedatei $DlpUpdatefile!"
+                } else {
+                    Set-Location ..
+                    .\update\update
+                    Invoke-CleanupDelapro $DlpPath -Verbose
+                }
+            } else {
+                throw "$DlpUpdateFile konnte nicht ausgeführt werden!"
             }
-            Set-Location ..
-            .\update\update
-            Invoke-CleanupDelapro $DlpPath -Verbose
         } else {
             Write-Error "$DlpUpdateFile nicht vorhanden."
         }
