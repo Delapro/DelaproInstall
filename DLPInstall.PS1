@@ -2419,6 +2419,54 @@ Function Install-StartBitsTransfer {
 
 }
 
+# spielt ein Delapro-Update ein
+Function Invoke-DelaproUpdate {
+	[CmdletBinding()]
+	Param(
+		[Int]$DlpAlterInTagen=1,
+		[String]$DlpPath,
+		[String]$DlpUpdateFile = 'C:\temp\Exes.exe'
+
+	)
+
+	If (Test-DelaproActive -Path $DlpPath -TolerateDays $DlpAlterInTagen) {
+		If (Test-DelaproNotRunning -Path $DlpPath) {
+			If (-Not (Test-Path "$($DlpPath)\Update")) {
+				New-Item "$($DlpPath)\Update" -Type Directory
+			}
+			Set-Location "$($DlpPath)\Update"
+			# \\Update wegen Match, sonst würde \U als RegEx von Match interpretiert!
+			If ((Get-Location) -match "\\Update") {
+				Remove-Item * -Force -Recurse
+			}
+			If (Test-Path $DlpUpdateFile) {
+				Start-Process -Wait -FilePath $DlpUpdateFile -NoNewWindow
+				If ($?) {
+					$lec = $LastExitcode
+					If (-Not ($lec -eq 0)) {
+					   throw "Fehler $lec beim Entpacken der Delapro-Updatedatei $DlpUpdatefile!"
+					} else {
+						Set-Location ..
+						.\update\update
+						Invoke-CleanupDelapro $DlpPath -Verbose
+					}
+				} else {
+					throw "$DlpUpdateFile konnte nicht ausgeführt werden!"
+				}
+			} else {
+				Write-Error "$DlpUpdateFile nicht vorhanden."
+			}
+		} else {
+			If (Test-Path $DlpPath) {
+				Write-Error "Delapro läuft noch!"
+			} else {
+				Write-Error "Delapro nicht unter $DLPPath gefunden!!"
+			}
+		}
+	}
+	
+}
+
 # Delapro installieren, muss schon heruntergeladen sein und in $TempDirectory liegen
 Function Install-DelaproHauptmodul {
 	[CmdletBinding()]
