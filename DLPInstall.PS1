@@ -933,7 +933,7 @@ Function Get-DelaproLicense {
 		Write-Verbose "Start $exeFile"
 		Start-Process -Wait -FilePath $exeFile -ArgumentList '/GetLicense'
 		If (Test-Path $licFile) {
-			$lic = Get-Content -Path $licFile
+			$lic = Get-Content -Path $licFile -Encoding Oem
 			Write-Verbose "License gefunden: $lic"
 			If ($lic[-1][-1] -eq 0x1a) {
 				$l1 = $lic[0]
