@@ -2463,6 +2463,8 @@ Function Invoke-DelaproUpdate {
 				Write-Error "Delapro nicht unter $DLPPath gefunden!!"
 			}
 		}
+	} else {
+		Write-Error "Delapro in $DlpPath ist zu alt, bitte prüfen!"
 	}
 	
 }
