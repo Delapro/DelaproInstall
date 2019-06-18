@@ -779,6 +779,35 @@ Function Install-Ghostscript {
 	Start-Process -Wait $ghostcall -ArgumentList "/S"
 }
 
+# prüft, ob der Rechner neu gestartet werden sollte
+Function Test-RebootRequired {
+	[CmdletBinding()]
+	Param(
+
+	)
+
+	$reboot = $false
+
+	# CBS Registry
+	If (Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending") {
+		$reboot = $true
+	}
+
+	# SCCM
+	# try catch
+	# ([wmiclass]"\\.\root\ccm\clientsdk:CCM_ClientUtilities").DetermineIfRebootPending()
+
+	If ((New-Object -ComObject "Microsoft.Update.SystemInfo").RebootRequired) {
+		$reboot = $true
+	}
+
+	If (Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired") {
+		$reboot = $true
+	}
+
+	$reboot
+}
+
 # konvertiert eine PDF-Datei in eine BMP-Datei
 Function Convert-PDF {
 	[CmdletBinding()]
