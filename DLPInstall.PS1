@@ -730,22 +730,26 @@ Function Update-DelaproGhostscript {
 		[System.String]$PathGhostscript = (Get-GhostScript)[0].Fullname
 	)
 
-	Write-Verbose "Aktualisiere $PathDelaproGhostscript"
-	Write-Verbose "Ermittelter Ghostscriptpfad: $PathGhostScript"
-	$matches = Get-Content $PathDelaproGhostscript | Select-String "SET GSDIR"
-	If ($matches) {
-		$content = Get-Content $PathDelaproGhostscript
-		$matches | ForEach-Object {
-					$current = $_.Line
-					Write-Verbose "Zeile $($_.LineNumber) die geändert werden muss: $current"
-					Write-Verbose "Zeile: $($content[$_.LineNumber-1])"
-					$current = $current.SubString(0, $current.LastIndexOf("\"))
-					$current = $current.SubString($current.IndexOf("=")+1)
-					Write-Verbose "Pfad der ausgetauscht werden muss: $current"
-					$content[$_.LineNumber-1] = $content[$_.LineNumber-1].replace($current, $PathGhostscript)
-					Write-Verbose "so sollte es aussehen: $($content[$_.LineNumber-1].replace($current, $PathGhostscript))"
+	If ($null -eq $PathGhostscript) {
+		throw "Kein Ghostscript gefunden!"
+	} else {
+		Write-Verbose "Aktualisiere $PathDelaproGhostscript"
+		Write-Verbose "Ermittelter Ghostscriptpfad: $PathGhostScript"
+		$matches = Get-Content $PathDelaproGhostscript | Select-String "SET GSDIR"
+		If ($matches) {
+			$content = Get-Content $PathDelaproGhostscript
+			$matches | ForEach-Object {
+						$current = $_.Line
+						Write-Verbose "Zeile $($_.LineNumber) die geändert werden muss: $current"
+						Write-Verbose "Zeile: $($content[$_.LineNumber-1])"
+						$current = $current.SubString(0, $current.LastIndexOf("\"))
+						$current = $current.SubString($current.IndexOf("=")+1)
+						Write-Verbose "Pfad der ausgetauscht werden muss: $current"
+						$content[$_.LineNumber-1] = $content[$_.LineNumber-1].replace($current, $PathGhostscript)
+						Write-Verbose "so sollte es aussehen: $($content[$_.LineNumber-1].replace($current, $PathGhostscript))"
+			}
+			$content| Set-Content $PathDelaproGhostscript
 		}
-		$content| Set-Content $PathDelaproGhostscript
 	}
 }
 
