@@ -276,6 +276,20 @@ Set-DlpUi -Reset
 Test-NeueFormulare -Path $DlpPath
 ```
 
+### HPLASER.INI-Erweiterung
+
+```
+// Erweiterung:
+// YPos, XPos, Macronummer, Maáeinheit, AbsoluterRand, Scalefaktor
+// Durch den Parameter 4 kann man die Maáeinheit auf CM anstatt auf Inch
+// umstellen, wenn man beim 5. Parameter True angibt, wird immer vom oberen
+// linken Blattrand absolute gemessen und nicht vom druckerabh„ngigen linken,
+// oberen Druckbereich, Parameter 6 mit 5.5 gibt den Scalefaktor an.
+// Scalefaktor 11 w„re fr 600 DPI Grafiken.
+[Grafik]
+Grafik1=0,0,.\LASER\Briefkopf.BMP,CM,TRUE,5.5
+```
+
 ### Fertigteile in Sonstiges ändern
 
 ```Powershell
