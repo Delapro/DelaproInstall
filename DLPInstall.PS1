@@ -1581,7 +1581,7 @@ Function Install-ImageMagick {
 
 	# aktuelle Version: https://imagemagick.org/script/download.php
 	# ImageMagick-7.0.8-47-Q16-x64-dll.exe
-	$version = "7.0.8-47"
+	$version = "7.0.8-49"
 	If (Test-64Bit) {
 		$platform = "x64"
 	} else {
@@ -1602,6 +1602,10 @@ Function Install-ImageMagick {
 	Write-Verbose $url
 
 	Start-BitsTransfer -Source $url -Destination "$($temp)\$filename"
+	If (-Not $?) {
+		Write-Verbose "Gibt es eine neue Version?"
+		Start-Process https://imagemagick.org
+	}
 
 	Start-Process "$($temp)\$filename"
 
