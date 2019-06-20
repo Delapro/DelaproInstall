@@ -1840,7 +1840,9 @@ Function Install-Thunderbird {
 		[System.String]$tempDirectory="$Env:TEMP\",
 		[switch]$Force,
 		[Validateset("60.7.1", "60.7.0", "60.6.1", "60.6.0", "60.5.3", "60.5.2", "60.5.1", "60.5.0", "60.4.0", "60.3.3", "60.2.1", "60.0")]
-		[string[]]$Version
+		[string[]]$Version,
+		[validateset("win32", "win64")]
+		[string]$Platform="win32"
 	
 	)
 
@@ -1864,7 +1866,7 @@ Function Install-Thunderbird {
 		$Filename = "Thunderbird Setup $tbVersion.exe"
 		Write-Verbose "Download $tbVersion, Dateiname: $Filename"
 		$urlFilename = [uri]::EscapeUriString($Filename)
-		Start-BitsTransfer "$($downloadUrlBase)/win32/de/$UrlFilename" -Destination $tempDirectory
+		Start-BitsTransfer "$($downloadUrlBase)/$platform/de/$UrlFilename" -Destination $tempDirectory
 		$Filename = Join-Path -path "$($tempDirectory)" -ChildPath $urlFilename
 		Write-Verbose "Installiere $Filename"
 		Start-Process -Wait $Filename -ArgumentList "/S"
