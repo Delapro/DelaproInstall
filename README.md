@@ -314,11 +314,14 @@ Set-Location $DlpPath
 
 ```Powershell
 # konvertieren einer PDF-Datei in eine BMP-Datei
-$pdf = "$DLPPath\Laser\Briefkopf.pdf"
-$bmp = $pdf.Replace(".pdf", ".bmp")
-Convert-PDF -PDFFile $pdf -OutFile $bmp -Verbose
-# Falls man noch was ändern müsste, oder einfach zum Anschauen
-Start-Process $bmp -Verb Edit
+# $pdf = "$DLPPath\Laser\Briefkopf.pdf"
+$pdf = (Get-ChildItem "$DLPPath\Laser\*.pdf" | Out-GridView -Title "PDF zum Konvertieren auswählen" -PassThrough).Fullname
+If (Test-Path $pdf) {
+    $bmp = $pdf.Replace(".pdf", ".bmp")
+    Convert-PDF -PDFFile $pdf -OutFile $bmp -Verbose
+    # Falls man noch was ändern müsste, oder einfach zum Anschauen
+    Start-Process $bmp -Verb Edit
+}
 
 ```
 
