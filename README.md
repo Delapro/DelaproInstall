@@ -517,6 +517,20 @@ Install-ImageMagick -Verbose
 # Ausgabe der Konvertierungsmöglichkeiten
 & 'C:\Program Files\ImageMagick-7.0.8-Q16\magick.exe' convert
 
+# Infos über Grafik ausgeben
+& 'C:\Program Files\ImageMagick-7.0.8-Q16\magick.exe' identify Bild.BMP
+
+# ausführliche Infos über Grafik ausgeben
+& 'C:\Program Files\ImageMagick-7.0.8-Q16\magick.exe' identify Bild.BMP
+
+# BMP in 256-Farben BMP mit RLE-Komprimierung konvertieren
+# Infos über Grafik ausgeben
+& 'C:\Program Files\ImageMagick-7.0.8-Q16\magick.exe' convert Bild.BMP -type PALETTE -compress RLE BMP3:Bild-RLE.BMP
+
+# wenn man Daten zu einem Bild weiterverarbeiten möchte, ist dies leichter im JSON-Format:
+# Infos über Grafik ausgeben, wenn Ghostscript installiert ist, funktionieren sogar Infos zu PDF-Dateien!
+$json = Convert-FromJson ((& 'C:\Program Files\ImageMagick-7.0.8-Q16\magick.exe' convert Bild.BMP json:-) | out-String )
+$json.Image
 
 ```
 
