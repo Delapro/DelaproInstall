@@ -508,6 +508,13 @@ Start-FFMpeg -Title Delapro -Verbose -Metadata (New-FFMpegMetadata -Title "Kunde
 ```Powershell
 Install-ImageMagick -Verbose
 
+# Version und eingebundene Filter ausgeben
+& 'C:\Program Files\ImageMagick-7.0.8-Q16\magick.exe' -version
+
+# Ausgabe der Konvertierungsmöglichkeiten
+& 'C:\Program Files\ImageMagick-7.0.8-Q16\magick.exe' convert
+
+
 ```
 
 ## Probleme ermitteln
