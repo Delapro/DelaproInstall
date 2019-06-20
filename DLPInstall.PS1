@@ -1601,13 +1601,13 @@ Function Install-ImageMagick {
 	$url = "https://imagemagick.org/download/binaries/$filename"
 	Write-Verbose $url
 
-	Start-BitsTransfer -Source $url -Destination "$($temp)\$filename"
+	Start-BitsTransfer -Source $url -Destination "$($tempDirectory)\$filename"
 	If (-Not $?) {
 		Write-Verbose "Gibt es eine neue Version?"
 		Start-Process https://imagemagick.org
 	}
 
-	Start-Process "$($temp)\$filename"
+	Start-Process "$($tempDirectory)\$filename"
 
 }
 
