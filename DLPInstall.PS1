@@ -3123,7 +3123,7 @@ Function Install-DPF {
 
 	Start-BitsTransfer -Source $url -Destination "$tempDirectory\DPF.zip"
 	Expand-Archive -Path "$tempDirectory\DPF.zip" -DestinationPath "$tempDirectory\DPF" -Force
-	Start-Process -FilePath "$tempDirectory\DPF\dpf-$($version).exe"
+	Start-Process -FilePath "$tempDirectory\DPF\dpf-$($version.replace('-','.')).exe"
 }
 
 # installiert ffmpeg
