@@ -1574,6 +1574,7 @@ Function Install-ImageMagick {
 	[CmdletBinding()]
 	Param(
 		[System.String]$tempDirectory="$Env:TEMP\",
+		[Validateset("Q16", "Q8" )]
 		[String]$BitsPerPixel="Q16",
 		[Switch]$HighDynamicRangeImaging,
 		[Switch]$StaticVersion
@@ -3112,12 +3113,17 @@ Function Invoke-VDDSPruefTool
 Function Install-DPF {
 	[CmdletBinding()]
 	Param(
-
+		[System.String]$tempDirectory="$Env:TEMP\"
 	)
 
 	Start-Process "https://www.kzbv.de/digitale-planungshilfe-dpf.336.de.html"
 
-	# TODO: mit Leben erfüllen und automatisieren
+	$version = "u3-0-8-1"
+	$url = "https://www.kzbv.de/dpf-$($version).download.794d92d6e96448b6ce0827fa98fea6b0.zip"
+
+	Start-BitsTransfer -Source $url -Destination "$tempDirectory\DPF.zip"
+	Expand-Archive -Path "$tempDirectory\DPF.zip" -DestinationPath "$tempDirectory\DPF" -Force
+	Start-Process -FilePath "$tempDirectory\DPF\dpf-$($version).exe"
 }
 
 # installiert ffmpeg
