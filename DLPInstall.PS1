@@ -2483,7 +2483,7 @@ Function Invoke-DelaproUpdate {
 				Start-Process -Wait -FilePath $DlpUpdateFile -NoNewWindow
 				If ($?) {
 					$lec = $LastExitcode
-					If (-Not ($lec -eq 0)) {
+					If (-Not ($null -eq $lec)) {
 					   throw "Fehler $lec beim Entpacken der Delapro-Updatedatei $DlpUpdatefile!"
 					} else {
 						Set-Location ..
