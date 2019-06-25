@@ -2802,9 +2802,9 @@ Function Get-DelaproError {
 		[String[]]$Pfad = (Join-Path -Path (Get-Location) -ChildPath "*.ERR")
 	)
 
-	$Files = Resolve-Path $Pfad
+	$Files = Resolve-Path $Pfad | Get-ChildItem
 	If ($Last) {
-		$Files = ($Files | Sort-Object LastWriteTime)[0]
+		$Files = ($Files | Sort-Object LastWriteTime -Descending)[0]
 	}
 
 	Write-Verbose "Dateien: $Files"
