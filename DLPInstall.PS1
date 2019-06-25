@@ -2810,7 +2810,7 @@ Function Get-DelaproError {
 	Write-Verbose "Dateien: $Files"
 
 	$Errors = @()
-	$Files | Select-Object -ExpandProperty Path | ForEach-Object { Write-Verbose $_; $Errors += (Get-DelaproErrorObject ($_)) }
+	$Files | Select-Object -ExpandProperty Fullname | ForEach-Object { Write-Verbose $_; $Errors += (Get-DelaproErrorObject ($_)) }
 	$Errors
 
 }
