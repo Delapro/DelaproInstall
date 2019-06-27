@@ -137,7 +137,7 @@ Show-Printers
 $gv = Get-Ghostscript
 $gv
 # Ghostversion prüfen, gegebenenfalls aktualisieren oder installieren
-If ((@("gs9.00", "gs8.63", "gs8.64", "gs8.70", "gs8.71") -contains $gv[0].Name -and $gv.length -eq 1) -or $gv.length -eq 0) {
+If ((@("gs9.00", "gs8.63", "gs8.64", "gs8.70", "gs8.71") -contains $gv[0].Name -and $gv.length -eq 1) -or ($gv.length -eq 0) -or ($null -eq $gv) {
     Install-Ghostscript -Verbose
 }
 # TODO: GhostPDF.BAT in LASER-Verzeichnis kopieren
