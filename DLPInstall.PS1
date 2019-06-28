@@ -1612,6 +1612,26 @@ Function Install-ImageMagick {
 
 }
 
+Function Get-ImageMagick {
+	[CmdletBinding()]
+	[OutputType([System.IO.DirectoryInfo])]
+	Param ()
+
+	$imDirs = @()
+
+	If ($PSVersionTable.PSVersion -eq "2.0")
+	{
+		$imDirs += Get-ChildItem "$($Env:ProgramFiles)\ImageMagick*" -ErrorAction SilentlyContinue | Where-Object { $_.PSIsContainer}
+		$imDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\ImageMagick*" -ErrorAction SilentlyContinue | Where-Object { $_.PSIsContainer}
+	} else {
+		$imDirs += Get-ChildItem "$($Env:ProgramFiles)\ImageMagick*" -ErrorAction SilentlyContinue -Directory
+		$imDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\ImageMagick*" -ErrorAction SilentlyContinue -Directory
+	}
+	$imDirs = $imDirs | Sort-Object Name -Descending
+	$imDirs
+}
+
+
 # ladet und installiert 7Zip
 Function Install-7Zip {
 	[CmdletBinding()]
@@ -2223,7 +2243,7 @@ Function Install-NetFramework {
                 # hier die Übersicht bei welchem BS welche .Net Version läuft: https://msdn.microsoft.com/en-us/library/8z6watww(v=vs.110).aspx
 	     If (Test-WindowsVista) {
 			 Write-Verbose "Vista erkannt, installiere .Net Framework 4.6"
-	                # Vista unterstützt maximal 4.6 und das war es dann!
+	                #   Vista unterstützt maximal 4.6 und das war es dann!
 		     # Wenn Net 4.5 nicht vorhanden ist, wird gleich 4.6 heruntergeladen und installiert
 		     (New-Object Net.WebClient).DownloadFile("http://go.microsoft.com/fwlink/?LinkId=528222",  "$($tempDirectory)NDP46-KB3045560-Web.exe")
 		      # Invoke-Item .\NDP46-KB3045560-Web.exe

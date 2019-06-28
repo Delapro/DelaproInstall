@@ -532,6 +532,11 @@ Install-ImageMagick -Verbose
 $json = Convert-FromJson ((& 'C:\Program Files\ImageMagick-7.0.8-Q16\magick.exe' convert Bild.BMP json:-) | out-String )
 $json.Image
 
+# installierte Versionen von ImageMagock ermitteln
+Get-ImageMagick
+
+# neueste Version von ImageMagick ausführen
+& "$((Get-ImageMagick)[0].Fullname)\magick.exe"
 ```
 
 ## Probleme ermitteln
