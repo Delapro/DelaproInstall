@@ -4081,6 +4081,7 @@ Function Invoke-CleanupDelapro {
 	              "BTX_UEBE.BAT",
 				  "COMPILE.BAT",
 				  "Laser\HPPcxLd2.EXE"
+				  "COPY\*.DBT"
 	             )
 	$toRemove | ForEach-Object {Remove-Item "$($DelaproPath)\$_" -ErrorAction SilentlyContinue}
 
