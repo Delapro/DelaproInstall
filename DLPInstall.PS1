@@ -3979,6 +3979,7 @@ Function Copy-Delagame {
 		New-Item -Type Directory $DelaGamePath
 	}
 	Copy-Item "$($DelaproPath)\*.*" $DelaGamePath
+	Copy-Item "$($DelaproPath)\Laser" $DelaGamePath -Recurse -Force
 
 }
 
