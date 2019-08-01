@@ -184,10 +184,15 @@ Function Test-DelaproActive {
 		[String]$Path = 'C:\DELAPRO'
 	)
 
-        $Pos = (Get-Item (Join-Path -Path $Path -ChildPath 'auftrpos.dbf')).LastWriteTime -gt ((Get-Date).AddDays($TolerateDays * -1))
-        $Main = (Get-Item (Join-Path -Path $Path -ChildPath 'auftrag.dbf')).LastWriteTime -gt ((Get-Date).AddDays($TolerateDays * -1))
+	If ($TolerateDays -eq -1) {
+		$true
+	} else {
+		$Pos = (Get-Item (Join-Path -Path $Path -ChildPath 'auftrpos.dbf')).LastWriteTime -gt ((Get-Date).AddDays($TolerateDays * -1))
+		$Main = (Get-Item (Join-Path -Path $Path -ChildPath 'auftrag.dbf')).LastWriteTime -gt ((Get-Date).AddDays($TolerateDays * -1))
 
-	$Pos -or $Main
+		$Pos -or $Main
+
+	}
 }
 
 # Mal sehen, ob es was bringt unter alten Windowsversionen
