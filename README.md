@@ -541,6 +541,10 @@ Get-ImageMagick
 
 ## Probleme ermitteln
 
+### Probleme mit Virenscannern
+
+siehe hier: [Probleme mit Virenscannern](https://github.com/Delapro/DelaproInstall/wiki/Probleme-mit-Virenscannern)
+
 ### Probleme in Delapro ermitteln
 
 ```Powershell
