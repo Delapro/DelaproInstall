@@ -163,6 +163,10 @@ If (Test-Path "$($DLPPath)\LASER\XXGHOSTPDFX.BAT") {
 # DelaproMail-Druckertreiber installieren
 Install-DelaproMailPrinter -Verbose
 
+# seit Win10 1903 gibt es die üblichen PS Treiber nicht mehr, es wird deshalb
+# der per Windows Update verfügbare Treiber installiert
+# Druckertreiber installieren->Windows Update->Xerox->"Xerox Global Print Driver PS"
+
 # evtl. bei Win10, wegen kaputtem Microsoft PS Standardtreiber (fehlende Ränder)
 Add-PrinterDriver -Name "Xerox PS Color Class Driver V1.1"
 Set-Printer -Name "DelaproMail" -Drivername "Xerox PS Color Class Driver V1.1"
@@ -424,6 +428,10 @@ Install-AcrobatDC
 
 ```Powershell
 Install-LibreOffice
+
+# um Desktoplinks zu erstellen
+New-FileShortcut -FileTarget "c:\programme (x86)\LibreOffice\programs\swriter.exe" -LinkFilename "Writer starten"
+New-FileShortcut -FileTarget "c:\programme (x86)\LibreOffice\programs\scalc.exe" -LinkFilename "Calc starten"
 ```
 
 ### VDDS-XML-Dateien-Prüftool
