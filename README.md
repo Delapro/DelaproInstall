@@ -209,6 +209,19 @@ If ($p) {
 }
 ```
 
+### Faxtreiber
+
+#### HP
+https://support.hp.com/de-de/drivers/selfservice/hp-universal-fax-driver-series-for-windows/7529318
+
+### Brother
+
+Nennt sich "PC-FAX Software", kann mit dem Control Center in Verbindung stehen, darf aber nicht über eine Freigabe von einem Server angebunden sein, sonst steht die Fax-Funktion nicht zur Verfügung.
+
+### Canon
+
+?
+
 ## Rund um Backups
 
 ### Erstellen von Backups
