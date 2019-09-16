@@ -1864,7 +1864,7 @@ Function Install-Thunderbird {
 		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\",
 		[switch]$Force,
-		[Validateset("68.1.0", "68.0", "60.8.0", "60.7.2", "60.7.1", "60.7.0", "60.6.1", "60.6.0", "60.5.3", "60.5.2", "60.5.1", "60.5.0", "60.4.0", "60.3.3", "60.2.1", "60.0")]
+		[Validateset("68.1.0", "68.0", "60.9.0", "60.8.0", "60.7.2", "60.7.1", "60.7.0", "60.6.1", "60.6.0", "60.5.3", "60.5.2", "60.5.1", "60.5.0", "60.4.0", "60.3.3", "60.2.1", "60.0")]
 		[string[]]$Version,
 		[validateset("win32", "win64")]
 		[string]$Platform="win32"
