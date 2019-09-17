@@ -2662,6 +2662,7 @@ Function Backup-Delapro {
 		If ($IgnoreBilder) {
 			$Argumente += "/IB"
 		}
+		Write-Verbose "Argumente: $Argumente"
 		Start-Process -Wait (Join-Path -Path $($DelaproPath) -ChildPath "Backup\easyBackup32.EXE") -ArgumentList $Argumente -WorkingDirectory $DelaproPath
 
 		If ($SecureBackup) {
@@ -2674,7 +2675,9 @@ Function Backup-Delapro {
 			}
 			# umbenennen
 			If (Test-Path $backups.FullName) {
-				Rename-Item -Path $backups.FullName -NewName ([System.IO.Path]::ChangeExtension($backups.FullName, "eyBZIP"))
+				$NewName = [System.IO.Path]::ChangeExtension($backups.FullName, "eyBZIP")
+				Write-Verbose "SecureBackup-Name: $NewName"
+				Rename-Item -Path $backups.FullName -NewName $NewName
 			}
 		}
 
