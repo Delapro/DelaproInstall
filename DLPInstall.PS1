@@ -1279,11 +1279,17 @@ Function Install-AcrobatDC {
 	# DC Release-Infos: http://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html
 	# WICHTIG: Nur die Planned Updates können verwendet werden!!
 	$dcVersion = "19.012.20036".Replace(".", "")
-	$url = "http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/$dcVersion/AcroRdrDC$($dcVersion)_de_DE.exe"
+	$dcOptionalVersion = "19.012.20040".Replace(".", "")
+	$url = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/$dcVersion/AcroRdrDC$($dcVersion)_de_DE.exe"
+	$urlOption = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/$dcOptionalVersion/AcroRdrDCUpd$($dcOptionalVersion).msp"
 	Start-BitsTransfer -Source $url -Destination $tempDirectory
 	# Adobe Reader Silent Install mit Progressbar
 	# Start-Process  -Wait .\AdbeRdr11010_de_DE.exe /sPB
 	Start-Process  -Wait "$($tempDirectory)\AcroRdrDC$($dcVersion)_de_DE.exe" -ArgumentList "/sPB"
+
+	Start-BitsTransfer -Source $urlOption -Destination $tempDirectory
+	Start-Process  -Wait "$($tempDirectory)\AcroRdrDCUpd$($dcVersion).msp"
+
 	# EULA abnicken, bei Neuinstallation muss zuerst der Key angelegt werden
 	New-Item 'Registry::HKEY_CURRENT_USER\SOFTWARE\Adobe\acrobat reader\DC\AdobeViewer' -Force
 
