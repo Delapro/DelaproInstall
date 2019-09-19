@@ -565,6 +565,10 @@ Get-ImageMagick
 
 ## Probleme ermitteln
 
+### Problem, dass Delapro nicht deinstalliert werden kann
+
+In diesem Fall hilft die manuelle deinstallation vom Delapro. Man wird in Registrierungseditor unter HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall fündig um den Delaproeintrag zu finden.
+
 ### Probleme mit Virenscannern
 
 siehe hier: [Probleme mit Virenscannern](https://github.com/Delapro/DelaproInstall/wiki/Probleme-mit-Virenscannern)
