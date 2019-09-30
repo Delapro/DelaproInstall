@@ -1900,7 +1900,9 @@ Function Install-Thunderbird {
 		$Filename = "Thunderbird Setup $tbVersion.exe"
 		Write-Verbose "Download $tbVersion, Dateiname: $Filename"
 		$urlFilename = [uri]::EscapeUriString($Filename)
-		Start-BitsTransfer "$($downloadUrlBase)/$platform/de/$UrlFilename" -Destination $tempDirectory
+		$downloadUrl = "$($downloadUrlBase)/$platform/de/$UrlFilename"
+		Write-Verbose "Lade von $downloadUrl"
+		Start-BitsTransfer -Source $downloadUrl -Destination $tempDirectory
 		$Filename = Join-Path -path "$($tempDirectory)" -ChildPath $urlFilename
 		Write-Verbose "Installiere $Filename"
 		Start-Process -Wait $Filename -ArgumentList "/S"
