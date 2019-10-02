@@ -1302,6 +1302,35 @@ Function Install-AcrobatDC {
 #	}
 }
 
+# installiert Python 3.x
+Function Install-Python {
+	[CmdletBinding()]
+	Param(
+		#[parameter(Mandatory=$true)]
+		[System.String]$tempDirectory="$Env:TEMP\",
+		[Validateset("x64", "x86")]
+		[System.String]$Platform="x64",
+	)
+
+	# Installationsparameter siehe: https://docs.python.org/3.7/using/windows.html
+	# aktuelle Version von: https://python.org/downloads/windows
+
+	$version = "3.7.4"
+	If ($Platform -eq "x64") {
+		$x64 = "-amd64"
+	} else {
+		$x64=""
+	}
+	$url = "https://www.python.org/ftp/python/$version/python-$version$x64.exe"
+	$Dest = "$($tempDirectory)\python-$version$x64.exe"
+
+	Write-Verbose "Download von: $url"
+	Write-Verbose "nach $Dest"
+	Start-BitsTransfer -Source $url -Destination $Dest
+	Start-Process -Wait -FilePath $Dest -ArgumentList "/quiet", "InstallAllUsers=1"
+
+}
+
 # installiert Amazons Corretto OpenJDK
 Function Install-OpenJDK {
 	[CmdletBinding()]
