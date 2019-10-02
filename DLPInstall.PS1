@@ -1309,7 +1309,7 @@ Function Install-Python {
 		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\",
 		[Validateset("x64", "x86")]
-		[System.String]$Platform="x64",
+		[System.String]$Platform="x64"
 	)
 
 	# Installationsparameter siehe: https://docs.python.org/3.7/using/windows.html
