@@ -476,6 +476,16 @@ Install-Maven -Verbose  # noch nicht komplett implementiert!
 Install-VeraPDF -Verbose
 ```
 
+### Python 3.x
+
+```Powershell
+# installiert die 64-Bit Version
+Install-Python -Verbose
+
+# installiert die 32-Bit Version
+Install-Python -Platform x86 -Verbose
+```
+
 ### 7Zip
 
 ```Powershell
