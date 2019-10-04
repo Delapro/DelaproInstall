@@ -563,7 +563,7 @@ Install-ImageMagick -Verbose
 
 # wenn man Daten zu einem Bild weiterverarbeiten möchte, ist dies leichter im JSON-Format:
 # Infos über Grafik ausgeben, wenn Ghostscript installiert ist, funktionieren sogar Infos zu PDF-Dateien!
-$json = Convert-FromJson ((& 'C:\Program Files\ImageMagick-7.0.8-Q16\magick.exe' convert Bild.BMP json:-) | out-String )
+$json = ConvertFrom-Json ((& 'C:\Program Files\ImageMagick-7.0.8-Q16\magick.exe' convert Bild.BMP json:-) | out-String )
 $json.Image
 
 # installierte Versionen von ImageMagock ermitteln
@@ -571,6 +571,14 @@ Get-ImageMagick
 
 # neueste Version von ImageMagick ausführen
 & "$((Get-ImageMagick)[0].Fullname)\magick.exe"
+
+# alle Metadaten eines Bilds ermitteln
+& 'C:\Program Files\ImageMagick-7.0.8-Q16\magick.exe' identify -format '%[EXIF:*]' .\Bild.JPG
+# möchte man die Metadaten als JSON-Objekt, so kann man diesen Aufruf verwenden
+$json = ConvertFrom-Json ((& 'C:\Program Files\ImageMagick-7.0.8-Q16\magick.exe' convert Bild.JPEG[1x1,0,0] json:-) | out-String )
+# um dann nur die EXIF-Informationen zu bekommen:
+$json.image.properties | select exif*
+
 ```
 
 ## Probleme ermitteln
