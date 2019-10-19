@@ -210,6 +210,21 @@ If ($p) {
 }
 ```
 
+### Druckertreiber ID bei neuen Windows Featureupdate Versionen ermitteln
+
+Ermittelt die Buildnummer und DriverID gibt diese aus.
+
+```Powershell
+$driverName = "Microsoft PS Class Driver"
+$winBuild = (Get-CimInstance Win32_OperatingSystem).Version
+$driver = Get-InstalledWindowsPrinterDriver -Vendor Microsoft -Driver $driverName
+$driverIDFound = ($driver[0]).OriginalFilename -match '\\prnms005.inf_[amd_64|x86]+_([0-9a-fA-F]{16})\\prnms005.inf'
+If ($driverIDFound) {
+    $driverID = $Matches[1]
+}
+"""$winBuild"" {`$driverID = ""$driverID""}"
+```
+
 ### Faxtreiber
 
 #### HP
