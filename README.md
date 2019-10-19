@@ -611,6 +611,20 @@ Get-GhostScriptExecutable
 
 # Konvertieren einer Postscriptdatei in PDF
 & "$(Get-GhostScriptExecutable)" -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile="test.pdf" .\test.ps
+
+# Konvertieren einer JPG-Datei in PDF
+# viewjpeg.ps kommt aus dem Ghostscript-Lib-Verzeichnis
+# viewJPEG ist case sensitiv und ruft die passende Prozedur auf
+# über -c werden die Parameter in diesem Fall der JPG-Dateiname angegeben, die Parameter müssen immer in () stehen
+& "$(Get-GhostScriptExecutable)" -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile="test.pdf" viewjpeg.ps -c "(test.jpg)" viewJPEG
+
+# mehrere JPG-Dateien in einer PDF-Datei speichern geht so:
+& "$(Get-GhostScriptExecutable)" -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile="test.pdf" viewjpeg.ps -c "(test1.jpg)" viewJPEG showpage "(test2.jpg)" viewJPEG showpage
+
+# alle *.JPG-Dateien im aktuellen Verzeichnis sammeln und in Datei schreiben,
+# wichtig, die Pfadangaben müssen Unix-like sein, um frühere Kommandozeilenlängenbegrenzungen unter Windows zu umgehen, wird alles in eine Datei geschrieben und diese als Parameter übergeben
+dir *.jpg| % {"($($_.Fullname.Replace('\','/'))) viewJPEG showpage"} | set-content testj.ps
+& "$(Get-GhostScriptExecutable)" -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile="test.pdf" viewjpeg.ps testj.ps
 ```
 
 ## Probleme ermitteln
