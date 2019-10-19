@@ -1785,11 +1785,11 @@ Function Install-VisualStudioCodeExtension {
 		[string[]]$Extension
 	)
 
-	If ($Extensions) {
+	If ($Extension) {
 		$codeEXE = 'C:\Program Files\Microsoft VS Code\Code.exe'
 		If (Test-Path $codeEXE) {
 			$codeEXE = 'C:\Program Files\Microsoft VS Code\bin\Code.cmd'
-			foreach ($ext in $Extensions) {
+			foreach ($ext in $Extension) {
 				switch ($ext) {
 					# verfügbare Extensions mit code --list-extensions anzeigen
 					"Powershell" 	{$installExt = "ms-vscode.PowerShell"}
