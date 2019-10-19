@@ -582,6 +582,22 @@ $json.image.properties | select exif*
 
 ```
 
+### Ghostscript
+
+```Powershell
+# installiert die aktuelle Ghostscript Version
+Install-Ghostscript -Verbose
+
+# verfügbare Ghostscript Versionen ermitteln
+Get-Ghostscript
+
+# EXE der aktuellen Ghostscript-Version ermitteln
+Get-GhostScriptExecutable
+
+# Konvertieren einer Postscriptdatei in PDF
+& "$(Get-GhostScriptExecutable)" -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile="test.pdf" .\test.ps
+```
+
 ## Probleme ermitteln
 
 ### Problem, dass Delapro nicht deinstalliert werden kann
