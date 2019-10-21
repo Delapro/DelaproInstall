@@ -625,6 +625,9 @@ Get-GhostScriptExecutable
 # wichtig, die Pfadangaben müssen Unix-like sein, um frühere Kommandozeilenlängenbegrenzungen unter Windows zu umgehen, wird alles in eine Datei geschrieben und diese als Parameter übergeben
 dir *.jpg| % {"($($_.Fullname.Replace('\','/'))) viewJPEG showpage"} | set-content testj.ps
 & "$(Get-GhostScriptExecutable)" -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile="test.pdf" viewjpeg.ps testj.ps
+
+# um aus einer PDF-Datei einzelne Grafikdateien zu erhalten, verwendet man den Aufruf so, dabei ist %03d ein Platzhalter welcher durch die Nummer der Seite, welche aus der PDF gewandelt wird ersetzt wird. Anstatt png16m kann man auch pngmono, pnggray usw. versuchen.
+& "$(Get-GhostScriptExecutable)" -dBATCH -dNOPAUSE -sDEVICE=png16m -r300 -sOutputFile="preise%03d.png" .\preise.pdf
 ```
 
 ## Probleme ermitteln
