@@ -3950,12 +3950,16 @@ Function Add-VolumeToBackupXML {
 			$Volume = Get-Volume| Where-Object {$dl -eq $_.Driveletter} | Where-Object {$_.OperationalStatus -eq "OK"} |  Select-Object -ExpandProperty Path
 			Write-Verbose "Drive: $dl  Volume: $Volume"
 
-			# Prüfen, ob das Volume schon hinterlegt ist
-			$exist = $backupXML.Delapro.easybackup32.BackupVolumeGUIDs.ChildNodes| ForEach-Object {$_.innertext -eq $Volume}
-			If (-Not $exist) {
-				$guid = $backupXML.CreateElement("GUID")
-				$guid.InnerText = $Volume
-				$backupXML.Delapro.easybackup32.BackupVolumeGUIDs.AppendChild($guid)
+			If ($null -ne $Volume) {
+				# Prüfen, ob das Volume schon hinterlegt ist
+				$exist = $backupXML.Delapro.easybackup32.BackupVolumeGUIDs.ChildNodes| ForEach-Object {$_.innertext -eq $Volume}
+				If (-Not $exist) {
+					$guid = $backupXML.CreateElement("GUID")
+					$guid.InnerText = $Volume
+					$backupXML.Delapro.easybackup32.BackupVolumeGUIDs.AppendChild($guid)
+				}
+			} else {
+				Write-Error "Volume zu Drive: $dl konnte nicht ermittelt werden"
 			}
 		}
 		Write-Verbose "Speichere $backXMLFile"
