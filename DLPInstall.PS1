@@ -3945,6 +3945,7 @@ Function Add-VolumeToBackupXML {
 "@
 		}
 
+		$added = $false
 		$Drive | ForEach-Object {
 			$dl = $_
 			$Volume = Get-Volume| Where-Object {$dl -eq $_.Driveletter} | Where-Object {$_.OperationalStatus -eq "OK"} |  Select-Object -ExpandProperty Path
@@ -3957,13 +3958,16 @@ Function Add-VolumeToBackupXML {
 					$guid = $backupXML.CreateElement("GUID")
 					$guid.InnerText = $Volume
 					$backupXML.Delapro.easybackup32.BackupVolumeGUIDs.AppendChild($guid)
+					$added = $true
 				}
 			} else {
 				Write-Error "Volume zu Drive: $dl konnte nicht ermittelt werden"
 			}
 		}
-		Write-Verbose "Speichere $backXMLFile"
-		$backupXML.OuterXml | Set-Content $backXMLFile
+		If ($added) {
+			Write-Verbose "Speichere $backXMLFile"
+			$backupXML.OuterXml | Set-Content $backXMLFile
+		}
 	} else {
 		Write-Error "$DestinationPath nicht gefunden"
 	}
