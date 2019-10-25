@@ -3953,7 +3953,7 @@ Function Add-VolumeToBackupXML {
 			If ($null -ne $Volume) {
 				# Prüfen, ob das Volume schon hinterlegt ist
 				$exist = $backupXML.Delapro.easybackup32.BackupVolumeGUIDs.ChildNodes| ForEach-Object {$_.innertext -eq $Volume}
-				If (-Not $exist) {
+				If (-not ($exist -contains $true)) {
 					$guid = $backupXML.CreateElement("GUID")
 					$guid.InnerText = $Volume
 					$backupXML.Delapro.easybackup32.BackupVolumeGUIDs.AppendChild($guid)
