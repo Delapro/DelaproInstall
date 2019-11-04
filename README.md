@@ -167,6 +167,10 @@ Install-DelaproMailPrinter -Verbose
 # der per Windows Update verfügbare Treiber installiert
 # Druckertreiber installieren->Windows Update->Xerox->"Xerox Global Print Driver PS"
 # oder HP->"HP Color LaserJet 2800 Series PS"
+# direkt:
+Install-HPColorLaserjet2800PS -Verbose
+Add-PrinterDriver -Name "HP Color LaserJet 2800 Series PS"
+Set-Printer -Name "DelaproMail" -Drivername "HP Color LaserJet 2800 Series PS"
 
 # evtl. bei Win10, wegen kaputtem Microsoft PS Standardtreiber (fehlende Ränder)
 Add-PrinterDriver -Name "Xerox PS Color Class Driver V1.1"
