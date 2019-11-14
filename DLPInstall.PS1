@@ -321,6 +321,7 @@ Function New-FileShortcut {
 		[String]$LinkFilename,
 		[String]$WorkingDirectory,
 		[String]$Description,
+		[String]$Arguments,
 		[String]$Folder=(Get-DesktopFolder -AllUsers)
 	)
 
@@ -334,6 +335,9 @@ Function New-FileShortcut {
 	$link.TargetPath = $FileTarget
 	$link.WorkingDirectory = $WorkingDirectory
 	$link.Description = $Description
+	If ($Arguments) {
+		$link.Arguments=$Arguments
+	}
 	$link.Save()
 
 }
