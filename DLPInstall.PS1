@@ -342,6 +342,41 @@ Function New-FileShortcut {
 
 }
 
+# erzeugt eine Verknüpfung zur Ausführung eines Powershellscripts
+Function New-PowershellScriptShortcut {
+	[CmdletBinding()]
+	Param (
+		[String]$Path,
+		[Switch]$Admin,
+		[Switch]$NoExit,
+		[String]$Description,
+		[String]$LinkFilename,
+		[String]$Folder=(Get-DesktopFolder -AllUsers)
+	)
+
+	$Path = Resolve-Path $Path
+	If (Test-Path $Path) {
+		$script = Get-Item $Path
+		$target='C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe'
+		# im folgenden Scriptaufruf sollte man das Verzeichnis (C:\temp) bzw. den Scriptnamen setup.ps1 anpassen! Der Aufruf erfolgt so, damit das Verzeichnis auch explizit aktiv ist. Andere Methoden haben nicht zum Erfolg geführt, weil das WorkingDirectory komischerweise immer ignoriert wurde
+		$arguments='-Command "& {$arg=@(''-NoExit'', ''-Command ""cd '
+		$arguments += $script.Directory.FullName
+		$arguments += '; . .\'
+		$arguments += $script.Name + '""''); Start-Process powershell.exe -argumentlist $arg '
+		If ($NoExit) {
+			$arguments = '-NoExit ' + $arguments
+		}
+		If ($Admin) {
+			$arguments += '-verb runas }"'
+		} else {
+			$arguments += '}"'
+		}
+		Write-Verbose "Arguments: $arguments"
+		New-FileShortcut -FileTarget  $target -Arguments $arguments -LinkFilename $LinkFilename -Description $Description -Folder $Folder
+	}
+
+}
+
 # druckt eine Windowstestseite vom angegebenen Drucker
 Function Invoke-PrinterTestPage {
 	[CmdletBinding()]
