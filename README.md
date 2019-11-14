@@ -392,6 +392,18 @@ Show-StartupFolder
 
 ```
 
+## beliebiges Powershellscript (auch als Admin) ausführen mit Desktop-Verknpüfung
+```Powershell
+$target='C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe'
+# im folgenden Scriptaufruf sollte man das Verzeichnis (C:\temp) bzw. den Scriptnamen setup.ps1 anpassen! Der Aufruf erfolgt so, damit das Verzeichnis auch explizit aktiv ist. Andere Methoden haben nicht zum Erfolg geführt, weil das WorkingDirectory komischerweise immer ignoriert wurde
+$arguments='-NoExit -Command "& {$arg=@(''-NoExit'', ''-Command ""cd c:\temp; . .\setup.PS1""''); Start-Process powershell.exe -argumentlist $arg -verb runas }"'
+New-FileShortcut -FileTarget  $target -Arguments $arguments -LinkFilename StartPSAdminScript -Description "führt ein Powershellscript mit Adminrechten aus" -Verbose
+
+# möchte man ein Script einrichten, welches keine Adminrechte benötigt verwendet man
+$arguments='-NoExit -Command "& {$arg=@(''-NoExit'', ''-Command ""cd c:\temp; . .\setup.PS1""''); Start-Process powershell.exe -argumentlist $arg}"'
+
+```
+
 ## Windows Passwortabfrage abschalten
 
 ```Powershell
