@@ -392,6 +392,21 @@ Function Invoke-GithubRawDownload {
 	}
 }
 
+Function Invoke-DelaproInstallNetDownloadAndInit {
+	[CmdletBinding()]
+	Param()
+
+	$Files = @('DLPInstallCommon.PS1', 'DLPInstallServer.PS1', 
+	           'DLPInstallClient.PS1')
+
+	Invoke-GithubRawDownload -Repository DelaproInstallNet -Files $Files -Verbose
+
+	foreach ($file in $Files) {
+		Write-Verbose "Lade: $file"
+		. .\$file
+	}
+}
+
 # druckt eine Windowstestseite vom angegebenen Drucker
 Function Invoke-PrinterTestPage {
 	[CmdletBinding()]
