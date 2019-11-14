@@ -377,6 +377,21 @@ Function New-PowershellScriptShortcut {
 
 }
 
+Function Invoke-GithubRawDownload {
+	[CmdletBinding()]
+	Param(
+		[String]$Repository,
+		[String[]]$Files
+	)
+
+	$githubDLUrl = "https://raw.githubusercontent.com/Delapro/$Repository/master/"
+	foreach ($file in $Files) {
+		$dl = $githubDLUrl + $file
+		Write-Verbose "Download von: $dl"
+		Start-BitsTransfer $dl
+	}
+}
+
 # druckt eine Windowstestseite vom angegebenen Drucker
 Function Invoke-PrinterTestPage {
 	[CmdletBinding()]
