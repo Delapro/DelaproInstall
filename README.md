@@ -78,23 +78,7 @@ $DlpPath
 ```
 
 ```Powershell
-$DlpAlterInTagen=1
-If (Test-DelaproActive -Path $DlpPath -TolerateDays $DlpAlterInTagen) {
-    If (Test-DelaproNotRunning -Path $DlpPath) {
-        # Backup aktualisieren
-        Update-Backup -DelaproPath $DLPPath -Verbose
-        # Sicherung des aktuellen Programms durchführen
-        Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -IgnoreBilder -SecureBackup -Verbose
-        # Druckertreiber aktualisieren
-        Update-DlpWinPr -DelaproPath $DLPPath -Verbose
-        Update-DlpRawPr -DelaproPath $DLPPath -Verbose
-        Update-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -Verbose
-    } else {
-        Write-Error "Delapro läuft noch!"
-    }
-} else {
-    Write-Error 'Sicherheitshalber nochmal $DlpPath prüfen!'
-}
+Invoke-DelaproPreUpdate -DlpAlterInTagen 1 -DlpPath $DlpPath -Verbose
 ```
 
 ## Update einspielen

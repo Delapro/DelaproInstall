@@ -2645,6 +2645,33 @@ Function Invoke-DelaproUpdate {
 	
 }
 
+# spielt ein Delapro-PreUpdate ein, bzw. bereitet das Einspielen eines Updates bevor, aktualisiert die Fernwartung
+Function Invoke-DelaproPreUpdate {
+	[CmdletBinding()]
+	Param(
+		[Int]$DlpAlterInTagen=1,
+		[String]$DlpPath
+	)
+
+	If (Test-DelaproActive -Path $DlpPath -TolerateDays $DlpAlterInTagen) {
+		If (Test-DelaproNotRunning -Path $DlpPath) {
+			# Backup aktualisieren
+			Update-Backup -DelaproPath $DLPPath -Verbose
+			# Sicherung des aktuellen Programms durchführen
+			Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -IgnoreBilder -SecureBackup -Verbose
+			# Druckertreiber aktualisieren
+			Update-DlpWinPr -DelaproPath $DLPPath -Verbose
+			Update-DlpRawPr -DelaproPath $DLPPath -Verbose
+			Update-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -Verbose
+		} else {
+			Write-Error "Delapro läuft noch!"
+		}
+	} else {
+		Write-Error 'Sicherheitshalber nochmal $DlpPath prüfen!'
+	}
+	
+}
+
 # Delapro installieren, muss schon heruntergeladen sein und in $TempDirectory liegen
 Function Install-DelaproHauptmodul {
 	[CmdletBinding()]
