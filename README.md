@@ -634,6 +634,12 @@ dir *.jpg| % {"($($_.Fullname.Replace('\','/'))) viewJPEG showpage"} | set-conte
 
 In diesem Fall hilft die manuelle deinstallation vom Delapro. Man wird in Registrierungseditor unter HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall fündig um den Delaproeintrag zu finden.
 
+### Installierte Windowsupdates ausgeben
+
+```Powershell
+Get-HotFix  | Sort-Object -Property InstalledOn –Descending
+```
+
 ### Probleme mit Virenscannern
 
 siehe hier: [Probleme mit Virenscannern](https://github.com/Delapro/DelaproInstall/wiki/Probleme-mit-Virenscannern)
