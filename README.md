@@ -367,10 +367,15 @@ Copy-Item .\SynPDFB.dll Syncfusion.Pdf.Base.dll
 Notepad EncrPdf.Ps1
 ```
 
-## Delapro Autostart einrichten
+## Autostart einrichten
 
 ```Powershell
+# Delapro Autostart
 New-FileShortcut -FileTarget  "$($DlpPath)\Delapro.exe" -LinkFilename StartDelapro -WorkingDirectory $DlpPath -Description "Autostart Delapro" -Folder (Get-StartupFolder) -Verbose
+
+# Thunderbird Autostart
+New-FileShortcut -FileTarget  (Get-ThunderbirdEXE).Fullname -LinkFilename StartThunderbird -WorkingDirectory (Get-ThunderbirdEXE).directoryname -Description "Autostart Thunderbird" -Folder (Get-StartupFolder) -Verbose
+
 # Verzeichnis öffnen
 Show-StartupFolder
 
