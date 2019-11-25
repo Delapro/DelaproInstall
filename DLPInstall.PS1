@@ -4498,11 +4498,6 @@ If (-Not (Test-Path $DlpGamePath)) {
 	Copy-Delagame -DelaproPath $($DlpPath) -DelagamePath $DlpGamePath
 }
 
-# Um die Standardprogramme einzusehen:
-Control.exe  /Name Microsoft.DefaultPrograms
-Cmd /c Assoc  .pdf
-Cmd /c Ftype  acrobat
-
 # den Status des Virenscanners holen:
 Get-AntiMalware
 

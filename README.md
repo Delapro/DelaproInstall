@@ -690,6 +690,15 @@ Wenn das E-Mailprogramm ein 64-Bit E-Mailprogramm ist, muss ein MAPI-Proxy von L
 # TODO: noch abklären, was es mit cxCT24.DLL, cxUT24.DLL und cxMX.DLL auf sich hat
 ```
 
+### Windows Standardprogramme einsehen, wie z. B. PDF, 7z oder ZIP-Dateizuordnungen:
+
+```Powershell
+# Um die Standardprogramme einzusehen:
+Control.exe  /Name Microsoft.DefaultPrograms
+Cmd /c Assoc  .pdf
+Cmd /c Ftype  acrobat
+```
+
 ### Abstürzende Programme in Windows ausfindig machen
 
 ```Powershell
