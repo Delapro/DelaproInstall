@@ -4330,6 +4330,197 @@ Function Get-LLVersion {
 	}
 }
 
+Function Install-Delapro {
+	[CmdletBinding()]
+	Param (
+		[String]$DlpInstPath,
+		[String]$DlpPath,
+		[String]$DlpGamePath,
+		[Validateset("Main", "Zert", "Chart", "Image", "Preise", "Acrobat", "Chrome", "Thunderbird", "eDocPrintPro", "Mailer", "AnyDesk", "Teamviewer", "ImportBackup", "CopyGame", "AntiMalware" )]
+		[string[]]$InstallSwitch
+	)
+		
+	If (Test-WindowsServer) {
+		Write-Error "Windows Server erkannt, bitte Installation manuell durchführen!"
+		# weitere Scriptausführung anhalten
+		throw "Server"
+	}
+
+	If (-Not (Test-Admin)) {
+		Write-Error "Script benötigt Administratorrechte"
+		# weitere Scriptausführung anhalten
+		throw "Admin"
+	}
+
+	If (Test-Windows8-0) {
+		Write-Error "Windows 8.0 wird nicht unterstützt! Bitte updaten auf Windows 8.1."
+		Write-Error "Weitere Infos: https://support.microsoft.com/de-de/help/15288/windows-8-update-to-windows-8-1"
+		throw "Windows 8"
+	}
+
+	If (-not (Test-Path -Path $DlpInstPath)) {
+		New-item -Path $DlpInstPath -Type Directory
+	}
+	Set-Location $DLPInstPath
+
+	# TODO: Bevor überhaupt etwas installiert wird, sollte hier zuerst ein Wiederherstellungspunkt gesetzt werden und nicht erst,
+	# wenn bereits etwas installiert wurde!
+
+	# Wegen Unblock-File sollte MF4 installiert werden: http://www.microsoft.com/de-de/download/details.aspx?id=40855
+	# direkter Download: http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu
+	If (-not (Get-Command Unblock-File -ErrorAction SilentlyContinue)) {
+
+		# Wenn kein Unblock-File da ist, dann fehlt auch Invoke-WebRequest!
+		# Invoke-WebRequest "http://www.microsoft.com/de-de/download/details.aspx?id=40855"
+		# Start-BitsTransfer "http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu"
+
+		# Bevor etwas installiert wird, zuerst einen Systemwiederherstellungspunkt setzen
+		CheckPoint-Computer "vor .Net-Framework- bzw. Powershell-Installation"
+
+		# TODO: Die Installation der Pakete automatisieren, hier werden die betreffenden Paramter zum Aufruf
+		# beschrieben: https://support.microsoft.com/en-us/kb/934307
+
+		If (-Not  (Test-NetFramework45Installed)) {
+			Install-NetFramework
+		}
+
+		Install-Powershell
+
+		If (Test-WUARebootRequired) {
+			Write-Warning "Neustart notwendig!"
+			# Theoretisch könnte man gleich  Restart-Computer  ausführen...
+			Return
+		}
+	}
+
+	# Falls Win7 mit PS 2.0 zum Einsatz kommt:
+	Import-Module Bitstransfer
+
+	# Systemwiederherstellungspunkt setzen
+	CheckPoint-Computer "vor Delapro Installation"
+	# Falls die Meldung
+	# WARNUNG: Es kann kein neuer Systemwiederherstellungspunkt erstellt werden, da innerhalb der letzten 24 Stunden bereits
+	# ein Wiederherstellungspunkt erstellt wurde. Versuchen Sie es später erneut.
+	# erscheint Control System aufrufen und manuellen Systemwiederherstellungspunkt erstellen
+	# hier weitere Infos zu obigem Thema: http://msdn.microsoft.com/de-de/library/windows/desktop/aa378727(v=vs.85).aspx
+	#
+	# Wenn die Meldung:
+	# Dieser Befehl kann aufgrund des folgenden Fehlers nicht ausgeführt werden: Der Dienst kann nicht gestartet werden, da er
+	# deaktiviert ist oder ihm keine aktivierten Geräte zugeordnet sind.
+	# Dabei enthält $Error.Exception.HResult den Wert -2147024809
+
+	Control System
+
+	# hier gibt es die passenden WMI-Klassen für SystemRestore: https://msdn.microsoft.com/en-us/library/windows/desktop/aa378986(v=vs.85).aspx
+	# (gwmi -Namespace root/default -Class SystemRestoreConfig).RPSessionInterval -eq 1
+	# fragt ab, ob die Systemwiederherstellung überhaupt aktiv ist.
+
+	# zunächst mal die Cmdlets nachbauen, welche benötigt werden und evtl. nicht da sind
+
+	Install-MissingPowershellCmdLets
+
+	New-Item $DlpPath -ItemType Directory
+
+	# ab hier beginnen die eigentlichen Installationsroutinen
+	If ($InstallSwitch -contains "TeamViewer") {
+		Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -CreateDesktopLink "easy Internet Fernwartung (Teamviewer).lnk"
+	}
+	If ($InstallSwitch -contains "AnyDesk") {
+		Install-AnyDesk -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -CreateDesktopLink "easy Internet Fernwartung (AnyDesk).lnk"
+	}
+
+	# Druckertreiber Installation
+	If ($InstallSwitch -contains "eDocPrintPro") {	
+		Install-eDocPrintPro -tempPath "$($DLPInstPath)"
+
+		# abklären, ob die Util-Methode besser ist anstatt Rename:
+		# C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDocPrintProUtil.EXE /AddPrinter /Printer="DelaproPDF" /Driver="eDocPrintPro" /Silent
+		Start-Process -Wait "C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDocPrintProUtil.EXE" -ArgumentList "/AddPrinter", '/Printer="DelaproPDF"', '/Driver="eDocPrintPro"', '/ProfilePath="C:\ProgramData\eDocPrintPro\DelaproPDF.ESFX"', "/Silent"
+		# WENN der Aufruf hier hängen bleibt, dann liegt es an fehlenden LOKALEN Adminrechten!!
+		# Rename-Printer -Name eDocPrintPro -NewName DelaproPDF
+		# durch Aufruf von eDocPrintProUtil.EXE sind zwei Druckertreiber vorhanden, deshalb den Standard eDocPrintPro löschen
+		Remove-Printer -Name eDocPrintPro
+	}
+
+	If ($InstallSwitch -contains "Mailer") {	
+		Install-DelaproMailPrinter -Verbose
+	}
+
+	Show-Printers
+
+	Disable-Windows10DefaultPrinterRoaming
+
+	# eigentliche Delaproinstallation
+	If ($InstallSwitch -contains "Main") {	
+		Start-BitsTransfer $easyBaseURI/Demo/dlpsetup.exe $DlpInstPath
+		Unblock-File "$($DLPInstPath)dlpsetup.exe"
+		Install-DelaproHauptmodul -TempDirectory $DLPInstPath -DelaproPath $DlpPath
+	}
+
+	If ($InstallSwitch -contains "Image") {	
+		Install-DelaproBildarchivierungModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI
+	}
+	If ($InstallSwitch -contains "Zert") {	
+		Install-DelaproZertifikatModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI
+	}
+	If ($InstallSwitch -contains "Chart") {	
+		Install-DelaproChartModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI
+	}
+	If ($InstallSwitch -contains "Preise") {	
+		Install-DelaproPreisupdate -TempDirectory $DLPInstPath -DownloadUrl $easyBaseURI
+	}
+
+	Update-DelaproGhostscript -PathDelaproGhostscript "$($DLPPath)\LASER\GHOSTPDF.BAT" -Verbose
+
+	# Für Neuinstallation BEL2014.LOG anlegen, damit ein spezieller Hinweis erfolgt, falls diese nochmals eingespielt werden sollte
+	"Neuinstallation" | Set-Content  "$($DlpPath)\BEL2014.LOG"
+
+	If ($InstallSwitch -contains "Acrobat") {	
+		Install-AcrobatDC -TempDirectory $DLPInstPath
+
+		# Pfad für Reader DC holen
+		$dcFile = Get-AcrobatReaderDCEXE
+		Set-AcrobatReaderDCViewerRightPaneOff $dcFile
+		Disable-AcrobatReaderDCSendAndTrack
+	}
+
+	If ($InstallSwitch -contains "Thunderbird") {	
+		Install-Thunderbird -TempDirectory $DLPInstPath
+	}
+
+	If ($InstallSwitch -contains "Chrome") {	
+		Install-Chrome -TempDirectory $DLPInstPath
+	}
+
+	If ($InstallSwitch -contains "ImportBackup") {	
+		Import-LastDelaproBackup -TempPath "$($DLPInstPath)AlteDatensicherung" -DestinationPath "$($DLPPath)"
+		# zum Direkt einspielen
+		# Import-OldDLPVersion -SourcePath G: -DestinationPath "$($DLPPath)"
+		# Import-OldDLPVersion -SourcePath C:\DelaproAlt -DestinationPath "$($DLPPath)"
+
+		Invoke-CleanupDelapro -DelaproPath $DLPPath
+	}
+
+	# Prüfen, ob man sich im Delapro-Verzeichnis befindet
+	If (-Not ((Get-Location).Path -eq "$($DlpPath)")) {
+	Set-Location $DlpPath
+	}
+
+	If ($InstallSwitch -contains "CopyGame") {	
+		If (-Not (Test-Path $DlpGamePath)) {
+			# Spielprogramm anlegen und Daten rüberkopieren
+			Copy-Delagame -DelaproPath $($DlpPath) -DelagamePath $DlpGamePath
+		}
+	}
+
+	If ($InstallSwitch -contains "AntiMalware") {
+		# den Status des Virenscanners holen:
+		Get-AntiMalware
+
+		Invoke-DefenderSetupAndScan
+	}
+}
+
 #If($PSReadlineActive) {
 #	# PSReadline wieder aktiveren, falls es vorher ausgeschaltet wurde.
 #	Import-Module PSReadline
@@ -4349,157 +4540,11 @@ Function Get-LLVersion {
 #
 #  CMDLET-ENDE
 
-If (Test-WindowsServer) {
-	Write-Error "Windows Server erkannt, bitte Installation manuell durchführen!"
-	# weitere Scriptausführung anhalten
-	throw "Server"
+# Bitte beachten: Es sind am Anfang des Skripts die hier aufgeführten Variablen definiert!
+$DelaproInstParameter = @{
+	DlpPath = $DlpPath
+	DlpGamePath = $DlpGamePath
+	DlpInstPath = $DlpInstPath
+	InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'TeamViewer', 'Mailer', 'eDocPrintPro', 'Acrobat', 'Thunderbird', 'Chrome', 'CopyGame', 'AntiMalware')
 }
-
-If (-Not (Test-Admin)) {
-	Write-Error "Script benötigt Administratorrechte"
-	# weitere Scriptausführung anhalten
-	throw "Admin"
-}
-
-If (Test-Windows8-0) {
-	Write-Error "Windows 8.0 wird nicht unterstützt! Bitte updaten auf Windows 8.1."
-	Write-Error "Weitere Infos: https://support.microsoft.com/de-de/help/15288/windows-8-update-to-windows-8-1"
-	throw "Windows 8"
-}
-
-If (-not (Test-Path -Path $DlpInstPath)) {
-	New-item -Path $DlpInstPath -Type Directory
-}
-Set-Location $DLPInstPath
-
-# TODO: Bevor überhaupt etwas installiert wird, sollte hier zuerst ein Wiederherstellungspunkt gesetzt werden und nicht erst,
-# wenn bereits etwas installiert wurde!
-
-# Wegen Unblock-File sollte MF4 installiert werden: http://www.microsoft.com/de-de/download/details.aspx?id=40855
-# direkter Download: http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu
-If (-not (Get-Command Unblock-File -ErrorAction SilentlyContinue)) {
-
-	# Wenn kein Unblock-File da ist, dann fehlt auch Invoke-WebRequest!
-	# Invoke-WebRequest "http://www.microsoft.com/de-de/download/details.aspx?id=40855"
-	# Start-BitsTransfer "http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu"
-
-	# Bevor etwas installiert wird, zuerst einen Systemwiederherstellungspunkt setzen
-	CheckPoint-Computer "vor .Net-Framework- bzw. Powershell-Installation"
-
-	# TODO: Die Installation der Pakete automatisieren, hier werden die betreffenden Paramter zum Aufruf
-	# beschrieben: https://support.microsoft.com/en-us/kb/934307
-
-	If (-Not  (Test-NetFramework45Installed)) {
-		Install-NetFramework
-	}
-
-	Install-Powershell
-
-	If (Test-WUARebootRequired) {
-		Write-Warning "Neustart notwendig!"
-		# Theoretisch könnte man gleich  Restart-Computer  ausführen...
-		Return
-	}
-}
-
-# Falls Win7 mit PS 2.0 zum Einsatz kommt:
-Import-Module Bitstransfer
-
-# Systemwiederherstellungspunkt setzen
-CheckPoint-Computer "vor Delapro Installation"
-# Falls die Meldung
-# WARNUNG: Es kann kein neuer Systemwiederherstellungspunkt erstellt werden, da innerhalb der letzten 24 Stunden bereits
-# ein Wiederherstellungspunkt erstellt wurde. Versuchen Sie es später erneut.
-# erscheint Control System aufrufen und manuellen Systemwiederherstellungspunkt erstellen
-# hier weitere Infos zu obigem Thema: http://msdn.microsoft.com/de-de/library/windows/desktop/aa378727(v=vs.85).aspx
-#
-# Wenn die Meldung:
-# Dieser Befehl kann aufgrund des folgenden Fehlers nicht ausgeführt werden: Der Dienst kann nicht gestartet werden, da er
-# deaktiviert ist oder ihm keine aktivierten Geräte zugeordnet sind.
-# Dabei enthält $Error.Exception.HResult den Wert -2147024809
-
-Control System
-
-# hier gibt es die passenden WMI-Klassen für SystemRestore: https://msdn.microsoft.com/en-us/library/windows/desktop/aa378986(v=vs.85).aspx
-# (gwmi -Namespace root/default -Class SystemRestoreConfig).RPSessionInterval -eq 1
-# fragt ab, ob die Systemwiederherstellung überhaupt aktiv ist.
-
-# zunächst mal die Cmdlets nachbauen, welche benötigt werden und evtl. nicht da sind
-
-Install-MissingPowershellCmdLets
-
-New-Item $DlpPath -ItemType Directory
-
-# ab hier beginnen die eigentlichen Installationsroutinen
-Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -CreateDesktopLink "easy Internet Fernwartung (Teamviewer).lnk"
-
-# Druckertreiber Installation
-Start-BitsTransfer $easyBaseURI/Demo/dlpsetup.exe $DlpInstPath
-Unblock-File "$($DLPInstPath)dlpsetup.exe"
-
-Install-eDocPrintPro -tempPath "$($DLPInstPath)"
-
-# abklären, ob die Util-Methode besser ist anstatt Rename:
-# C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDocPrintProUtil.EXE /AddPrinter /Printer="DelaproPDF" /Driver="eDocPrintPro" /Silent
-Start-Process -Wait "C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDocPrintProUtil.EXE" -ArgumentList "/AddPrinter", '/Printer="DelaproPDF"', '/Driver="eDocPrintPro"', '/ProfilePath="C:\ProgramData\eDocPrintPro\DelaproPDF.ESFX"', "/Silent"
-# WENN der Aufruf hier hängen bleibt, dann liegt es an fehlenden LOKALEN Adminrechten!!
-# Rename-Printer -Name eDocPrintPro -NewName DelaproPDF
-# durch Aufruf von eDocPrintProUtil.EXE sind zwei Druckertreiber vorhanden, deshalb den Standard eDocPrintPro löschen
-Remove-Printer -Name eDocPrintPro
-
-Install-DelaproMailPrinter -Verbose
-Show-Printers
-
-Disable-Windows10DefaultPrinterRoaming
-
-# eigentliche Delaproinstallation
-Install-DelaproHauptmodul -TempDirectory $DLPInstPath -DelaproPath $DlpPath
-
-Install-DelaproBildarchivierungModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI
-Install-DelaproZertifikatModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI
-Install-DelaproChartModul -TempDirectory $DLPInstPath -DelaproPath $DlpPath -DownloadUrl $easyBaseURI
-
-<#
-
-Install-DelaproPreisupdate -TempDirectory $DLPInstPath -DownloadUrl $easyBaseURI
-
-#>
-
-Update-DelaproGhostscript -PathDelaproGhostscript "$($DLPPath)\LASER\GHOSTPDF.BAT" -Verbose
-
-# Für Neuinstallation BEL2014.LOG anlegen, damit ein spezieller Hinweis erfolgt, falls diese nochmals eingespielt werden sollte
-"Neuinstallation" | Set-Content  "$($DlpPath)\BEL2014.LOG"
-
-Install-AcrobatDC -TempDirectory $DLPInstPath
-
-# Pfad für Reader DC holen
-$dcFile = Get-AcrobatReaderDCEXE
-Set-AcrobatReaderDCViewerRightPaneOff $dcFile
-Disable-AcrobatReaderDCSendAndTrack
-
-Install-Thunderbird -TempDirectory $DLPInstPath
-
-Install-Chrome -TempDirectory $DLPInstPath
-
-Import-LastDelaproBackup -TempPath "$($DLPInstPath)AlteDatensicherung" -DestinationPath "$($DLPPath)"
-# zum Direkt einspielen
-# Import-OldDLPVersion -SourcePath G: -DestinationPath "$($DLPPath)"
-# Import-OldDLPVersion -SourcePath C:\DelaproAlt -DestinationPath "$($DLPPath)"
-
-Invoke-CleanupDelapro -DelaproPath $DLPPath
-
-# Prüfen, ob man sich im Delapro-Verzeichnis befindet
-If (-Not ((Get-Location).Path -eq "$($DlpPath)")) {
-  Set-Location $DlpPath
-}
-
-If (-Not (Test-Path $DlpGamePath)) {
-	# Spielprogramm anlegen und Daten rüberkopieren
-	Copy-Delagame -DelaproPath $($DlpPath) -DelagamePath $DlpGamePath
-}
-
-# den Status des Virenscanners holen:
-Get-AntiMalware
-
-Invoke-DefenderSetupAndScan
-
+Install-Delapro @DelaproInstParameter
