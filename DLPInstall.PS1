@@ -4330,16 +4330,28 @@ Function Get-LLVersion {
 	}
 }
 
+# ImportBackup und ImportData schließen sich gegenseitig aus!
 Function Install-Delapro {
 	[CmdletBinding()]
 	Param (
 		[String]$DlpInstPath,
 		[String]$DlpPath,
 		[String]$DlpGamePath,
-		[Validateset("Main", "Zert", "Chart", "Image", "Preise", "Acrobat", "Chrome", "Thunderbird", "eDocPrintPro", "Mailer", "AnyDesk", "Teamviewer", "ImportBackup", "CopyGame", "AntiMalware" )]
-		[string[]]$InstallSwitch
+		[Validateset("Main", "Zert", "Chart", "Image", "Preise", "Acrobat", "Chrome", "Thunderbird", "eDocPrintPro", "Mailer", "AnyDesk", "Teamviewer", "ImportBackup", "ImportData", "CopyGame", "AntiMalware" )]
+		[string[]]$InstallSwitch,
+		[String]$ImportDataPath
 	)
-		
+
+	If (($InstallSwitch -contains "ImportData") -and ($InstallSwitch -contains "ImportBackup")) {
+		Write-Error "Entweder ImportBackup oder ImportData verwenden"
+		throw "Import-Fehler"
+	}
+
+	If (($InstallSwitch -contains "ImportData") -and (-not  (Test-Path $ImportDataPath))) {
+		Write-Error "$ImportDataPath nicht gefunden!"
+		throw "ImportDataPath-Fehler"
+	}
+
 	If (Test-WindowsServer) {
 		Write-Error "Windows Server erkannt, bitte Installation manuell durchführen!"
 		# weitere Scriptausführung anhalten
@@ -4498,6 +4510,11 @@ Function Install-Delapro {
 		# Import-OldDLPVersion -SourcePath G: -DestinationPath "$($DLPPath)"
 		# Import-OldDLPVersion -SourcePath C:\DelaproAlt -DestinationPath "$($DLPPath)"
 
+		Invoke-CleanupDelapro -DelaproPath $DLPPath
+	}
+
+	If ($InstallSwitch -contains "ImportData") {
+		Import-OldDLPVersion -SourcePath $ImportDataPath -DestinationPath "$($DLPPath)"
 		Invoke-CleanupDelapro -DelaproPath $DLPPath
 	}
 
