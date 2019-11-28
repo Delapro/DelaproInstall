@@ -4564,4 +4564,14 @@ $DelaproInstParameter = @{
 	DlpInstPath = $DlpInstPath
 	InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'TeamViewer', 'Mailer', 'eDocPrintPro', 'Acrobat', 'Thunderbird', 'Chrome', 'CopyGame', 'AntiMalware')
 }
+
+# Variante mit Datenimport aus Verzeichnis, ohne Acrobat, Thunderbird, Chrome und Antimalware
+$DelaproInstParameterMitDataImport = @{
+	DlpPath = $DlpPath
+	DlpGamePath = $DlpGamePath
+	DlpInstPath = $DlpInstPath
+	InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'TeamViewer', 'Mailer', 'eDocPrintPro', 'CopyGame', 'ImportData')
+	ImportDataPath = 'D:\Delapro'
+}
+
 Install-Delapro @DelaproInstParameter
