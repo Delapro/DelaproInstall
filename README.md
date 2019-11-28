@@ -671,6 +671,12 @@ Get-DelaproError| select *, @{Name="CallStackStr";Expression={($_.CallStack|out-
 
 ```
 
+### Probleme mit Passwörtern von alten E-Mail-Programmen
+
+Kommt leider zu häufig vor, dass Benutzer die Passwörter für die E-Mailprogramme verlieren.
+
+Eine Möglichkeit auf alten Rechnern die Passwörter auszulesen wäre z. B. [Nirsoft Mail PassView](https://www.nirsoft.net/utils/mailpv.html).
+
 ### Probleme mit Windows Standard E-Mailprogramm
 ```Powershell
 # gibt den aktuellen Standard-E-Mail-Client aus
