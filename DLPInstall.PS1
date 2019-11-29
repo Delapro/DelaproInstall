@@ -4568,6 +4568,9 @@ Function Install-Delapro {
 #
 #  CMDLET-ENDE
 
+# verfügbare Switches bei InstallSwitch ermitteln
+(Get-Command Install-Delapro).Parameters['InstallSwitch'].Attributes[1].ValidValues
+
 # Bitte beachten: Es sind am Anfang des Skripts die hier aufgeführten Variablen definiert!
 $DelaproInstParameter = @{
 	DlpPath = $DlpPath
@@ -4576,6 +4579,15 @@ $DelaproInstParameter = @{
 	InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'TeamViewer', 'Mailer',
 					  'eDocPrintPro', 'Acrobat', 'Thunderbird', 'Chrome', 'CopyGame',
 					  'AntiMalware')
+}
+
+$DelaproInstParameterFromBackup = @{
+	DlpPath = $DlpPath
+	DlpGamePath = $DlpGamePath
+	DlpInstPath = $DlpInstPath
+	InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'TeamViewer', 'Mailer',
+					  'eDocPrintPro', 'Acrobat', 'Thunderbird', 'Chrome', 'CopyGame',
+					  'ImportBackup', 'AntiMalware')
 }
 
 # Variante mit Datenimport aus Verzeichnis, ohne Acrobat, Thunderbird, Chrome und Antimalware
