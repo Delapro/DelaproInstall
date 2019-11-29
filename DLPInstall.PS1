@@ -4337,10 +4337,17 @@ Function Install-Delapro {
 		[String]$DlpInstPath,
 		[String]$DlpPath,
 		[String]$DlpGamePath,
-		[Validateset("Main", "Zert", "Chart", "Image", "Preise", "Acrobat", "Chrome", "Thunderbird", "eDocPrintPro", "Mailer", "AnyDesk", "Teamviewer", "ImportBackup", "ImportData", "CopyGame", "AntiMalware" )]
+		[Validateset("Main", "Zert", "Chart", "Image", "Preise",
+					 "Acrobat", "AcrobatConfig", "Chrome", "Thunderbird", 
+					 "eDocPrintPro", "Mailer", "AnyDesk", "Teamviewer", 
+					 "ImportBackup", "ImportData", "CopyGame", "AntiMalware" )]
 		[string[]]$InstallSwitch,
 		[String]$ImportDataPath
 	)
+
+	If (($InstallSwitch -contains "Acrobat") -and ($InstallSwitch -contains "AcrobatConfig")) {
+		Write-Warning "AcrobatConfig wird automatisch durch Acrobat ausgeführt"
+	}
 
 	If (($InstallSwitch -contains "ImportData") -and ($InstallSwitch -contains "ImportBackup")) {
 		Write-Error "Entweder ImportBackup oder ImportData verwenden"
@@ -4489,13 +4496,17 @@ Function Install-Delapro {
 
 	If ($InstallSwitch -contains "Acrobat") {	
 		Install-AcrobatDC -TempDirectory $DLPInstPath
+		# Konfiguration von Acrobat erzwingen
+		$InstallSwitch += "AcrobatConfig"
+	}
 
+	If ($InstallSwitch -contains "AcrobatConfig") {
 		# Pfad für Reader DC holen
 		$dcFile = Get-AcrobatReaderDCEXE
 		Set-AcrobatReaderDCViewerRightPaneOff $dcFile
 		Disable-AcrobatReaderDCSendAndTrack
 	}
-
+	
 	If ($InstallSwitch -contains "Thunderbird") {	
 		Install-Thunderbird -TempDirectory $DLPInstPath
 	}
@@ -4520,10 +4531,10 @@ Function Install-Delapro {
 
 	# Prüfen, ob man sich im Delapro-Verzeichnis befindet
 	If (-Not ((Get-Location).Path -eq "$($DlpPath)")) {
-	Set-Location $DlpPath
+		Set-Location $DlpPath
 	}
 
-	If ($InstallSwitch -contains "CopyGame") {	
+	If ($InstallSwitch -contains "CopyGame") {
 		If (-Not (Test-Path $DlpGamePath)) {
 			# Spielprogramm anlegen und Daten rüberkopieren
 			Copy-Delagame -DelaproPath $($DlpPath) -DelagamePath $DlpGamePath
@@ -4562,7 +4573,9 @@ $DelaproInstParameter = @{
 	DlpPath = $DlpPath
 	DlpGamePath = $DlpGamePath
 	DlpInstPath = $DlpInstPath
-	InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'TeamViewer', 'Mailer', 'eDocPrintPro', 'Acrobat', 'Thunderbird', 'Chrome', 'CopyGame', 'AntiMalware')
+	InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'TeamViewer', 'Mailer',
+					  'eDocPrintPro', 'Acrobat', 'Thunderbird', 'Chrome', 'CopyGame',
+					  'AntiMalware')
 }
 
 # Variante mit Datenimport aus Verzeichnis, ohne Acrobat, Thunderbird, Chrome und Antimalware
@@ -4570,7 +4583,8 @@ $DelaproInstParameterMitDataImport = @{
 	DlpPath = $DlpPath
 	DlpGamePath = $DlpGamePath
 	DlpInstPath = $DlpInstPath
-	InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'TeamViewer', 'Mailer', 'eDocPrintPro', 'CopyGame', 'ImportData')
+	InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'TeamViewer', 'Mailer',
+					  'eDocPrintPro', 'CopyGame', 'ImportData')
 	ImportDataPath = 'D:\Delapro'
 }
 
