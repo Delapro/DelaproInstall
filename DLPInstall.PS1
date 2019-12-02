@@ -2151,11 +2151,12 @@ Function Install-Enigmail {
 
 	If (Test-Thunderbird) {
 		# Infos zur aktuellen Version: https://www.enigmail.net/index.php/en/download/changelog
+		$emMainVersion = "2.1"
 		$emVersion = "2.1.3"
-		$Filename = "enigmail-$($emVersion)-sm+tb.xpi"
+		$Filename = "enigmail-$($emVersion)-tb.xpi"
 		Write-Verbose "Download $emVersion, Dateiname: $Filename"
 		$urlFilename = [uri]::EscapeUriString($Filename)
-		Start-BitsTransfer https://www.enigmail.net/download/release/2.0/$Filename -Destination $tempDirectory
+		Start-BitsTransfer https://www.enigmail.net/download/release/$emMainVersion/$urlFilename -Destination $tempDirectory
 		$DestFilename = Join-Path -path "$($tempDirectory)" -ChildPath $urlFilename
 		Write-Verbose "Installiere $DestFilename"
 		$DestZIP = $DestFilename.Replace('.xpi', '.zip')
