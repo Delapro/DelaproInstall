@@ -1900,7 +1900,7 @@ Function Install-Maven {
 	}
 	# sowas sollte vorhanden sein: $env:JAVA_HOME= 'C:\Program Files\Amazon Corretto\jdk1.8.0_202'
 	# Versionsinfos: https://maven.apache.org/docs/history.html
-	$version = "3.6.0"
+	$version = "3.6.3"
 	$url = "http://apache.uvigo.es/maven/maven-3/$($version)/binaries/apache-maven-$($version)-bin.zip"
 	$file = Join-Path $TempDirectory -ChildPath "apache-maven-$($version)-bin.zip"
 	Start-BitsTransfer -Source $url -Destination $TempDirectory
@@ -1910,6 +1910,7 @@ Function Install-Maven {
 	# TODO: M2_HOME mit Maven-Pfad anlegen 
 
 	# VSCode braucht den kompletten Pfad zu C:\Tools\Maven\apache-maven-3.6.0\bin\mvn.cmd in den Settings
+	Write-Warnung "M2_HOME anlegen und VSCode benötigt Pfad zu C:\tools\maven...!"
 }
 
 # Installation von Chrome
