@@ -2348,6 +2348,20 @@ Function Invoke-SysInternalTool {
 
 }
 
+Function Install-DotNetCore {
+	[CmdletBinding()]
+	Param(
+		[System.String]$tempDirectory="$Env:TEMP\"
+	)
+
+	# TODO: Version, Platform, OS beachten
+
+	$filename = "dotnet-runtime-3.1.0-win-x64.exe"
+	Start-BitsTransfer "https://download.visualstudio.microsoft.com/download/pr/9f010da2-d510-4271-8dcc-ad92b8b9b767/d2dd394046c20e0563ce5c45c356653f/$Filename" -Destination "$($tempDirectory)\$Filename"
+	Start-Process -Wait -FilePath "$($tempDirectory)\$Filename"
+
+}
+
 # diese Funktion übernimmt die Installation des .Net-Frameworks, wenn dieses nicht installiert sein sollte
 Function Install-NetFramework {
 	[CmdletBinding()]
