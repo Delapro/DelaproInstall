@@ -1384,7 +1384,7 @@ Function Install-Python {
 	# Installationsparameter siehe: https://docs.python.org/3.7/using/windows.html
 	# aktuelle Version von: https://python.org/downloads/windows
 
-	$version = "3.8.0"
+	$version = "3.8.1"
 	If ($Platform -eq "x64") {
 		$x64 = "-amd64"
 	} else {
