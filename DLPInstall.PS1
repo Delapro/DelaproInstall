@@ -1413,11 +1413,11 @@ Function Install-OpenJDK {
 
 	# Infos: https://docs.aws.amazon.com/de_de/corretto/latest/corretto-8-ug/downloads-list.html
 	# Source: https://github.com/corretto/corretto-8
-	$JavaVersion = "8.212.04.2"
+	$JavaVersion = "8.232.09.1"
 
 	# https://d2znqt9b1bc64u.cloudfront.net/amazon-corretto-8.202.08.2-windows-x64.msi
 	If ($Version -eq "8" -and $Platform -eq "x64") {
-		$url = "https://d3pxv6yz143wms.cloudfront.net/$($JavaVersion)/amazon-corretto-$($JavaVersion)-windows-x64.msi"
+		$url = "https://corretto.aws/downloads/resources/$($JavaVersion)/amazon-corretto-$($JavaVersion)-windows-x64.msi"
 		Start-BitsTransfer $url -Destination $tempDirectory
 		$msi = Join-Path -Path $tempDirectory -ChildPath "amazon-corretto-$($JavaVersion)-windows-x64.msi"
 		# mögliche Features zum installieren: ADDLOCAL=FeatureMain,FeatureSetupJavaHome,FeatureSetupEnv,FeatureAddPath
