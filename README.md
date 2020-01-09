@@ -742,6 +742,10 @@ Invoke-SysInternalTool -Tool ProcDump -Verbose
 Get-PhysicalDisk
 Get-PhysicalDisk|% {Get-StorageReliabilityCounter -PhysicalDisk $_}|fl *
 
+# Hardwareprobleme bei der Festplattenkommunikation
+# mögliche Erläuterungen siehe: https://docs.microsoft.com/de-de/archive/blogs/ntdebugging/interpreting-event-153-errors
+Get-WinEvent -ProviderName disk
+
 # für tiefergehende Infos bzw. genaueren Analyse smartmontools verwenden
 # www.smartmontools.org
 
