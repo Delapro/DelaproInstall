@@ -2642,6 +2642,7 @@ Function Invoke-DelaproUpdate {
 						Set-Location ..
 						.\update\update
 						Invoke-CleanupDelapro $DlpPath -Verbose
+						Test-DelaproFormsAnomality $DlpPath -Verbose
 					}
 				} else {
 					throw "$DlpUpdateFile konnte nicht ausgeführt werden!"
@@ -2660,6 +2661,21 @@ Function Invoke-DelaproUpdate {
 		Write-Error "Delapro in $DlpPath ist zu alt, bitte prüfen!"
 	}
 	
+}
+
+Function Test-DelaproFormsAnomality {
+	[CmdletBinding()]
+	Param(
+		[String]$DlpPath
+	)
+
+	$MinSize = 2	# alles was kleiner ist, wird ermittelt
+	$Files = Get-ChildItem -Path (Join-Path -Path $DlpPath -ChildPath Form*.txt) | Where-Object length -lt $MinSize
+	If ($Files) {
+		If ($Files.Length -gt 0) {
+			Write-Warning "Achtung FormsAnomalie! $(foreach($f in $Files){$f.name})"
+		}
+	}
 }
 
 # spielt ein Delapro-PreUpdate ein, bzw. bereitet das Einspielen eines Updates bevor, aktualisiert die Fernwartung
