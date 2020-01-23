@@ -226,6 +226,10 @@ Nennt sich "PC-FAX Software", kann mit dem Control Center in Verbindung stehen, 
 
 ?
 
+### Epson
+
+Nennt sich "Epson Fax Utility" und kann beim jeweiligen Drucker heruntergeladen werden.
+
 ## Rund um Backups
 
 ### Erstellen von Backups
