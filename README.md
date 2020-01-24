@@ -230,6 +230,12 @@ Nennt sich "PC-FAX Software", kann mit dem Control Center in Verbindung stehen, 
 
 Nennt sich "Epson Fax Utility" und kann beim jeweiligen Drucker heruntergeladen werden.
 
+Falls der Epson-Druckertreiber von Windows direkt installiert wurde lässt sich das Epson-Fax-Programm nicht direkt installieren, sondern meldet den Fehler: 
+
+> Epson-Druckertreiber, der für FAX Utility benötigt wird, ist nicht installiert. Installieren Sie den Druckertreiber, bevor Sie FAX Utility installieren.
+
+In diesem Fall muss der normale Epson-Druckertreiber zuerst installiert werden und danach das Epson Fax Utility.
+
 ## Rund um Backups
 
 ### Erstellen von Backups
