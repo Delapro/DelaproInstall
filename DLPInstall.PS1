@@ -3844,17 +3844,20 @@ Function Get-DefaultEMailClient {
 	}
 
 	If ($mailClient -eq "Microsoft Outlook") {
-		$bitness = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Office\15.0\Outlook -Name Bitness)
+		$bitness = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Office\15.0\Outlook -Name Bitness -ErrorAction SilentlyContinue)
 		If ($null -eq $bitness) {
-			$bitness = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Office\16.0\Outlook -Name Bitness)
+			$bitness = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Office\16.0\Outlook -Name Bitness -ErrorAction SilentlyContinue)
 			If ($null -eq $bitness) {
-				$bitness = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Office\ClickToRun\REGISTRY\MACHINE\Software\Microsoft\Office\15.0\Outlook -Name Bitness)
+				$bitness = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Office\ClickToRun\REGISTRY\MACHINE\Software\Microsoft\Office\15.0\Outlook -Name Bitness -ErrorAction SilentlyContinue)
 				If ($null -eq $bitness) {
-					$bitness = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Office\ClickToRun\REGISTRY\MACHINE\Software\Microsoft\Office\16.0\Outlook -Name Bitness)
+					$bitness = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Office\ClickToRun\REGISTRY\MACHINE\Software\Microsoft\Office\16.0\Outlook -Name Bitness -ErrorAction SilentlyContinue)
 				}
 			}
 		}
 
+		If ($null -ne $bitness) {
+			$bitness = $bitness.Bitness
+		}
 		$Version = "unbekannt" # TODO, 2013, 2016, 2019, Office365 usw.
 		$Click2Run = "fehlt noch" # TODO Registry?
 	}
