@@ -3860,6 +3860,7 @@ Function Get-DefaultEMailClient {
 		}
 		$Version = "unbekannt" # TODO, 2013, 2016, 2019, Office365 usw.
 		$Click2Run = "fehlt noch" # TODO Registry?
+		$BuildNr = "0815" # TODO Buildnumber aus Outlook.EXE auslesen
 	}
 
 	"$mailClient, $bitness" #, $If($Click2Run){'Click2Run'}"
@@ -4379,6 +4380,27 @@ Function Get-LLVersion {
 	} else {
 		$versions
 	}
+}
+
+Function Get-DelaproInstallPreparation {
+	[CmdletBinding()]
+	Param(
+
+	)
+
+	$prep = @()
+
+	If ((Get-DefaultEMailClient) -eq ", ") {
+			$prep += 'Thunderbird'
+	}
+	If ($null -eq (Get-AcrobatReaderDCEXE)) {
+		$prep += 'Acrobat', 'AcrobatConfig'
+	}
+	If ((Get-AntiMalware).Count -eq 1) {
+		$prep += 'AntiMalware'
+	}
+
+	$prep
 }
 
 # ImportBackup und ImportData schließen sich gegenseitig aus!
