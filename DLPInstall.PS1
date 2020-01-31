@@ -480,15 +480,17 @@ Function Get-AcrobatReaderDCEXE {
 	# Pfad für Reader DC holen
 	$ftype = Cmd /c Ftype  acrobat
 	Write-Verbose "FType: $ftype"
-	$dc = (($ftype -split '=')[1]).Replace('"%1"',"")
-	Write-Verbose $dc
-	# neuere Versionen von DC scheinen ein /u (Win8.1 Pro) einzutragen, komische Installation verwenden sogar "/ u"
-	$dc = $dc.Replace('/u',"")
-	$dc = $dc.Replace('/ u', "")
-	$dc = $dc.TrimEnd()
-	$dc = $dc.Replace('"', "")
-	$dcfile = Get-Item $dc
-	$dcfile
+	If ($null -ne $ftype) {
+		$dc = (($ftype -split '=')[1]).Replace('"%1"',"")
+		Write-Verbose $dc
+		# neuere Versionen von DC scheinen ein /u (Win8.1 Pro) einzutragen, komische Installation verwenden sogar "/ u"
+		$dc = $dc.Replace('/u',"")
+		$dc = $dc.Replace('/ u', "")
+		$dc = $dc.TrimEnd()
+		$dc = $dc.Replace('"', "")
+		$dcfile = Get-Item $dc
+		$dcfile
+	}
 }
 
 # Schaltet beim Acrobat ReaderDC die rechte Leiste ab, muss mit Admin-Rechten laufen
@@ -4396,7 +4398,7 @@ Function Get-DelaproInstallPreparation {
 	If ($null -eq (Get-AcrobatReaderDCEXE)) {
 		$prep += 'Acrobat', 'AcrobatConfig'
 	}
-	If ((Get-AntiMalware).Count -eq 1) {
+	If (-Not ((Get-AntiMalware) -is [array])) {
 		$prep += 'AntiMalware'
 	}
 
@@ -4673,4 +4675,5 @@ $DelaproInstParameterMitDataImport = @{
 	ImportDataPath = 'D:\Delapro'
 }
 
+Get-DelaproInstallPreparation
 Install-Delapro @DelaproInstParameter
