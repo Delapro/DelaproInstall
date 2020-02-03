@@ -1937,6 +1937,37 @@ Function Install-Chrome {
 
 }
 
+Function Register-CombitMAPIProxy {
+	[CmdletBinding()]
+	Param(
+		[System.String]$DelaproPath="C:\Delapro"
+	)
+
+	$Dll = 'cxCT24.DLL'
+	If (-Not (Test-Path (Join-Path -path $DelaproPath -ChildPath $Dll))) {
+		Write-Error "$DelaproPath\$Dll fehlt!"
+	}
+	$Dll = 'cxUT24.DLL'
+	If (-Not (Test-Path (Join-Path -path $DelaproPath -ChildPath $Dll))) {
+		Write-Error "$DelaproPath\$Dll fehlt!"
+	}
+	$Dll = 'cxMX24.DLL'
+	If (-Not (Test-Path (Join-Path -path $DelaproPath -ChildPath $Dll))) {
+		Write-Error "$DelaproPath\$Dll fehlt!"
+	}
+	$Dll = 'CXMP24.EXE'
+	If (-Not (Test-Path (Join-Path -path $DelaproPath -ChildPath $Dll))) {
+		Write-Error "$DelaproPath\$Dll fehlt!"
+	} else {
+		Start-Process -Wait -FilePath "$DelaproPath\CXMP24.EXE" -ArgumentList '/regserver'
+	}
+
+	# Es müssen auf jeden Fall noch cxCT24.DLL, cxUT24.DLL und cxMX24.DLL vorhanden sein!
+	# Falls diese fehlen, findet sich z. B. in Debwin kein Eintrag zu cxMP24.EXE!
+	# Die Registrierung kann aus einem 64-Bit Prozess heraus erfolgen
+	
+}
+
 # installiert List&Label Debwin legt dazu ein eigenes Verzeichnis mit Namen combitProblemLösung an
 function Install-DebWin {
 	[CmdletBinding()]

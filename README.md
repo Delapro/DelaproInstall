@@ -704,10 +704,7 @@ Wenn das E-Mailprogramm ein 64-Bit E-Mailprogramm ist, muss ein MAPI-Proxy von L
 .\CMMP24.EXE /regserver
 
 # bei 32-Bit Delapro und 64-Bit Outlook:
-.\CXMP24.EXE /regserver
-# Es müssen auf jeden Fall noch cxCT24.DLL, cxUT24.DLL und cxMX24.DLL vorhanden sein!
-# Falls diese fehlen, findet sich z. B. in Debwin kein Eintrag zu cxMP24.EXE!
-# Die Registrierung kann aus einem 64-Bit Prozess heraus erfolgen
+Register-CombitMAPIProxy
 ```
 
 ### Windows Standardprogramme einsehen, wie z. B. PDF, 7z oder ZIP-Dateizuordnungen:
