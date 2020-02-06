@@ -834,11 +834,21 @@ Function Install-Ghostscript {
 	[CmdletBinding()]
 	Param(
 		#[parameter(Mandatory=$true)]
-		[System.String]$tempPath="$Env:TEMP\"
+		[System.String]$tempPath="$Env:TEMP\",
+		[Validateset("Newest", "9.50", "9.27","9.26", "9.25", "9.24")]
+		[string[]]$Version
+
 	)
 
 	# Infos zur aktuellen Version: http://ghostscript.com/Releases.html
-	$ghostVersion="gs950"
+	switch ($Version) {
+		"Newest" {$ghostVersion="gs950"}
+		"9.50" {$ghostVersion="gs950"}
+		"9.27" {$ghostVersion="gs927"}
+		"9.26" {$ghostVersion="gs926"}
+		"9.25" {$ghostVersion="gs925"}
+		"9.24" {$ghostVersion="gs924"}
+	}
 	If (Test-64Bit) {
 		$ghostPlatform = "w64"
 	} else {
