@@ -829,6 +829,19 @@ Function Update-DelaproGhostscript {
 	}
 }
 
+Function Install-EdgeChromium {
+	[CmdletBinding()]
+	Param(
+		[System.String]$tempDirectory="$Env:temp\"
+	)
+
+	# 
+	$url = 'https://go.microsoft.com/fwlink/?linkid=2108834&Channel=Stable&language=de'
+	Start-BitsTransfer -Source $url -Destination $tempDirectory\EdgeChromiumSetup.exe
+	Start-Process  -Wait "$($tempDirectory)\EdgeChromiumSetup.exe" # -ArgumentList "/s"
+
+}
+
 # Installation Ghostscript
 Function Install-Ghostscript {
 	[CmdletBinding()]
