@@ -4489,7 +4489,7 @@ Function Install-Delapro {
 		throw "ImportDataPath-Fehler"
 	}
 
-	If (($InstallSwitch -contains "Thunderbirdx64") -and (-not Test-64Bit)) {
+	If (($InstallSwitch -contains "Thunderbirdx64") -and (-not (Test-64Bit))) {
 		Write-Error "Thunderbirdx64 kann nicht installiert werden, da 32-Bit System!"
 		throw "Thunderbird Plattform Fehler"
 	}
