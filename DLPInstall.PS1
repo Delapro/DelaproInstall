@@ -407,6 +407,21 @@ Function Invoke-DelaproInstallNetDownloadAndInit {
 	}
 }
 
+Function Invoke-DelaproAutomateDownloadAndInit {
+	[CmdletBinding()]
+	Param()
+
+	$Files = @('DLPAutoCommon.PS1', 'DLPAutoKunde.PS1', 
+	           'DLPAutoAuftrag.PS1')
+
+	Invoke-GithubRawDownload -Repository DelaproAutomate -Files $Files -Verbose
+
+	foreach ($file in $Files) {
+		Write-Verbose "Lade: $file"
+		. .\$file
+	}
+}
+
 # druckt eine Windowstestseite vom angegebenen Drucker
 Function Invoke-PrinterTestPage {
 	[CmdletBinding()]
