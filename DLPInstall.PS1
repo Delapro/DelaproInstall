@@ -4467,7 +4467,8 @@ Function Install-Delapro {
 		[String]$DlpPath,
 		[String]$DlpGamePath,
 		[Validateset("Main", "Zert", "Chart", "Image", "Preise",
-					 "Acrobat", "AcrobatConfig", "Chrome", "Thunderbird", 
+					 "Acrobat", "AcrobatConfig", "Chrome", "Thunderbird",
+					 "Thunderbirdx64", 
 					 "eDocPrintPro", "Mailer", "AnyDesk", "Teamviewer", 
 					 "ImportBackup", "ImportData", "CopyGame", "AntiMalware" )]
 		[string[]]$InstallSwitch,
@@ -4486,6 +4487,16 @@ Function Install-Delapro {
 	If (($InstallSwitch -contains "ImportData") -and (-not  (Test-Path $ImportDataPath))) {
 		Write-Error "$ImportDataPath nicht gefunden!"
 		throw "ImportDataPath-Fehler"
+	}
+
+	If (($InstallSwitch -contains "Thunderbirdx64") -and (-not Test-64Bit)) {
+		Write-Error "Thunderbirdx64 kann nicht installiert werden, da 32-Bit System!"
+		throw "Thunderbird Plattform Fehler"
+	}
+
+	If (($InstallSwitch -contains "Thunderbirdx64") -and ($InstallSwitch -contains "Thunderbird")) {
+		Write-Error "Bitte für eine Plattform bei Thunderbird entscheiden!"
+		throw "Thunderbird Plattform nicht exakt spezifiziert Fehler"
 	}
 
 	If (Test-WindowsServer) {
@@ -4638,6 +4649,10 @@ Function Install-Delapro {
 	
 	If ($InstallSwitch -contains "Thunderbird") {	
 		Install-Thunderbird -TempDirectory $DLPInstPath
+	}
+
+	If ($InstallSwitch -contains "Thunderbirdx64") {	
+		Install-Thunderbird -TempDirectory $DLPInstPath -platform win64
 	}
 
 	If ($InstallSwitch -contains "Chrome") {	
