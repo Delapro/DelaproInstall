@@ -413,7 +413,7 @@ Function Invoke-DelaproAutomateDownloadAndInit {
 
 	$Files = @('DLPAutoCommon.PS1', 'DLPAutoKunde.ps1',  # muss leider klein sein! 
 			   'DLPAutoAuftrag.PS1', 'DLPAutoAufPos.PS1',
-			   'DLPAutoArtikel.PS1')
+			   'DLPAutoArtikel.PS1', 'DLPAutoTechniker.PS1')
 
 	Invoke-GithubRawDownload -Repository DelaproAutomate -Files $Files -Verbose
 
