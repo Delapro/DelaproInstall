@@ -411,7 +411,7 @@ Function Invoke-DelaproAutomateDownloadAndInit {
 	[CmdletBinding()]
 	Param()
 
-	$Files = @('DLPAutoCommon.PS1', 'DLPAutoKunde.PS1', 
+	$Files = @('DLPAutoCommon.PS1', 'DLPAutoKunde.ps1',  # muss leider klein sein! 
 			   'DLPAutoAuftrag.PS1', 'DLPAutoAufPos.PS1',
 			   'DLPAutoArtikel.PS1')
 
