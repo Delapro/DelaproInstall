@@ -422,6 +422,9 @@ Function Invoke-DelaproAutomateDownloadAndInit {
 		Write-Verbose "Lade: $file"
 		. .\$file
 	}
+
+	# alles initialisieren, damit die geladenen Funktionen direkt benutzt werden können
+	Initialize-Automation
 }
 
 # druckt eine Windowstestseite vom angegebenen Drucker
