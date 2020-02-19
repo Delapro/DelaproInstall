@@ -402,8 +402,10 @@ Function Invoke-DelaproInstallNetDownloadAndInit {
 	Invoke-GithubRawDownload -Repository DelaproInstallNet -Files $Files -Verbose
 
 	foreach ($file in $Files) {
-		Write-Verbose "Lade: $file"
-		. .\$file
+		If (Test-Path $file) {
+			Write-Verbose "Lade: $file"
+			. .\$file
+		}
 	}
 }
 
@@ -419,8 +421,10 @@ Function Invoke-DelaproAutomateDownloadAndInit {
 	Invoke-GithubRawDownload -Repository DelaproAutomate -Files $Files -Verbose
 
 	foreach ($file in $Files) {
-		Write-Verbose "Lade: $file"
-		. .\$file
+		If (Test-Path $file) {
+			Write-Verbose "Lade: $file"
+			. .\$file
+		}
 	}
 
 	# alles initialisieren, damit die geladenen Funktionen direkt benutzt werden können
