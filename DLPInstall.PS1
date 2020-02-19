@@ -431,6 +431,22 @@ Function Invoke-DelaproAutomateDownloadAndInit {
 	Initialize-Automation
 }
 
+Function Invoke-PSDBFDownloadAndInit {
+	[CmdletBinding()]
+	Param()
+
+	$Files = @('DBFReadWrite.PS1')
+
+	Invoke-GithubRawDownload -Repository PSDBF -Files $Files -Verbose
+
+	foreach ($file in $Files) {
+		If (Test-Path $file) {
+			Write-Verbose "Lade: $file"
+			. .\$file
+		}
+	}
+}
+
 # druckt eine Windowstestseite vom angegebenen Drucker
 Function Invoke-PrinterTestPage {
 	[CmdletBinding()]
