@@ -447,6 +447,9 @@ Function Invoke-PSDBFDownloadAndInit {
 	}
 }
 
+# prüft ob eine Datei oder ein ByteArray UTF8 entspricht und gibt $true oder $false zurück
+# wenn man wissen möchte, wo evtl. ein Problem bestehen kann man mittels -Verbose den Index und
+# das betreffende Zeichen ausgeben lassen, damit man das Problem genauer analysieren kann
 Function Confirm-UTF8 {
 	[CmdletBinding()]
 	Param(
