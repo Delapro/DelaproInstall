@@ -450,8 +450,17 @@ Function Invoke-PSDBFDownloadAndInit {
 Function Confirm-UTF8 {
 	[CmdletBinding()]
 	Param(
-		[Byte[]]$Bytes
+        [Parameter(ParameterSetName='bytes', Position=0)]
+		[Byte[]]$Bytes,
+
+		[Parameter(ParameterSetName='file', Position=0)]
+		[String]$Path
 	)
+
+	switch -exact ($PSCmdlet.ParameterSetName) {
+		{ @('file') -contains $_}	{$Bytes = Get-Content $Path -Encoding Byte}
+	}
+
 	[bool]$result=$false
 
 	# Objekt instanzieren welches bei UTF8-Fehlern eine Exception auslöst
