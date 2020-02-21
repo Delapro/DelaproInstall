@@ -447,6 +447,24 @@ Function Invoke-PSDBFDownloadAndInit {
 	}
 }
 
+Function Confirm-UTF8 {
+	[CmdletBinding()]
+	Param(
+		[Byte[]]$Bytes
+	)
+	[bool]$result=$false
+
+	# Objekt instanzieren welches bei UTF8-Fehlern eine Exception auslöst
+	$utf8 = [System.Text.UTF8Encoding]::new($false, $true)
+	try {
+		$utf8.GetCharCount($Bytes) | Out-Null
+		$result=$true
+	} catch {
+		Write-Verbose $_.Exception.Message
+	}
+	$result
+}
+
 # druckt eine Windowstestseite vom angegebenen Drucker
 Function Invoke-PrinterTestPage {
 	[CmdletBinding()]
