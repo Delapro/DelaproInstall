@@ -2935,26 +2935,37 @@ Function Backup-Delapro {
 		If (-Not (Test-Path $DelaproPath -PathType Container)) {
 			throw "$DelaproPath existiert nicht oder es handelt sich nicht um einen Verzeichnispfad!"
 		}
-		$BackupDir = "Delapro_FULL_$(get-date -format "yyyyMMdd_HHmm")"
+		$BackupDir = "Delapro_FULL_$($env:Hostname)_$(get-date -format "yyyyMMdd_HHmm")"
 		$BackupPath = Join-Path -Path $BackupPath -ChildPath $BackupDir
 		If (Test-Path $BackupPath) {
 			throw "Backupverzeichnis $BackupPath existiert bereits und wird nicht überschrieben!"
 		}
 		$ts = Start-Transcript
+		$ts
 		$SourceFiles = Get-ChildItem $DelaproPath\* -Recurse
 		$SourceSize = ($SourceFiles | Measure-Object -Property Length -Sum).Sum /1GB
-		"zu sicherndes Volumen: $SourceSize"
-		Copy-Item $DelaproPath\* $BackupPath -Recurse -Verbose
+		$statistic = $SourceFiles | Group-Object PSIsContainer
+		"zu sichern: $SourceSize GB"
+		"$($statistic| Where-Object Name -eq True) Verzeichnisse"
+		"$($statistic| Where-Object Name -eq False) Dateien"
+		Push-location $BackupPath
+		If ($?) {
+			# eigentlich sollte es mittels funktionieren, allerdings werden dann keine Unterverzeichnisse kopiert!!
+			# Copy-Item $DelaproPath\* $BackupPath -Recurse -Verbose
+			# deshalb Push-Location und dann dieser Aufruf:
+			Copy-Item $DelaproPath\*  -Recurse -Verbose
+			Pop-Location
+		}
 		$DestFiles = Get-ChildItem $BackupPath\* -Recurse
 		$DestSize = ($DestFiles | Measure-Object -Property Length -Sum).Sum /1GB
 		"Vergleich Quelle und Ziel"
 		"Quelle: $SourceSize GB"
 		"Ziel  : $DestSize GB"
-		"Diff  : $($SourceSize -eq $DestSize), $($SourceSize - $DestSize) GB"
+		"Diff  : $(If ($SourceSize -eq $DestSize) {'Nein'} else {'Ja'}), $($SourceSize - $DestSize) GB"
 		"Dateivergleich:"
 		Compare-Object -ReferenceObject $SourceFiles -DifferenceObject $DestFiles -Property Name, Length
 		Stop-Transcript
-		$tsf = Get-Item $ts.Replace('Die Aufzeichnung wurde gesartet. Die Ausgabedatei ist "', '').Replace('".', '')
+		$tsf = Get-Item $ts.Replace('Die Aufzeichnung wurde gestartet. Die Ausgabedatei ist "', '').Replace('".', '')
 		Write-Verbose $tsf
 		
 	} elseIf ($Zip64) {
