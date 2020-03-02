@@ -2956,6 +2956,11 @@ Function Backup-Delapro {
 			# Copy-Item $DelaproPath\* $BackupPath -Recurse -Verbose
 			# deshalb Push-Location und dann dieser Aufruf:
 			Copy-Item $DelaproPath\*  -Recurse -Verbose
+			# zum Abschluss noch gleich die Registrierung mit sichern, wegen Druckereinstellungen
+			$regPath = Join-Path -Path $BackupPath -ChildPath "HKEY_CURRENT_USER" 
+			New-Item $regPath -ItemType Directory
+			reg.exe export "HKCU\Software\easy - innovative software" "$($regPath)\easy.reg"
+			reg.exe export "HKCU\Software\combit" "$($regPath)\combit.regRe"
 			Pop-Location
 		}
 		$DestFiles = Get-ChildItem $BackupPath\* -Recurse
