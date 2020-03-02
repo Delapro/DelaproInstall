@@ -2963,7 +2963,7 @@ Function Backup-Delapro {
 			reg.exe export "HKCU\Software\combit" "$($regPath)\combit.reg"
 			Pop-Location
 		}
-		$DestFiles = Get-ChildItem $BackupPath\* -Exclude @('combit.reg', 'easy.reg') -Recurse
+		$DestFiles = Get-ChildItem $BackupPath\* -Exclude @('HKEY_CURRENT_USER', 'combit.reg', 'easy.reg') -Recurse
 		$DestSize = ($DestFiles | Measure-Object -Property Length -Sum).Sum /1GB
 		"Vergleich Quelle und Ziel"
 		"Quelle: $SourceSize GB"
