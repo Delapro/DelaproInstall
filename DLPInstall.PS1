@@ -2921,12 +2921,43 @@ Function Backup-Delapro {
 		[System.String]$BackupPath="C:\Temp\DelaproSicherung",
 		[Switch]$IgnoreBilder,
 		[Switch]$SecureBackup,
-		[Switch]$Zip64
+		[Switch]$Zip64,
+		[Switch]$SimpleBackup
 	)
 
 	Write-Verbose "Sichere $DelaproPath nach $BackupPath"
 
-	If ($Zip64) {
+	If ($SimpleBackup) {
+		# einfache Backupmenthode für NAS usw.
+		If (-Not (Test-Path $BackupPath -PathType Container)) {
+			throw "$BackupPath existiert nicht oder es handelt sich nicht um einen Verzeichnispfad!"
+		}
+		If (-Not (Test-Path $DelaproPath -PathType Container)) {
+			throw "$DelaproPath existiert nicht oder es handelt sich nicht um einen Verzeichnispfad!"
+		}
+		$BackupDir = "Delapro_FULL_$(get-date -format "yyyyMMdd_HHmm")"
+		$BackupPath = Join-Path -Path $BackupPath -ChildPath $BackupDir
+		If (Test-Path $BackupPath) {
+			throw "Backupverzeichnis $BackupPath existiert bereits und wird nicht überschrieben!"
+		}
+		$ts = Start-Transcript
+		$SourceFiles = Get-ChildItem $DelaproPath\* -Recurse
+		$SourceSize = ($SourceFiles | Measure-Object -Property Length -Sum).Sum /1GB
+		"zu sicherndes Volumen: $SourceSize"
+		Copy-Item $DelaproPath\* $BackupPath -Recurse -Verbose
+		$DestFiles = Get-ChildItem $BackupPath\* -Recurse
+		$DestSize = ($DestFiles | Measure-Object -Property Length -Sum).Sum /1GB
+		"Vergleich Quelle und Ziel"
+		"Quelle: $SourceSize GB"
+		"Ziel  : $DestSize GB"
+		"Diff  : $($SourceSize -eq $DestSize), $($SourceSize - $DestSize) GB"
+		"Dateivergleich:"
+		Compare-Object -ReferenceObject $SourceFiles -DifferenceObject $DestFiles -Property Name, Length
+		Stop-Transcript
+		$tsf = Get-Item $ts.Replace('Die Aufzeichnung wurde gesartet. Die Ausgabedatei ist "', '').Replace('".', '')
+		Write-Verbose $tsf
+		
+	} elseIf ($Zip64) {
 		# easyBackup32 unterstützt keine Dateien >4GB also tar verwenden
 		If (-Not (Test-Path $BackupPath)) {
 			throw "$BackupPath existiert nicht!"
