@@ -2942,6 +2942,8 @@ Function Backup-Delapro {
 		}
 		$ts = Start-Transcript
 		$ts
+		# Sicherungsverzeichnis anlegen
+		New-Item $BackupPath -ItemType Directory
 		$SourceFiles = Get-ChildItem $DelaproPath\* -Recurse
 		$SourceSize = ($SourceFiles | Measure-Object -Property Length -Sum).Sum /1GB
 		$statistic = $SourceFiles | Group-Object PSIsContainer
