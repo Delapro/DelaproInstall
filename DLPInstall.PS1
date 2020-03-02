@@ -2928,6 +2928,9 @@ Function Backup-Delapro {
 
 	If ($Zip64) {
 		# easyBackup32 unterstützt keine Dateien >4GB also tar verwenden
+		If (-Not (Test-Path $BackupPath)) {
+			throw "$BackupPath existiert nicht!"
+		}
 		$tarEXE = Join-Path -Path (Join-Path -Path $env:SystemRoot -ChildPath 'system32') -ChildPath 'tar.exe'
 		If (Test-Path -Path $tarEXE) {
 			$Argumente = @('--verbose', '--exclude', 'copy', '--exclude', 'copy',
@@ -2949,7 +2952,7 @@ Function Backup-Delapro {
 			Write-Verbose "Argumente: $Argumente"
 			Write-Verbose "Starte $tarEXE"
 			Write-Verbose "Kommandozeilenlänge: $(($Argumente|ForEach-Object{$l=0}{$l+=$_.length;$l+=1}{$l}) + $tarEXE.Length)"
-			Start-Process -Wait $tarEXE -ArgumentList $Argumente -WorkingDirectory $DelaproPath
+			Start-Process -Wait $tarEXE -ArgumentList $Argumente -WorkingDirectory $DelaproPath -NoNewWindow
 		} else {
 			Write-Error "tar.exe konnte nicht gefunden werden (benötigt Win >= 1803)"
 		}
