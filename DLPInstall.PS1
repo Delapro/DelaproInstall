@@ -2960,10 +2960,10 @@ Function Backup-Delapro {
 			$regPath = Join-Path -Path $BackupPath -ChildPath "HKEY_CURRENT_USER" 
 			New-Item $regPath -ItemType Directory
 			reg.exe export "HKCU\Software\easy - innovative software" "$($regPath)\easy.reg"
-			reg.exe export "HKCU\Software\combit" "$($regPath)\combit.regRe"
+			reg.exe export "HKCU\Software\combit" "$($regPath)\combit.reg"
 			Pop-Location
 		}
-		$DestFiles = Get-ChildItem $BackupPath\* -Recurse
+		$DestFiles = Get-ChildItem $BackupPath\* -Exclude @('combit.reg', 'easy.reg') -Recurse
 		$DestSize = ($DestFiles | Measure-Object -Property Length -Sum).Sum /1GB
 		"Vergleich Quelle und Ziel"
 		"Quelle: $SourceSize GB"
