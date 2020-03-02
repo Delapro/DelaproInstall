@@ -2935,7 +2935,7 @@ Function Backup-Delapro {
 		If (-Not (Test-Path $DelaproPath -PathType Container)) {
 			throw "$DelaproPath existiert nicht oder es handelt sich nicht um einen Verzeichnispfad!"
 		}
-		$BackupDir = "Delapro_FULL_$($env:Hostname)_$(get-date -format "yyyyMMdd_HHmm")"
+		$BackupDir = "Delapro_FULL_$($env:COMPUTERNAME)_$(get-date -format "yyyyMMdd_HHmm")"
 		$BackupPath = Join-Path -Path $BackupPath -ChildPath $BackupDir
 		If (Test-Path $BackupPath) {
 			throw "Backupverzeichnis $BackupPath existiert bereits und wird nicht überschrieben!"
