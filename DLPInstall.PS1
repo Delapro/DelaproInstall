@@ -431,6 +431,26 @@ Function Invoke-DelaproAutomateDownloadAndInit {
 	Initialize-Automation
 }
 
+Function Invoke-DelaproSammelsuriumDownloadAndInit {
+	[CmdletBinding()]
+	Param(
+		[String[]]$Files
+	)
+
+	# vorab Laden, wird im Sammelsurium häufiger benötigt
+	Invoke-PSDBFDownloadAndInit
+
+	Invoke-GithubRawDownload -Repository DelaproSammelsurium -Files $Files -Verbose
+
+	foreach ($file in $Files) {
+		If (Test-Path $file) {
+			Write-Verbose "Lade: $file"
+			. .\$file
+		}
+	}
+
+}
+
 Function Invoke-PSDBFDownloadAndInit {
 	[CmdletBinding()]
 	Param()
