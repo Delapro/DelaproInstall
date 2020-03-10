@@ -939,7 +939,7 @@ Function Install-Ghostscript {
 		#[parameter(Mandatory=$true)]
 		[System.String]$tempPath="$Env:TEMP\",
 		[Validateset("Newest", "9.50", "9.27","9.26", "9.25", "9.24")]
-		[string[]]$Version
+		[string[]]$Version='Newest'
 
 	)
 
