@@ -832,7 +832,7 @@ Function Save-DlpUiResetScript {
 		"Keine Einstellungen zum Löschen vorhanden."
 	}
 "@
-	$script | Set-Content (Resolve-Path $File).Path
+	$script | Set-Content $File
 
 }
 
