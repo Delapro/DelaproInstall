@@ -821,7 +821,7 @@ Function Save-DlpUiResetScript {
 		[String]$File
 	)
 
-	$script = @"
+	$script = @'
 
 	$regBase = 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings'
 
@@ -831,7 +831,7 @@ Function Save-DlpUiResetScript {
 	} else {
 		"Keine Einstellungen zum Löschen vorhanden."
 	}
-"@
+'@
 	$script | Set-Content $File
 
 }
