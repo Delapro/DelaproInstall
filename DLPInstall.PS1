@@ -361,8 +361,8 @@ Function New-PowershellScriptShortcut {
 		# im folgenden Scriptaufruf sollte man das Verzeichnis (C:\temp) bzw. den Scriptnamen setup.ps1 anpassen! Der Aufruf erfolgt so, damit das Verzeichnis auch explizit aktiv ist. Andere Methoden haben nicht zum Erfolg geführt, weil das WorkingDirectory komischerweise immer ignoriert wurde
 		$arguments='-Command "& {$arg=@(''-NoExit'', ''-ExecutionPolicy ByPass'', ''-Command ""cd '''''
 		$arguments += $script.Directory.FullName
-		$arguments += '''''; . .\'
-		$arguments += $script.Name + '""''); Start-Process powershell.exe -argumentlist $arg '
+		$arguments += '''''; . ''''.\'
+		$arguments += $script.Name + '''''""''); Start-Process powershell.exe -argumentlist $arg '
 		If ($NoExit) {
 			$arguments = '-NoExit ' + $arguments
 		}
