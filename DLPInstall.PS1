@@ -815,6 +815,27 @@ Function Set-DlpUi {
 
 }
 
+Function Save-DlpUiResetScript {
+	[CmdletBinding()]
+	Param(
+		[String]$File
+	)
+
+	$script = @"
+
+	$regBase = 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings'
+
+	If (Test-Path $regBase) {
+		Remove-Item $regBase
+		"Einstellungen gelöscht."
+	} else {
+		"Keine Einstellungen zum Löschen vorhanden."
+	}
+"@
+	$script | Set-Content (Resolve-Path $File).Path
+
+}
+
 # zum Auslesen von Font und Fenstergrößen
 Function Get-DlpUi {
 	[CmdletBinding()]

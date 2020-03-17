@@ -297,6 +297,10 @@ Set-DlpUi -Fontname "Lucida Console"
 # Wenn es zu Durcheinander geht, alles wieder zurücksetzen:
 Set-DlpUi -Reset
 
+# wenn man ein Script für das Reset für den Benutzer zum Anklicken setzen möchte
+Save-DlpUiResetScript -File .\ResetDelapro.PS1
+New-PowershellScriptShortcut -Path .\ResetDelapro.PS1 -LinkFilename Delapro-Fenster-Reset -Description 'Resettet die Delapro-Fenstereinstellungen auf Standardeinstellungen.'
+
 ```
 
 ## Formulare überprüfen und aktualisieren
