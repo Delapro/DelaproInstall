@@ -1094,7 +1094,8 @@ Function Get-PDFInfo {
 					"-dDumpMediaSizes=true",
 					"-dDumpFontsNeeded=true",
 					"-dDumpXML",
-					"-dDumpFontsUsed"
+					"-dDumpFontsUsed",
+					"-dNOSAFER"			# wird benötigt, sonst gibt es einen Error /invalidfileaccess
 					)
 		  If ($OptArgs) {
 			$arg += $OptArgs
