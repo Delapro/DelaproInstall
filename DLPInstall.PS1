@@ -1030,6 +1030,7 @@ Function Convert-PDF {
 		[version]$Version,
 		[Switch]$Show,
 		[Switch]$ShowDir,
+		[Switch]$UseArtBox,
 		[String[]]$OptArgs
 	)
 
@@ -1049,6 +1050,9 @@ Function Convert-PDF {
 					"-g2480x3508",
 					"-dBATCH"
 					)
+		If ($UseArtBox) {
+			$arg += "-dUseArtBox"
+		}
 		If ($OptArgs) {
 			$arg += $OptArgs
 		}

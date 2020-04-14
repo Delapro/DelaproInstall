@@ -358,6 +358,9 @@ If (Test-Path $pdf) {
     Start-Process $bmp -Verb Edit
 }
 
+# bei Problemen mit Rand bzw. Schnittmarken hilft evtl.
+Convert-PDF -PDFFile $pdf -OutFile $bmp -UseArtBox -Verbose
+
 ```
 
 ### Texte aus PDF-Dateien extrahieren
