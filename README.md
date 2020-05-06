@@ -2,6 +2,8 @@
 
 Powershell Installationsscript um Delapro ab Windows 7 bis Windows 10 zu installieren.
 
+Zur Installation auf Mac OSX siehe hier: [Virtuelle Maschine auf Mac](https://github.com/Delapro/DelaproInstall/wiki/MACOSX)
+
 > **Hinweis zu Windows Vista**
 >
 > Da der Microsoft Support für Windows Vista abgelaufen ist, wird Windows Vista von uns auch nicht mehr unterstützt.
