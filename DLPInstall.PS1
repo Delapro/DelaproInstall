@@ -4639,7 +4639,8 @@ Function Install-Delapro {
 					 "Acrobat", "AcrobatConfig", "Chrome", "Thunderbird",
 					 "Thunderbirdx64", 
 					 "eDocPrintPro", "Mailer", "AnyDesk", "Teamviewer", 
-					 "ImportBackup", "ImportData", "CopyGame", "AntiMalware" )]
+					 "ImportBackup", "ImportData", "CopyGame", "AntiMalware",
+					 "EdgeChromium" )]
 		[string[]]$InstallSwitch,
 		[String]$ImportDataPath
 	)
@@ -4826,6 +4827,10 @@ Function Install-Delapro {
 
 	If ($InstallSwitch -contains "Chrome") {	
 		Install-Chrome -TempDirectory $DLPInstPath
+	}
+
+	If ($InstallSwitch -contains "EdgeChromium") {	
+		Install-EdgeChromium -TempDirectory $DLPInstPath
 	}
 
 	If ($InstallSwitch -contains "ImportBackup") {	
