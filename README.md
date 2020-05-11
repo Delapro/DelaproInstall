@@ -303,6 +303,9 @@ Set-DlpUi -Reset
 Save-DlpUiResetScript -File .\ResetDelapro.PS1
 New-PowershellScriptShortcut -Path .\ResetDelapro.PS1 -LinkFilename Delapro-Fenster-Reset -Description 'Resettet die Delapro-Fenstereinstellungen auf Standardeinstellungen.'
 
+# oder wenn man die aktuelle Fenstergröße wieder setzen möchte
+Save-DlpUiResetScript -File .\SetDelapro.PS1 -SetWindowSize
+New-PowershellScriptShortcut -Path .\SetDelapro.PS1 -LinkFilename 'Delapro-Fenster Größe setzen' -Description 'Setzt die Delapro-Fenstereinstellungen auf die aktuell aktiven Einstellungen.'
 ```
 
 ## Formulare überprüfen und aktualisieren

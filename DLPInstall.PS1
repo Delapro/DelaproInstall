@@ -818,8 +818,33 @@ Function Set-DlpUi {
 Function Save-DlpUiResetScript {
 	[CmdletBinding()]
 	Param(
-		[String]$File
+		[String]$File,
+		[Switch]$SetWindowSize
 	)
+
+	If ($SetWindowSize) {
+		# aktuelle Werte notieren
+		$Height = (Get-ItemProperty `$regBase -Name "Height" -ErrorAction SilentlyContinue).Height;
+		$Width = (Get-ItemProperty `$regBase -Name "Width" -ErrorAction SilentlyContinue).Width;
+		$FontSize = (Get-ItemProperty `$regBase -Name "FontSize" -ErrorAction SilentlyContinue).FontSize;
+		$FontWidth = (Get-ItemProperty `$regBase -Name "FontWidth" -ErrorAction SilentlyContinue).FontWidth;
+		
+		$script = @"
+		`$regBase = 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings'
+
+		If (Test-Path `$regBase) {
+			# Werte überschreiben
+			Set-ItemProperty `$regBase -Name "Height" -Value $Height
+			Set-ItemProperty `$regBase -Name "Width" -Value $Width
+			Set-ItemProperty `$regBase -Name "FontSize" -Value $FontSize
+			Set-ItemProperty `$regBase -Name "FontWidth" -Value $FontWidth
+		} else {
+			'Keine Einstellungen zum Überschreiben vorhanden.'
+		}
+"@
+
+	} else {
+
 
 	$script = @'
 
@@ -832,6 +857,8 @@ Function Save-DlpUiResetScript {
 		"Keine Einstellungen zum Löschen vorhanden."
 	}
 '@
+	}
+
 	$script | Set-Content $File
 
 }
