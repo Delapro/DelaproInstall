@@ -3459,6 +3459,7 @@ Function Install-DelaproMailPrinter {
 						"10.0.17763" {$driverID = "6c1071b47c60ba60"}
 						"10.0.18362" {$driverID = "ff08dae4bacd9003"} # {$driverID = "0074e542b81fb408"}
 						"10.0.18363" {$driverID = "ff08dae4bacd9003"} # wegen SP?
+						"10.0.19041" {$driverID = "add71423ba73e797"}
 						# neue IDs siehe: https://github.com/Delapro/DelaproInstall#druckertreiber-id-bei-neuen-windows-featureupdate-versionen-ermitteln
 					}
 				} else {
