@@ -1277,8 +1277,11 @@ Function Install-eDocPrintPro {
 	# ftp://download.may.co.at/Repository/msoftware/MAYComp/Current/RO/eDocPrintPro.zip
 
 	Expand-Archive "$($eDocPrintProDir)eDocPrintPro.zip" "$($eDocPrintProDir)eDocPrintPro"
-	Start-Process -Wait "$($eDocPrintProDir)\eDocPrintPro\eDocPrintPro_x64.exe" -ArgumentList @("/exenoui","/qn")
-
+	If (Test-64Bit) {
+		Start-Process -Wait "$($eDocPrintProDir)\eDocPrintPro\eDocPrintPro_x64.exe" -ArgumentList @("/exenoui","/qn")
+	} else {
+		Start-Process -Wait "$($eDocPrintProDir)\eDocPrintPro\eDocPrintPro.exe" -ArgumentList @("/exenoui","/qn")
+	}
 	# Jetzt noch Delapro.ESFx einspielen, muss in C:\Users\All Users\eDocPrintPro und C:\Programdata\eDocPrintPro
 	# eine .ESFx-Datei ist eine einfache XML-Datei
 	# $b64 = [System.Convert]::ToBase64String(Get-Content Delapro.ESXF -Encoding Byte)
