@@ -1589,7 +1589,7 @@ Function Install-OpenJDK {
 
 	# Infos: https://docs.aws.amazon.com/de_de/corretto/latest/corretto-8-ug/downloads-list.html
 	# Source: https://github.com/corretto/corretto-8
-	$JavaVersion = "8.232.09.1"
+	$JavaVersion = "8.252.09.2"
 
 	# https://d2znqt9b1bc64u.cloudfront.net/amazon-corretto-8.202.08.2-windows-x64.msi
 	If ($Version -eq "8" -and $Platform -eq "x64") {
