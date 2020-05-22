@@ -1815,7 +1815,7 @@ Function Install-VeraPDF {
 		$AutoInstallXML | Set-Content -Path $veraPath\auto-install.XML
 
 		# Javapfad ermitteln
-		$j = Get-Java
+		$j = Get-OpenJDK
 		If ($j) {
 			# java -jar "%BASEDIR%verapdf-izpack-installer-1.10.6.jar" auto-install.xml
 			$p = Start-Process -Wait -FilePath $j -ArgumentList "-jar", $veraJarFile, "$($veraPath)\auto-install.XML" -PassThru -NoNewWindow
@@ -2072,7 +2072,7 @@ Function Install-Maven {
 	# siehe https://stackoverflow.com/questions/46671308/how-to-create-a-java-maven-project-that-works-in-visual-studio-code
 	# https://maven.apache.org/install.html
 	If (-Not ($Env:JAVA_HOME)) {
-		$Java = Get-Java
+		$Java = Get-OpenJDK
 	}
 	# sowas sollte vorhanden sein: $env:JAVA_HOME= 'C:\Program Files\Amazon Corretto\jdk1.8.0_202'
 	# Versionsinfos: https://maven.apache.org/docs/history.html
