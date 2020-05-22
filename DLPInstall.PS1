@@ -1815,7 +1815,7 @@ Function Install-VeraPDF {
 		$AutoInstallXML | Set-Content -Path $veraPath\auto-install.XML
 
 		# Javapfad ermitteln
-		$j = Get-OpenJDK
+		$j = (Get-OpenJDK).Fullname
 		If ($j) {
 			# java -jar "%BASEDIR%verapdf-izpack-installer-1.10.6.jar" auto-install.xml
 			$p = Start-Process -Wait -FilePath $j -ArgumentList "-jar", $veraJarFile, "$($veraPath)\auto-install.XML" -PassThru -NoNewWindow
