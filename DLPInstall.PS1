@@ -1775,7 +1775,7 @@ Function Install-VeraPDF {
 	)
 
 	Write-Verbose "tempDirectory: $tempDirectory"
-	Start-BitsTransfer https://downloads.verapdf.org/rel/verapdf-installer.zip -Destination $tempDirectory\Verapdf-installer.zip
+	Start-BitsTransfer https://software.verapdf.org/rel/verapdf-installer.zip -Destination $tempDirectory\Verapdf-installer.zip
 	If (Test-Path $tempDirectory\Vera) {
 		Remove-Item $tempDirectory\Vera -Recurse
 	}
