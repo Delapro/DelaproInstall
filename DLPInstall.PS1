@@ -2086,7 +2086,7 @@ Function Install-Maven {
 	# TODO: M2_HOME mit Maven-Pfad anlegen 
 
 	# VSCode braucht den kompletten Pfad zu C:\Tools\Maven\apache-maven-3.6.0\bin\mvn.cmd in den Settings
-	Write-Warnung "M2_HOME anlegen und VSCode benötigt Pfad zu C:\tools\maven...!"
+	Write-Warning "M2_HOME anlegen und VSCode benötigt Pfad zu C:\tools\maven...!"
 }
 
 # Installation von Chrome
