@@ -3844,8 +3844,14 @@ Function Install-HPColorLaserjet2800PS {
 	$download = 'http://download.windowsupdate.com/msdownload/update/driver/drvs/2011/07/4753_fc148f3df197a4c5cf20bd6a8b337b444037655f.cab'
 	Start-BitsTransfer $download $TempDirectory
 	$CABFile='4753_fc148f3df197a4c5cf20bd6a8b337b444037655f.cab'
-	tar -xf $TempDirectory\$CABFile
-	pnputil -i -a .\prnhp002.inf
+	Push-Location $TempDirectory
+	If ($?) {
+		tar -xf $TempDirectory\$CABFile
+		If ($?) {
+			pnputil -i -a $TempDirectory\prnhp002.inf
+		}
+		Pop-Location
+	}
 
 }
 
