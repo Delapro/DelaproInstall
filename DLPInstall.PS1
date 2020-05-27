@@ -3846,7 +3846,11 @@ Function Install-HPColorLaserjet2800PS {
 	$CABFile='4753_fc148f3df197a4c5cf20bd6a8b337b444037655f.cab'
 	Push-Location $TempDirectory
 	If ($?) {
-		tar -xf $TempDirectory\$CABFile
+		If (Test-Windows10) {
+			tar -xf $TempDirectory\$CABFile
+		} else {
+			expand $TempDirectory\$CABFile -F:* $TempDirectory
+		}
 		If ($?) {
 			pnputil -i -a $TempDirectory\prnhp002.inf
 		}
