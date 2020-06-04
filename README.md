@@ -427,6 +427,8 @@ control userpasswords2
 Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -CreateDesktopLink "easy Internet Fernwartung (Teamviewer).lnk"
 ```
 
+Wie man eine bestehende Instanz von Teamviewer beenden kann (mittels Stop-Teamviwer) findet man hier: https://github.com/Delapro/DelaproInstall/blob/2a7f077e3d01a118b43d57e974475804cb19d1c0/DLPInstall.PS1#L2517
+
 ### Thunderbird
 
 ```Powershell
