@@ -2513,6 +2513,20 @@ Function Install-Teamviewer {
 	}
 }
 
+# beendet eine laufende Instanz von Teamviewer, falls es sich um einen Dienst handelt, wird dieser vorher beendet
+Function Stop-Teamviewer {
+	[CmdletBinding()]
+	Param()
+	
+	If (Get-Service Teamviewer) {
+		Stop-Service Teamviewer -Force
+		Start-Sleep -Seconds 1
+		If (Get-Process Teamviewer) {
+			Get-Process Teamviewer | Stop-Process -Force
+		}
+	}
+}
+
 Function Install-AnyDesk {
 	[CmdletBinding()]
 	Param(
