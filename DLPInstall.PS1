@@ -1870,7 +1870,7 @@ Function Install-ImageMagick {
 
 	# aktuelle Version: https://imagemagick.org/script/download.php
 	# ImageMagick-7.0.8-47-Q16-x64-dll.exe
-	$version = "7.0.10-11"
+	$version = "7.0.10-16"
 	If (Test-64Bit) {
 		$platform = "x64"
 	} else {
