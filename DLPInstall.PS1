@@ -3617,11 +3617,13 @@ Function Install-FFMpeg {
 	# werden und quasi nightly Builds darstellen, deshalb ist nie klar, welche 
 	# Version zu einem Release gehört, aus diesem Grund wird eine Version nach einem
 	# Release Hash verwendet. Für 4.1.1 ist das am nächsten liegende Build 20190210-d20902f
-	$version = "4.2.1"
-	$date = "20191201"
+	# obiger Hinweise gilt aktuell nicht mehr
+	$version = "4.2.3"
+	$date = "20200527"
 	$gitShortHash = "637742b"
 	$platform = "win64"
-	$filename = "ffmpeg-$($date)-$($gitShortHash)-$platform-static.zip"
+	# $filename = "ffmpeg-$($date)-$($gitShortHash)-$platform-static.zip"
+	$filename = "ffmpeg-$($version)-$platform-static.zip"
 	$url = "https://ffmpeg.zeranoe.com/builds/$platform/static/$filename"
 
 	Write-Verbose "Lade $url"
