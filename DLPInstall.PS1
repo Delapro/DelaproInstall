@@ -911,7 +911,7 @@ Function Get-GhostscriptPCL {
 	Param ()
 
 	$gsDirs = @()
-	$exclude = @('Fonts', 'gs*')
+	$exclude = @('Fonts', 'gs9.??') # gs* geht nicht, wegen \gs\ in Pfad!!!
 
 	If ($PSVersionTable.PSVersion -eq "2.0")
 	{
