@@ -1031,7 +1031,7 @@ Function Install-GhostPCL {
 		"Newest" {$ghostVersion="gs952"; $ghostVersionNr="9.52"}
 	}
 
-	$ghostZIP = "ghostpxl-$ghostVersionNr-$ghostPlatform.zip"
+	$ghostZIP = "ghostpcl-$ghostVersionNr-$ghostPlatform.zip"
 	$ghostUrl = "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/$ghostVersion/$ghostZIP"
 	$ghostCall = Join-Path -Path $tempPath -ChildPath $ghostZIP
 
