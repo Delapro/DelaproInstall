@@ -904,6 +904,27 @@ Function Get-Ghostscript {
 	$gsDirs
 }
 
+# Zum ermitteln der verfügbaren GhostScript-Versionen
+Function Get-GhostscriptPCL {
+	[CmdletBinding()]
+	[OutputType([System.IO.DirectoryInfo])]
+	Param ()
+
+	$gsDirs = @()
+	$exclude = @('Fonts', 'gs*')
+
+	If ($PSVersionTable.PSVersion -eq "2.0")
+	{
+		$gsDirs += Get-ChildItem "$($Env:ProgramFiles)\GS" -ErrorAction SilentlyContinue -Exclude $exclude | Where-Object { $_.PSIsContainer}
+		$gsDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\GS" -ErrorAction SilentlyContinue -Exclude $exclude| Where-Object { $_.PSIsContainer}
+	} else {
+		$gsDirs += Get-ChildItem "$($Env:ProgramFiles)\GS" -ErrorAction SilentlyContinue -Directory -Exclude $exclude
+		$gsDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\GS" -ErrorAction SilentlyContinue -Directory -Exclude $exclude
+	}
+	$gsDirs = $gsDirs | Sort-Object Name -Descending
+	$gsDirs
+}
+
 # ermittelt den Pfad zur Konsolen-Ghostscript-EXE
 Function Get-GhostScriptExecutable {
 	[CmdletBinding()]
