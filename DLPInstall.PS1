@@ -925,6 +925,38 @@ Function Get-GhostscriptPCL {
 	$gsDirs
 }
 
+# ermittelt den Pfad zur Konsolen-GhostscriptPCL-EXE
+Function Get-GhostScriptPCLExecutable {
+	[CmdletBinding()]
+	Param(
+		[ValidateScript({throw "Not yet implemented"})]
+		[version]$Version
+		)
+
+	$gs=Get-GhostscriptPCL
+	If ($gs) {
+		$GhostScriptBasePath=$gs[0].Fullname
+	}
+
+	If ($GhostScriptBasePath) {
+		$gsPath = join-Path $GhostScriptBasePath ""
+		If (Test-Path "$($gsPath)gpcl6win64.exe") {
+			$gsPath = "$($gsPath)gpcl6win64.exe"
+		} else {
+			$gsPath = "$($gsPath)gpcl6win32.exe"
+		}
+		Write-Verbose "GsPath: $gsPath"
+		If (Test-Path $gsPath) {
+			$gsPath
+		} else {
+			Write-Error "GhostscriptPCL-EXE nicht gefunden!"
+		}
+	} else {
+		Write-Error "Ghostscript-Verzeichnis nicht gefunden!"
+	}
+
+}
+
 # ermittelt den Pfad zur Konsolen-Ghostscript-EXE
 Function Get-GhostScriptExecutable {
 	[CmdletBinding()]
