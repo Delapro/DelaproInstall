@@ -1018,6 +1018,33 @@ Function Install-Ghostscript {
 	Start-Process -Wait $ghostcall -ArgumentList "/S"
 }
 
+Function Install-GhostPCL {
+	[CmdletBinding()]
+	Param(
+		[System.String]$tempPath="$Env:TEMP\",
+		[Validateset("Newest")]
+		[string[]]$Version='Newest'
+	)
+
+	$ghostPlatform = "win64"
+	switch ($Version) {
+		"Newest" {$ghostVersion="gs952"; $ghostVersionNr="9.52"}
+	}
+
+	$ghostZIP = "ghostpxl-$ghostVersionNr-$ghostPlatform.zip"
+	$ghostUrl = "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/$ghostVersion/$ghostZIP"
+	$ghostCall = Join-Path -Path $tempPath -ChildPath $ghostZIP
+
+	# Start-BitsTransfer $ghostUrl  $tempPath
+	Invoke-WebRequest -UseBasicParsing -Uri $ghostUrl -OutFile $ghostCall
+
+	Expand-Archive $ghostCall -DestinationPath "$($env:ProgramFiles)\gs" -Force
+	$programPath = Join-Path -path "$($env:ProgramFiles)\gs" -ChildPath $ghostZIP.Replace('.zip', '')
+	If (Test-Path ($programPath)) {
+		Write-Verbose "nun verfügbar: $programPath, Version: $ghostVersionNr"
+	} 
+}
+
 # prüft, ob der Rechner neu gestartet werden sollte
 Function Test-RebootRequired {
 	[CmdletBinding()]
