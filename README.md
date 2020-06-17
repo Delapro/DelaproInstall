@@ -657,6 +657,38 @@ dir *.jpg| % {"($($_.Fullname.Replace('\','/'))) viewJPEG showpage"} | set-conte
 & "$(Get-GhostScriptExecutable)" -dBATCH -dNOPAUSE -sDEVICE=png16m -r300 -sOutputFile="preise%03d.png" .\preise.pdf
 ```
 
+### GhostscriptPCL
+
+GhostscriptPCL kann hilfreich sein, in Fällen wo es Probleme mit HP- oder HP-kompatiblen Druckern gibt. Diese benutzen PCL5 oder PCL6 um mit den Druckern zu kommunizieren. Wenn es dort Probleme gibt, kann man mittels GhostscriptPCL die PCL-Dateien in PDF-Dateien umwandeln. Damit man in diesen Prozess eingreifen kann, muss der PrintMonitor auf eine Datei gesetzt werden, welche dann nach der Erzeugung GhostscriptPCLExecutable zugeführt wird.
+
+```Powershell
+# installiert die aktuelle GhostscriptPCL Version
+Install-GhostscriptPCL -Verbose
+
+# verfügbare GhostscriptPCL Versionen ermitteln
+Get-GhostscriptPCL
+
+# EXE der aktuellen GhostscriptPCL-Version ermitteln
+Get-GhostScriptPCLExecutable
+
+# Konvertieren einer Postscriptdatei in PDF
+& "$(Get-GhostScriptPCLExecutable)" -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile="test.pdf" .\test.pcl
+
+# Druckertreiber ermitteln, welche PCL nutzen:
+Get-Printer | % {$pd=Get-PrinterDriver $_.DriverName; If ((Get-Item $pd.DependentFiles).Name -match 'pcl') {$_} }
+# neuen Port erzeugen
+New-PortMonitor C:\Delapro\Export\PDF\Delapro.PCL
+# zu testenden Drucker auswählen
+$p = Get-Printer | % {$pd=Get-PrinterDriver $_.DriverName; If ((Get-Item $pd.DependentFiles).Name -match 'pcl') {$_} } | Out-Gridview -PassThru -Title "Drucker wählen"
+$oldPortName = $p.Portname
+# TestPort zuweisen
+$p | Set-Printer -PortName C:\Delapro\Export\PDF\Delapro.PCL
+# nun Testen usw. und am Ende den Ursprungsport wieder setzen:
+$p | Set-Printer -Portname $oldPortName
+& "$(Get-GhostScriptPCLExecutable)" -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile="test.pdf" C:\Delapro\Export\PDF\Delapro.PCL
+
+```
+
 ## Probleme ermitteln
 
 ### Problem, dass Delapro nicht deinstalliert werden kann
