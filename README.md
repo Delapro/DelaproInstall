@@ -677,7 +677,7 @@ Get-GhostScriptPCLExecutable
 # Druckertreiber ermitteln, welche PCL nutzen:
 Get-Printer | % {$pd=Get-PrinterDriver $_.DriverName; If ((Get-Item $pd.DependentFiles).Name -match 'pcl') {$_} }
 # neuen Port erzeugen
-New-PortMonitor C:\Delapro\Export\PDF\Delapro.PCL
+New-PrinterPort C:\Delapro\Export\PDF\Delapro.PCL
 # zu testenden Drucker auswählen
 $p = Get-Printer | % {$pd=Get-PrinterDriver $_.DriverName; If ((Get-Item $pd.DependentFiles).Name -match 'pcl') {$_} } | Out-Gridview -PassThru -Title "Drucker wählen"
 $oldPortName = $p.Portname
