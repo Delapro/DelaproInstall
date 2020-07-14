@@ -3003,7 +3003,7 @@ Function Invoke-DelaproPreUpdate {
 			Write-Error "Delapro läuft noch!"
 		}
 	} else {
-		Write-Error 'Sicherheitshalber nochmal $DlpPath prüfen!'
+		Write-Error 'Sicherheitshalber nochmal $DlpPath oder $DlpAlterInTagen prüfen!'
 	}
 	
 }
