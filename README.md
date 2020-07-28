@@ -77,6 +77,9 @@ Zum setzen des aktuellen Delapro-Pfads verwendet man
 ```Powershell
 $DlpPath=(Resolve-Path .).Path
 $DlpPath
+
+# oder die bessere Variante, den Pfad aus der Verknüpfung vom Desktop auslesen
+$DlpPath=(Get-FileShortCut -LinkFilename Delapro.Lnk).WorkingDirectory
 ```
 
 ```Powershell

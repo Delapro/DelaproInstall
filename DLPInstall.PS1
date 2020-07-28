@@ -313,6 +313,37 @@ Function New-ScheduledTaskSimpleAfterLogin {
 
 }
 
+# gibt die Eigenschaften einer Verknüpfung zurück
+Function Get-FileShortcut {
+	[CmdletBinding()]
+	Param (
+		[String]$LinkFilename,
+		[String]$Folder=(Get-DesktopFolder -AllUsers)
+	)
+
+	$Shell = New-Object -ComObject Wscript.Shell
+	Write-Verbose "Pfad: $folder"
+	If (-Not $LinkFilename.ToUpper().EndsWith(".LNK")) {
+		$LinkFilename = $LinkFilename + ".LNK"
+	}
+	Write-Verbose "Shortcutpfad: $LinkFilename"
+	$link = $Shell.CreateShortcut("$($folder)\$($LinkFilename)")  # Windowslogik: Create ist auch zum Lesen da!
+	If ($null -ne $link) {
+		$Properties = @{
+			ShortcutName = $link.Name;
+			FullName = $link.FullName;
+			DirectoryName = $link.DirectoryName
+			WorkingDirectory = $link.WorkingDirectory
+			Description = $link.Description
+			Arguments = $link.Arguments
+			TargetPath = $link.targetpath
+			Hotkey = $link.Hotkey
+			IconLocation = $link.IconLocation
+		}
+		New-Object PSObject -Property $Properties
+	}
+}
+
 # erzeugt auf dem Öffentlichen Desktop einen Link zu einer Datei, benötigt dazu Adminrechte!
 Function New-FileShortcut {
 	[CmdletBinding()]
