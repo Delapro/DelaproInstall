@@ -4815,10 +4815,11 @@ Function Install-Delapro {
 					 "Acrobat", "AcrobatConfig", "Chrome", "Thunderbird",
 					 "Thunderbirdx64", 
 					 "eDocPrintPro", "Mailer", "AnyDesk", "Teamviewer", 
-					 "ImportBackup", "ImportData", "CopyGame", "AntiMalware",
+					 "ImportBackup", "ImportBackupFile", "ImportData", "CopyGame", "AntiMalware",
 					 "EdgeChromium" )]
 		[string[]]$InstallSwitch,
-		[String]$ImportDataPath
+		[String]$ImportDataPath,
+		[String]$ImportBackupFile
 	)
 
 	If (($InstallSwitch -contains "Acrobat") -and ($InstallSwitch -contains "AcrobatConfig")) {
@@ -4829,10 +4830,23 @@ Function Install-Delapro {
 		Write-Error "Entweder ImportBackup oder ImportData verwenden"
 		throw "Import-Fehler"
 	}
+	If (($InstallSwitch -contains "ImportData") -and ($InstallSwitch -contains "ImportBackupFile")) {
+		Write-Error "Entweder ImportBackupFile oder ImportData verwenden"
+		throw "Import-Fehler"
+	}
+	If (($InstallSwitch -contains "ImportBackup") -and ($InstallSwitch -contains "ImportBackupFile")) {
+		Write-Error "Entweder ImportBackupFile oder ImportBackup verwenden"
+		throw "Import-Fehler"
+	}
 
 	If (($InstallSwitch -contains "ImportData") -and (-not  (Test-Path $ImportDataPath))) {
 		Write-Error "$ImportDataPath nicht gefunden!"
 		throw "ImportDataPath-Fehler"
+	}
+
+	If (($InstallSwitch -contains "ImportBackupFile") -and (-not  (Test-Path $ImportBackupFilePath))) {
+		Write-Error "$ImportBackupFilePath nicht gefunden!"
+		throw "ImportBackupFilePath-Fehler"
 	}
 
 	If (($InstallSwitch -contains "Thunderbirdx64") -and (-not (Test-64Bit))) {
@@ -5015,6 +5029,12 @@ Function Install-Delapro {
 		# Import-OldDLPVersion -SourcePath G: -DestinationPath "$($DLPPath)"
 		# Import-OldDLPVersion -SourcePath C:\DelaproAlt -DestinationPath "$($DLPPath)"
 
+		Invoke-CleanupDelapro -DelaproPath $DLPPath
+	}
+
+	If ($InstallSwitch -contains "ImportBackupFile") {	
+		#Import-LastDelaproBackup -TempPath "$($DLPInstPath)AlteDatensicherung" -DestinationPath "$($DLPPath)"
+		throw "to be implemented!"
 		Invoke-CleanupDelapro -DelaproPath $DLPPath
 	}
 
