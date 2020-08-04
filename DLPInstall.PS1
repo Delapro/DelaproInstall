@@ -1473,7 +1473,7 @@ function Disable-eDocPrintProLogFile {
 	$regPath = "HKLM:\SOFTWARE\MAYComputer\eDocPrintPro\$($PrinterName)"
 	Write-Verbose $regPath
 	If (Test-Path $regPath) {
-		Remove-ItemProperty "HKLM:\SOFTWARE\MAYComputer\eDocPrintPro\DelaproPDF" -Name "log-path"
+		Remove-ItemProperty $regPath -Name "log-path"
 	}
 }
 
