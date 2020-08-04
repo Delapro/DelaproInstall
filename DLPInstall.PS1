@@ -326,6 +326,9 @@ Function Get-FileShortcut {
 	If (-Not $LinkFilename.ToUpper().EndsWith(".LNK")) {
 		$LinkFilename = $LinkFilename + ".LNK"
 	}
+	If (-Not ([System.IO.Path]::IsPathRooted($LinkFilename))) {
+		$LinkFilename = (Resolve-Path $LinkFilename).Path
+	}
 	Write-Verbose "Shortcutpfad: $LinkFilename"
 	$link = $Shell.CreateShortcut("$($folder)\$($LinkFilename)")  # Windowslogik: Create ist auch zum Lesen da!
 	If ($null -ne $link) {
