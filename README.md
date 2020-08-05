@@ -253,6 +253,35 @@ Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -Ign
 Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -Zip64 -SecureBackup -Verbose
 ```
 
+### Auswerten von Backups
+
+```Powershell
+# erfolgreiche Backups
+Select-String -Path $DLPPath\Backup\Logs\*.LOG -Pattern 'Result code: 0 \(Operation completed successfully.\)'
+
+# fehlerhafte Backups
+Select-String -Path $DLPPath\Backup\Logs\*.LOG -Pattern 'Result code: [^0]'
+
+# reason number 1002 sind die Dateien, welche durch Filterangabe ignoriert werden
+# hier werden folglich alle Eintragungen gesucht, welche einen anderen Grund haben,
+# meistens 1102, weil die betreffende Datei nicht geöffnet werden kann, da von
+# einer anderen Instanz bereits geöffnet
+Select-String -Path $DLPPath\Backup\Logs\*.LOG -Pattern 'Skipping file "(?<Filename>[^"]*)" for reason number (?<ReasonNr>\d\d\d\d),'|where {@('1002') -notcontains $_.matches[0].Groups['ReasonNr'].value}
+
+# blöd sind die Backups, welche erfolgreich gemeldet werden, aber übersprungene
+# Dateien enthalten
+$treffer=Select-String -Path 20200804_202938.LOG -Pattern '(?<FilesProcessed>\d*) files processed \((?<BytesProcessed>\d*) bytes\), (?<FilesSkipped>\d*) files skipped \((?<BytesSkipped>\d*) bytes\)'
+$treffer.Matches[0].Groups['FilesSkipped'].Value
+$skip=Select-String -Path 20200804_202938.LOG -Pattern 'Skipping file "([^"]*)" for reason number (\d\d\d\d),'
+$skip.Length -eq $treffer.Matches[0].Groups['FilesSkipped'].Value
+$skipError=Select-String -Path 20200804_202938.LOG -Pattern 'Skipping file "(?<Filename>[^"]*)" for reason number (?<ReasonNr>\d\d\d\d),'|where {@('1002') -notcontains $_.matches[0].Groups['ReasonNr'].value}
+IF ($skipError.length -ne 0) {
+    "Wichtige Dateien wurden übersprungen!"
+    $skipError
+}
+
+```
+
 ### Importieren einer Delapro-Datensicherung
 
 ```Powershell
