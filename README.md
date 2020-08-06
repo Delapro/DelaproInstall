@@ -257,16 +257,16 @@ Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -Zip
 
 ```Powershell
 # erfolgreiche Backups
-Select-String -Path $DLPPath\Backup\Logs\*.LOG -Pattern 'Result code: 0 \(Operation completed successfully.\)'
+Select-String -Path $DLPPath\Backup\Log\*.LOG -Pattern 'Result code: 0 \(Operation completed successfully.\)'
 
 # fehlerhafte Backups
-Select-String -Path $DLPPath\Backup\Logs\*.LOG -Pattern 'Result code: [^0]'
+Select-String -Path $DLPPath\Backup\Log\*.LOG -Pattern 'Result code: [^0]'
 
 # reason number 1002 sind die Dateien, welche durch Filterangabe ignoriert werden
 # hier werden folglich alle Eintragungen gesucht, welche einen anderen Grund haben,
 # meistens 1102, weil die betreffende Datei nicht geöffnet werden kann, da von
 # einer anderen Instanz bereits geöffnet
-Select-String -Path $DLPPath\Backup\Logs\*.LOG -Pattern 'Skipping file "(?<Filename>[^"]*)" for reason number (?<ReasonNr>\d\d\d\d),'|where {@('1002') -notcontains $_.matches[0].Groups['ReasonNr'].value}
+Select-String -Path $DLPPath\Backup\Log\*.LOG -Pattern 'Skipping file "(?<Filename>[^"]*)" for reason number (?<ReasonNr>\d\d\d\d),'|where {@('1002') -notcontains $_.matches[0].Groups['ReasonNr'].value}
 
 # blöd sind die Backups, welche erfolgreich gemeldet werden, aber übersprungene
 # Dateien enthalten
