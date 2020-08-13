@@ -4819,7 +4819,8 @@ Function Install-Delapro {
 					 "EdgeChromium" )]
 		[string[]]$InstallSwitch,
 		[String]$ImportDataPath,
-		[String]$ImportBackupFile
+		[String]$ImportBackupFile,
+		[Switch]$Force
 	)
 
 	If (($InstallSwitch -contains "Acrobat") -and ($InstallSwitch -contains "AcrobatConfig")) {
@@ -4881,6 +4882,11 @@ Function Install-Delapro {
 		New-item -Path $DlpInstPath -Type Directory
 	}
 	Set-Location $DLPInstPath
+
+	If (Test-Path -Path $DlpPath -and (-not $Force)) {
+		Write-Error "Delapropfad $DlpPath exisitiert bereits! Mit -Force kann ein Überschreiben erzwungen werden."
+		throw "Delapropfad existiert bereits!"
+	}
 
 	# TODO: Bevor überhaupt etwas installiert wird, sollte hier zuerst ein Wiederherstellungspunkt gesetzt werden und nicht erst,
 	# wenn bereits etwas installiert wurde!
