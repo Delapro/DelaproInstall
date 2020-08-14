@@ -4887,6 +4887,8 @@ Function Install-Delapro {
 		Write-Error "Delapropfad $DlpPath exisitiert bereits! Mit -Force kann ein Überschreiben erzwungen werden."
 		throw "Delapropfad existiert bereits!"
 	}
+	# TODO: Bei Parameter Force prüfen, ob eine Programminstallation bereits
+	# vorhanden ist und diese evtl. zuerst deinstallieren
 
 	# TODO: Bevor überhaupt etwas installiert wird, sollte hier zuerst ein Wiederherstellungspunkt gesetzt werden und nicht erst,
 	# wenn bereits etwas installiert wurde!
@@ -4945,6 +4947,12 @@ Function Install-Delapro {
 	Install-MissingPowershellCmdLets
 
 	New-Item $DlpPath -ItemType Directory
+	# Prüfen, ob Verzeichnis angelegt werden konnte oder nicht, denn sonst bestehen
+	# evtl. Probleme mit Berechtigungen, wegen Netz usw.
+	If (-not (Test-Path $DlpPath)) {
+		Write-Error "Delapropfad unter $DlpPath konnte nicht angelegt werden! Probleme mit Schreibrechten?"
+		throw "Delapropfad konnte nicht angelegt werden!"
+	}
 
 	# ab hier beginnen die eigentlichen Installationsroutinen
 	If ($InstallSwitch -contains "TeamViewer") {
