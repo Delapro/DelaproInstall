@@ -4883,7 +4883,7 @@ Function Install-Delapro {
 	}
 	Set-Location $DLPInstPath
 
-	If (Test-Path -Path $DlpPath -and (-not $Force)) {
+	If ((Test-Path -Path $DlpPath) -and (-not $Force)) {
 		Write-Error "Delapropfad $DlpPath exisitiert bereits! Mit -Force kann ein Überschreiben erzwungen werden."
 		throw "Delapropfad existiert bereits!"
 	}
