@@ -727,6 +727,26 @@ $p | Set-Printer -Portname $oldPortName
 
 In diesem Fall hilft die manuelle deinstallation vom Delapro. Man wird im Registrierungseditor unter HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall fündig um den Delaproeintrag zu finden. Unter Windows 32-Bit Versionen findet man den Eintrag unter HKLM:\SOFTWARE\Microsoft\windows\CurrentVersion\Uninstall\. Momentan findet man den konkreten Eintrag unter dem Key{61DB59C0-0B0E-11D4-B878-00A0C91D65AB}, welcher fürs Delapro zugeordnet ist.
 
+Leider taucht Delapro bei
+
+```Powershell
+$DlpApp = Get-WmiObject -Class Win32_Product | Where-Object{$_.Name -eq "Delapro"}
+```
+
+nicht auf! Sonst würde $DlpApp.Uninstall() funktioneren.
+
+Windows 10 versteht aber dies:
+
+```Powershell
+Get-Package -Name Delapro
+# mehr Infos gibts mit 
+Get-Package -Name Delapro | fl *
+# die ausführliche Variante
+Get-Package -Providename Programs -Include WindowsInstaller -Name Delapro
+# DeInstallation müsste so funktionieren
+Get-Package -Name Delapro | Uninstall-Package
+```
+
 ### Installierte Windowsupdates ausgeben
 
 ```Powershell
