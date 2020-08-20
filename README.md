@@ -490,6 +490,9 @@ Get-ThunderbirdUpdates
 
 # Thunderbird Profilmanager aufrufen
 Invoke-ThunderbirdProfileManager
+
+# um Thunderbird loszuwerden
+Uninstall-Thunderbird -Verbose
 ```
 
 Weitere Möglichkeiten mit Thunderbird: [Thunderbird Logging](#thunderbird-logging)
