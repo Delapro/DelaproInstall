@@ -2331,6 +2331,14 @@ Function Install-Thunderbird {
 
 }
 
+Function Uninstall-Thunderbird {
+	[CmdletBinding()]
+	Param()
+
+	$pack = Get-Package -Providername Programs -Name *Thunderbird*
+	$pack | Uninstall-Package
+}
+
 # gibt die verfügbaren Thunderbird Profile zurück
 Function Get-ThunderbirdProfile {
 	[CmdletBinding()]
