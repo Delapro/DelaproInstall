@@ -256,6 +256,9 @@ Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -Zip
 ### Auswerten von Backups
 
 ```Powershell
+# letztes Backup ermitteln
+$lb=dir $DLPPath\Backup\Log\ | sort lastwritetime -Descending|select -First 1
+
 # erfolgreiche Backups
 Select-String -Path $DLPPath\Backup\Log\*.LOG -Pattern 'Result code: 0 \(Operation completed successfully.\)'
 
@@ -270,11 +273,14 @@ Select-String -Path $DLPPath\Backup\Log\*.LOG -Pattern 'Skipping file "(?<Filena
 
 # blöd sind die Backups, welche erfolgreich gemeldet werden, aber übersprungene
 # Dateien enthalten
-$treffer=Select-String -Path 20200804_202938.LOG -Pattern '(?<FilesProcessed>\d*) files processed \((?<BytesProcessed>\d*) bytes\), (?<FilesSkipped>\d*) files skipped \((?<BytesSkipped>\d*) bytes\)'
+# letztes Backup ermitteln
+$lb=dir $DLPPath\Backup\Log\ | sort lastwritetime -Descending|select -First 1
+# bei großen Werten (Bildarchivierung), kann bei BytesProcessed ein Minus (wahrscheinlich Überlauf) auftauchen!
+$treffer=Select-String -Path $lb -Pattern '(?<FilesProcessed>\d*) files processed \((?<BytesProcessed>[-]\d*) bytes\), (?<FilesSkipped>\d*) files skipped \((?<BytesSkipped>[-]\d*) bytes\)'
 $treffer.Matches[0].Groups['FilesSkipped'].Value
-$skip=Select-String -Path 20200804_202938.LOG -Pattern 'Skipping file "([^"]*)" for reason number (\d\d\d\d),'
+$skip=Select-String -Path $lb -Pattern 'Skipping file "([^"]*)" for reason number (\d\d\d\d),'
 $skip.Length -eq $treffer.Matches[0].Groups['FilesSkipped'].Value
-$skipError=Select-String -Path 20200804_202938.LOG -Pattern 'Skipping file "(?<Filename>[^"]*)" for reason number (?<ReasonNr>\d\d\d\d),'|where {@('1002') -notcontains $_.matches[0].Groups['ReasonNr'].value}
+$skipError=Select-String -Path $lb -Pattern 'Skipping file "(?<Filename>[^"]*)" for reason number (?<ReasonNr>\d\d\d\d),'|where {@('1002') -notcontains $_.matches[0].Groups['ReasonNr'].value}
 IF ($skipError.length -ne 0) {
     "Wichtige Dateien wurden übersprungen!"
     $skipError
@@ -291,6 +297,30 @@ Import-LastDelaproBackup -DestinationPath $DlpPath -Verbose
 # Import-OldDLPVersion -SourcePath G:\Delapro\ -DestinationPath "$($DLPPath)"
 # Invoke-CleanupDelapro $DlpPath -Verbose
 
+```
+
+### Einrichtung der automatischen Datensicherung
+
+Richtet eine Aufgabe unter Windows für die automatische Datensicherung des Delapros ein. Hier am Beispiel eines
+Remotelaufwerk auf einem NAS. Rechner muss aber laufen und Benutzer muss angemeldet sein!
+
+```Powershell
+Copy-Item C:\Delapro\BACKUP.BAT C:\Delapro\AUTOBACKUP.BAT
+# gegebenfalls AUTOBACKUP.BAT anpassen wegen Zugriffsrechten, dies geschieht überlichweise unter dem Label
+# :NT
+# NET USE \\NAS\Freigabe /USER:Benutzer Passwort
+# CMD /X /C "START /W BACKUP\EASYBACKUP32 %2 /S /V %1 %3 %4 %5"
+# NET USE \\NAS\Freigabe /DELETE
+$taskname = 'Delapro Autosicherung auf NAS'
+$action = New-ScheduledTaskAction -Execute AUTOBACKUP.BAT -WorkingDirectory C:\Delapro -Argument '\\NAS\Freigabe\DelaproAutosicherung *.* /AUTO'
+# Uhrzeit im Sommer -2 im Winter -1 dann passt die Stunde, wegen UTC+1 und eben Sommerzeit, 05:00 -2 = 03:00
+$trigger=New-ScheduledTaskTrigger -Daily -At 05:00
+$set=New-ScheduledTaskSettingsSet -ExecutionTimeLimit "8:00"
+$princ=New-ScheduledTaskPrincipal -Id Author -RunLevel Limited -ProcessTokenSidType Default -UserId (whoami.exe) -LogonType Password
+$t=New-ScheduledTask -Action $action -Description "Sichert das Delapro täglich um 03:00 Uhr auf das NAS, das Delapro muss dazu auf allen Stationen geschlossen sein." -Principal $princ -Settings $set -Trigger $trigger
+$t | Register-ScheduledTask -TaskName $taskname -TaskPath '\easy\' -User (whoami.exe)
+# zum Testen dann direkt aufrufen:
+Start-ScheduledTask -TaskPath '\easy\' -TaskName $taskname
 ```
 
 ### Einrichtung von bestimmten Backup-Laufwerken
