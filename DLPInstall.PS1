@@ -2653,7 +2653,8 @@ Function Install-AnyDesk {
 	Param(
 		[System.String]$tempDirectory="$Env:TEMP\",
 		[System.String]$DestinationPath="C:\Delapro",
-		[System.String]$CreateDesktopLink="easy Internet Fernwartung (AnyDesk).lnk"
+		[System.String]$CreateDesktopLink="easy Internet Fernwartung (AnyDesk).lnk",
+		[Switch]$NoDesktopLink
 	)
 
 	If (Test-Path $DestinationPath) {
@@ -2667,8 +2668,10 @@ Function Install-AnyDesk {
 			New-Item -path $DestinationPath\Fernwartung -Type Directory
 		}
 		Copy-Item $tempDirectory\AnyDesk.exe $DestinationPath\Fernwartung -Force
-		# Link auf Desktop erstellen, Text: easy Internet Fernwartung (AnyDesk)
-		New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\AnyDesk.exe" -LinkFilename $CreateDesktopLink
+		If (-Not ($NoDesktopLink)) {
+			# Link auf Desktop erstellen, Text: easy Internet Fernwartung (AnyDesk)
+			New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\AnyDesk.exe" -LinkFilename $CreateDesktopLink
+		}
 	} else {
 		Write-Error "$DestinationPath existiert nicht!"
 	}
@@ -4965,6 +4968,7 @@ Function Install-Delapro {
 	# ab hier beginnen die eigentlichen Installationsroutinen
 	If ($InstallSwitch -contains "TeamViewer") {
 		Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -CreateDesktopLink "easy Internet Fernwartung (Teamviewer).lnk"
+		Install-AnyDesk -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -NoDesktopLink
 	}
 	If ($InstallSwitch -contains "AnyDesk") {
 		Install-AnyDesk -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -CreateDesktopLink "easy Internet Fernwartung (AnyDesk).lnk"
