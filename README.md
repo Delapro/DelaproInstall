@@ -780,6 +780,10 @@ Get-Package -Providename Programs -Include WindowsInstaller -Name Delapro
 Get-Package -Name Delapro | Uninstall-Package
 ```
 
+### Office Installation loswerden
+
+https://github.com/joaovitoriasilva/uninstall-office-msi-install-click-to-run/blob/master/script/Office365ProPlusDeploy.ps1
+
 ### Installierte Windowsupdates ausgeben
 
 ```Powershell
