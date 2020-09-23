@@ -1981,9 +1981,23 @@ Function Install-ImageMagick {
 		[Switch]$StaticVersion
 	)
 
+	Function Get-LatestImageMagickReleaseVersion {
+		[CmdletBinding()]
+		# TODO: Könnte man für Github verallgemeinern
+		$user = 'ImageMagick'
+		$repo = 'ImageMagick'
+		$url = "https://api.github.com/repos/$user/$repo/releases/latest"
+		$r = Invoke-WebRequest -Uri $url
+		If ($r.StatusCode -eq 200) {
+			$Json = ConvertFrom-Json $r.Content
+			$Version = $Json.Tag_Name  # darin befindet sich die Versionsnummer
+		}
+		$Version
+	}
+
 	# aktuelle Version: https://imagemagick.org/script/download.php
 	# ImageMagick-7.0.8-47-Q16-x64-dll.exe
-	$version = "7.0.10-24"
+	$version = Get-LatestImageMagickReleaseVersion  # "7.0.10-24"
 	If (Test-64Bit) {
 		$platform = "x64"
 	} else {
