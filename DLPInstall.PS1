@@ -1987,7 +1987,7 @@ Function Install-ImageMagick {
 		$user = 'ImageMagick'
 		$repo = 'ImageMagick'
 		$url = "https://api.github.com/repos/$user/$repo/releases/latest"
-		$r = Invoke-WebRequest -Uri $url
+		$r = Invoke-WebRequest -UseBasicParsing -Uri $url
 		If ($r.StatusCode -eq 200) {
 			$Json = ConvertFrom-Json $r.Content
 			$Version = $Json.Tag_Name  # darin befindet sich die Versionsnummer
