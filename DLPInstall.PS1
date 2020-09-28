@@ -5130,7 +5130,7 @@ $DelaproInstParameter = @{
 	DlpPath = $DlpPath
 	DlpGamePath = $DlpGamePath
 	DlpInstPath = $DlpInstPath
-	InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'TeamViewer', 'Mailer',
+	InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'Preise', 'TeamViewer', 'Mailer',
 					  'eDocPrintPro', 'Acrobat', 'Thunderbird', 'Chrome', 'CopyGame',
 					  'AntiMalware')
 }
