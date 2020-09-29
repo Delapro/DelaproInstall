@@ -344,6 +344,27 @@ Function Get-FileShortcut {
 	}
 }
 
+Function Set-FileShortcut {
+	[CmdletBinding()]
+	Param (
+		[PSObbject]$Shortcut,
+		[String]$TargetPath,
+		[String]$WorkingDirectory
+	)
+
+	$Shell = New-Object -ComObject Wscript.Shell
+	$link = $Shell.CreateShortcut("$($Shortcut.Fullname)")  # Windowslogik: Create ist auch zum Lesen da!
+	If ($null -ne $link) {
+		If ($TargetPath.Length -gt 0) {
+			$link.targetPath = $TargetPath
+		}
+		If ($WorkingDirectory.Length -gt 0) {
+			$link.WorkingDirectory = $WorkingDirectory
+		}
+		$link.Save()
+	}
+}
+
 # erzeugt auf dem Öffentlichen Desktop einen Link zu einer Datei, benötigt dazu Adminrechte!
 Function New-FileShortcut {
 	[CmdletBinding()]
