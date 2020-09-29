@@ -347,7 +347,7 @@ Function Get-FileShortcut {
 Function Set-FileShortcut {
 	[CmdletBinding()]
 	Param (
-		[PSObbject]$Shortcut,
+		[PSObject]$Shortcut,
 		[String]$TargetPath,
 		[String]$WorkingDirectory
 	)
