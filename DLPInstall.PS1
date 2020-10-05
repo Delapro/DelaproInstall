@@ -2265,23 +2265,24 @@ Function Register-CombitMAPIProxy {
 		[System.String]$DelaproPath="C:\Delapro"
 	)
 
-	$Dll = 'cxCT25.DLL'
+	$Version = '25'
+	$Dll = "cxCT$($Version).DLL"
 	If (-Not (Test-Path (Join-Path -path $DelaproPath -ChildPath $Dll))) {
 		Write-Error "$DelaproPath\$Dll fehlt!"
 	}
-	$Dll = 'cxUT25.DLL'
+	$Dll = "'cxUT$($Version).DLL"
 	If (-Not (Test-Path (Join-Path -path $DelaproPath -ChildPath $Dll))) {
 		Write-Error "$DelaproPath\$Dll fehlt!"
 	}
-	$Dll = 'cxMX25.DLL'
+	$Dll = "cxMX$($Version).DLL"
 	If (-Not (Test-Path (Join-Path -path $DelaproPath -ChildPath $Dll))) {
 		Write-Error "$DelaproPath\$Dll fehlt!"
 	}
-	$Dll = 'CXMP25.EXE'
+	$Dll = "CXMP$($Version).EXE"
 	If (-Not (Test-Path (Join-Path -path $DelaproPath -ChildPath $Dll))) {
 		Write-Error "$DelaproPath\$Dll fehlt!"
 	} else {
-		Start-Process -Wait -FilePath "$DelaproPath\CXMP25.EXE" -ArgumentList '/regserver'
+		Start-Process -Wait -FilePath "$DelaproPath\CXMP$($Version).EXE" -ArgumentList '/regserver'
 	}
 
 	# Es müssen auf jeden Fall noch cxCT24.DLL, cxUT24.DLL und cxMX24.DLL vorhanden sein!
