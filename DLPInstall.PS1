@@ -4791,6 +4791,13 @@ Function Invoke-CleanupDelapro {
 		Get-Item "$($DelaproPath)\backup\log\*.log" | Where-Object {$_.LastWriteTime -lt ((Get-Date).AddDays(-365))} | Remove-Item
 	}
 
+	# PDF-Dateien in Archiv stellen
+	If (Test-Path "$($DelaproPath)\Export\PDF") {
+		$pdf = Get-ChildItem -Path "$($DelaproPath)\Export\PDF" | Where-Object LastWriteTime -lt (Get-Date).AddDays(-7)
+		Compress-Archive -Path $pdf -DestinationPath "$($DelaproPath)\Export\PDF\PDF-Archiv-$(Get-Date -format 'yyyyMMdd_HHmm')"
+		$pdf | Remove-Item
+	}
+
 }
 
 Function Invoke-CleanupLL {
