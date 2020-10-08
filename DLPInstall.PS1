@@ -46,6 +46,10 @@ function Add-Tls12InSession {
 
 # TLS 1.2 wird zwingend wegen Github benötigt
 Add-Tls12InSession -Verbose
+@'
+REM kleines Hilfsscript zum nachträglichen Starten von easy.PS1
+powershell.exe -NoExit -NoProfile -executionPolicy Bypass -File .\easy.PS1
+'@ | Set-Content -Path '.\psEasy.bat' 
 
 Function Test-64Bit () {
 	[System.IntPtr]::Size -eq 8
@@ -3072,6 +3076,8 @@ Function Invoke-DelaproPreUpdate {
 		If (Test-DelaproNotRunning -Path $DlpPath) {
 			# Backup aktualisieren
 			Update-Backup -DelaproPath $DLPPath -Verbose
+			# PDF-Dateien in Archiv stellen, macht die Sicherung schneller
+			Compress-PDFArchive -DelaproPath $DLPPath -Verbose
 			# Sicherung des aktuellen Programms durchführen
 			Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -IgnoreBilder -SecureBackup -Verbose
 			# Druckertreiber aktualisieren
@@ -4793,7 +4799,7 @@ Function Invoke-CleanupDelapro {
 	}
 
 	# PDF-Dateien in Archiv stellen
-	Compress-PDFArchive -DelaproPath $DelaproPath
+	Compress-PDFArchive -DelaproPath $DelaproPath -Verbose
 
 }
 
