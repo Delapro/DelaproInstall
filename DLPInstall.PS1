@@ -4793,11 +4793,35 @@ Function Invoke-CleanupDelapro {
 	}
 
 	# PDF-Dateien in Archiv stellen
+	Compress-PDFArchive -DelaproPath $DelaproPath
+
+}
+
+# erstellt ein PDF-Dateiarchiv, wenn mehr als 50 PDF-Dateien gefunden werden 
+# und die älteste PDF-Datei mindestens älter als 14 Tage ist.
+# diese Logik kann mit dem Parameter Force umgangen werden
+# wurde das PDF-Archiv erfolgreich erstellt werden die PDF-Dateien gelöscht
+Function Compress-PDFArchive {
+	[CmdLetBinding()]
+	Param(
+		[System.String]$DelaproPath="C:\Delapro",
+		[switch]$Force
+	)
+
+	$Destination = "$($DelaproPath)\Export\PDF\PDF-Archiv-$(Get-Date -format 'yyyyMMdd_HHmm')"
+
 	If (Test-Path "$($DelaproPath)\Export\PDF") {
 		$pdf = Get-ChildItem -Path "$($DelaproPath)\Export\PDF\*.pdf" | Where-Object LastWriteTime -lt (Get-Date).AddDays(-7)
-		Compress-Archive -Path $pdf -DestinationPath "$($DelaproPath)\Export\PDF\PDF-Archiv-$(Get-Date -format 'yyyyMMdd_HHmm')"
-		If ($?) {
-			$pdf | Remove-Item
+		$pdf = $pdf | Sort-Object Lastwritetime
+		Write-Verbose "Anzahl Dateien: $($pdf.Length)"
+		If ($pdf) {
+			If ($Force -or (($pdf.Length -gt 50) -and ($pdf[0].LastWriteTime -lt (Get-Date).AddDays(-14)))) {
+				Write-Verbose "Erstelle Archiv $($Destination)"
+				Compress-Archive -Path $pdf -DestinationPath $Destination
+				If ($?) {
+					$pdf | Remove-Item
+				}
+			}	
 		}
 	}
 
