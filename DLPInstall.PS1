@@ -2839,6 +2839,34 @@ Function Install-Powershell {
 
 }
 
+Function Install-Powershell7 {
+	[CmdletBinding()]
+	Param(
+		[System.String]$tempPath = "$Env:TEMP"
+	)
+
+	# Versionen: https://github.com/PowerShell/PowerShell/releases
+	$Version = '7.1.0-rc.1'
+	If (Test-64Bit) {
+		$Platform = "win-x64"
+	} else {
+		$Platform = "win-x86"
+	}
+	$Filename = "PowerShell-$($Version)-$($Platform).msi"
+	$Url = "https://github.com/PowerShell/PowerShell/releases/download/v$($Version)/$($Filename)"
+	$tempFile = Join-Path -Path $tempPath -ChildPath $Filename
+
+	Write-Verbose "Lade: $Url"
+	Write-Verbose "nach: $tempFile"
+
+	# Start-BitsTransfer $ghostUrl  $tempPath
+	Invoke-WebRequest -UseBasicParsing -Uri $Url -OutFile $tempFile
+
+	## /S muss groß sein!
+	Start-Process -Wait "msiexec.exe" -ArgumentList "/i", $tempFile, "/qn"
+
+}
+
 # baut bei Windows 7 oder 8 fehlende Powershell Cmdlets nach
 # es wird aber das Cmdlet nicht komplett nachgebildet, sondern nur die Funktion
 # die im Rahmen dieses Skripts benötigt wird!!
