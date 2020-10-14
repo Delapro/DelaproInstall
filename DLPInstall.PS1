@@ -2864,7 +2864,10 @@ Function Install-Powershell7 {
 	Write-Verbose "nach: $tempFile"
 
 	# Start-BitsTransfer $ghostUrl  $tempPath
+	$pp = $ProgressPreference
+	$ProgressPreference = 'SilentlyContinue'	# damit Download schneller klappt
 	Invoke-WebRequest -UseBasicParsing -Uri $Url -OutFile $tempFile
+	$ProgressPreference = $pp
 
 	# Ändern in /Package /Quiet und Aufnahme von
 	# ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1 ENABLE_PSREMOTING=1 REGISTER_MANIFEST=1
