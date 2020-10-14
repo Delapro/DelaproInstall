@@ -2845,6 +2845,10 @@ Function Install-Powershell7 {
 		[System.String]$tempPath = "$Env:TEMP"
 	)
 
+	If (-Not (Test-Admin)) {
+		throw "Adminrechte werden benötigt!"
+	}
+	
 	# Versionen: https://github.com/PowerShell/PowerShell/releases
 	$Version = '7.1.0-rc.1'
 	If (Test-64Bit) {
@@ -2862,7 +2866,8 @@ Function Install-Powershell7 {
 	# Start-BitsTransfer $ghostUrl  $tempPath
 	Invoke-WebRequest -UseBasicParsing -Uri $Url -OutFile $tempFile
 
-	## /S muss groß sein!
+	# Ändern in /Package /Quiet und Aufnahme von
+	# ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1 ENABLE_PSREMOTING=1 REGISTER_MANIFEST=1
 	Start-Process -Wait "msiexec.exe" -ArgumentList "/i", $tempFile, "/qn"
 
 }
