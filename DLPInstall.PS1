@@ -5201,6 +5201,22 @@ Function Install-Delapro {
 	}
 }
 
+<# 
+Installiert das übliche Delapro Test-Setup
+#>
+Function Install-DelaproTestSetup {
+	$DelaproInstParameterTest = @{
+		DlpPath = $DlpPath
+		DlpGamePath = $DlpGamePath
+		DlpInstPath = $DlpInstPath
+		InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'Preise', 'TeamViewer', 'Mailer',
+						  'eDocPrintPro', 'Acrobat', 'Thunderbird', 'Chrome', 'CopyGame',
+						  'AntiMalware')
+	}
+
+	Install-Delapro @DelaproInstParameterTest
+}
+
 #If($PSReadlineActive) {
 #	# PSReadline wieder aktiveren, falls es vorher ausgeschaltet wurde.
 #	Import-Module PSReadline
