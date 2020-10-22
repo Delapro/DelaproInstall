@@ -3065,6 +3065,7 @@ Function Invoke-DelaproUpdate {
 						.\update\update
 						Invoke-CleanupDelapro $DlpPath -Verbose
 						Test-DelaproFormsAnomality $DlpPath -Verbose
+						Test-7ZipDLLMissing $DlpPath -Verbose
 					}
 				} else {
 					throw "$DlpUpdateFile konnte nicht ausgeführt werden!"
@@ -3083,6 +3084,17 @@ Function Invoke-DelaproUpdate {
 		Write-Error "Delapro in $DlpPath ist zu alt, bitte prüfen!"
 	}
 	
+}
+
+Function Test-7ZipDLLMissing {
+	[CmdletBinding()]
+	Param(
+		[String]$DlpPath
+	)
+
+	If (-Not (Test-Path (Join-Path -Path $DlpPath -ChildPath '7z.dll'))) {
+		Write-Warning "Achtung 7z.dll fehlt!"
+	}
 }
 
 Function Test-DelaproFormsAnomality {
