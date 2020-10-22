@@ -3202,10 +3202,12 @@ Function Install-DelaproPreisupdate {
 	Start-BitsTransfer $easyBaseURI/download/$dlpPreise $TempDirectory
 	Unblock-File "$($TempDirectory)$($dlpPreise)"
 	Start-Process -Wait "$($TempDirectory)$($dlpPreise)" -ArgumentList "-o$($TempDirectory)\PreisUpdate", "-y"
+<#  bei Selbstextrahierenden EXE wird dies nicht benötigt!
 	$dir = Get-Location
 	Set-Location "$($TempDirectory)\PreisUpdate"
 	Start-Process -Wait ".\UPDDIRKT.BAT"
 	Set-Location $dir
+#>
 }
 
 # legt ein Backup eines Delapro-Verzeichnis mittels easyBackup32.exe an
