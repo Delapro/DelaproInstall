@@ -2850,7 +2850,7 @@ Function Install-Powershell7 {
 	}
 	
 	# Versionen: https://github.com/PowerShell/PowerShell/releases
-	$Version = '7.1.0-rc.1'
+	$Version = '7.1.0-rc.2'
 	If (Test-64Bit) {
 		$Platform = "win-x64"
 	} else {
