@@ -3831,27 +3831,43 @@ Function Install-FFMpeg {
 		[String]$TempDir=$Env:TEMP
 	)
 
-	# https://github.com/FFmpeg/FFmpeg/releases
-	# etwas schwierig die Versionen, weil die Windows Builds automatisch erstellt
-	# werden und quasi nightly Builds darstellen, deshalb ist nie klar, welche 
-	# Version zu einem Release gehört, aus diesem Grund wird eine Version nach einem
-	# Release Hash verwendet. Für 4.1.1 ist das am nächsten liegende Build 20190210-d20902f
-	# obiger Hinweise gilt aktuell nicht mehr
-	$version = "4.2.3"
-	$date = "20200527"
-	$gitShortHash = "637742b"
-	$platform = "win64"
-	# $filename = "ffmpeg-$($date)-$($gitShortHash)-$platform-static.zip"
-	$filename = "ffmpeg-$($version)-$platform-static.zip"
-	$url = "https://ffmpeg.zeranoe.com/builds/$platform/static/$filename"
+	If (-Not (Test-Admin)) {
+		Write-Error "Script benötigt Administratorrechte"
+		# weitere Scriptausführung anhalten
+		throw "Admin"
+	}
 
-	Write-Verbose "Lade $url"
-	Start-BitsTransfer -Source $url -Destination $TempDir\ffmpeg.Zip
-	Expand-Archive $TempDir\ffmpeg.Zip -DestinationPath $env:ProgramFiles -Force
-	$programPath = Join-Path -path $env:ProgramFiles -ChildPath $filename.Replace('.zip', '')
-	If (Test-Path ($programPath)) {
-		Write-Verbose "nun verfügbar: $programPath, Version: $version oder neuer"
-	} 
+	# https://github.com/BtbN/FFmpeg-Builds/releases
+	# https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2020-10-27-12-34/ffmpeg-n4.3.1-20-g8a2acdc6da-win64-gpl-4.3.zip
+	# https://github.com/PowerShell/PowerShell/releases/download/autobuild-2020-10-27-12-34/ffmpeg-n4.3.1-20-g8a2acdc6da-win64-gpl-4.3.zip
+	$baseVersion = '4.3'
+	$Version = 'n4.3.1'
+	$Platform = "win64"
+	$gitHash = "g8a2acdc6da"
+	$lic = 'gpl'
+	$Filename = "ffmpeg-$($Version)-20-$($gitHash)-$($Platform)-$($lic)-$($baseVersion).zip"
+	$ReleaseDate = 'autobuild-2020-10-27-12-34'
+	$Url = "https://github.com/BtbN/FFmpeg-Builds/releases/download/$($Releasedate)/$($Filename)"
+	$tempFile = Join-Path -Path $tempDir -ChildPath $Filename
+
+	# TODO: "https://api.github.com/repos/$user/$repo/releases/latest"
+	
+	Write-Verbose "Lade: $Url"
+	Write-Verbose "nach: $tempFile"
+
+	# Start-BitsTransfer $ghostUrl  $tempPath
+	$pp = $ProgressPreference
+	$ProgressPreference = 'SilentlyContinue'	# damit Download schneller klappt
+	Invoke-WebRequest -UseBasicParsing -Uri $Url -OutFile $tempFile
+	$ProgressPreference = $pp
+
+	If ($tempFile) {
+		Expand-Archive $tempFile -DestinationPath $env:ProgramFiles -Force
+		$programPath = Join-Path -path $env:ProgramFiles -ChildPath $filename.Replace('.zip', '')
+		If (Test-Path ($programPath)) {
+			Write-Verbose "nun verfügbar: $programPath, Version: $version oder neuer"
+		} 	
+	}
 }
 
 # liefert mögliche ffmpeg Verzeichnisse, es sollte darin ein bin-Verzeichnis geben wo ffmpeg.exe usw. liegen
