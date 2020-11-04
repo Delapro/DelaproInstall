@@ -50,6 +50,9 @@ Add-Tls12InSession -Verbose
 REM kleines Hilfsscript zum nachträglichen Starten von easy.PS1
 powershell.exe -NoExit -NoProfile -executionPolicy Bypass -File .\easy.PS1
 '@ | Set-Content -Path '.\psEasy.bat' 
+@'
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoExit -NoProfile -Command '& {$s=(Invoke-WebRequest -UseBasicParsing -Uri https://raw.githubusercontent.com/Delapro/DelaproInstall/master/DLPInstall.PS1).Content.Replace([string][char]10,[char]13+[char]10); $s=$s.SubString(0, $s.IndexOf(''CMDLET-ENDE'')); $tempPath = ''C:\temp''; $scriptPath=Join-Path -Path $tempPath -ChildPath easy.PS1; If (-Not (Test-Path $tempPath)) {md $tempPath} ; Set-Content -path $scriptPath -value $s;
+'@ | Set-Content -Path '.\psEasyUpdate.bat' 
 
 Function Test-64Bit () {
 	[System.IntPtr]::Size -eq 8
