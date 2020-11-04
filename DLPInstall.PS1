@@ -54,7 +54,8 @@ powershell.exe -NoExit -NoProfile -executionPolicy Bypass -File .\easy.PS1
 # Achtung 2047 Zeichen-Beschränkung bei cmd.exe!!
 @'
 powershell.exe -NoExit -NoProfile -executionPolicy Bypass -File .\easyUpdate.PS1
-'@ | Set-Content -Path '.\psEasyUpdate.bat' 
+'@ | Set-Content -Path '.\psEasyUpdate.bat'
+
 @'
 $s=(Invoke-WebRequest -UseBasicParsing -Uri https://raw.githubusercontent.com/Delapro/DelaproInstall/master/DLPInstall.PS1).Content.Replace([string][char]10,[char]13+[char]10);
 $s=$s.SubString(0, $s.IndexOf("CMDLET-ENDE"))
