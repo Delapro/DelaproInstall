@@ -669,6 +669,14 @@ Install-ImageMagick -Verbose
 # Infos über Grafik ausgeben
 & "$((Get-ImageMagick)[0].Fullname)\magick.exe" convert Bild.BMP -type PALETTE -compress RLE BMP3:Bild-RLE.BMP
 
+# hat man z. B. Bilder in einem Verzeichnis und möchte diese auf 25% der ursprünglichen Größe
+# reduzieren, kann man diesen Aufruf verwenden
+$bilder = dir *.png
+md 25Prozent
+cd 25Prozent
+$bilder | % {& "$((Get-ImageMagick)[0].Fullname)\magick.exe" convert $_.Fullname -resize 25% $_.Name}
+
+
 # wenn man Daten zu einem Bild weiterverarbeiten möchte, ist dies leichter im JSON-Format:
 # Infos über Grafik ausgeben, wenn Ghostscript installiert ist, funktionieren sogar Infos zu PDF-Dateien!
 $json = ConvertFrom-Json ((& "$((Get-ImageMagick)[0].Fullname)\magick.exe" convert Bild.BMP json:-) | out-String )
