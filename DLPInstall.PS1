@@ -5154,7 +5154,7 @@ Function Install-Delapro {
 	}
 
 	If ($InstallSwitch -contains "Mailer") {	
-		Install-DelaproMailPrinter -Verbose
+		Install-DelaproMailPrinter -DelaproPath $DlpPath -Verbose
 	}
 
 	Show-Printers
