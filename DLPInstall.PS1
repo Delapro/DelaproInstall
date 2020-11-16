@@ -3356,11 +3356,13 @@ Function Backup-Delapro {
 			If ($backups -is [Array]) {
 				$backups = $backups[0]
 			}
-			# umbenennen
-			If (Test-Path $backups.FullName) {
-				$NewName = [System.IO.Path]::ChangeExtension($backups.FullName, "eyBZIP")
-				Write-Verbose "SecureBackup-Name: $NewName"
-				Rename-Item -Path $backups.FullName -NewName $NewName
+			If ($backups) {
+				# umbenennen
+				If (Test-Path $backups.FullName) {
+					$NewName = [System.IO.Path]::ChangeExtension($backups.FullName, "eyBZIP")
+					Write-Verbose "SecureBackup-Name: $NewName"
+					Rename-Item -Path $backups.FullName -NewName $NewName
+				}
 			}
 		}
 
