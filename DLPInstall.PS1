@@ -5300,7 +5300,7 @@ $DelaproInstParameter = @{
 	DlpPath = $DlpPath
 	DlpGamePath = $DlpGamePath
 	DlpInstPath = $DlpInstPath
-	InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'Preise', 'TeamViewer', 'Mailer',
+	InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'Preise', 'TeamViewer', 'AnyDesk', 'Mailer',
 					  'eDocPrintPro', 'Acrobat', 'Thunderbird', 'Chrome', 'CopyGame',
 					  'AntiMalware')
 }
@@ -5309,7 +5309,7 @@ $DelaproInstParameterFromBackup = @{
 	DlpPath = $DlpPath
 	DlpGamePath = $DlpGamePath
 	DlpInstPath = $DlpInstPath
-	InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'TeamViewer', 'Mailer',
+	InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'TeamViewer', 'AnyDesk', 'Mailer',
 					  'eDocPrintPro', 'Acrobat', 'Thunderbird', 'Chrome', 'CopyGame',
 					  'ImportBackup', 'AntiMalware')
 }
@@ -5319,7 +5319,7 @@ $DelaproInstParameterMitDataImport = @{
 	DlpPath = $DlpPath
 	DlpGamePath = $DlpGamePath
 	DlpInstPath = $DlpInstPath
-	InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'TeamViewer', 'Mailer',
+	InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'TeamViewer', 'AnyDesk', 'Mailer',
 					  'eDocPrintPro', 'CopyGame', 'ImportData')
 	ImportDataPath = 'D:\Delapro'
 }
