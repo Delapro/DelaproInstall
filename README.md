@@ -276,7 +276,7 @@ Select-String -Path $DLPPath\Backup\Log\*.LOG -Pattern 'Skipping file "(?<Filena
 # letztes Backup ermitteln
 $lb=dir $DLPPath\Backup\Log\ | sort lastwritetime -Descending|select -First 1
 # bei großen Werten (Bildarchivierung), kann bei BytesProcessed ein Minus (wahrscheinlich Überlauf) auftauchen!
-$treffer=Select-String -Path $lb -Pattern '(?<FilesProcessed>\d*) files processed \((?<BytesProcessed>[-]\d*) bytes\), (?<FilesSkipped>\d*) files skipped \((?<BytesSkipped>[-]\d*) bytes\)'
+$treffer=Select-String -Path $lb.FullName -Pattern '(?<FilesProcessed>\d*) files processed \((?<BytesProcessed>([-]?\d*)) bytes\), (?<FilesSkipped>\d*) files skipped \((?<BytesSkipped>([-]?\d*)) bytes\)'
 $treffer.Matches[0].Groups['FilesSkipped'].Value
 $skip=Select-String -Path $lb -Pattern 'Skipping file "([^"]*)" for reason number (\d\d\d\d),'
 $skip.Length -eq $treffer.Matches[0].Groups['FilesSkipped'].Value
