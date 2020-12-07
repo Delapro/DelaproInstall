@@ -284,6 +284,8 @@ $skipError=Select-String -Path $lb -Pattern 'Skipping file "(?<Filename>[^"]*)" 
 IF ($skipError.length -ne 0) {
     "Wichtige Dateien wurden übersprungen!"
     $skipError
+} elseIf ($treffer.Matches[0].Groups['BytesProcessed'].Value -eq 0) {
+    throw "Keine Dateien in Sicherung! Sicherung abggebrochen?"
 }
 
 ```
