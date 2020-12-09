@@ -4539,6 +4539,7 @@ Function Get-DesktopFolder {
 	[CmdletBinding()]
 	Param(
 		[Switch]$AllUsers
+		[Switch]$CurrentUser
 	)
 
 	If ($AllUsers) {
