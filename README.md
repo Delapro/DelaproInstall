@@ -95,9 +95,9 @@ Dieses Beispiel funktioniert nur mit manuellen Updates, wo in C:\TEMP\ die Datei
 Invoke-DelaproUpdate -DlpAlterInTagen 1 -DlpPath $DlpPath -DlpUpdateFile 'C:\temp\Exes.exe' -Verbose
 
 # die MwSt-Hilfen aktivieren
-.\dlp_conf /INISETIFNOTSET DLP_MAIN.INI Modus ZeigeMwStImAuftrag 1 "Bestimmt ob die MwSt. im Auftragskopf angezeigt wird (0=Nicht Anzeigen 1=Anzeigen)"
-.\dlp_conf /INISETIFNOTSET DLP_MAIN.INI Modus MwStHinweisBeimKopieren 1 "Bestimmt ob ein Hinweis ausgegeben wird, wenn die MwSt. beim zu kopierenden Auftrag von den Labordaten abweicht (0=Nicht Anzeigen 1=Anzeigen)"
-.\dlp_conf /INISETIFNOTSET DLP_MAIN.INI Modus MwStCheckBeiLaufzettelRechnungsdruck 1 "Bestimmt ob ein Hinweis ausgegeben wird, wenn einer Rechnung aus einem Technikerlaufzettel gedruckt werden soll und die MwSt. von den Labordaten abweicht (0=Nicht Anzeigen 1=Anzeigen)"
+.\dlp_conf.exe /INISETIFNOTSET DLP_MAIN.INI Modus ZeigeMwStImAuftrag 1 "Bestimmt ob die MwSt. im Auftragskopf angezeigt wird (0=Nicht Anzeigen 1=Anzeigen)"
+.\dlp_conf.exe /INISETIFNOTSET DLP_MAIN.INI Modus MwStHinweisBeimKopieren 1 "Bestimmt ob ein Hinweis ausgegeben wird, wenn die MwSt. beim zu kopierenden Auftrag von den Labordaten abweicht (0=Nicht Anzeigen 1=Anzeigen)"
+.\dlp_conf.exe /INISETIFNOTSET DLP_MAIN.INI Modus MwStCheckBeiLaufzettelRechnungsdruck 1 "Bestimmt ob ein Hinweis ausgegeben wird, wenn einer Rechnung aus einem Technikerlaufzettel gedruckt werden soll und die MwSt. von den Labordaten abweicht (0=Nicht Anzeigen 1=Anzeigen)"
 ```
 
 ## Delapro-Verzeichnis aufräumen
@@ -411,9 +411,9 @@ If (Test-FormulareFertigteile -DelaproPath $DlpPath -Verbose) {
 }
 Set-Location $DlpPath
 # Text für Fertigteile setzen, falls noch nicht vorhanden:
-.\dlp_conf /INISETIFNOTSET DLP_MAIN.INI Formulare FertigteileText "  Sonstiges" "Text für 4. Preiszeile, Vorgabe: Fertigteile oder Sonstiges"
+.\dlp_conf.exe /INISETIFNOTSET DLP_MAIN.INI Formulare FertigteileText "  Sonstiges" "Text für 4. Preiszeile, Vorgabe: Fertigteile oder Sonstiges"
 # zum Forcieren eines Text, kann man dies verwenden
-# .\dlp_conf /INISET DLP_MAIN.INI Formulare FertigteileText "  Sonstiges" "Text für 4. Preiszeile, Vorgabe: Fertigteile oder Sonstiges"
+# .\dlp_conf.exe /INISET DLP_MAIN.INI Formulare FertigteileText "  Sonstiges" "Text für 4. Preiszeile, Vorgabe: Fertigteile oder Sonstiges"
 
 ```
 
