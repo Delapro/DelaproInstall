@@ -4538,7 +4538,7 @@ Function Get-StartupFolder {
 Function Get-DesktopFolder {
 	[CmdletBinding()]
 	Param(
-		[Switch]$AllUsers
+		[Switch]$AllUsers,
 		[Switch]$CurrentUser
 	)
 
