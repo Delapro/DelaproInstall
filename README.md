@@ -385,6 +385,12 @@ New-PowershellScriptShortcut -Path .\SetDelapro.PS1 -LinkFilename 'Delapro-Fenst
 Test-NeueFormulare -Path $DlpPath
 ```
 
+### Hilfsfunktion für XML-Formulare
+
+```Powershell
+Get-XmlFormChilds -CheckDir Reps -FilePattern a*.rep
+```
+
 ### HPLASER.INI-Erweiterung
 
 ```

@@ -4757,6 +4757,20 @@ Function Copy-Delagame {
 
 }
 
+Function Get-XmlFormChilds {
+	[CmdletBinding()]
+	Param(
+		[Validateset("Reps", "Layouts")]
+		[string]$CheckDir,
+		[string]$filePattern,
+		[string]$Path=(Resolve-Path .).Path
+	)
+
+	$xmlform = Get-ChildItem -Path $Path -Recurse -Include xmlform* -ea SilentlyContinue
+	Write-Verbose "$($xmlform.Length) Dateien gefunden"
+	$xmlform|ForEach-Object {$dir="$($_.Fullname)\$($CheckDir)"; if (Test-Path $dir -PathType Container) {Get-ChildItem "$($dir)\$filePattern"} }
+}
+
 # prüft ob der Text Fertigteile in den REP-Dateien fix drin steht
 Function Test-FormulareFertigteile {
 	[CmdletBinding()]
