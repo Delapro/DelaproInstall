@@ -387,8 +387,13 @@ Test-NeueFormulare -Path $DlpPath
 
 ### Hilfsfunktion für XML-Formulare
 
+Wichtig: Get-XmlFormChilds sucht immer nur in Unterverzeichnissen
+
 ```Powershell
+# alle REP-Dateien die mit A anfangen
 Get-XmlFormChilds -CheckDir Reps -FilePattern a*.rep
+# alle XML-Formular-Verzeichnisse auflisten
+Get-XmlFormChilds
 ```
 
 ### HPLASER.INI-Erweiterung
