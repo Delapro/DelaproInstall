@@ -395,7 +395,7 @@ Get-XmlFormChilds -CheckDir Reps -FilePattern a*.rep
 # alle XML-Formular-Verzeichnisse auflisten
 Get-XmlFormChilds
 # alle XML-Formular-Verzeichnisse unterhalb eines bestimmten Pfads auflisten
-Get-XmlFormChilds C:\Delapro
+Get-XmlFormChilds -Path C:\Delapro
 ```
 
 ### HPLASER.INI-Erweiterung
