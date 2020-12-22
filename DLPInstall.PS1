@@ -472,7 +472,7 @@ Function Invoke-DelaproInstallNetDownloadAndInit {
 	$Files = @('DLPInstallCommon.PS1', 'DLPInstallServer.PS1', 
 	           'DLPInstallClient.PS1')
 
-	Invoke-GithubRawDownload -Repository DelaproInstallNet -Files $Files -Verbose
+	Invoke-GithubRawDownload -Repository DelaproInstallNet -Files $Files
 
 	foreach ($file in $Files) {
 		If (Test-Path $file) {
@@ -491,7 +491,7 @@ Function Invoke-DelaproAutomateDownloadAndInit {
 			   'DLPAutoArtikel.PS1', 'DLPAutoTechniker.PS1',
 			   'DLPAutoJumbo.PS1', 'DLPAutoMonatsaufstellung.PS1')
 
-	Invoke-GithubRawDownload -Repository DelaproAutomate -Files $Files -Verbose
+	Invoke-GithubRawDownload -Repository DelaproAutomate -Files $Files
 
 	foreach ($file in $Files) {
 		If (Test-Path $file) {
@@ -513,7 +513,7 @@ Function Invoke-DelaproSammelsuriumDownloadAndInit {
 	# vorab Laden, wird im Sammelsurium häufiger benötigt
 	Invoke-PSDBFDownloadAndInit
 
-	Invoke-GithubRawDownload -Repository DelaproSammelsurium -Files $Files -Verbose
+	Invoke-GithubRawDownload -Repository DelaproSammelsurium -Files $Files
 
 	foreach ($file in $Files) {
 		If (Test-Path $file) {
@@ -530,7 +530,7 @@ Function Invoke-PSDBFDownloadAndInit {
 
 	$Files = @('DBFReadWrite.PS1')
 
-	Invoke-GithubRawDownload -Repository PSDBF -Files $Files -Verbose
+	Invoke-GithubRawDownload -Repository PSDBF -Files $Files
 
 	foreach ($file in $Files) {
 		If (Test-Path $file) {
