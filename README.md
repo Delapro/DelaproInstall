@@ -98,6 +98,7 @@ Invoke-DelaproUpdate -DlpAlterInTagen 1 -DlpPath $DlpPath -DlpUpdateFile 'C:\tem
 .\dlp_conf.exe /INISETIFNOTSET DLP_MAIN.INI Modus ZeigeMwStImAuftrag 1 "Bestimmt ob die MwSt. im Auftragskopf angezeigt wird (0=Nicht Anzeigen 1=Anzeigen)"
 .\dlp_conf.exe /INISETIFNOTSET DLP_MAIN.INI Modus MwStHinweisBeimKopieren 1 "Bestimmt ob ein Hinweis ausgegeben wird, wenn die MwSt. beim zu kopierenden Auftrag von den Labordaten abweicht (0=Nicht Anzeigen 1=Anzeigen)"
 .\dlp_conf.exe /INISETIFNOTSET DLP_MAIN.INI Modus MwStCheckBeiLaufzettelRechnungsdruck 1 "Bestimmt ob ein Hinweis ausgegeben wird, wenn einer Rechnung aus einem Technikerlaufzettel gedruckt werden soll und die MwSt. von den Labordaten abweicht (0=Nicht Anzeigen 1=Anzeigen)"
+
 ```
 
 ## Delapro-Verzeichnis aufräumen
