@@ -1363,7 +1363,9 @@ Function Get-DelaproLicense {
 			Remove-Item -Path $licFile -Force
 		}
 		Write-Verbose "Start $exeFile"
+		Push-Location $DelaproPath
 		Start-Process -Wait -FilePath $exeFile -ArgumentList '/GetLicense'
+		Pop-Location
 		If (Test-Path $licFile) {
 			$lic = Get-Content -Path $licFile -Encoding Oem
 			Write-Verbose "License gefunden: $lic"
