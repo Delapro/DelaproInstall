@@ -3070,6 +3070,7 @@ Function Invoke-DelaproUpdate {
 
 	If (Test-DelaproActive -Path $DlpPath -TolerateDays $DlpAlterInTagen) {
 		If (Test-DelaproNotRunning -Path $DlpPath) {
+			$licOld = Get-DelaproLicense -CompareParts -DelaproPath $DlpPath
 			If (-Not (Test-Path "$($DlpPath)\Update")) {
 				New-Item "$($DlpPath)\Update" -Type Directory
 			}
@@ -3090,6 +3091,10 @@ Function Invoke-DelaproUpdate {
 						Invoke-CleanupDelapro $DlpPath -Verbose
 						Test-DelaproFormsAnomality $DlpPath -Verbose
 						Test-7ZipDLLMissing $DlpPath -Verbose
+						$licNew = Get-DelaproLicense -CompareParts -DelaproPath $DlpPath
+						If (Compare-Object -ReferenceObject $licOld -DifferenceObject $licNew) {
+							Write-Error "Lizenzdifferenzen"
+						}
 					}
 				} else {
 					throw "$DlpUpdateFile konnte nicht ausgeführt werden!"
