@@ -1380,12 +1380,20 @@ Function Get-DelaproLicense {
 					[Array]::Reverse($m)
 					$m = ($m -join '').TrimStart()
 					$s = ($l1 -split '-')[2]
-					$l2 = $lic[1].Substring(0, $lic[1].Length -1)
+					$l2 = $lic[1].Substring(0, $lic[1].Length)
+					If ($l2 -eq [char]26) {
+						$l2 = ""
+					}
+					$l3 = $lic[2].Substring(0, $lic[2].Length)
+					If ($l3 -eq [char]26) {
+						$l3 = ""
+					}
 					$licObj = [PSCustomObject]@{
 						SerialNr = $s;
 						Year = $y;
 						Month = $m;
 						Licensee = ($l2 -split '@')
+						CustomerID = $l3
 					}
 					$licObj
 				}
