@@ -3156,6 +3156,7 @@ Function Invoke-DelaproPreUpdate {
 			Update-DlpWinPr -DelaproPath $DLPPath -Verbose
 			Update-DlpRawPr -DelaproPath $DLPPath -Verbose
 			Update-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -Verbose
+			Install-AnyDesk -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -Verbose
 		} else {
 			Write-Error "Delapro läuft noch!"
 		}
