@@ -2743,7 +2743,11 @@ Function Install-AnyDesk {
 		Copy-Item $tempDirectory\AnyDesk.exe $DestinationPath\Fernwartung -Force
 		If (-Not ($NoDesktopLink)) {
 			# Link auf Desktop erstellen, Text: easy Internet Fernwartung (AnyDesk)
-			New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\AnyDesk.exe" -LinkFilename $CreateDesktopLink
+			If (Test-Admin) {
+				New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\AnyDesk.exe" -LinkFilename $CreateDesktopLink
+			} else {
+				New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\AnyDesk.exe" -LinkFilename $CreateDesktopLink -Folder (Get-DesktopFolder -CurrentUser)
+			}
 		}
 	} else {
 		Write-Error "$DestinationPath existiert nicht!"
