@@ -1384,9 +1384,13 @@ Function Get-DelaproLicense {
 					If ($l2 -eq [char]26) {
 						$l2 = ""
 					}
-					$l3 = $lic[2].Substring(0, $lic[2].Length)
-					If ($l3 -eq [char]26) {
-						$l3 = ""
+					If ($lic.Length -gt 2) {
+						$l3 = $lic[2].Substring(0, $lic[2].Length)
+						If ($l3 -eq [char]26) {
+							$l3 = ''
+						}
+					} else {
+						$l3 = ''
 					}
 					$licObj = [PSCustomObject]@{
 						SerialNr = $s;
