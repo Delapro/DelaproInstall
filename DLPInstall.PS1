@@ -3153,6 +3153,9 @@ Function Test-DelaproFormsAnomality {
 	If ($Files) {
 		If ($Files.Length -gt 0) {
 			Write-Warning "Achtung FormsAnomalie! $(foreach($f in $Files){$f.name})"
+			If (Test-NeueFormulare -Path $DlpPath) {
+				Write-Warning "Neue Formulare!"
+			}
 		}
 	}
 }
