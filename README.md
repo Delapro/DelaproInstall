@@ -242,6 +242,10 @@ Falls der Epson-Druckertreiber von Windows direkt installiert wurde lässt sich 
 
 In diesem Fall muss der normale Epson-Druckertreiber zuerst installiert werden und danach das Epson Fax Utility.
 
+### Kyocera
+
+Nennt sich "Network FAX v7.0.1002 WebPackage" und kann beim jeweiligen Drucker heruntergeladen werden.
+
 ## Rund um Backups
 
 ### Erstellen von Backups
