@@ -83,7 +83,7 @@ $DlpPath=(Get-FileShortCut -LinkFilename Delapro.Lnk).WorkingDirectory
 ```
 
 ```Powershell
-Invoke-DelaproPreUpdate -DlpAlterInTagen 1 -DlpPath $DlpPath -Verbose
+Invoke-DelaproPreUpdate -DlpPath $DlpPath -Verbose -DlpAlterInTagen 1
 ```
 
 ## Update einspielen
@@ -92,7 +92,7 @@ Dieses Beispiel funktioniert nur mit manuellen Updates, wo in C:\TEMP\ die Datei
 
 ```Powershell
 # spielt ein Delapro-Update ein, das Update muss gepackt als EXES.EXE vorliegen
-Invoke-DelaproUpdate -DlpAlterInTagen 1 -DlpPath $DlpPath -DlpUpdateFile 'C:\temp\Exes.exe' -Verbose
+Invoke-DelaproUpdate -DlpPath $DlpPath -DlpUpdateFile 'C:\temp\Exes.exe' -Verbose -DlpAlterInTagen 1
 
 ```
 
