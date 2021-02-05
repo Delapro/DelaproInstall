@@ -246,6 +246,11 @@ In diesem Fall muss der normale Epson-Druckertreiber zuerst installiert werden u
 
 Nennt sich "Network FAX v7.0.1002 WebPackage" und kann beim jeweiligen Drucker heruntergeladen werden.
 
+### Samsung
+
+Mittlerweile bei HP zu finden. Die Fax Software nennt sich Netzwerk-PC-Fax-Dienstprogramm und ist beim jeweiligen Drucker im Downloadbereich zu finden.
+
+
 ## Rund um Backups
 
 ### Erstellen von Backups
