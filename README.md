@@ -435,6 +435,14 @@ Set-Location $DlpPath
 
 ```
 
+## Ergänzungen zu Programmeinstellungen
+
+### Speziellen Präfix-Text bei XML-E-Mail-Rechnungen setzen
+
+```Powershell
+.\dlp_conf.exe /INISETIFNOTSET DLP_MAIN.INI Formulare XMLEMailRechnungstext "XML-Rechnung" "Präfix-Text für XML-E-Mail-Rechnungen" 
+```
+
 ## PDF-Dateien
 
 ### Briefpapier einbinden
