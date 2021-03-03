@@ -835,6 +835,24 @@ Get-HotFix  | Sort-Object -Property InstalledOn –Descending
 
 siehe hier: [Probleme mit Virenscannern](https://github.com/Delapro/DelaproInstall/wiki/Probleme-mit-Virenscannern)
 
+### Probleme mit PDF-Erzeugung aus dem Delapro heraus
+
+Per Commandline im Delapro-Verzeichnis folgenden Aufruf starten
+
+> Bei Angabe von test.out beachten, dass es evtl. auch um Netzwerkdateien handeln könnte, also statt dessen test.$$$ verwenden.
+
+```Powershell
+.\laser\ghostpdf.bat test.out
+```
+
+Bei komplizierteren Fällen, wo X-Dateien zum Einsatz kommen, wie Verschlüsselung, diesen Aufruf
+
+```Powershell
+.\laser\xghostpdf.bat test.out; .\Encrypt.Bat .\Export\PDF\Delapro.PDF AES-256 passwort; .\laser\xxghostscript.bat test.out
+```
+
+In C:\Delapro\Export\PDF\Temp findet man eine LOG-Datei mit weiteren Informationen.
+
 ### Probleme in Delapro ermitteln
 
 ```Powershell
