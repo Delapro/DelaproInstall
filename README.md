@@ -435,6 +435,36 @@ Set-Location $DlpPath
 
 ```
 
+### Art der Artbeit auf zwei Zeilen
+
+Im Konfigurationsprogramm unter F4-Vorgabewerte kann die Länge der Art der Arbeit auf 120 Zeichen gesetzt werden. Einzeilig wäre 70 Zeichen.
+
+Platzhalter für Nachweislayouts:
+
+{Art_der_Arbeit_1____________________________________________________}
+{Art_der_Arbeit_2____________________________________________________}
+
+Für FORMPATI.TXT Änderung steht in FORMADAR.TXT:
+
+```
+.* Art der Arbeit über zwei Zeilen
+.IF MLCOUNT (RTRIM (AVD_Master (19)), 70) > 1
+Art der Arbeit: @MEMOLINE (AVD_Master (19), 70, 1)@
+                @MEMOLINE (AVD_Master (19), 70, 2)@
+.                ABSVMore := ABSVMore +1
+.ELSE
+Art der Arbeit: @AVD_Master (19)@
+.ENDIF
+```
+
+Evtl. FORMWREF.TXT um SET WIDTH TO 150 ergänzen:
+
+```
+.SET WIDTH TO 150
+.IF ABSVKP == "K"
+...
+```
+
 ## Ergänzungen zu Programmeinstellungen
 
 ### Speziellen Präfix-Text bei XML-E-Mail-Rechnungen setzen
