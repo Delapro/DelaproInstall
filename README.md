@@ -467,6 +467,13 @@ Evtl. FORMWREF.TXT um SET WIDTH TO 150 ergänzen:
 
 ## Ergänzungen zu Programmeinstellungen
 
+### Ausgabe eines Stern wenn Bilder in der Bildarchivierung vorhanden sind
+
+Im Konfigurationsprogramm unter ALT+F5-Fielddefinitionen, bei AUFTRAG im Feld Beleg unter F4-Ändern bei der BischiAusgabe diesen Eintrag machen: 
+```
+IF (FIELD->Bilder, LEFT (Field->Beleg, 9) + "*", Field->Beleg)
+```
+
 ### Speziellen Präfix-Text bei XML-E-Mail-Rechnungen setzen
 
 ```Powershell
