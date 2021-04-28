@@ -4174,7 +4174,7 @@ Function Install-XeroxUniversalDriver {
 	# kann hier gefunden werden: http://www.support.xerox.com/support/global-printer-driver/downloads/enus.html?operatingSystem=win10x64&fileLanguage=de
 	# Xerox Randlos Installation
 	If ($Version -eq "V3") {
-		$xeroxVersion = "5.733.11.0"
+		$xeroxVersion = "5.759.5.0"
 		$prefix = "UNIV"
 	} else {
 		# V4
