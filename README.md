@@ -96,6 +96,14 @@ Invoke-DelaproUpdate -DlpPath $DlpPath -DlpUpdateFile 'C:\temp\Exes.exe' -Verbos
 
 ```
 
+Formulardateien für Referenzbarcodes
+```Powershell
+Start-BitsTransfer https://easysoftware.de/util/xml2021Def.zip
+Expand-Archive .\xml2021Def.zip -DestinationPath .\xml2021Def
+Set-Location .\xml2021Def\
+#Copy-Item .\xml2021Def\* "$($DLPPath)\xml2021Def" -Recurse
+```
+
 ## Delapro-Verzeichnis aufräumen
 
 ```Powershell
