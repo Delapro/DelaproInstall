@@ -101,7 +101,10 @@ Formulardateien für Referenzbarcodes
 Start-BitsTransfer https://easysoftware.de/util/xml2021Def.zip
 Expand-Archive .\xml2021Def.zip -DestinationPath .\xml2021Def
 Set-Location .\xml2021Def\
-#Copy-Item .\xml2021Def\* "$($DLPPath)\xml2021Def" -Recurse
+New-Item "$($DlpPath)\xml2021Def"
+Copy-Item .\xml2021Def\* "$($DdlpPath)\xml2021Def\" -Recurse
+New-Item "$($DlpPath)\Import\GUDID"
+New-Item "$($DlpPath)\Import\Barcodescanner"
 ```
 
 ## Delapro-Verzeichnis aufräumen
