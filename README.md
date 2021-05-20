@@ -106,6 +106,12 @@ New-Item "$($DlpPath)\xml2021Def" -ItemType Directory
 Copy-Item .\xml2021Def\* "$($DlpPath)\xml2021Def\" -Recurse
 New-Item "$($DlpPath)\Import\GUDID" -ItemType Directory
 New-Item "$($DlpPath)\Import\Barcodescanner" -ItemType Directory
+If ((Get-Item $DlpPath).Directory -eq Get-Item ($DlpGamePath).Directory) {
+    New-Item "$($DlpGamePath)\xml2021Def" -ItemType Directory
+    Copy-Item .\xml2021Def\* "$($DlpGamePath)\xml2021Def\" -Recurse
+    New-Item "$($DlpGamePath)\Import\GUDID" -ItemType Directory
+    New-Item "$($DlpGamePath)\Import\Barcodescanner" -ItemType Directory
+}
 ```
 
 ## Delapro-Verzeichnis aufräumen
