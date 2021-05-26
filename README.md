@@ -79,7 +79,11 @@ $DlpPath=(Resolve-Path .).Path
 $DlpPath
 
 # oder die bessere Variante, den Pfad aus der Verknüpfung vom Desktop auslesen
-$DlpPath=(Get-FileShortCut -LinkFilename Delapro.Lnk).WorkingDirectory
+$DlpPath=(Get-FileShortCut -LinkFilename Delapro.Lnk -Folder (Get-DesktopFolder -CurrentUser)).WorkingDirectory
+If (-Not (Test-Path $DlpPath)) {
+    $DlpPath=(Get-FileShortCut -LinkFilename Delapro.Lnk).WorkingDirectory
+}
+$DlpPath
 ```
 
 ```Powershell
