@@ -206,10 +206,12 @@ muss, ohne dass man die Version tatsächlich installieren möchte. Man kann sich
 symbolische Links von Windows behelfen.
 
 ```Powershell
+# im Netz bei nachträglicher Installation hat man meist eine neuere Version von Ghostscript
+# und muss diese auf eine ältere Version fürs Script kompatibel machen:
 cd $env:programfiles\gs
-# erzeugt einen Link von gs.15 auf die aktuelle Version 9.26
+Get-Ghostscript
 # MKLink funktioniert in Powershell nicht direkt!
-cmd.exe /c mklink /D gs9.15 gs9.26 
+cmd.exe /c mklink /D gs9.26 gs9.53.3
 ```
 
 ### Druckertreiber kopieren
