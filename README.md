@@ -128,6 +128,38 @@ If (((Get-Item $DlpPath).Fullname.SubString(0, 3)) -eq (Get-Item ($DlpGamePath).
 }
 ```
 
+## Barcodescanner Vorbereitung
+
+```Powershell
+Set-Location C:\temp
+If (-Not (Test-Path SerialReader -ItemType Directory)) {
+    New-Item SerialReader
+}
+Set-Location .\SerialReader
+Start-BitsTransfer https://easysoftware.de/util/SerialReader.exe
+Notepad
+devmgmt.msc
+start https://github.com/Delapro/DelaproInstall/wiki/NetumC990_Konfiguration
+@'
+@ECHO OFF
+REM Kleines Hilfsprogramm um den Scanner auszulesen und zu Prüfen
+REM COM-Schnittstelle und Dateinummer muss angegeben werden
+REM Beispiel: ReadAndCompare.BAT 3 1
+IF %1A == A GOTO Parameter
+IF %2A == A GOTO Parameter
+.\SerialReader /com=%1 /WriteTimeOut=500 /mode=read /filename=input%2-1.bin
+.\SerialReader /com=%1 /WriteTimeOut=500 /mode=read /filename=input%2-2.bin
+.\SerialReader /com=%1 /WriteTimeOut=500 /mode=read /filename=input%2-3.bin
+comp input%2-1.bin input%2-2.bin
+comp input%2-1.bin input%2-3.bin
+GOTO Ende
+:Parameter
+ECHO COM-Schnittstelle und Dateinummer muss angegeben werden
+ECHO Beispiel: ReadAndCompare.BAT 3 1
+:Ende
+'@ | Set-Content -Path ReadAndCompare.BAT
+```
+
 ## Delapro-Verzeichnis aufräumen
 
 ```Powershell
