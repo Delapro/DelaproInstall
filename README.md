@@ -110,17 +110,17 @@ New-Item "$($DlpPath)\xml2021Def" -ItemType Directory
 Copy-Item .\xml2021Def\* "$($DlpPath)\xml2021Def\" -Recurse
 New-Item "$($DlpPath)\Import\GUDID" -ItemType Directory
 New-Item "$($DlpPath)\Import\Barcodescanner" -ItemType Directory
-If (Test-Item .\..\GetGUDIDData.PS1) {
+If (Test-Path .\..\GetGUDIDData.PS1) {
     Copy-Item .\..\GetGUDIDData.PS1 "$($DlpPath)\Import\GUDID\"
 }
-If ((Get-Item $DlpPath).Fullname.SubString(0, 3) -eq Get-Item ($DlpGamePath).Fullname.SubString(0, 3)) {
+If (((Get-Item $DlpPath).Fullname.SubString(0, 3)) -eq (Get-Item ($DlpGamePath).Fullname.SubString(0, 3))) {
     New-Item "$($DlpGamePath)\xml2021Def" -ItemType Directory
     Copy-Item .\xml2021Def\* "$($DlpGamePath)\xml2021Def\" -Recurse
     New-Item "$($DlpGamePath)\Import\GUDID" -ItemType Directory
     New-Item "$($DlpGamePath)\Import\Barcodescanner" -ItemType Directory
-    If (Test-Item .\..\GetGUDIDData.PS1) {
+    If (Test-Path .\..\GetGUDIDData.PS1) {
        Copy-Item .\..\GetGUDIDData.PS1 "$($DlpGamePath)\Import\GUDID\"
-}
+    }
 } else {
     Write-Host '$DlpGamePath anpassen!'
     $DlpPath
