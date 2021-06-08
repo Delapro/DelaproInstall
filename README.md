@@ -113,7 +113,7 @@ New-Item "$($DlpPath)\Import\Barcodescanner" -ItemType Directory
 If (Test-Path .\..\GetUDIDIData.PS1) {
     Copy-Item .\..\GetUDIDIData.PS1 "$($DlpPath)\Import\GUDID\"
 }
-If (((Get-Item $DlpPath).Fullname.SubString(0, 3)) -eq (Get-Item ($DlpGamePath).Fullname.SubString(0, 3))) {
+If (((Get-Item $DlpPath).Fullname.SubString(0, 3)) -eq ((Get-Item $DlpGamePath).Fullname.SubString(0, 3))) {
     New-Item "$($DlpGamePath)\xml2021Def" -ItemType Directory
     Copy-Item .\xml2021Def\* "$($DlpGamePath)\xml2021Def\" -Recurse
     New-Item "$($DlpGamePath)\Import\GUDID" -ItemType Directory
