@@ -1089,6 +1089,9 @@ Invoke-SysInternalTool -Tool ProcExp
 
 ```Powershell
 Get-PnPDevice -Class Ports | ft -Autosize
+# bzw.
+Get-Item 'HKLM:\\SYSTEM\CurrentControlSet\Control\COM Name Arbiter\Devices'
+Get-ItemProperty 'HKLM:\\SYSTEM\CurrentControlSet\Control\COM Name Arbiter' -Name 'ComDB'
 ```
 
 #### COM-Ports löschen, wo irgendwas zugeordnet sind
