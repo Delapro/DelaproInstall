@@ -1085,6 +1085,12 @@ Invoke-SysInternalTool -Tool ProcExp
 
 ### Problem mit COM-Port Zuordnungen
 
+#### COM-Ports ausgeben
+
+```Powershell
+Get-PnPDevice -Class Ports | ft -Autosize
+```
+
 #### COM-Ports löschen, wo irgendwas zugeordnet sind
 
 ```Powershell
