@@ -1083,6 +1083,17 @@ Invoke-SysInternalTool -Tool ProcExp
 & $Env:Temp\AutoRuns.Exe
 ```
 
+### Problem mit COM-Port Zuordnungen
+
+#### COM-Ports löschen, wo irgendwas zugeordnet sind
+
+```Powershell
+New-Item Env:devmgr_show_nonpresent_devices -Value 1
+devmgmt.msc
+# Ansicht->Ausgeblendete Geräte anzeigen
+# X = entfernen
+```
+
 ### Probleme in Zusatzprogrammen
 
 #### eDocPrintPro
