@@ -110,6 +110,7 @@ New-Item "$($DlpPath)\xml2021Def" -ItemType Directory
 Copy-Item .\xml2021Def\* "$($DlpPath)\xml2021Def\" -Recurse
 New-Item "$($DlpPath)\Import\GUDID" -ItemType Directory
 New-Item "$($DlpPath)\Import\Barcodescanner" -ItemType Directory
+cmd.exe /c mklink "$($DlpPath)\Import\Barcodescanner\SerialReader.exe" "$($DlpPath)\SerialReader.exe"
 If (Test-Path .\..\GetUDIDIData.PS1) {
     Copy-Item .\..\GetUDIDIData.PS1 "$($DlpPath)\Import\GUDID\"
 }
@@ -118,6 +119,7 @@ If (((Get-Item $DlpPath).Fullname.SubString(0, 3)) -eq ((Get-Item $DlpGamePath).
     Copy-Item .\xml2021Def\* "$($DlpGamePath)\xml2021Def\" -Recurse
     New-Item "$($DlpGamePath)\Import\GUDID" -ItemType Directory
     New-Item "$($DlpGamePath)\Import\Barcodescanner" -ItemType Directory
+    cmd.exe /c mklink "$($DlpGamePath)\Import\Barcodescanner\SerialReader.exe" "$($DlpGamePath)\SerialReader.exe"
     If (Test-Path .\..\GetUDIDIData.PS1) {
        Copy-Item .\..\GetUDIDIData.PS1 "$($DlpGamePath)\Import\GUDID\"
     }
