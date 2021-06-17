@@ -152,8 +152,8 @@ IF %2A == A GOTO Parameter
 .\SerialReader /com=%1 /WriteTimeOut=500 /mode=read /filename=input%2-1.bin
 .\SerialReader /com=%1 /WriteTimeOut=500 /mode=read /filename=input%2-2.bin
 .\SerialReader /com=%1 /WriteTimeOut=500 /mode=read /filename=input%2-3.bin
-comp input%2-1.bin input%2-2.bin
-comp input%2-1.bin input%2-3.bin
+comp input%2-1.bin input%2-2.bin /M
+comp input%2-1.bin input%2-3.bin /M
 GOTO Ende
 :Parameter
 ECHO COM-Schnittstelle und Dateinummer muss angegeben werden
