@@ -135,7 +135,7 @@ If (((Get-Item $DlpPath).Fullname.SubString(0, 3)) -eq ((Get-Item $DlpGamePath).
 ```Powershell
 Set-Location C:\temp
 If (-Not (Test-Path SerialReader -Type Leaf)) {
-    New-Item SerialTest -Type Leaf
+    New-Item SerialTest -ItemType Directory
 }
 Set-Location .\SerialTest
 Start-BitsTransfer https://easysoftware.de/util/SerialReader.exe
