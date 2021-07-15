@@ -1107,6 +1107,13 @@ devmgmt.msc
 # X = entfernen
 ```
 
+### Barcodes durchsuchen 
+
+```Powershell
+# nach Dateien mit Referenzbarcodes suchen
+findstr /S /M ".8Y00" *.BIN
+```
+
 ### Probleme in Zusatzprogrammen
 
 #### eDocPrintPro
