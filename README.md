@@ -110,7 +110,7 @@ New-Item "$($DlpPath)\xml2021Def" -ItemType Directory
 Copy-Item .\xml2021Def\* "$($DlpPath)\xml2021Def\" -Recurse
 New-Item "$($DlpPath)\Import\GUDID" -ItemType Directory
 New-Item "$($DlpPath)\Import\Barcodescanner" -ItemType Directory
-$NonAdmin = If (-Not (Test-Admin)) {'/J'} else {''}
+$NonAdmin = If (-Not (Test-Admin)) {'/H'} else {''}
 cmd.exe /c mklink $NonAdmin "$($DlpPath)\Import\Barcodescanner\SerialReader.exe" "$($DlpPath)\SerialReader.exe"
 If (Test-Path .\..\GetUDIDIData.PS1) {
     Copy-Item .\..\GetUDIDIData.PS1 "$($DlpPath)\Import\GUDID\"
