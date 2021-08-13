@@ -289,7 +289,7 @@ Function Add-ScheduledTaskPowershellRunOnceAfterLogin {
 
 	# TODO: Die RestartAction sollte noch austauschbar gemacht werden...
 	$RestartAction = @"
-Start http://easysoftware.de/ps
+Start https://easysoftware.de/ps
 schtasks /delete /F /tn $Taskname
 "@
 	$RestartAction | Set-Content -Path $RunOnceFile
@@ -2700,7 +2700,7 @@ Function Install-Teamviewer {
 			New-Item $tempDirectory -ItemType Directory
 		}
 		# Teamviewer Fernwartung einrichten
-		Start-BitsTransfer "http://www.easysoftware.de/download/easyTeamViewerQS_de.exe"  -Destination $tempDirectory
+		Start-BitsTransfer "https://www.easysoftware.de/download/easyTeamViewerQS_de.exe"  -Destination $tempDirectory
 		Unblock-File "$($tempDirectory)easyTeamViewerQS_de.exe"
 		If (! (Test-Path $DestinationPath\Fernwartung)) {
 			New-Item -path $DestinationPath\Fernwartung -Type Directory
@@ -2806,13 +2806,13 @@ Function Install-NetFramework {
 			 Write-Verbose "Vista erkannt, installiere .Net Framework 4.6"
 	                #   Vista unterstützt maximal 4.6 und das war es dann!
 		     # Wenn Net 4.5 nicht vorhanden ist, wird gleich 4.6 heruntergeladen und installiert
-		     (New-Object Net.WebClient).DownloadFile("http://go.microsoft.com/fwlink/?LinkId=528222",  "$($tempDirectory)NDP46-KB3045560-Web.exe")
+		     (New-Object Net.WebClient).DownloadFile("https://go.microsoft.com/fwlink/?LinkId=528222",  "$($tempDirectory)NDP46-KB3045560-Web.exe")
 		      # Invoke-Item .\NDP46-KB3045560-Web.exe
 		      Start-Process -Wait "$($tempDirectory)NDP46-KB3045560-Web.exe"
 	     } else {
 			 Write-Verbose "Installiere .Net Framework 4.6.1"
 		     # Unter Windows 7 gleich .NET 4.6.1 installieren
-		     (New-Object Net.WebClient).DownloadFile("http://go.microsoft.com/fwlink/?LinkId=671728",  "$($tempDirectory)NDP461-KB3088520.exe")
+		     (New-Object Net.WebClient).DownloadFile("https://go.microsoft.com/fwlink/?LinkId=671728",  "$($tempDirectory)NDP461-KB3088520.exe")
 		      # Invoke-Item .\NDP461-KB3088520.exe
 		      Start-Process -Wait "$($tempDirectory)NDP461-KB3088520.exe"
 	     }
@@ -2863,7 +2863,7 @@ Function Install-Powershell {
 
 	If (Test-64Bit) {
 		If  (Test-Windows7) {
-			(New-Object Net.WebClient).DownloadFile("http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu",  "$($DLPInstPath)Windows6.1-KB2819745-x64-MultiPkg.msu")
+			(New-Object Net.WebClient).DownloadFile("https://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu",  "$($DLPInstPath)Windows6.1-KB2819745-x64-MultiPkg.msu")
 			# Invoke-Item .\Windows6.1-KB2819745-x64-MultiPkg.msu
 			Start-Process -Wait "$($DLPInstPath)Windows6.1-KB2819745-x64-MultiPkg.msu"
 		} else {
@@ -2871,7 +2871,7 @@ Function Install-Powershell {
 			Start-Process -Wait "$($DLPInstPath)W2K12R2-KB3094174-x64.msu"
 		}
 	} else {
-		(New-Object Net.WebClient).DownloadFile("http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x86-MultiPkg.msu",  "$($DLPInstPath)Windows6.1-KB2819745-x86-MultiPkg.msu")
+		(New-Object Net.WebClient).DownloadFile("https://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x86-MultiPkg.msu",  "$($DLPInstPath)Windows6.1-KB2819745-x86-MultiPkg.msu")
 		# Invoke-Item .\Windows6.1-KB2819745-x86-MultiPkg.msu
 		Start-Process -Wait "$($DLPInstPath)Windows6.1-KB2819745-x86-MultiPkg.msu"
 		# Falls es hier Probleme geben sollte, mit Fehlermeldung 0xc80003f3, dann hilfe wahrscheinlich die Installation
@@ -3210,7 +3210,7 @@ Function Install-DelaproChartModul {
 	Param(
 		[String]$TempDirectory=$Env:TEMP,
 		[string]$DelaproPath="C:\Delapro",
-		[string]$DownloadUrl="http://www.easysoftware.de/"
+		[string]$DownloadUrl="https://www.easysoftware.de/"
 	)
 
 	Start-BitsTransfer "$($DownloadUrl)/util/dlpwinchart.exe" $TempDirectory
@@ -3227,7 +3227,7 @@ Function Install-DelaproZertifikatModul {
 	Param(
 		[String]$TempDirectory,
 		[string]$DelaproPath="C:\Delapro",
-		[string]$DownloadUrl="http://www.easysoftware.de/"
+		[string]$DownloadUrl="https://www.easysoftware.de/"
 	)
 
 	Start-BitsTransfer "$($DownloadUrl)/download/dlpwinzert.exe" $TempDirectory
@@ -3241,7 +3241,7 @@ Function Install-DelaproBildarchivierungModul {
 	Param(
 		[String]$TempDirectory,
 		[string]$DelaproPath="C:\Delapro",
-		[string]$DownloadUrl="http://www.easysoftware.de"
+		[string]$DownloadUrl="https://www.easysoftware.de"
 	)
 
 	Start-BitsTransfer $DownloadUrl/download/dlpwinim.exe $TempDirectory
@@ -3255,7 +3255,7 @@ Function Install-DelaproPreisupdate {
 	[CmdletBinding()]
 	Param(
 		[String]$TempDirectory=$Env:TEMP,
-		[string]$DownloadUrl="http://www.easysoftware.de"
+		[string]$DownloadUrl="https://www.easysoftware.de"
 	)
 
 	# Backslash anhängen falls notwendig
@@ -3407,7 +3407,7 @@ Function Update-Backup {
 	)
 
 	# TODO: sollte noch $easyURI angepasst werden!
-	$c=Invoke-WebRequest -Uri http://www.easysoftware.de/util -UseBasicParsing
+	$c=Invoke-WebRequest -Uri https://www.easysoftware.de/util -UseBasicParsing
 
 	# so sieht ein Eintrag aus, es geht ums Datum wo vor dem Eintrag steht!
 	# ...<A HREF="/util/EasyBackup32.exe">EasyBackup32.exe</A><br> 12/6/2013 10:07 PM        77824 <A HREF="...
@@ -3430,8 +3430,8 @@ Function Update-Backup {
 	$ExeDate = (Get-Item $ExePath).LastWriteTime
 	If ($EXEDate.Date -lt $FileDate.Date) {
 		Write-Verbose "Version muss aktualisiert werden, von $($ExeDate.Date) auf $($FileDate.Date)"
-		Start-BitsTransfer http://www.easysoftware.de/util/easybackup32.exe -Destination (Join-Path -Path $DelaproPath -ChildPath Backup)
-		Start-BitsTransfer http://www.easysoftware.de/util/easyrestore32.exe -Destination (Join-Path -Path $DelaproPath -ChildPath Backup)
+		Start-BitsTransfer https://www.easysoftware.de/util/easybackup32.exe -Destination (Join-Path -Path $DelaproPath -ChildPath Backup)
+		Start-BitsTransfer https://www.easysoftware.de/util/easyrestore32.exe -Destination (Join-Path -Path $DelaproPath -ChildPath Backup)
 	} else {
 		Write-Verbose "Version ist aktuell, $($ExeDate.Date)"
 	}
@@ -3446,7 +3446,7 @@ Function Update-DlpWinPr {
 	)
 
 	# TODO: sollte noch $easyURI angepasst werden!
-	$c=Invoke-WebRequest -Uri http://www.easysoftware.de/util -UseBasicParsing
+	$c=Invoke-WebRequest -Uri https://www.easysoftware.de/util -UseBasicParsing
 
 	# so sieht ein Eintrag aus, es geht ums Datum wo vor dem Eintrag steht!
 	# ...<A HREF="/util/EasyBackup32.exe">EasyBackup32.exe</A><br> 12/6/2013 10:07 PM        77824 <A HREF="...
@@ -3470,7 +3470,7 @@ Function Update-DlpWinPr {
 	$ExeDate = (Get-Item $ExePath).LastWriteTime
 	If ($EXEDate.Date -lt $FileDate.Date) {
 		Write-Verbose "Version muss aktualisiert werden, von $($ExeDate.Date) auf $($FileDate.Date)"
-		Start-BitsTransfer http://www.easysoftware.de/util/DlpWinPr.exe -Destination (Join-Path -Path $DelaproPath -ChildPath Laser)
+		Start-BitsTransfer https://www.easysoftware.de/util/DlpWinPr.exe -Destination (Join-Path -Path $DelaproPath -ChildPath Laser)
 	} else {
 		Write-Verbose "Version ist aktuell, $($ExeDate.Date)"
 	}
@@ -3519,7 +3519,7 @@ Function Update-Teamviewer {
 			Write-Verbose "Version $Version in $ExePath vorhanden"
 			If ($Version -lt [Version]"13.0.0.0" -or $Force) {
 				Write-Verbose "neuere Version wird heruntergeladen"
-				Start-BitsTransfer "http://www.easysoftware.de/download/easyTeamViewerQS_de.exe"  -Destination $tempDirectory
+				Start-BitsTransfer "https://www.easysoftware.de/download/easyTeamViewerQS_de.exe"  -Destination $tempDirectory
 				Unblock-File "$($tempDirectory)easyTeamViewerQS_de.exe"
 				Copy-Item $tempDirectory\easyTeamViewerQS_de.exe $DestinationPath\Fernwartung -Force
 				$Version = (Get-Item $ExePath).VersionInfo.FileVersionRaw
@@ -4147,7 +4147,7 @@ Function Install-HPColorLaserjet2800PS {
 	# https://www.catalog.update.microsoft.com/Search.aspx?q=HP%20Color%20LaserJet%202800%20Series%20PS
 	# Treiber direkt, passend für x64 und x86
 	# https://www.catalog.update.microsoft.com/ScopedViewInline.aspx?updateid=c29cfdf0-cb25-4251-a170-9b244a27d563
-	$download = 'http://download.windowsupdate.com/msdownload/update/driver/drvs/2011/07/4753_fc148f3df197a4c5cf20bd6a8b337b444037655f.cab'
+	$download = 'https://download.windowsupdate.com/msdownload/update/driver/drvs/2011/07/4753_fc148f3df197a4c5cf20bd6a8b337b444037655f.cab'
 	Start-BitsTransfer $download $TempDirectory
 	$CABFile='4753_fc148f3df197a4c5cf20bd6a8b337b444037655f.cab'
 	Push-Location $TempDirectory
