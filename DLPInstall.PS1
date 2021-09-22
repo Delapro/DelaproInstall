@@ -4147,7 +4147,9 @@ Function Install-HPColorLaserjet2800PS {
 	# https://www.catalog.update.microsoft.com/Search.aspx?q=HP%20Color%20LaserJet%202800%20Series%20PS
 	# Treiber direkt, passend für x64 und x86
 	# https://www.catalog.update.microsoft.com/ScopedViewInline.aspx?updateid=c29cfdf0-cb25-4251-a170-9b244a27d563
-	$download = 'https://download.windowsupdate.com/msdownload/update/driver/drvs/2011/07/4753_fc148f3df197a4c5cf20bd6a8b337b444037655f.cab'
+
+	# darf nicht auf https gesetzt werden(!):
+	$download = 'http://download.windowsupdate.com/msdownload/update/driver/drvs/2011/07/4753_fc148f3df197a4c5cf20bd6a8b337b444037655f.cab'
 	Start-BitsTransfer $download $TempDirectory
 	$CABFile='4753_fc148f3df197a4c5cf20bd6a8b337b444037655f.cab'
 	Push-Location $TempDirectory
