@@ -3737,7 +3737,7 @@ Function Install-DelaproMailPrinter {
 			Write-Verbose "Installiere Druckertreiber unter Win7"
 			rundll32 printui.dll,PrintUIEntry /if /b "$PrinterName" /f $env:WinDir\inf\ntprint.inf /r "$($DelaproPath)\Export\Pdf\Delapro.EPS" /m "Xerox Phaser 6120 PS"
 		} else {
-			If (Test-Windows10) {
+			If (Test-Windows10 -or Test-Windows11) {
 				# PRÜFEN! Alternative Xerox PS Color Class Driver V1.1, Oder HP Laserjet 2500 PS wird von Parallels verwendet
 				$driverName = "Microsoft PS Class Driver"
 				$driverID = ""
@@ -4160,7 +4160,7 @@ Function Install-HPColorLaserjet2800PS {
 	$CABFile='4753_fc148f3df197a4c5cf20bd6a8b337b444037655f.cab'
 	Push-Location $TempDirectory
 	If ($?) {
-		If (Test-Windows10) {
+		If (Test-Windows10 -or Test-Windows11) {
 			tar -xf $TempDirectory\$CABFile
 		} else {
 			expand $TempDirectory\$CABFile -F:* $TempDirectory
@@ -4230,7 +4230,7 @@ Function Disable-Windows10DefaultPrinterRoaming {
 
 	# die ab Windows 10 v1511 Einstellung für den Standarddruckertreiber, welche immer den zuletzt benutzten Drucker zum
 	# Standarddrucker macht ausschalten
-	If (Test-Windows10) {
+	If (Test-Windows10 -or Test-Windows11) {
 		# Key vorhanden?
 		If ($null -ne (Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows' -Name LegacyDefaultPrinterMode).LegacyDefaultPrinterMode) {
 			If ((Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows' -Name LegacyDefaultPrinterMode).LegacyDefaultPrinterMode -eq 0) {
