@@ -100,6 +100,10 @@ Function Test-Windows10() {
 	(Get-CimInstance Win32_OperatingSystem).Caption -match "Windows 10"
 }
 
+Function Test-Windows11() {
+	(Get-CimInstance Win32_OperatingSystem).Caption -match "Windows 11"
+}
+
 Function Test-WindowsServer() {
 	# 1 = Desktop OS
 	# 2 = Server OS DC
