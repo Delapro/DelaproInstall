@@ -1125,6 +1125,7 @@ Function Install-Ghostscript {
 	# Infos zur aktuellen Version: http://ghostscript.com/Releases.html
 	switch ($Version) {
 		"Newest" {$ghostVersion="gs9550"}
+		"9.55.0" {$ghostVersion="gs9550"}
 		"9.54.0" {$ghostVersion="gs9540"}
 		"9.53.3" {$ghostVersion="gs9533"}
 		"9.52" {$ghostVersion="gs952"}
