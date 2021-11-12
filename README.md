@@ -80,6 +80,11 @@ $DlpPath
 
 # oder die bessere Variante, den Pfad aus der Verknüpfung vom Desktop auslesen
 $DlpPath=(Get-FileShortCut -LinkFilename Delapro.Lnk -Folder (Get-DesktopFolder -CurrentUser)).WorkingDirectory
+# vor dem Prüfen muss getestet werden, ob die Shell mit Adminrechten läuft, da gerade hier oft die Verbindung
+# der Laufwerke nachgeholt werden muss
+If (Test-Admin) {
+    # TODO
+}
 If ($DlpPath -eq '' -or $null -eq $DlpPath -or (-Not (Test-Path $DlpPath))) {
     $DlpPath=(Get-FileShortCut -LinkFilename Delapro.Lnk).WorkingDirectory
     If ($DlpPath -eq '' -or $null -eq $DlpPath -or (-Not (Test-Path $DlpPath))) {
