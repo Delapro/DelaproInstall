@@ -92,6 +92,7 @@ If ($DlpPath -eq '' -or $null -eq $DlpPath -or (-Not (Test-Path $DlpPath))) {
     }
 }
 $DlpPath
+# TODO: $DlpGamePath noch anpassen und prüfen, wenn $DlpPath von C:\Delapro abweicht!
 ```
 
 ```Powershell
