@@ -2313,7 +2313,7 @@ Function Register-CombitMAPIProxy {
 	If (-Not (Test-Path (Join-Path -path $DelaproPath -ChildPath $Dll))) {
 		Write-Error "$DelaproPath\$Dll fehlt!"
 	}
-	$Dll = "'cxUT$($Version).DLL"
+	$Dll = "cxUT$($Version).DLL"
 	If (-Not (Test-Path (Join-Path -path $DelaproPath -ChildPath $Dll))) {
 		Write-Error "$DelaproPath\$Dll fehlt!"
 	}
