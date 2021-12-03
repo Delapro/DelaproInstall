@@ -1074,7 +1074,8 @@ Get-WinEvent -ProviderName disk
 ### Thunderbird Logging
 
 ```Powershell
-Start-ThunderbirdLogging -Modules IMAP,POP3,SMTP -AddTimeStamp -Verbose
+Start-ThunderbirdLogging -Modules IMAP,POP3 -AddTimeStamp -Verbose
+# bei alten Versionen von Thunderbird vor 91.x.x funktionierte noch SMTP, dies geht jetzt über Einstellungen->mailnews.smtp.loglevel -> All und der Error Console (Strg+Shift+J), siehe: https://wiki.mozilla.org/MailNews:Logging
 # zur Auswertung
 Get-Content $Env:Temp\Thunderbird.Log | Out-GridView
 ```
