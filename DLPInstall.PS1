@@ -2334,6 +2334,7 @@ Function Register-CombitMAPIProxy {
 	# sollte mit Adminrechten ausgeführt werden
 	# kann auch von einem Netzlaufwerk passieren
 	# falls es noch Probleme gibt C:\WINDOWS\WIN.INI sollte unter [Mail]MAPI=1 gesetzt haben
+	# siehe auch: https://forum.combit.net/t/fehler-beim-simplemapi-versand/4918
 	
 }
 
