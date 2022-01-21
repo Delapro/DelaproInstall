@@ -2305,10 +2305,10 @@ Function Install-Chrome {
 Function Register-CombitMAPIProxy {
 	[CmdletBinding()]
 	Param(
-		[System.String]$DelaproPath="C:\Delapro"
+		[System.String]$DelaproPath="C:\Delapro",
+		[System.String]$Version='25'
 	)
 
-	$Version = '25'
 	$Dll = "cxCT$($Version).DLL"
 	If (-Not (Test-Path (Join-Path -path $DelaproPath -ChildPath $Dll))) {
 		Write-Error "$DelaproPath\$Dll fehlt!"
@@ -2331,6 +2331,9 @@ Function Register-CombitMAPIProxy {
 	# Es müssen auf jeden Fall noch cxCT24.DLL, cxUT24.DLL und cxMX24.DLL vorhanden sein!
 	# Falls diese fehlen, findet sich z. B. in Debwin kein Eintrag zu cxMP24.EXE!
 	# Die Registrierung kann aus einem 64-Bit Prozess heraus erfolgen
+	# sollte mit Adminrechten ausgeführt werden
+	# kann auch von einem Netzlaufwerk passieren
+	# falls es noch Probleme gibt C:\WINDOWS\WIN.INI sollte unter [Mail]MAPI=1 gesetzt haben
 	
 }
 
