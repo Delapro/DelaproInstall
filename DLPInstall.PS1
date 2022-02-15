@@ -3762,6 +3762,7 @@ Function Install-DelaproMailPrinter {
 						"10.0.19041" {$driverID = "add71423ba73e797"}
 						"10.0.19042" {$driverID = "add71423ba73e797"} # gleichgeblieben!
 						"10.0.19043" {$driverID = "add71423ba73e797"} # gleichgeblieben!
+						"10.0.19044" {$driverID = "add71423ba73e797"} # gleichgeblieben!
 						"10.0.22000" {$driverID = "b0d591b9cf5aba04"} # Win11
 						# neue IDs siehe: https://github.com/Delapro/DelaproInstall#druckertreiber-id-bei-neuen-windows-featureupdate-versionen-ermitteln
 					}
@@ -3780,6 +3781,7 @@ Function Install-DelaproMailPrinter {
 						"10.0.19041" {$driverID = "b969fdbb40be3d0c"}
 						"10.0.19042" {$driverID = "b969fdbb40be3d0c"}
 						"10.0.19043" {$driverID = "b969fdbb40be3d0c"}
+						"10.0.19044" {$driverID = "b969fdbb40be3d0c"}
 						# Win11 gibts nicht!
 					}
 				}
