@@ -4975,7 +4975,7 @@ Function Compress-PDFArchive {
 	$Destination = "$($DelaproPath)\Export\PDF\PDF-Archiv-$(Get-Date -format 'yyyyMMdd_HHmm')"
 
 	If (Test-Path "$($DelaproPath)\Export\PDF") {
-		$pdf = Get-ChildItem -Path "$($DelaproPath)\Export\PDF\*.pdf" | Where-Object LastWriteTime -lt (Get-Date).AddDays(-7)
+		$pdf = Get-ChildItem -Path "$($DelaproPath)\Export\PDF\*.pdf" -Exclude '*.zip' | Where-Object LastWriteTime -lt (Get-Date).AddDays(-7)
 		$pdf = $pdf | Sort-Object Lastwritetime
 		Write-Verbose "Anzahl Dateien: $($pdf.Length)"
 		If ($pdf) {
