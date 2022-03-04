@@ -4958,11 +4958,13 @@ Function Invoke-CleanupDelapro {
 
 	# PDF-Dateien in Archiv stellen
 	Compress-PDFArchive -DelaproPath $DelaproPath -Verbose
+	# BIN-Dateien vom Barcodescanner in Archiv stellen
+	Compress-BarcodeBINArchive -DelaproPath $DelaproPath -Verbose
 
 }
 
 # erstellt ein PDF-Dateiarchiv, wenn mehr als 50 PDF-Dateien gefunden werden 
-# und die älteste PDF-Datei mindestens älter als 14 Tage ist.
+# und die älteste PDF-Datei mindestens älter als 7 Tage ist.
 # diese Logik kann mit dem Parameter Force umgangen werden
 # wurde das PDF-Archiv erfolgreich erstellt werden die PDF-Dateien gelöscht
 Function Compress-PDFArchive {
@@ -4984,6 +4986,36 @@ Function Compress-PDFArchive {
 				Compress-Archive -Path $pdf -DestinationPath $Destination
 				If ($?) {
 					$pdf | Remove-Item
+				}
+			}	
+		}
+	}
+
+}
+
+# erstellt ein BIN-Dateiarchiv, wenn mehr als 50 BIN-Dateien gefunden werden 
+# und die älteste BIN-Datei mindestens älter als 7 Tage ist.
+# diese Logik kann mit dem Parameter Force umgangen werden
+# wurde das BIN-Archiv erfolgreich erstellt werden die BIN-Dateien gelöscht
+Function Compress-BarcodeBINArchive {
+	[CmdLetBinding()]
+	Param(
+		[System.String]$DelaproPath="C:\Delapro",
+		[switch]$Force
+	)
+    $baseDir = "$($DelaproPath)\Import\Barcodescanner"
+	$Destination = "$($baseDir)\BIN-Archiv-$(Get-Date -format 'yyyyMMdd_HHmm')"
+
+	If (Test-Path $baseDir) {
+		$files = Get-ChildItem -Path "$($baseDir)\*.bin" -Exclude '*.zip' | Where-Object LastWriteTime -lt (Get-Date).AddDays(-7)
+		$files = $files | Sort-Object Lastwritetime
+		Write-Verbose "Anzahl Dateien: $($files.Length)"
+		If ($files) {
+			If ($Force -or (($files.Length -gt 50) -and ($files[0].LastWriteTime -lt (Get-Date).AddDays(-14)))) {
+				Write-Verbose "Erstelle Archiv $($Destination)"
+				Compress-Archive -Path $files -DestinationPath $Destination
+				If ($?) {
+					$files | Remove-Item
 				}
 			}	
 		}
