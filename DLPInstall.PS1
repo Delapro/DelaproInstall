@@ -1688,7 +1688,9 @@ Function Install-AcrobatDC {
 	[CmdletBinding()]
 	Param(
 		#[parameter(Mandatory=$true)]
-		[System.String]$tempDirectory="$Env:TEMP\"
+		[System.String]$tempDirectory="$Env:TEMP\",
+		[Validateset("x64", "x86")]
+		[System.String]$Platform="x86"
 	)
 
 	# Acrobat DC Versionsnummererklärung: http://www.adobe.com/devnet-docs/acrobatetk/tools/AdminGuide/basics.html#versioning-strategy
@@ -1699,10 +1701,16 @@ Function Install-AcrobatDC {
 	# Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/11.x/11.0.10/de_DE/AdbeRdr11010_de_DE.exe
 	# DC Release-Infos: http://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html
 	# WICHTIG: Nur die Planned Updates können verwendet werden!!
-	$dcVersion = "21.011.20039".Replace(".", "")
+	$dcVersion = "22.001.20085".Replace(".", "")
 	$dcOptionalVersion = "19.021.20061".Replace(".", "")
 	$useOptionalUpdate = $false	# falls es mal kein aktuelles optionales Update gibt auf $false setzen
-	$url = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/$dcVersion/AcroRdrDC$($dcVersion)_de_DE.exe"
+	If ($Platform -eq "x64") {
+		# 64-Bit, beachte anstatt reader acrobat im Pfad und x64 nach AcroRdrDC:
+		$url = "https://ardownload2.adobe.com/pub/adobe/acrobat/win/AcrobatDC/$dcVersion/AcroRdrDCx64$($dcVersion)_de_DE.exe"
+	} else {
+		$url = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/$dcVersion/AcroRdrDC$($dcVersion)_de_DE.exe"
+	}
+	# TODO: muss noch auf 64-Bit angepasst werden
 	$urlOption = "https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/$dcOptionalVersion/AcroRdrDCUpd$($dcOptionalVersion).msp"
 	Start-BitsTransfer -Source $url -Destination $tempDirectory
 	# Adobe Reader Silent Install mit Progressbar
