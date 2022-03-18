@@ -660,6 +660,9 @@ Disable-ThunderbirdUpdates -Verbose
 # die etwas besondere Art die Commandline-Parameter anzuzeigen | Out-Host muss sein!
 & (Get-ThunderbirdEXE).fullname "-help" | Out-Host
 
+# oder um die aktuelle Version zu ermitteln
+& (Get-ThunderbirdEXE).fullname "--version" | Out-String -Stream
+
 # Thunderbird-Profile abrufen
 Get-ThunderbirdProfile
 
