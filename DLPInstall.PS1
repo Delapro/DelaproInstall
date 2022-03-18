@@ -2409,7 +2409,8 @@ Function Install-Thunderbird {
 
 	If ((-not (Test-Thunderbird)) -or $Force) {
 		If (Test-Thunderbird) {
-			Write-Verbose "Installierte Version: $((Get-ThunderbirdEXE).VersionInfo.ProductVersion)"
+			Write-Verbose "Installierte Version: $((
+			irdEXE).VersionInfo.ProductVersion)"
 		}
 		#Start-BitsTransfer http://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe
 		$Filename = "Thunderbird Setup $tbVersion.exe"
@@ -2474,13 +2475,15 @@ Function Get-ThunderbirdUpdates {
 	Param(
 
 	)
-
-	$thunderbirdBasePath = "$env:LOCALAPPDATA\Thunderbird\updates"
+	
+	# Pfad hat sich von AppData nach Programdata geändert und umfasst nun gegebenenfalls auch Firefox,
+	# deshalb wird am Ende auf Thunderbird gefiltert
+	$thunderbirdBasePath = "$env:Programdata\Mozilla\updates"
 	$thunderbirdTempPath = (Get-ChildItem $thunderbirdBasePath -Directory).FullName
 	$updateXMLFile = Join-Path $thunderbirdTempPath -ChildPath "updates.xml"
 	If (Test-Path $updateXMLFile) {
 		$updates = [xml](Get-Content $updateXMLFile)
-		$updates.updates.update
+		$updates.updates.update | where name -match 'Thunderbird'
 	}
 }
 
