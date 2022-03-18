@@ -2432,6 +2432,9 @@ Function Uninstall-Thunderbird {
 
 	$pack = Get-Package -Providername Programs -Name *Thunderbird*
 	$pack | Uninstall-Package
+	# Uninstall-Package scheint nicht mehr zu funktionieren, alternative:
+	# $stt=[xml](Get-Package -Providername Programs -Name *Thunderbird*|select -ExpandProperty swidtagtext)
+	# start-process "$($stt.SoftwareIdentity.Meta.UninstallString)" -ArgumentList '/S' -Wait
 }
 
 # gibt die verfügbaren Thunderbird Profile zurück
