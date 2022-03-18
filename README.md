@@ -665,6 +665,8 @@ Get-ThunderbirdProfile
 
 # Thunderbird Update-Chronik ermitteln
 Get-ThunderbirdUpdates
+# bessere Darstellung
+Get-ThunderbirdUpdates|select name, @{l="installationsDate";e={(Get-Date -day 1 -month 1 -year 1970).AddMilliseconds($_.installdate)}}, statusText
 
 # Thunderbird Profilmanager aufrufen
 Invoke-ThunderbirdProfileManager
