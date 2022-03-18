@@ -59,14 +59,14 @@ powershell.exe -NoExit -NoProfile -executionPolicy Bypass -File .\easyUpdate.PS1
 $text | Set-Content -Path '.\psEasyUpdate.bat'
 
 $text = @"
-$s=(Invoke-WebRequest -UseBasicParsing -Uri https://raw.githubusercontent.com/Delapro/DelaproInstall/master/DLPInstall.PS1).Content.Replace([string][char]10,[char]13+[char]10)
-$s=$s.SubString(0, $s.IndexOf([char]67+'MDLET-ENDE')) # wichtig! Sonst wird "CMDLET*ENDE" erkannt und abgebrochen!!
-$tempPath = 'C:\temp'
-$scriptPath=Join-Path -Path $tempPath -ChildPath easy.PS1
-If (-Not (Test-Path $tempPath)) {md $tempPath}
-Set-Content -path $scriptPath -value $s
+`$s=(Invoke-WebRequest -UseBasicParsing -Uri https://raw.githubusercontent.com/Delapro/DelaproInstall/master/DLPInstall.PS1).Content.Replace([string][char]10,[char]13+[char]10)
+`$s=`$s.SubString(0, `$s.IndexOf([char]67+'MDLET-ENDE')) # wichtig! Sonst wird "CMDLET*ENDE" erkannt und abgebrochen!!
+`$tempPath = 'C:\temp'
+`$scriptPath=Join-Path -Path `$tempPath -ChildPath easy.PS1
+If (-Not (Test-Path $tempPath)) {md `$tempPath}
+Set-Content -path `$scriptPath -value `$s
 "@
-$text | Set-Content -Path '.\easyUpdate.PS1' 
+$text | Set-Content -Path '.\easyUpdate.PS1'
 
 Function Test-64Bit () {
 	[System.IntPtr]::Size -eq 8
