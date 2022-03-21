@@ -63,7 +63,7 @@ $text = @"
 `$s=`$s.SubString(0, `$s.IndexOf([char]67+'MDLET-ENDE')) # wichtig! Sonst wird "CMDLET*ENDE" erkannt und abgebrochen!!
 `$tempPath = 'C:\temp'
 `$scriptPath=Join-Path -Path `$tempPath -ChildPath easy.PS1
-If (-Not (Test-Path $tempPath)) {md `$tempPath}
+If (-Not (Test-Path `$tempPath)) {md `$tempPath}
 Set-Content -path `$scriptPath -value `$s
 "@
 $text | Set-Content -Path '.\easyUpdate.PS1'
