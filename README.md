@@ -329,6 +329,14 @@ Nennt sich "Network FAX v7.0.1002 WebPackage" und kann beim jeweiligen Drucker h
 Mittlerweile bei HP zu finden. Die Fax Software nennt sich Netzwerk-PC-Fax-Dienstprogramm und ist beim jeweiligen Drucker im Downloadbereich zu finden.
 
 
+## Hardwareeinstellungen
+
+### Funktionstasten
+
+Bei verschiedenen Laptops und Notebooks werden die F-Tasten häufig mit Multimediafunktionen belegt. Dadurch ist die direkte Verwendung der F-Tasten nicht mehr möglich. Um die F-Tasten dennoch verwenden zu können muss meistens die sogenannte Fn-Taste zur F-Taste dazu gedrückt werden.
+Hier eine Beschreibung für HP-Laptops: https://support.hp.com/at-de/product/hp-deskjet-f300-all-in-one-printer-series/1129389/document/c02064253 oder Lenovo Thinkpads: https://support.lenovo.com/de/de/solutions/ht503647.
+
+
 ## Rund um Backups
 
 ### Erstellen von Backups
