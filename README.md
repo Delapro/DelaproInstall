@@ -625,6 +625,8 @@ New-PowershellScriptShortcut -Path C:\temp\test.ps1 -LinkFilename TestOhneAdmin 
 
 ## Windows Passwortabfrage abschalten
 
+> Bei Windows 10/11 ist es nicht immer direkt möglich die Passwortabfrage zu deaktivieren. Es kann jedoch über eine Änderung des Registrierungseintrags HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\WindowsNT\CurrentVersion\PasswordLess\Device den Eintrag DevicePasswordLessBuildVersion von 2 auf 0 geändert werden. Siehe auch https://www.borncity.com/blog/2019/11/29/windows-10-2004-und-die-angeblich-verlorene-autoanmeldung/ und https://www.ionos.de/digitalguide/server/konfiguration/windows-11-ohne-passwort. Das Grundproblem ist eigentlich das bei vielen neuen Rechnern aktivierte Windows Hello.
+
 ```Powershell
 control userpasswords2
 ```
