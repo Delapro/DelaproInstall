@@ -138,6 +138,7 @@ If (((Get-Item $DlpPath).Fullname.SubString(0, 3)) -eq ((Get-Item $DlpGamePath).
     $DlpPath
     $DlpGamePath
 }
+
 ```
 
 ## Barcodescanner Vorbereitung
