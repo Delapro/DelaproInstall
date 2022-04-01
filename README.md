@@ -567,6 +567,11 @@ IF (FIELD->Bilder, LEFT (Field->Beleg, 9) + "*", Field->Beleg)
 .\dlp_conf.exe /INISETIFNOTSET DLP_MAIN.INI Modus XMLEMailRechnungstext "XML-Rechnung" "Präfix-Text für XML-E-Mail-Rechnungen" 
 ```
 
+### MEP-Edit aufrufen um z.B. MOA_Rueckgriff() ändern zu können
+```Powershell
+.\dlp_conf.exe /MEPEDIT .\DLP_MAI2.MEP
+```
+
 ## PDF-Dateien
 
 ### Briefpapier einbinden
