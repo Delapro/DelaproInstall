@@ -1046,6 +1046,50 @@ Cmd /c Assoc  .pdf
 Cmd /c Ftype  acrobat
 ```
 
+### Skript um per Powershell Datum/Uhrzeit ändern zu können
+
+```Powershell
+#Requires -RunAsAdministrator
+#
+# Script um das Datum von Windows ändern zu können
+
+# prüfen, ob der Zeitdienst läuft
+$s = Get-Service w32Time -ErrorAction SilentlyContinue
+If ($s -eq $null) {
+
+  # Zeitdienst läuft nicht, also wieder aktivieren
+  w32tm /register
+  Start-Sleep -Seconds 1
+
+  # Dienst starten und syncen
+  Start-Service W32Time
+  Start-Sleep -Seconds 1
+
+  w32tm /resync  
+
+} else {
+
+  # zuerst Zeitdienst ausschalten
+  Stop-Service W32Time -force
+  # w32tm aushängen
+  w32tm /unregister
+  Start-Sleep -Seconds 1
+
+  # nun gewünschte Zeit einstellen:
+  "Bitte Datum setzen"
+  Start-Process -Wait -FilePath "timedate.cpl"
+
+  "gesetztes Datum $(Get-Date -format d)"
+}
+```
+Obiges Script in eine Datei DatumVerstellen.PS1 speichern und mittels
+
+```Powershell
+New-PowershellScriptShortcut -Path C:\Users\User\DatumVerstellen.PS1 -Admin -LinkFilename DatumÄndern -Description 'Script zum Datum verändern, erfordert Adminrechte'
+```
+
+eine Verknüpfung auf dem Desktop erstellen.
+
 ### Abstürzende Programme in Windows ausfindig machen
 
 ```Powershell
