@@ -959,7 +959,24 @@ Get-Package -Name Delapro | Uninstall-Package
 
 ### Office Installation loswerden
 
-https://github.com/joaovitoriasilva/uninstall-office-msi-install-click-to-run/blob/master/script/Office365ProPlusDeploy.ps1
+Zur Deinstallation von Office365 benötigt man das Office Deployment Kit: https://www.microsoft.com/en-us/download/details.aspx?id=49117. Dieses ausführen, in ein Verzeichnis entpacken und in diesem die Datei RemoveOffice.xml mit folgendem Inhalt anlegen:
+
+```XML
+<Configuration>
+    <!--Uninstall complete Office 365-->
+    <Display Level="None" AcceptEULA="TRUE" />
+    <Logging Level="Standard" Path="%temp%" />
+    <Remove All="TRUE" />
+</Configuration>
+```
+
+dann diesen Befehl ausführen
+
+```Powershell
+.\setup.exe /configure .\RemoveOffice.xml
+```
+
+siehe auch: https://github.com/joaovitoriasilva/uninstall-office-msi-install-click-to-run/blob/master/script/Office365ProPlusDeploy.ps1
 
 ### Installierte Windowsupdates ausgeben
 
