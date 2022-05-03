@@ -1,6 +1,6 @@
 # DelaproInstall
 
-Powershell Installationsskript um Delapro ab Windows 7 bis Windows 10 zu installieren.
+Powershell Installationsskript um Delapro ab Windows 7 bis Windows 11 zu installieren.
 
 Zur Installation auf Mac OSX siehe hier: [Virtuelle Maschine auf Mac](https://github.com/Delapro/DelaproInstall/wiki/MACOSX)
 
