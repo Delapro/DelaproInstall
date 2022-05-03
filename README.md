@@ -1107,6 +1107,15 @@ New-PowershellScriptShortcut -Path C:\Users\User\DatumVerstellen.PS1 -Admin -Lin
 
 eine Verknüpfung auf dem Desktop erstellen.
 
+### fehlendes Notepad bei Windows 11 nachinstallieren
+
+```Powershell
+$np=Get-WindowsCapability -Online -Name Microsoft.Windows.Notepad.System*
+If ($np.State -ne [Microsoft.Dism.Commands.PackageFeatureState]::Installed) {
+    Add-WindowsCapability -Online -Name Microsoft.Windows.Notepad.System~~~~0.0.1.0
+}
+```
+
 ### Abstürzende Programme in Windows ausfindig machen
 
 ```Powershell
