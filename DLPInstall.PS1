@@ -68,6 +68,67 @@ Set-Content -path `$scriptPath -value `$s
 "@
 $text | Set-Content -Path '.\easyUpdate.PS1'
 
+Function Test-Admin() {
+	([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
+}
+
+# Baut Install-StartBitsTransfer in der einfachsten Variante nach, diese Funktion kann bei Powershell Core
+# benutzt werden oder wenn es Rechteprobleme wegen der Fehlermeldung 0x800704DD bzw. -2147023651 gibt.
+# Start-BitsTransfer -Source
+# liefert
+# $e=$Error[0]
+# $e.Exception.ErrorCode -eq -2147023651
+# Falls man nach Aufruf von Install-StartBitsTransfer doch die Originalvariante aufrufen möchte, muss man
+# Bitstransfer\Start-BitsTransfer verwenden!
+Function Install-StartBitsTransfer {
+
+	# damit die Function verfügbar wird, muss sie mittels & ausgeführt werden und mit dem Scope global: versehen werden
+	&{
+		Function global:Start-BitsTransfer {
+			[CmdletBinding()]
+			Param(
+				$Source, $Destination
+
+			)
+
+			If (-Not $Destination) {
+				$Destination = $PWD
+			}
+			If (Test-Path -Type Container $Destination) {
+				$Destination = Join-Path -Path $Destination -ChildPath ([System.IO.Path]::GetFilename($Source))
+			}
+
+			$wc = New-Object System.Net.WebClient
+
+			$job1 = Register-ObjectEvent -InputObject $wc -EventName DownloadProgressChanged -SourceIdentifier WebClient.DownloadProgressChanged -MessageData $Source -Action {Write-Progress "Downloading: $($EventArgs.ProgressPercentage)% Completed" -Status $event.MessageData -PercentComplete $EventArgs.ProgressPercentage; }
+			$job2 = Register-ObjectEvent -InputObject $wc -EventName DownloadFileCompleted -SourceIdentifier WebClient.DownloadFileComplete -MessageData $Destination -Action {Write-Host "Download Complete - $($event.MessageData)"; Unregister-Event -SourceIdentifier WebClient.DownloadProgressChanged; Unregister-Event -SourceIdentifier WebClient.DownloadFileComplete; }
+
+			try {
+			  $wc.DownloadFileAsync($Source, $Destination)
+			} catch [System.Net.WebException] {
+			  Write-Host "Cannot download $Source"
+			} finally {
+			  $wc.Dispose()
+			}
+
+			while ($job1.state -ne "Stopped" -and $job2.state -ne "Stopped") {
+			  Start-Sleep -Milliseconds 100
+			}
+
+			Remove-Job $job1, $Job2
+
+		}
+	}
+
+}
+
+# Download testen
+Start-BitsTransfer "$easyBaseURI/util/PingDownload.txt"
+If (-Not ($?)) {
+	# wenn Start-Bitstransfer nicht funktioniert, diese Alternative verwenden:
+	Install-BitsTransfer
+}
+
 Function Test-64Bit () {
 	[System.IntPtr]::Size -eq 8
 }
@@ -117,10 +178,6 @@ Function Test-WUARebootRequired {
     } catch {
         Write-Warning -Message "Failed to query COM object because $($_.Exception.Message)"
     }
-}
-
-Function Test-Admin() {
-	([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
 }
 
 Function Test-NetFramework45Installed()
@@ -3049,56 +3106,6 @@ Function Install-MissingPowershellCmdLets {
 	#     $wc.Dispose()
 	#   }
 	# }
-
-}
-
-# Baut Install-StartBitsTransfer in der einfachsten Variante nach, diese Funktion kann bei Powershell Core
-# benutzt werden oder wenn es Rechteprobleme wegen der Fehlermeldung 0x800704DD bzw. -2147023651 gibt.
-# Start-BitsTransfer -Source
-# liefert
-# $e=$Error[0]
-# $e.Exception.ErrorCode -eq -2147023651
-# Falls man nach Aufruf von Install-StartBitsTransfer doch die Originalvariante aufrufen möchte, muss man
-# Bitstransfer\Start-BitsTransfer verwenden!
-Function Install-StartBitsTransfer {
-
-	# damit die Function verfügbar wird, muss sie mittels & ausgeführt werden und mit dem Scope global: versehen werden
-	&{
-		Function global:Start-BitsTransfer {
-			[CmdletBinding()]
-			Param(
-				$Source, $Destination
-
-			)
-
-			If (-Not $Destination) {
-				$Destination = $PWD
-			}
-			If (Test-Path -Type Container $Destination) {
-				$Destination = Join-Path -Path $Destination -ChildPath ([System.IO.Path]::GetFilename($Source))
-			}
-
-			$wc = New-Object System.Net.WebClient
-
-			$job1 = Register-ObjectEvent -InputObject $wc -EventName DownloadProgressChanged -SourceIdentifier WebClient.DownloadProgressChanged -MessageData $Source -Action {Write-Progress "Downloading: $($EventArgs.ProgressPercentage)% Completed" -Status $event.MessageData -PercentComplete $EventArgs.ProgressPercentage; }
-			$job2 = Register-ObjectEvent -InputObject $wc -EventName DownloadFileCompleted -SourceIdentifier WebClient.DownloadFileComplete -MessageData $Destination -Action {Write-Host "Download Complete - $($event.MessageData)"; Unregister-Event -SourceIdentifier WebClient.DownloadProgressChanged; Unregister-Event -SourceIdentifier WebClient.DownloadFileComplete; }
-
-			try {
-			  $wc.DownloadFileAsync($Source, $Destination)
-			} catch [System.Net.WebException] {
-			  Write-Host "Cannot download $Source"
-			} finally {
-			  $wc.Dispose()
-			}
-
-			while ($job1.state -ne "Stopped" -and $job2.state -ne "Stopped") {
-			  Start-Sleep -Milliseconds 100
-			}
-
-			Remove-Job $job1, $Job2
-
-		}
-	}
 
 }
 
