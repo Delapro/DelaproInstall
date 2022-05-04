@@ -1028,6 +1028,22 @@ Get-DelaproError| select *, @{Name="CallStackStr";Expression={($_.CallStack|out-
 
 ```
 
+### Probleme mit Werbetextzeilen mit Labor2.DBF
+
+Über diese Befehle werden die alten Werbetextzeilen ausgegeben:
+
+```Powershell
+# PDDBF Modul laden
+. Invoke-PSDBFDownloadAndInit
+$l2c = Use-DBF (Resolve-Path .\Copy\Labor2.dbf)
+$l2c.GoTop()
+"WerbRech:"
+"$($l2c.Fields.WerbRech1) `n $($l2c.Fields.WerbRech2) `n $($l2c.Fields.WerbRech3)"
+"WerbPRech:"
+"$($l2c.Fields.WerbPRech1) `n $($l2c.Fields.WerbPRech2) `n $($l2c.Fields.WerbPRech3)"
+$l2c.Close()
+```
+
 ### Probleme mit Passwörtern von alten E-Mail-Programmen
 
 Kommt leider zu häufig vor, dass Benutzer die Passwörter für die E-Mailprogramme verlieren.
