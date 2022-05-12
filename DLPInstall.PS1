@@ -3209,6 +3209,8 @@ Function Invoke-DelaproPreUpdate {
 			Update-Backup -DelaproPath $DLPPath -Verbose
 			# PDF-Dateien in Archiv stellen, macht die Sicherung schneller
 			Compress-PDFArchive -DelaproPath $DLPPath -Verbose
+			# BIN-Dateien vom Barcodescanner in Archiv stellen
+			Compress-BarcodeBINArchive -DelaproPath $DelaproPath -Verbose
 			# Sicherung des aktuellen Programms durchführen
 			Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -IgnoreBilder -SecureBackup -Verbose
 			# Druckertreiber aktualisieren
