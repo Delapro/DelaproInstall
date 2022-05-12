@@ -594,6 +594,8 @@ If (Test-Path $pdf) {
 # bei Problemen mit Rand bzw. Schnittmarken hilft evtl.
 Convert-PDF -PDFFile $pdf -OutFile $bmp -UseArtBox -Verbose
 
+# will man Rand- bzw. Schnittmarken loswerden, trotzdem aber eine PDF-Datei erhalten kann man diesen Aufruf verwenden
+&(Get-GhostScriptExecutable) -sOutputFile="C:\delapro\XMLForm\PDF-Vorlagen\Briefkopf - 2022 - A4.pdf" -sDEVICE=pdfwrite -dUseTrimBox -dNOPAUSE -dBATCH "C:\delapro\XMLForm\PDF-Vorlagen\Briefkopf - 2022.pdf"
 ```
 
 ### Texte aus PDF-Dateien extrahieren
