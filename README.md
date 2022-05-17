@@ -556,6 +556,100 @@ Evtl. FORMWREF.TXT um SET WIDTH TO 150 ergänzen:
 ...
 ```
 
+### Abweichende Formularwerbetextzeilen bei Reparaturrechnungen
+
+Die Werbetextzeilen finden sich in LAB_Daten (132), LAB_Daten (133) und LAB_Daten (134). LAB_Daten (135) enthält die Information, ob die Reparatur-Werbetextzeilen gedruckt werden sollen.
+
+Abgeändert werden muss FORMWREF.TXT in
+
+```
+.* Ausgabe der Werbetextzeilen
+.SET WIDTH TO 150
+.IF Auftrag->Reparatur == "J"
+.  IF .NOT. EMPTY (LAB_Daten (132))
+@STRTRAN (RTRIM (LAB_Daten (132)), "$", "§")@
+.  ENDIF
+.  IF .NOT. EMPTY (LAB_Daten (133))
+@STRTRAN (RTRIM (LAB_Daten (133)), "$", "§")@
+.  ENDIF
+.  IF .NOT. EMPTY (LAB_Daten (134))
+@STRTRAN (RTRIM (LAB_Daten (134)), "$", "§")@
+.  ENDIF
+.ELSE
+.  IF ABSVKP == "K"
+.    * Kasse
+.    IF LAB_Daten (21) == "J"
+.      IF .NOT. EMPTY (LAB_Daten (18))
+@STRTRAN (RTRIM (LAB_Daten (18)), "$", "§")@
+.      ENDIF
+.      IF .NOT. EMPTY (LAB_Daten (19))
+@STRTRAN (RTRIM (LAB_Daten (19)), "$", "§")@
+.      ENDIF
+.      IF .NOT. EMPTY (LAB_Daten (20))
+@STRTRAN (RTRIM (LAB_Daten (20)), "$", "§")@
+.      ENDIF
+.    ENDIF
+.  ELSE
+.    * Privat
+.    IF LAB_Daten (51) == "J"
+.      IF .NOT. EMPTY (LAB_Daten (48))
+@STRTRAN (RTRIM (LAB_Daten (48)), "$", "§")@
+.      ENDIF
+.      IF .NOT. EMPTY (LAB_Daten (49))
+@STRTRAN (RTRIM (LAB_Daten (49)), "$", "§")@
+.      ENDIF
+.      IF .NOT. EMPTY (LAB_Daten (50))
+@STRTRAN (RTRIM (LAB_Daten (50)), "$", "§")@
+.      ENDIF
+.    ENDIF
+.  ENDIF
+.ENDIF
+```
+
+und FORMWREK.TXT
+
+```
+.* Verminderung der auszugebenden Positionsanzahl um die Anzahl der Werbetextzeilen bei Rechnungen
+.IF Auftrag->Reparatur == "J"
+.  IF LAB_Daten (135) == "J"
+.    IF EMPTY (LAB_Daten (132))
+.      ABSVMore := ABSVMore -1
+.    ENDIF
+.    IF EMPTY (LAB_Daten (133))
+.      ABSVMore := ABSVMore -1
+.    ENDIF
+.  ELSE
+.    ABSVMore := ABSVMore -2
+.  ENDIF
+.ELSE
+.  IF ABSVKP == "K"
+.    * Kasse
+.    IF LAB_Daten (21) == "J"
+.      IF EMPTY (LAB_Daten (18))
+.        ABSVMore := ABSVMore -1
+.      ENDIF
+.      IF EMPTY (LAB_Daten (19))
+.        ABSVMore := ABSVMore -1
+.      ENDIF
+.    ELSE
+.      ABSVMore := ABSVMore -2
+.    ENDIF
+.  ELSE
+.    * Privat
+.    IF LAB_Daten (51) == "J"
+.      IF EMPTY (LAB_Daten (48))
+.        ABSVMore := ABSVMore -1
+.      ENDIF
+.      IF EMPTY (LAB_Daten (49))
+.        ABSVMore := ABSVMore -1
+.      ENDIF
+.    ELSE
+.      ABSVMore := ABSVMore -2
+.    ENDIF
+.  ENDIF
+.ENDIF
+```
+
 ## Ergänzungen zu Programmeinstellungen
 
 ### Ausgabe eines Stern wenn Bilder in der Bildarchivierung vorhanden sind
