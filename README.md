@@ -1050,6 +1050,28 @@ $l2c.GoTop()
 $l2c.Close()
 ```
 
+### Probleme mit UDI-DI
+
+```Powershell
+# PDDBF Modul laden
+. Invoke-PSDBFDownloadAndInit
+
+# UDI-DI gibts in IMPMATPO.DBF
+$db =Use-DBF (Resolve-Path .\IMPMATPO.DBF)
+# sucht alle UDI-DI Einträge die mit J anfangen
+$i=$db.ListAll()|%{$db.Goto($_);If($db.Fields.UDIDI.Substring(0,1) -eq 'J'){[PSCustomObject]@{Satz=$_; UDIDI=$db.Fields.UDIDI}}}
+$i | out-GridView
+$db.Close()
+
+# und ARTUDI.DBF
+$db=Use-DBF (Resolve-Path .\ARTUDI.DBF)
+# sucht alle UDI-DI Einträge die mit J anfangen
+$a=$db.ListAll()|%{$db.Goto($_);If($db.Fields.UDIDI.Substring(0,1) -eq 'J'){[PSCustomObject]@{Satz=$_; UDIDI=$db.Fields.UDIDI}}}
+$a | out-GridView
+$db.Close()
+
+```
+
 ### Probleme mit Passwörtern von alten E-Mail-Programmen
 
 Kommt leider zu häufig vor, dass Benutzer die Passwörter für die E-Mailprogramme verlieren.
