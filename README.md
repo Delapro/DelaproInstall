@@ -692,6 +692,12 @@ Convert-PDF -PDFFile $pdf -OutFile $bmp -UseArtBox -Verbose
 &(Get-GhostScriptExecutable) -sOutputFile="C:\delapro\XMLForm\PDF-Vorlagen\Briefkopf - 2022 - A4.pdf" -sDEVICE=pdfwrite -dUseTrimBox -dNOPAUSE -dBATCH "C:\delapro\XMLForm\PDF-Vorlagen\Briefkopf - 2022.pdf"
 ```
 
+### Informationen zu Grafikdateien ausgeben
+
+```Powershell
+Get-ImageInfo *.bmp|select File, width, height
+```
+
 ### Texte aus PDF-Dateien extrahieren
 
 Es wird noch kein OCR unterstützt!
