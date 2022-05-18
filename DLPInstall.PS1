@@ -2407,6 +2407,9 @@ Function Register-CombitMAPIProxy {
 	# kann auch von einem Netzlaufwerk passieren
 	# falls es noch Probleme gibt C:\WINDOWS\WIN.INI sollte unter [Mail]MAPI=1 gesetzt haben
 	# siehe auch: https://forum.combit.net/t/fehler-beim-simplemapi-versand/4918
+	# bei Click2Run-Office ist über Win10 über "Apps und Features" keine Reparatur möglich, allerdings
+	#   bei Verwendung von "control.exe /name Microsoft.ProgramsAndFeatures" und Auswahl von Microsoft365
+	#   ist Ändern möglich und darüber dann die Schnell- oder Onlinereparatur!
 	
 }
 
