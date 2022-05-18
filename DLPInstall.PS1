@@ -4566,7 +4566,7 @@ Function Get-ImageInfo {
 					}
 	} else {
 		$o = [System.Drawing.Image]::FromFile($f)
-		$o | Add-Member -MemberType NoteProperty -Name File -Value $i
+		$o | Add-Member -MemberType NoteProperty -Name File -Value $f
 		$o
 	}
  }
