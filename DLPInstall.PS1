@@ -2377,6 +2377,9 @@ Function Register-CombitMAPIProxy {
 		[System.String]$Version='25'
 	)
 
+	Write-Verbose "Registriere Version $Version"
+	Write-Verbose "Verwende Pfad $DelaproPath"
+	
 	$Dll = "cxCT$($Version).DLL"
 	If (-Not (Test-Path (Join-Path -path $DelaproPath -ChildPath $Dll))) {
 		Write-Error "$DelaproPath\$Dll fehlt!"
@@ -2393,6 +2396,7 @@ Function Register-CombitMAPIProxy {
 	If (-Not (Test-Path (Join-Path -path $DelaproPath -ChildPath $Dll))) {
 		Write-Error "$DelaproPath\$Dll fehlt!"
 	} else {
+	        Write-Verbose "Aufruf: $DelaproPath\CXMP$($Version).EXE /regserver"
 		Start-Process -Wait -FilePath "$DelaproPath\CXMP$($Version).EXE" -ArgumentList '/regserver'
 	}
 
