@@ -1153,7 +1153,7 @@ $l2c.Close()
 # UDI-DI gibts in IMPMATPO.DBF
 $db =Use-DBF (Resolve-Path .\IMPMATPO.DBF)
 # sucht alle UDI-DI Einträge die mit J anfangen
-$i=$db.ListAll()|%{$db.Goto($_);If($db.Fields.UDIDI.Substring(0,1) -eq 'J'){[PSCustomObject]@{Satz=$_; UDIDI=$db.Fields.UDIDI}}}
+$i=$db.ListAll()|%{$db.Goto($_);If($db.Fields.UDIDI.Substring(0,1) -eq 'J'){[PSCustomObject]@{Satz=$_; UDIDI=$db.Fields.UDIDI;Charge=$db.Fields.Charge}}}
 $i | out-GridView
 $db.Close()
 
