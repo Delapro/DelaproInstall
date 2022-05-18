@@ -2410,6 +2410,7 @@ Function Register-CombitMAPIProxy {
 	# bei Click2Run-Office ist über Win10 über "Apps und Features" keine Reparatur möglich, allerdings
 	#   bei Verwendung von "control.exe /name Microsoft.ProgramsAndFeatures" und Auswahl von Microsoft365
 	#   ist Ändern möglich und darüber dann die Schnell- oder Onlinereparatur!
+	#   siehe auch: https://docs.microsoft.com/de-de/office/troubleshoot/office-suite-issues/click-to-run-app-repair-process
 	
 }
 
