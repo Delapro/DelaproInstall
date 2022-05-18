@@ -4441,6 +4441,7 @@ Function Set-SystemRestore {
 	)
 
 	# vssadmin.exe Resize ShadowStorage /For=$Drive /On=$Drive /Maxsize=320MB
+	Throw "To be implemented!"
 
 }
 
