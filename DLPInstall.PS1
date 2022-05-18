@@ -4547,6 +4547,30 @@ Function Show-MAPIProfiles {
 
 }
 
+# gibt Informationen über eine oder mehrere Bilddatei(en) aus
+Function Get-ImageInfo {
+	[CmdletBinding()]
+	Param(
+		[String]$Path
+	)
+	
+	$f = Resolve-Path $Path
+	
+	# falls die Assembly noch nicht geladen ist, laden:
+	try{$null=[System.Drawing.Image] -as [type]}catch{Add-Type -AssemblyName System.Drawing}
+	
+	If ($f -is [array]) {
+	  	foreach ($i in $f) { $o= [System.Drawing.Image]::FromFile($i)
+				     $o | Add-Member -MemberType NoteProperty -Name File -Value $i
+				     $o
+					}
+	} else {
+		$o = [System.Drawing.Image]::FromFile($f)
+		$o | Add-Member -MemberType NoteProperty -Name File -Value $i
+		$o
+	}
+ }
+
 # Zeigt ein bestimmtes Verzeichnis im Explorer an, bei Angabe von -Filename wird
 # die übergebene Datei gleich selektiert
 Function Show-Folder {
