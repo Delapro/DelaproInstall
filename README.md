@@ -1164,6 +1164,11 @@ $a=$db.ListAll()|%{$db.Goto($_);If($db.Fields.UDIDI.Substring(0,1) -eq 'J'){[PSC
 $a | out-GridView
 $db.Close()
 
+# dann gehören noch die Einzeleinträge aus ARTIKEL.DBF dazu:
+$db=Use-DBF (Resolve-Path .\ARTikel.DBF)
+$a2=$db.ListAll()|%{$db.Goto($_);If($db.Fields.UDIDI.Substring(0,1) -eq 'Q'){[PSCustomObject]@{Satz=$_; UDIDI=$db.Fields.UDIDI}}}
+$a2 | out-GridView
+$db.Close()
 ```
 
 ### Probleme mit Passwörtern von alten E-Mail-Programmen
