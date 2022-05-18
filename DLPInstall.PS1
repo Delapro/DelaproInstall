@@ -123,10 +123,11 @@ Function Install-StartBitsTransfer {
 }
 
 # Download testen
-Start-BitsTransfer "$easyBaseURI/util/PingDownload.txt"
+Start-BitsTransfer "$easyBaseURI/util/PingDownload.txt" -ErrorAction SilentlyContinue
 If (-Not ($?)) {
 	# wenn Start-Bitstransfer nicht funktioniert, diese Alternative verwenden:
 	Install-StartBitsTransfer
+	"Install-StartBitsTransfer aktiviert!"
 }
 
 Function Test-64Bit () {
