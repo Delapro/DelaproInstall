@@ -5151,7 +5151,7 @@ Function Install-Delapro {
 		[String]$DlpPath,
 		[String]$DlpGamePath,
 		[Validateset("Main", "Zert", "Chart", "Image", "Preise",
-					 "Acrobat", "AcrobatConfig", "Chrome", "Thunderbird",
+					 "Acrobatx64", "Acrobat", "AcrobatConfig", "Chrome", "Thunderbird",
 					 "Thunderbirdx64", 
 					 "eDocPrintPro", "Mailer", "AnyDesk", "Teamviewer", 
 					 "ImportBackup", "ImportBackupFile", "ImportData", "CopyGame", "AntiMalware",
@@ -5161,6 +5161,10 @@ Function Install-Delapro {
 		[String]$ImportBackupFile,
 		[Switch]$Force
 	)
+
+	If (($InstallSwitch -contains "Acrobatx64") -and ($InstallSwitch -contains "AcrobatConfig")) {
+		Write-Warning "AcrobatConfig wird automatisch durch Acrobat ausgeführt"
+	}
 
 	If (($InstallSwitch -contains "Acrobat") -and ($InstallSwitch -contains "AcrobatConfig")) {
 		Write-Warning "AcrobatConfig wird automatisch durch Acrobat ausgeführt"
@@ -5350,6 +5354,12 @@ Function Install-Delapro {
 
 	If ($InstallSwitch -contains "Acrobat") {	
 		Install-AcrobatDC -TempDirectory $DLPInstPath
+		# Konfiguration von Acrobat erzwingen
+		$InstallSwitch += "AcrobatConfig"
+	}
+
+	If ($InstallSwitch -contains "Acrobatx64") {	
+		Install-AcrobatDC -TempDirectory $DLPInstPath -Platform x64
 		# Konfiguration von Acrobat erzwingen
 		$InstallSwitch += "AcrobatConfig"
 	}
