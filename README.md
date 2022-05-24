@@ -1144,9 +1144,9 @@ Get-DelaproError| select *, @{Name="CallStackStr";Expression={($_.CallStack|out-
 $l2c = Use-DBF (Resolve-Path .\Copy\Labor2.dbf)
 $l2c.GoTop()
 "WerbRech:"
-"$($l2c.Fields.WerbRech1) `n $($l2c.Fields.WerbRech2) `n $($l2c.Fields.WerbRech3)"
+"$($l2c.Fields.WerbRech1.Trim())`n$($l2c.Fields.WerbRech2.Trim())`n$($l2c.Fields.WerbRech3.Trim())"
 "WerbPRech:"
-"$($l2c.Fields.WerbPRech1) `n $($l2c.Fields.WerbPRech2) `n $($l2c.Fields.WerbPRech3)"
+"$($l2c.Fields.WerbPRech1.Trim())`n$($l2c.Fields.WerbPRech2.Trim())`n$($l2c.Fields.WerbPRech3.Trim())"
 $l2c.Close()
 ```
 
