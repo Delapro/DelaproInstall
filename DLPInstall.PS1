@@ -2858,7 +2858,7 @@ Function Invoke-SysInternalTool {
   [CmdletBinding()]
   Param(
     [System.String]$tempDirectory="$Env:TEMP\",
-    [Validateset("Autoruns", "Procmon", "Procexp", "ProcDump", "PSExec")]
+    [Validateset("Autoruns", "Procmon", "Procexp", "ProcDump", "PSExec", 'SDelete')]
     [string[]]$Tool
   )
 
