@@ -2477,8 +2477,7 @@ Function Install-Thunderbird {
 
 	If ((-not (Test-Thunderbird)) -or $Force) {
 		If (Test-Thunderbird) {
-			Write-Verbose "Installierte Version: $((
-			irdEXE).VersionInfo.ProductVersion)"
+			Write-Verbose "Installierte Version: $((Get-ThunderbirdEXE).VersionInfo.ProductVersion)"
 		}
 		#Start-BitsTransfer http://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion/win32/de/Thunderbird%20Setup%20$tbVersion.exe
 		$Filename = "Thunderbird Setup $tbVersion.exe"
