@@ -2377,7 +2377,7 @@ Function Register-CombitMAPIProxy {
 	[CmdletBinding()]
 	Param(
 		[System.String]$DelaproPath="C:\Delapro",
-		[System.String]$Version='25'
+		[System.String]$Version='27'
 	)
 
 	Write-Verbose "Registriere Version $Version"
