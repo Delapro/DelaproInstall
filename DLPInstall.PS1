@@ -5146,8 +5146,16 @@ Function Set-LaborIdentifikation {
 		[System.String]$DelaproPath="C:\Delapro"
 	)
 
+	$iniPath = "$DelaproPath\DLP_MAIN.INI"
+
+	$ini = Get-Content -Path $iniPath -Encoding byte
+	If ($ini[-1] -eq 0x1a) {
+		# Dateiendekennzeichen entfernen
+		$ini[0..($ini.Length-2)] | Set-Content -Path $iniPath -Encoding Byte
+	}
+
 	$LaborIdent= @"
-[Labor]`r
+`r`r[Labor]`r
 // Die Labor-ID zur Identifikation des Labors`r
 Labor-ID="                    "`r
 // Primärer Herstellungsort`r
@@ -5155,7 +5163,7 @@ Herstellungsort="D-GD"`r
 Abrechnungsbereich=BW `r
 "@
 
-	$LaborIdent | Add-Content -Path "$DelaproPath\DLP_MAIN.INI"  -Encoding oem
+	$LaborIdent | Add-Content -Path $iniPath  -Encoding oem
 }
 
 Function Get-DelaproInstallPreparation {
