@@ -5380,7 +5380,7 @@ Function Install-Delapro {
 	}
 
 	If ($InstallSwitch -contains 'RegCombitx64Proxy') {	
-		Register-CombitMAPIProxy -Verbose
+		Register-CombitMAPIProxy -DelaproPath $DLPPath -Verbose
 	}
 
 	If ($InstallSwitch -contains "Chrome") {	
