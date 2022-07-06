@@ -5139,6 +5139,25 @@ Function Set-DefaultApp {
 	# Remove-Item $tempFile
 }
 
+# damit ein KZBV-Export möglich wird, Laboridentifikation setzen, allerdings Fix für Testdaten
+Function Set-LaborIdentifikation {
+	[CmdletBinding()]
+	Param(
+		[System.String]$DelaproPath="C:\Delapro"
+	)
+
+	$LaborIdent= @"
+[Labor]
+// Die Labor-ID zur Identifikation des Labors
+Labor-ID="                    "
+// Primärer Herstellungsort
+Herstellungsort="D-GD"
+Abrechnungsbereich=BW
+"@
+
+	$LaborIdent | Add-Content -Path $DelaproPath  -Encoding oem
+}
+
 Function Get-DelaproInstallPreparation {
 	[CmdletBinding()]
 	Param(
@@ -5479,6 +5498,7 @@ Function Install-DelaproTestSetup {
 	}
 
 	Install-Delapro @DelaproInstParameterTest
+	Set-LaborIdentifikation
 }
 
 #If($PSReadlineActive) {
