@@ -5445,7 +5445,7 @@ Function Install-DelaproTestSetup {
 			DlpPath = $DlpPath
 			DlpGamePath = $DlpGamePath
 			DlpInstPath = $DlpInstPath
-			InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'Preise', 'TeamViewer', 'Mailer',
+			InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'Preise', 'TeamViewer', 'AnyDesk', 'Mailer',
 							  'eDocPrintPro', 'Acrobatx64', 'Thunderbirdx64', 'RegCombitx64Proxy', 'Chrome', 'CopyGame',
 							  'AntiMalware')	
 		}
