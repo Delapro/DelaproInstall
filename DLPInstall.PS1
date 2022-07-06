@@ -5122,6 +5122,23 @@ Function Get-LLVersion {
 	}
 }
 
+# Öffnet zu einer bestimmten Dateiendung den Eigenschaften-Dialog, dazu wird eine temporäre Datei mit der Dateiendung erzeugt
+Function Set-DefaultApp {
+	[CmdLetBinding()]
+	Param(
+		[System.String]$Extension
+	)
+
+	$tempFile = "C:\Temp\temp.$($Extension)"
+	"Temp $Extension" | Set-Content $tempFile
+	$Shell = New-Object -ComObject Shell.Application
+	$Folder = $Shell.Namespace('C:\Temp')
+	$Prop = $Folder.Parsename("temp.$($Extension)")
+	$Prop.InvokeVerb('Properties')
+	# sorgt für extra Meldung:
+	# Remove-Item $tempFile
+}
+
 Function Get-DelaproInstallPreparation {
 	[CmdletBinding()]
 	Param(
@@ -5369,6 +5386,7 @@ Function Install-Delapro {
 		$dcFile = Get-AcrobatReaderDCEXE
 		Set-AcrobatReaderDCViewerRightPaneOff $dcFile
 		Disable-AcrobatReaderDCSendAndTrack
+		Set-DefaultApp -Extension PDF
 	}
 	
 	If ($InstallSwitch -contains "Thunderbird") {	
