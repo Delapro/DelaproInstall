@@ -5155,7 +5155,7 @@ Function Install-Delapro {
 					 "Thunderbirdx64", 
 					 "eDocPrintPro", "Mailer", "AnyDesk", "Teamviewer", 
 					 "ImportBackup", "ImportBackupFile", "ImportData", "CopyGame", "AntiMalware",
-					 "EdgeChromium" )]
+					 "EdgeChromium", 'RegCombitx64Proxy' )]
 		[string[]]$InstallSwitch,
 		[String]$ImportDataPath,
 		[String]$ImportBackupFile,
@@ -5379,6 +5379,10 @@ Function Install-Delapro {
 		Install-Thunderbird -TempDirectory $DLPInstPath -platform win64
 	}
 
+	If ($InstallSwitch -contains 'RegCombitx64Proxy') {	
+		Register-CombitMAPIProxy -Verbose
+	}
+
 	If ($InstallSwitch -contains "Chrome") {	
 		Install-Chrome -TempDirectory $DLPInstPath
 	}
@@ -5431,13 +5435,29 @@ Function Install-Delapro {
 Installiert das übliche Delapro Test-Setup
 #>
 Function Install-DelaproTestSetup {
-	$DelaproInstParameterTest = @{
-		DlpPath = $DlpPath
-		DlpGamePath = $DlpGamePath
-		DlpInstPath = $DlpInstPath
-		InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'Preise', 'TeamViewer', 'Mailer',
-						  'eDocPrintPro', 'Acrobat', 'Thunderbird', 'Chrome', 'CopyGame',
-						  'AntiMalware')
+	[CmdletBinding()]
+	Param (
+		[Switch]$x64
+	)
+
+	If ($x64) {
+		$DelaproInstParameterTest = @{
+			DlpPath = $DlpPath
+			DlpGamePath = $DlpGamePath
+			DlpInstPath = $DlpInstPath
+			InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'Preise', 'TeamViewer', 'Mailer',
+							  'eDocPrintPro', 'Acrobatx64', 'Thunderbirdx64', 'RegCombitx64Proxy', 'Chrome', 'CopyGame',
+							  'AntiMalware')	
+		}
+	} else {
+		$DelaproInstParameterTest = @{
+			DlpPath = $DlpPath
+			DlpGamePath = $DlpGamePath
+			DlpInstPath = $DlpInstPath
+			InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'Preise', 'TeamViewer', 'Mailer',
+							'eDocPrintPro', 'Acrobat', 'Thunderbird', 'Chrome', 'CopyGame',
+							'AntiMalware')
+		}
 	}
 
 	Install-Delapro @DelaproInstParameterTest
