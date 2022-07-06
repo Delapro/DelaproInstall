@@ -5147,15 +5147,15 @@ Function Set-LaborIdentifikation {
 	)
 
 	$LaborIdent= @"
-[Labor]
-// Die Labor-ID zur Identifikation des Labors
-Labor-ID="                    "
-// Primärer Herstellungsort
-Herstellungsort="D-GD"
-Abrechnungsbereich=BW
+[Labor]`r
+// Die Labor-ID zur Identifikation des Labors`r
+Labor-ID="                    "`r
+// Primärer Herstellungsort`r
+Herstellungsort="D-GD"`r
+Abrechnungsbereich=BW `r
 "@
 
-	$LaborIdent | Add-Content -Path $DelaproPath  -Encoding oem
+	$LaborIdent | Add-Content -Path "$DelaproPath\DLP_MAIN.INI"  -Encoding oem
 }
 
 Function Get-DelaproInstallPreparation {
