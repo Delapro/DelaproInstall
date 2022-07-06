@@ -2149,7 +2149,7 @@ Function Install-ImageMagick {
 
 	$filename = "ImageMagick-$version-$BitsPerPixel-$platform-$HDRI$static.exe"
 	Write-Verbose $filename
-	$url = "https://imagemagick.org/download/binaries/$filename"
+	$url = "https://imagemagick.org/archive/binaries/$filename"
 	Write-Verbose $url
 
 	Start-BitsTransfer -Source $url -Destination "$($tempDirectory)\$filename"
