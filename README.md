@@ -1041,6 +1041,8 @@ $p | Set-Printer -Portname $oldPortName
 
 Benötigt wird https://apps.microsoft.com/store/detail/3dviewer/9NBLGGH42THS?hl=de-de&gl=DE aus dem MS-Store. Zur Einbindung im Windows-Explorer im Vorschaufenster den 3D-Viewer als Vorgabeprogramm für STL-Dateien einrichten, danach steht die Vorschau direkt zur Verfügung. Die Vorschau lässt sich sogar dynamisch mit der Maus drehen.
 
+Falls man bei den 3D-Geschichten aus irgendeinem Grund auf OpenGL angewiesen ist und gleichzeitig VMs zu tun hat, dann hat man meist keine OpenGL-Unterstützung weshalb bestimmte Programme nicht laufen. In diesem Fall hilft ein OpenGL-Softwarerenderer: https://fdossena.com/?p=mesa/index.frag.
+
 ## Probleme ermitteln
 
 ### Problem, dass Delapro nicht deinstalliert werden kann
