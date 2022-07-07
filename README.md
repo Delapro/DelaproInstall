@@ -1037,6 +1037,10 @@ $p | Set-Printer -Portname $oldPortName
 
 ```
 
+### 3D-Viewer um STL-Dateien anschauen zu können
+
+Benötigt wird https://apps.microsoft.com/store/detail/3dviewer/9NBLGGH42THS?hl=de-de&gl=DE aus dem MS-Store. Zur Einbindung im Windows-Explorer im Vorschaufenster den 3D-Viewer als Vorgabeprogramm für STL-Dateien einrichten, danach steht die Vorschau direkt zur Verfügung. Die Vorschau lässt sich sogar dynamisch mit der Maus drehen.
+
 ## Probleme ermitteln
 
 ### Problem, dass Delapro nicht deinstalliert werden kann
