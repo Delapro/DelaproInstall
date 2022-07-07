@@ -2835,17 +2835,27 @@ Function Install-AnyDesk {
 		}
 		# AnyDesk Fernwartung einrichten
 		Start-BitsTransfer 'https://download.anydesk.com/AnyDesk.exe'  -Destination $tempDirectory
-		Unblock-File "$($tempDirectory)AnyDesk.exe"
-		If (! (Test-Path $DestinationPath\Fernwartung)) {
-			New-Item -path $DestinationPath\Fernwartung -Type Directory
-		}
-		Copy-Item $tempDirectory\AnyDesk.exe $DestinationPath\Fernwartung -Force
-		If (-Not ($NoDesktopLink)) {
-			# Link auf Desktop erstellen, Text: easy Internet Fernwartung (AnyDesk)
-			If (Test-Admin) {
-				New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\AnyDesk.exe --silent" -LinkFilename $CreateDesktopLink
-			} else {
-				New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\AnyDesk.exe --silent" -LinkFilename $CreateDesktopLink -Folder (Get-DesktopFolder -CurrentUser)
+		# prüfen, ob es sich überhaupt um eine neuere Version handelt
+		If (([Version](Get-Item -Path $tempDirectory\AnyDesk.exe).VersionInfo.ProductVersion) -gt ([Version](Get-Item -Path $DestinationPath\Fernwartung).VersionInfo.ProductVersion)) {
+			Unblock-File "$($tempDirectory)AnyDesk.exe"
+			If (! (Test-Path $DestinationPath\Fernwartung)) {
+				New-Item -path $DestinationPath\Fernwartung -Type Directory
+			}
+			If (Test-Path -Path "$($DestinationPath)\Fernwartung\AnyDesk.exe") {
+				# alte Version umbennen, damit es keine Fehlermeldung gibt, falls diese gerade aktiv ist
+				If (Test-Path -Path "$($DestinationPath)\Fernwartung\AnyDesk.exe.alt") {
+					Remove-Item -Path "$($DestinationPath)\Fernwartung\AnyDesk.exe.alt"
+				}
+				Rename-Item -Path "$($DestinationPath)\Fernwartung\AnyDesk.exe" -NewName "$($DestinationPath)\Fernwartung\AnyDesk.exe.alt"
+			}
+			Copy-Item $tempDirectory\AnyDesk.exe $DestinationPath\Fernwartung -Force
+			If (-Not ($NoDesktopLink)) {
+				# Link auf Desktop erstellen, Text: easy Internet Fernwartung (AnyDesk)
+				If (Test-Admin) {
+					New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\AnyDesk.exe --silent" -LinkFilename $CreateDesktopLink
+				} else {
+					New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\AnyDesk.exe --silent" -LinkFilename $CreateDesktopLink -Folder (Get-DesktopFolder -CurrentUser)
+				}
 			}
 		}
 	} else {
