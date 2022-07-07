@@ -2838,7 +2838,7 @@ Function Install-AnyDesk {
 		# prüfen, ob es sich überhaupt um eine neuere Version handelt
 		If (([Version](Get-Item -Path $tempDirectory\AnyDesk.exe).VersionInfo.ProductVersion) -gt ([Version](Get-Item -Path $DestinationPath\Fernwartung).VersionInfo.ProductVersion)) {
 			Unblock-File "$($tempDirectory)AnyDesk.exe"
-			If (! (Test-Path $DestinationPath\Fernwartung)) {
+			If (-Not (Test-Path $DestinationPath\Fernwartung)) {
 				New-Item -path $DestinationPath\Fernwartung -Type Directory
 			}
 			If (Test-Path -Path "$($DestinationPath)\Fernwartung\AnyDesk.exe") {
@@ -2852,11 +2852,13 @@ Function Install-AnyDesk {
 			If (-Not ($NoDesktopLink)) {
 				# Link auf Desktop erstellen, Text: easy Internet Fernwartung (AnyDesk)
 				If (Test-Admin) {
-					New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\AnyDesk.exe --silent" -LinkFilename $CreateDesktopLink
+					New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\AnyDesk.exe" -Arguments '--silent' -LinkFilename $CreateDesktopLink
 				} else {
-					New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\AnyDesk.exe --silent" -LinkFilename $CreateDesktopLink -Folder (Get-DesktopFolder -CurrentUser)
+					New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\AnyDesk.exe" -Arguments '--silent' -LinkFilename $CreateDesktopLink -Folder (Get-DesktopFolder -CurrentUser)
 				}
 			}
+		} else {
+			Write-Verbose "Keine neuere Version vorhanden"
 		}
 	} else {
 		Write-Error "$DestinationPath existiert nicht!"
