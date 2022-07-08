@@ -3955,14 +3955,17 @@ Function Install-FFMpeg {
 
 	# https://github.com/BtbN/FFmpeg-Builds/releases
 	# https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2020-10-27-12-34/ffmpeg-n4.3.1-20-g8a2acdc6da-win64-gpl-4.3.zip
+	# https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n5.0-latest-win64-gpl-5.0.zip
 	# https://github.com/PowerShell/PowerShell/releases/download/autobuild-2020-10-27-12-34/ffmpeg-n4.3.1-20-g8a2acdc6da-win64-gpl-4.3.zip
-	$baseVersion = '4.3'
-	$Version = 'n4.3.1'
-	$Platform = "win64"
-	$gitHash = "g8a2acdc6da"
-	$lic = 'gpl'
-	$Filename = "ffmpeg-$($Version)-20-$($gitHash)-$($Platform)-$($lic)-$($baseVersion).zip"
-	$ReleaseDate = 'autobuild-2020-10-27-12-34'
+
+	$baseVersion = '5.0'
+    $Version = 'n5.0'
+    $Platform = "win64"
+    $gitHash = "latest" # früher: "g8a2acdc6da"
+    $lic = 'gpl'
+    # $Filename = "ffmpeg-$($Version)-20-$($gitHash)-$($Platform)-$($lic)-$($baseVersion).zip"
+    $Filename = "ffmpeg-$($Version)-$($gitHash)-$($Platform)-$($lic)-$($baseVersion).zip"
+    $ReleaseDate = 'latest'
 	$Url = "https://github.com/BtbN/FFmpeg-Builds/releases/download/$($Releasedate)/$($Filename)"
 	$tempFile = Join-Path -Path $tempDir -ChildPath $Filename
 
