@@ -256,6 +256,12 @@ Set-Printer -Name "DelaproMail" -Drivername "Xerox Global Print Driver PS"
 Install-XeroxUniversalDriver -Verbose -Version V4
 Set-Printer -Name "DelaproMail" -Drivername "Xerox Global Print Driver V4 PS"
 
+# bei Ghostscript 9.56.1 und Windows 11 gab es Probleme mit fehlender VCRuntime140.dll, betrifft auf eDocPrintpro
+# Problem offenbart sich, indem eDocPrintpro keine PDF erstellt und Laser\GhostPDF.BAT eine Fehlermeldung 53 bringt, weil
+# keine PDF-Datei vorhanden ist
+# Lösung bringt die Installation der C++-Runtime für 64-Bit:
+https://aka.ms/vs/16/release/vc_redist.x64.exe
+
 ```
 
 ### Ghostscript ältere Versionen unterstützen
