@@ -5677,3 +5677,7 @@ $DelaproInstParameterMitDataImport = @{
 
 Get-DelaproInstallPreparation
 Install-Delapro @DelaproInstParameter
+
+# mal für später, anstatt Resolve-Path, wenn eine Datei nicht existiert:
+# $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath
+# https://stackoverflow.com/questions/8505294/how-do-i-deal-with-paths-when-writing-a-powershell-cmdlet
