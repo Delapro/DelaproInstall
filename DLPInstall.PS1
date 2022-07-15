@@ -1223,7 +1223,7 @@ Function Install-GhostscriptPCL {
 
 	$ghostPlatform = "win64"
 	switch ($Version) {
-		"Newest" {$ghostVersion="gs952"; $ghostVersionNr="9.52"}
+		"Newest" {$ghostVersion='gs9561'; $ghostVersionNr='9.56.1'}
 	}
 
 	$ghostZIP = "ghostpcl-$ghostVersionNr-$ghostPlatform.zip"
