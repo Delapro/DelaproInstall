@@ -1221,23 +1221,27 @@ Function Install-GhostscriptPCL {
 		[string[]]$Version='Newest'
 	)
 
-	$ghostPlatform = "win64"
-	switch ($Version) {
-		"Newest" {$ghostVersion='gs9561'; $ghostVersionNr='9.56.1'}
+	If (Test-Admin) {
+		$ghostPlatform = "win64"
+		switch ($Version) {
+			"Newest" {$ghostVersion='gs9561'; $ghostVersionNr='9.56.1'}
+		}
+
+		$ghostZIP = "ghostpcl-$ghostVersionNr-$ghostPlatform.zip"
+		$ghostUrl = "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/$ghostVersion/$ghostZIP"
+		$ghostCall = Join-Path -Path $tempPath -ChildPath $ghostZIP
+
+		# Start-BitsTransfer $ghostUrl  $tempPath
+		Invoke-WebRequest -UseBasicParsing -Uri $ghostUrl -OutFile $ghostCall
+
+		Expand-Archive $ghostCall -DestinationPath "$($env:ProgramFiles)\gs" -Force
+		$programPath = Join-Path -path "$($env:ProgramFiles)\gs" -ChildPath $ghostZIP.Replace('.zip', '')
+		If (Test-Path ($programPath)) {
+			Write-Verbose "nun verfügbar: $programPath, Version: $ghostVersionNr"
+		} 
+	} else {
+		Write-Error "Benötigt Adminrechte!"
 	}
-
-	$ghostZIP = "ghostpcl-$ghostVersionNr-$ghostPlatform.zip"
-	$ghostUrl = "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/$ghostVersion/$ghostZIP"
-	$ghostCall = Join-Path -Path $tempPath -ChildPath $ghostZIP
-
-	# Start-BitsTransfer $ghostUrl  $tempPath
-	Invoke-WebRequest -UseBasicParsing -Uri $ghostUrl -OutFile $ghostCall
-
-	Expand-Archive $ghostCall -DestinationPath "$($env:ProgramFiles)\gs" -Force
-	$programPath = Join-Path -path "$($env:ProgramFiles)\gs" -ChildPath $ghostZIP.Replace('.zip', '')
-	If (Test-Path ($programPath)) {
-		Write-Verbose "nun verfügbar: $programPath, Version: $ghostVersionNr"
-	} 
 }
 
 # prüft, ob der Rechner neu gestartet werden sollte
