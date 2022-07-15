@@ -1213,7 +1213,7 @@ Function Install-Ghostscript {
 	Start-Process -Wait $ghostcall -ArgumentList "/S"
 }
 
-Function Install-GhostPCL {
+Function Install-GhostscriptPCL {
 	[CmdletBinding()]
 	Param(
 		[System.String]$tempPath="$Env:TEMP\",
