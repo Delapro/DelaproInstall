@@ -2727,7 +2727,7 @@ Function Install-OpenGPG {
 	)
 
 	# andere Platformen unterstützten
-	$gpgVersion = "4.0.2"
+	$gpgVersion = "4.0.3"
 
 	$Filename = "gpg4win-$($gpgVersion).exe"
 	Write-Verbose "Download $gpgVersion, Dateiname: $Filename"
