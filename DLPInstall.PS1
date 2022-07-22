@@ -3328,6 +3328,7 @@ Function Get-DelaproPath{
 	$DlpPath='C:\Delapro'
 	# TODO: auch noch zu beachten mehrere Verknüpfungen, für verschiedene Mandanten!
 	# oder die bessere Variante, den Pfad aus der Verknüpfung vom Desktop auslesen
+	# nach Delapro.exe Ausschau halten:  TargetPath       : C:\Delapro\Delapro.exe
 	$DlpPath=(Get-FileShortCut -LinkFilename Delapro.Lnk -Folder (Get-DesktopFolder -CurrentUser)).WorkingDirectory
 	# vor dem Prüfen muss getestet werden, ob die Shell mit Adminrechten läuft, da gerade hier oft die Verbindung
 	# der Laufwerke nachgeholt werden muss
