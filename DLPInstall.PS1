@@ -3322,6 +3322,30 @@ Function Test-DelaproFormsAnomality {
 	}
 }
 
+# versucht den aktuellen Delapropfad zu ermitteln
+Function Get-DelaproPath{
+
+	$DlpPath='C:\Delapro'
+	# TODO: auch noch zu beachten mehrere Verknüpfungen, für verschiedene Mandanten!
+	# oder die bessere Variante, den Pfad aus der Verknüpfung vom Desktop auslesen
+	$DlpPath=(Get-FileShortCut -LinkFilename Delapro.Lnk -Folder (Get-DesktopFolder -CurrentUser)).WorkingDirectory
+	# vor dem Prüfen muss getestet werden, ob die Shell mit Adminrechten läuft, da gerade hier oft die Verbindung
+	# der Laufwerke nachgeholt werden muss
+	If (Test-Admin) {
+		# wenn der aktuelle Benutzer als Admin unterwegs ist, müssen noch die Laufwerke
+		# hergestellt werden
+		# dies gilts dabei zu beachten: https://devblogs.microsoft.com/oldnewthing/20190425-00/?p=102443
+		# TODO
+	}
+	If ($DlpPath -eq '' -or $null -eq $DlpPath -or (-Not (Test-Path $DlpPath))) {
+		$DlpPath=(Get-FileShortCut -LinkFilename Delapro.Lnk).WorkingDirectory
+		If ($DlpPath -eq '' -or $null -eq $DlpPath -or (-Not (Test-Path $DlpPath))) {
+			$DlpPath='C:\Delapro' # Standardpfad setzen
+		}
+	}
+	$DlpPath
+}
+
 # spielt ein Delapro-PreUpdate ein, bzw. bereitet das Einspielen eines Updates bevor, aktualisiert die Fernwartung
 Function Invoke-DelaproPreUpdate {
 	[CmdletBinding()]
