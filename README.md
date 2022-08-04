@@ -1010,6 +1010,9 @@ Get-GhostscriptPCL
 # EXE der aktuellen GhostscriptPCL-Version ermitteln
 Get-GhostScriptPCLExecutable
 
+# Version der installierten Ghostscriptversion ausgeben
+& "$(Get-GhostScriptExecutable)" -v
+
 # Konvertieren einer Postscriptdatei in PDF
 & "$(Get-GhostScriptPCLExecutable)" -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile="test.pdf" .\test.pcl
 
