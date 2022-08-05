@@ -271,7 +271,8 @@ Bietet die vorhandenen Druckerwarteschlangen zur Auswahl an, wählt man eine aus
 ```Powershell
 $p = Get-Printer | Out-Gridview -Title "zu kopierenden Drucker auswählen" -PassThru
 If ($p) {
-    $pNewName = Read-Host -Prompt "neuer Druckername"
+    "ausgewählter Druckername: $($p.Drivername)"
+    $pNewName = Read-Host -Prompt "neuer Druckername (leer für Abbruch)"
     If ($pNewName.Length -gt 0) {
         Add-Printer -Name $pNewName -DriverName $p.DriverName -PortName $p.PortName
     }
