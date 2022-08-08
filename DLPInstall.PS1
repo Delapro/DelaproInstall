@@ -3870,6 +3870,28 @@ Function New-PrinterPort {
 	Restart-Service Spooler -Force
 }
 
+# kopiert einen Drucker (Druckerwarteschlange), wird -Newname nicht angegeben wird interaktiv nach dem neuen Namen gefragt
+Function Copy-Printer {
+	[CmdletBinding()]
+	Param(
+		[String]$NewName
+	)
+
+	$p = Get-Printer | Out-Gridview -Title "zu kopierenden Drucker auswählen" -PassThru
+	If ($p) {
+		"ausgewählter Druckername: $($p.Drivername)"
+		If ($Newname)
+		{
+			Add-Printer -Name $NewName -DriverName $p.DriverName -PortName $p.PortName
+		} else {
+			$pNewName = Read-Host -Prompt "neuer Druckername (leer für Abbruch)"
+			If ($pNewName.Length -gt 0) {
+				Add-Printer -Name $pNewName -DriverName $p.DriverName -PortName $p.PortName
+			}
+		}
+	}
+}
+
 # durchsucht die installierten Druckertreiber nach einem bestimmten Namen von einem Hersteller
 # benötigt Adminrechte
 Function Get-InstalledWindowsPrinterDriver {

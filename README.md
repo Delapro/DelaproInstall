@@ -269,14 +269,11 @@ cmd.exe /c mklink /D gs9.26 gs9.53.3
 Bietet die vorhandenen Druckerwarteschlangen zur Auswahl an, wählt man eine aus, dann wird nach einem neuen Namen für eine neue Druckerwarteschlange gefragt. Wird dieser angegeben, dann wird eine neue Druckerwarteschlange angelegt.
 
 ```Powershell
-$p = Get-Printer | Out-Gridview -Title "zu kopierenden Drucker auswählen" -PassThru
-If ($p) {
-    "ausgewählter Druckername: $($p.Drivername)"
-    $pNewName = Read-Host -Prompt "neuer Druckername (leer für Abbruch)"
-    If ($pNewName.Length -gt 0) {
-        Add-Printer -Name $pNewName -DriverName $p.DriverName -PortName $p.PortName
-    }
-}
+# zeigt eine Auswahl der vorhandenen Drucker an und fragt dann, nach Auswahl, nach dem neuen Druckernamen:
+Copy-Printer
+
+# oder direkt den neuen Namen setzen
+Copy-Printer -NewName TestPrinter
 ```
 
 ### Druckertreiber ID bei neuen Windows Featureupdate Versionen ermitteln
