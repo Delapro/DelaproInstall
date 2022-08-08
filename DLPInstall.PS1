@@ -3877,6 +3877,8 @@ Function Copy-Printer {
 		[String]$NewName
 	)
 
+	# TODO: Es sollten noch die Druckereinstellungen mitkopiert werden (PrintTicketXML), sowie
+	# weitere Druckereinstellung (Get-PrinterProperty)
 	$p = Get-Printer | Out-Gridview -Title "zu kopierenden Drucker auswählen" -PassThru
 	If ($p) {
 		"ausgewählter Druckername: $($p.Drivername)"
