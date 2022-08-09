@@ -303,15 +303,15 @@ NETZDRCK.XML:
     <Konfiguration>
         <Delaprodrucker Name='HPLJ'>
             <Netzwerkdrucker>
-                <Drucker Type="COMPUTERNAME" ID="DESK0815">
+                <Drucker Type="COMPUTERNAME" TypeValue="DESK0815">
                     <!-- Name der Druckerwarteschlange -->
                     HP Laserjet D602
                 </Drucker>
-                <Drucker Type="USERNAME" ID="Admin">
+                <Drucker Type="USERNAME" TypeValue="Admin">
                     <!-- Name der Druckerwarteschlange -->
                     HP Laserjet D605
                 </Drucker>
-                <Drucker="DLP_PRGVRT" ID="Station1">
+                <Drucker="DLP_PRGVRT" TypeValue="Station1">
                     <!-- Name der Druckerwarteschlange -->
                     HP Laserjet D607
                 </Drucker>
@@ -323,15 +323,15 @@ NETZDRCK.XML:
         </Delaprodrucker>
         <Delaprodrucker Name='Kyocera'>
             <Netzwerkdrucker>
-                <Drucker Type="COMPUTERNAME" ID="DESK0815">
+                <Drucker Type="COMPUTERNAME" TypeValue="DESK0815">
                     <!-- Name der Druckerwarteschlange -->
                     Kyocera D602
                 </Drucker>
-                <Drucker Type="USERNAME" ID="Admin">
+                <Drucker Type="USERNAME" TypeValue="Admin">
                     <!-- Name der Druckerwarteschlange -->
                     Kyocera D605
                 </Drucker>
-                <Drucker="DLP_PRGVRT" ID="Station1">
+                <Drucker="DLP_PRGVRT" TypeValue="Station1">
                     <!-- Name der Druckerwarteschlange -->
                     Kyocera D607
                 </Drucker>
@@ -352,11 +352,15 @@ Add-DelaproNetPrinter -DelaproPrinter 'HPLJ' -Printername 'HP Laserjet D611' -Ty
 # übernimmt automatisch den aktuellen Benutzernamen
 Add-DelaproNetPrinter -DelaproPrinter 'HPLJ' -Printername 'HP Laserjet D611' -Type USERNAME
 # verwendet den übergebenen Computernamen Dell20
-Add-DelaproNetPrinter -DelaproPrinter 'HPLJ' -Printername 'HP Laserjet D611' -Type COMPUTERNAME -ID 'Dell20'
+Add-DelaproNetPrinter -DelaproPrinter 'HPLJ' -Printername 'HP Laserjet D611' -Type COMPUTERNAME -[Type]Value 'Dell20'
 # übernimmt den aktuellen Wert von DLP_PRGVRT
 Add-DelaproNetPrinter -DelaproPrinter 'HPLJ' -Printername 'HP Laserjet D611' -Type DLP_PRGVRT
 # optional die Angabe der XML-Datei erlauben
 Add-DelaproNetPrinter -DelaproPrinter 'HPLJ' -Printername 'HP Laserjet D611' -Type DLP_PRGVRT -XmlFile .\NETZDRCK.XML
+# für einen Drucker den Standarddrucker definieren
+Add-DelaproNetPrinter -DelaproPrinter 'HPLJ' -Printername 'HP Laserjet D611' -DefaultPrinter 
+# setzt den Windowsstandarddrucker als Standarddrucker
+Add-DelaproNetPrinter -DelaproPrinter 'HPLJ' -DefaultPrinter 
 
 # Set-DelaproNetPrinter ließt die NetzDrck.XML und erzeugt die passende BAT-Datei
 Set-DelaproNetPrinter
@@ -364,16 +368,20 @@ Set-DelaproNetPrinter
 Set-DelaproNetPrinter -XmlFile .\NETZDRCK.XML
 # Ausgabe der aktuellen Einstellungen
 Get-DelaproNetPrinter
-DelaproPrinter  PrinterName       Type          ID
---------------  -----------       ----          --
-HPLJ            HP Laserjet D611  COMPUTERNAME  Dell20
-HPLJ            HP Laserjet D611  USERNAME      Admin
-HPLJ            HP Laserjet D611  DLP_PRGVRT    Station1
-Kyocera         Kyocera X5        COMPUTERNAME  Dell20
+DelaproPrinter  PrinterName       Type          TypeValue  ID
+--------------  -----------       ----          ---------  --
+HPLJ            HP Laserjet D611  COMPUTERNAME  Dell20     1
+HPLJ            HP Laserjet D611  USERNAME      Admin      2
+HPLJ            HP Laserjet D611  DLP_PRGVRT    Station1   3
+HPLJ            HP Laserjet D611  Default                  4
+Kyocera         Kyocera X5        COMPUTERNAME  Dell20     5
+Kyocera         Kyocera X5        Default                  6
+
+# zum Entfernen eines Eintrags
+Remove-DelaproNetPrinter -ID 2
 ```
 
 Bei Add-DelaproNetPrinter muss geprüft werden, ob die betreffende Druckertreiberwarteschlange vorhanden ist, ansonsten mittels -Force erzwingen.
-Wie werden die Delaprodruckertreibernamen verwaltet?
 
 ### Faxtreiber
 
