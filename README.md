@@ -364,6 +364,8 @@ Add-DelaproNetPrinter -DelaproPrinter 'HPLJ' -DefaultPrinter
 
 # Set-DelaproNetPrinter ließt die NetzDrck.XML und erzeugt die passende BAT-Datei
 Set-DelaproNetPrinter
+# evtl. unterschiedliche Sortierung, entweder nach Delaprodruckertreiber oder Type
+Set-DelaproNetPrinter -Order DelaproPrinter # oder Type
 # oder unter Verwendung einer spezifischen Einstellungdatei
 Set-DelaproNetPrinter -XmlFile .\NETZDRCK.XML
 # Ausgabe der aktuellen Einstellungen
