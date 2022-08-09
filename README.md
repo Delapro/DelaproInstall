@@ -362,6 +362,14 @@ Add-DelaproNetPrinter -DelaproPrinter 'HPLJ' -Printername 'HP Laserjet D611' -Ty
 Set-DelaproNetPrinter
 # oder unter Verwendung einer spezifischen Einstellungdatei
 Set-DelaproNetPrinter -XmlFile .\NETZDRCK.XML
+# Ausgabe der aktuellen Einstellungen
+Get-DelaproNetPrinter
+DelaproPrinter  PrinterName       Type          ID
+--------------  -----------       ----          --
+HPLJ            HP Laserjet D611  COMPUTERNAME  Dell20
+HPLJ            HP Laserjet D611  USERNAME      Admin
+HPLJ            HP Laserjet D611  DLP_PRGVRT    Station1
+Kyocera         Kyocera X5        COMPUTERNAME  Dell20
 ```
 
 Bei Add-DelaproNetPrinter muss geprüft werden, ob die betreffende Druckertreiberwarteschlange vorhanden ist, ansonsten mittels -Force erzwingen.
