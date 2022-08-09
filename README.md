@@ -294,8 +294,8 @@ If ($driverIDFound) {
 ### Netzwerkdruckertreiber
 
 Wenn in einem Netz keine zentral freigebenen Drucker vorhanden sind, oder aus irgendeinem Grund flexibel reagiert werden muss, dann hilft die Verwendung von NETZDRCK.BAT.
-Muss ohne CALL angegeben werden. TODO: NETZDRCK.XML sollte als Basiskonfiguration gelten. Daraus sollte dann dynamisch NETZDRCK.BAT erstellt werden, dadurch
-ist es leichter mit entsprechenden Konfigurationsänderungen umzugehen.
+Muss ohne CALL angegeben werden. 
+TODO: NETZDRCK.XML sollte als Basiskonfiguration gelten. Daraus sollte dann dynamisch NETZDRCK.BAT erstellt werden, dadurch ist es leichter mit entsprechenden Konfigurationsänderungen umzugehen.
 
 NETZDRCK.XML:
 ```XML
@@ -303,19 +303,19 @@ NETZDRCK.XML:
     <Konfiguration>
         <Delaprodrucker Name='HPLJ'>
             <Netzwerkdrucker>
-                <Drucker Type="COMPUTERNAME" TypeValue="DESK0815">
+                <Drucker Type="COMPUTERNAME" TypeValue="DESK0815" ID='1'>
                     <!-- Name der Druckerwarteschlange -->
                     HP Laserjet D602
                 </Drucker>
-                <Drucker Type="USERNAME" TypeValue="Admin">
+                <Drucker Type="USERNAME" TypeValue="Admin" ID='2'>
                     <!-- Name der Druckerwarteschlange -->
                     HP Laserjet D605
                 </Drucker>
-                <Drucker="DLP_PRGVRT" TypeValue="Station1">
+                <Drucker="DLP_PRGVRT" TypeValue="Station1" ID='3'>
                     <!-- Name der Druckerwarteschlange -->
                     HP Laserjet D607
                 </Drucker>
-                <Default>
+                <Default ID='4'>
                     <!-- Name der Druckerwarteschlange oder WINDOWSSTANDARDDRUCKER -->
                     WINDOWSSTANDARDDRUCKER
                 </Default>
@@ -323,15 +323,15 @@ NETZDRCK.XML:
         </Delaprodrucker>
         <Delaprodrucker Name='Kyocera'>
             <Netzwerkdrucker>
-                <Drucker Type="COMPUTERNAME" TypeValue="DESK0815">
+                <Drucker Type="COMPUTERNAME" TypeValue="DESK0815" ID='5'>
                     <!-- Name der Druckerwarteschlange -->
                     Kyocera D602
                 </Drucker>
-                <Drucker Type="USERNAME" TypeValue="Admin">
+                <Drucker Type="USERNAME" TypeValue="Admin" ID='6'>
                     <!-- Name der Druckerwarteschlange -->
                     Kyocera D605
                 </Drucker>
-                <Drucker="DLP_PRGVRT" TypeValue="Station1">
+                <Drucker="DLP_PRGVRT" TypeValue="Station1" ID='7'>
                     <!-- Name der Druckerwarteschlange -->
                     Kyocera D607
                 </Drucker>
