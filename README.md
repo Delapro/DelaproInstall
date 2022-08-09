@@ -291,6 +291,82 @@ If ($driverIDFound) {
 """$winBuild"" {`$driverID = ""$driverID""}"
 ```
 
+### Netzwerkdruckertreiber
+
+Wenn in einem Netz keine zentral freigebenen Drucker vorhanden sind, oder aus irgendeinem Grund flexibel reagiert werden muss, dann hilft die Verwendung von NETZDRCK.BAT.
+Muss ohne CALL angegeben werden. TODO: NETZDRCK.XML sollte als Basiskonfiguration gelten. Daraus sollte dann dynamisch NETZDRCK.BAT erstellt werden, dadurch
+ist es leichter mit entsprechenden Konfigurationsänderungen umzugehen.
+
+NETZDRCK.XML:
+```XML
+<Delapro>
+    <Konfiguration>
+        <Delaprodrucker Name='HPLJ'>
+            <Netzwerkdrucker>
+                <Drucker Type="COMPUTERNAME" ID="DESK0815">
+                    <!-- Name der Druckerwarteschlange -->
+                    HP Laserjet D602
+                </Drucker>
+                <Drucker Type="USERNAME" ID="Admin">
+                    <!-- Name der Druckerwarteschlange -->
+                    HP Laserjet D605
+                </Drucker>
+                <Drucker="DLP_PRGVRT" ID="Station1">
+                    <!-- Name der Druckerwarteschlange -->
+                    HP Laserjet D607
+                </Drucker>
+                <Default>
+                    <!-- Name der Druckerwarteschlange oder WINDOWSSTANDARDDRUCKER -->
+                    WINDOWSSTANDARDDRUCKER
+                </Default>
+            </Netzwerkdrucker>
+        </Delaprodrucker>
+        <Delaprodrucker Name='Kyocera'>
+            <Netzwerkdrucker>
+                <Drucker Type="COMPUTERNAME" ID="DESK0815">
+                    <!-- Name der Druckerwarteschlange -->
+                    Kyocera D602
+                </Drucker>
+                <Drucker Type="USERNAME" ID="Admin">
+                    <!-- Name der Druckerwarteschlange -->
+                    Kyocera D605
+                </Drucker>
+                <Drucker="DLP_PRGVRT" ID="Station1">
+                    <!-- Name der Druckerwarteschlange -->
+                    Kyocera D607
+                </Drucker>
+                <Default>
+                    <!-- Name der Druckerwarteschlange oder WINDOWSSTANDARDDRUCKER -->
+                    WINDOWSSTANDARDDRUCKER
+                </Default>
+            </Netzwerkdrucker>
+        </Delaprodrucker>
+    </Konfiguration>
+</Delapro>
+```
+
+Zur Bearbeitung obiger XML-Datei wäre ein Cmdlet Add-DelaproNetPrinter von Vorteil:
+```Powershell
+# übernimmt automatisch den aktuellen Rechnernamen
+Add-DelaproNetPrinter -DelaproPrinter 'HPLJ' -Printername 'HP Laserjet D611' -Type COMPUTERNAME
+# übernimmt automatisch den aktuellen Benutzernamen
+Add-DelaproNetPrinter -DelaproPrinter 'HPLJ' -Printername 'HP Laserjet D611' -Type USERNAME
+# verwendet den übergebenen Computernamen Dell20
+Add-DelaproNetPrinter -DelaproPrinter 'HPLJ' -Printername 'HP Laserjet D611' -Type COMPUTERNAME -ID 'Dell20'
+# übernimmt den aktuellen Wert von DLP_PRGVRT
+Add-DelaproNetPrinter -DelaproPrinter 'HPLJ' -Printername 'HP Laserjet D611' -Type DLP_PRGVRT
+# optional die Angabe der XML-Datei erlauben
+Add-DelaproNetPrinter -DelaproPrinter 'HPLJ' -Printername 'HP Laserjet D611' -Type DLP_PRGVRT -XmlFile .\NETZDRCK.XML
+
+# Set-DelaproNetPrinter ließt die NetzDrck.XML und erzeugt die passende BAT-Datei
+Set-DelaproNetPrinter
+# oder unter Verwendung einer spezifischen Einstellungdatei
+Set-DelaproNetPrinter -XmlFile .\NETZDRCK.XML
+```
+
+Bei Add-DelaproNetPrinter muss geprüft werden, ob die betreffende Druckertreiberwarteschlange vorhanden ist, ansonsten mittels -Force erzwingen.
+Wie werden die Delaprodruckertreibernamen verwaltet?
+
 ### Faxtreiber
 
 #### HP
