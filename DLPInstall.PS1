@@ -1127,6 +1127,7 @@ Function Get-GhostScriptExecutable {
 }
 
 # setzt die Version von Ghostscript in der GHOSTSCRIPT.BAT-Datei auf die übergebene Version
+# wird ein Pfad angegeben, werden automatisch alle *Ghost*.BAT-Dateien darin bearbeitet
 Function Update-DelaproGhostscript {
 	[CmdletBinding()]
 	#[OutputType([System.IO.DirectoryInfo])]
@@ -1138,22 +1139,27 @@ Function Update-DelaproGhostscript {
 	If ($null -eq $PathGhostscript) {
 		throw "Kein Ghostscript gefunden!"
 	} else {
-		Write-Verbose "Aktualisiere $PathDelaproGhostscript"
-		Write-Verbose "Ermittelter Ghostscriptpfad: $PathGhostScript"
-		$matches = Get-Content $PathDelaproGhostscript | Select-String "SET GSDIR"
-		If ($matches) {
-			$content = Get-Content $PathDelaproGhostscript
-			$matches | ForEach-Object {
-						$current = $_.Line
-						Write-Verbose "Zeile $($_.LineNumber) die geändert werden muss: $current"
-						Write-Verbose "Zeile: $($content[$_.LineNumber-1])"
-						$current = $current.SubString(0, $current.LastIndexOf("\"))
-						$current = $current.SubString($current.IndexOf("=")+1)
-						Write-Verbose "Pfad der ausgetauscht werden muss: $current"
-						$content[$_.LineNumber-1] = $content[$_.LineNumber-1].replace($current, $PathGhostscript)
-						Write-Verbose "so sollte es aussehen: $($content[$_.LineNumber-1].replace($current, $PathGhostscript))"
+		If ((Get-Item -Path $PathDelaproGhostscript).PSIsContainer) {
+			Write-Verbose "Verzeichnis erkannt: $PathDelaproGhostscript"
+			Get-ChildItem "$PathDelaproGhostscript\*Ghost*.BAT" | ForEach-Object {Update-DelaproGhostscript -PathDelaproGhostscript $_.Fullname -PathGhostscript $PathGhostscript}
+		} else {
+			Write-Verbose "Aktualisiere $PathDelaproGhostscript"
+			Write-Verbose "Ermittelter Ghostscriptpfad: $PathGhostScript"
+			$treffer = Get-Content $PathDelaproGhostscript | Select-String "SET GSDIR"
+			If ($treffer) {
+				$content = Get-Content $PathDelaproGhostscript
+				$treffer | ForEach-Object {
+							$current = $_.Line
+							Write-Verbose "Zeile $($_.LineNumber) die geändert werden muss: $current"
+							Write-Verbose "Zeile: $($content[$_.LineNumber-1])"
+							$current = $current.SubString(0, $current.LastIndexOf("\"))
+							$current = $current.SubString($current.IndexOf("=")+1)
+							Write-Verbose "Pfad der ausgetauscht werden muss: $current"
+							$content[$_.LineNumber-1] = $content[$_.LineNumber-1].replace($current, $PathGhostscript)
+							Write-Verbose "so sollte es aussehen: $($content[$_.LineNumber-1].replace($current, $PathGhostscript))"
+				}
+				$content| Set-Content $PathDelaproGhostscript
 			}
-			$content| Set-Content $PathDelaproGhostscript
 		}
 	}
 }
