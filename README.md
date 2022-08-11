@@ -299,6 +299,7 @@ TODO: NETZDRCK.XML sollte als Basiskonfiguration gelten. Daraus sollte dann dyna
 
 NETZDRCK.XML:
 ```XML
+<?xml version="1.0" encoding="utf-8" ?>
 <Delapro>
     <Konfiguration>
         <Delaprodrucker Name='HPLJ'>
@@ -311,7 +312,7 @@ NETZDRCK.XML:
                     <!-- Name der Druckerwarteschlange -->
                     HP Laserjet D605
                 </Drucker>
-                <Drucker="DLP_PRGVRT" TypeValue="Station1" ID='3'>
+                <Drucker Type="DLP_PRGVRT" TypeValue="Station1" ID='3'>
                     <!-- Name der Druckerwarteschlange -->
                     HP Laserjet D607
                 </Drucker>
@@ -331,7 +332,7 @@ NETZDRCK.XML:
                     <!-- Name der Druckerwarteschlange -->
                     Kyocera D605
                 </Drucker>
-                <Drucker="DLP_PRGVRT" TypeValue="Station1" ID='7'>
+                <Drucker Type="DLP_PRGVRT" TypeValue="Station1" ID='7'>
                     <!-- Name der Druckerwarteschlange -->
                     Kyocera D607
                 </Drucker>
