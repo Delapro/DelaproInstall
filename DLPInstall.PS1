@@ -367,12 +367,12 @@ Function Remove-ScheduledTaskSimple {
 		[String]$Taskname
 	)
 
-	$args = @(
+	$argList = @(
 		"/Delete",
 		"/TN", $Taskname  # Name des Tasks
 	)
 
-	Start-Process -FilePath "SchTasks.EXE" -ArgumentList $args
+	Start-Process -FilePath "SchTasks.EXE" -ArgumentList $argList
 }
 
 Function New-ScheduledTaskSimpleAfterLogin {
@@ -2566,7 +2566,7 @@ Function Get-ThunderbirdUpdates {
 	$updateXMLFile = Join-Path $thunderbirdTempPath -ChildPath "updates.xml"
 	If (Test-Path $updateXMLFile) {
 		$updates = [xml](Get-Content $updateXMLFile)
-		$updates.updates.update | where name -match 'Thunderbird'
+		$updates.updates.update | Where-Object name -match 'Thunderbird'
 	}
 }
 
@@ -2589,9 +2589,9 @@ Function Disable-ThunderbirdUpdates {
 	user_pref("app.update.service.enabled", false);
 "@
 
-	$profile = Get-ThunderbirdProfile| Where-Object name -eq "default"
-	If (Test-Path $profile.FullPathName) {
-		$userJSPath = Join-Path -Path $profile.FullPathName -ChildPath "user.js"
+	$TBprofile = Get-ThunderbirdProfile| Where-Object name -eq "default"
+	If (Test-Path $TBprofile.FullPathName) {
+		$userJSPath = Join-Path -Path $TBprofile.FullPathName -ChildPath "user.js"
 		If (Test-Path $userJSPath) {
 			Write-Verbose "$userJSPath existiert bereits lege .js.bak-Datei an"
 			Copy-Item $userJSPath -Destination $userJSPath.Replace('.js', '.js.bak') -Force
@@ -3834,16 +3834,16 @@ Function Show-ReliabilityMonitor {
 Function Convert-EventData {
 	[CmdletBinding()]
 	Param(
-		[System.Diagnostics.Eventing.Reader.EventRecord]$Event
+		[System.Diagnostics.Eventing.Reader.EventRecord]$EventRecord
 	)
 
-	$eventXML = [xml]$Event.ToXml()
+	$eventXML = [xml]$EventRecord.ToXml()
     # Eventproperties anfügen
     For ($i=0; $i -lt $eventXML.Event.EventData.Data.Count; $i++) {
         # Append these as object properties
-        Add-Member -InputObject $Event -MemberType NoteProperty -Force -Name $eventXML.Event.EventData.Data[$i].name -Value $eventXML.Event.EventData.Data[$i].'#text'
+        Add-Member -InputObject $EventRecord -MemberType NoteProperty -Force -Name $eventXML.Event.EventData.Data[$i].name -Value $eventXML.Event.EventData.Data[$i].'#text'
 	}
-	$Event
+	$EventRecord
 }
 
 # prüft, ob ein Printerport mit dem angegebenen Namen vorhanden ist
