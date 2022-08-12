@@ -5717,6 +5717,7 @@ $DelaproInstParameter = @{
 					  'AntiMalware')
 }
 
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Scope='Function')]
 $DelaproInstParameterFromBackup = @{
 	DlpPath = $DlpPath
 	DlpGamePath = $DlpGamePath
@@ -5727,6 +5728,7 @@ $DelaproInstParameterFromBackup = @{
 }
 
 # Variante mit Datenimport aus Verzeichnis, ohne Acrobat, Thunderbird, Chrome und Antimalware
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Scope='Function')]
 $DelaproInstParameterMitDataImport = @{
 	DlpPath = $DlpPath
 	DlpGamePath = $DlpGamePath
