@@ -4038,6 +4038,70 @@ Function Install-DelaproMailPrinter {
 
 }
 
+Function Add-DelaproNetPrinter {
+    [CmdletBinding()]
+    [OutputType([void])]
+    Param
+    (
+#        [Parameter(Mandatory=$true,
+#                   Position=0)]
+         [String]$XmlFile='.\NetzDrck.XML'
+		,[String]$DelaproPrinter
+		,[String]$PrinterName
+		,[ValidateSet('Computername', 'Username', 'Dlp_PrgVrt')][String]$Type
+		,[Alias("Value")][String]$TypeValue
+    )
+
+	If (Test-Path $XmlFile) {
+		$xml = [xml](Get-Content -Path $XmlFile)
+	} else {
+		$xml = [xml]@"
+<?xml version="1.0" encoding="utf-8" ?>
+<Delapro>
+  <Konfiguration>
+  </Konfiguration>
+</Delapro>
+"@
+	}
+
+	# letzte ID ermitteln, gegebenfalls 0
+	$lastID = 0
+	$id=$xml.SelectNodes('//@ID') # alle ID-Attribute sammeln
+	If ($id.Count -gt 0) {
+		# Ids in Nummern wandeln und sortieren
+		$ids=$id|Select-Object -Property @{N='Id';E={[int]$_.'#text'}}| Sort-Object -Property id
+		$lastID = $ids[-1].ID
+	}
+	$lastID ++
+
+	# Delaprodrucker schon vorhanden?
+	$DlpPrinterNode = $xml.SelectSingleNode("//Delaprodrucker[@Name='$DelaproPrinter']")
+    If ($null -eq $DlpPrinterNode) {
+		$DlpPrinterNode = [xml]"<Delaprodrucker Name='$DelaproPrinter'><Netzwerkdrucker/></Delaprodrucker>"
+		$newNode = $xml.ImportNode($DlpPrinterNode.Delaprodrucker, $true)
+		$xml.Delapro.Childnodes[0].AppendChild($newNode) # Childnodes[0] ist Konfiguration, anders gehts nicht
+		# jetzt können wir den betreffenden Node finden
+		$DlpPrinterNode = $xml.SelectSingleNode("//Delaprodrucker[@Name='$DelaproPrinter']")
+	}
+
+	$Druckernode= [xml]"<Drucker Type='$Type' TypeValue='$TypeValue' ID='$lastID'>$Printername</Drucker>"
+	$NewNode = $xml.ImportNode($Druckernode.Drucker, $true)
+
+#	If ($null -eq $DlpPrinterNode.ChildNodes[0].hasChildren) {
+		$DlpPrinterNode.ChildNodes[0].AppendChild($newNode)
+#	} else {
+#		$DlpPrinterNode.ChildNodes[0].AppendChild($newNode)
+#	}
+
+	# $DlpPrinterNode.Netzwerkdrucker.InsertAfter($newNode, $DlpPrinterNode.Netzwerkdrucker)
+
+#	$newNode = $xml.ImportNode($newNode.appSettings,$true)
+#	$xml.configuration.InsertAfter($newNode,$foundNode) |out-null
+
+	#Set-Content -Path $XmlFile
+	$xml.Save($XmlFile)
+}
+
 <#
 .Synopsis
    Ruft das VDDS Prüfmodul auf und öffnet ein Explorer-Fenster mit der übergebenen Datei selektiert
