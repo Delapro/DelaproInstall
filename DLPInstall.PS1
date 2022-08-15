@@ -4084,6 +4084,14 @@ Function Add-DelaproNetPrinter {
 		$DlpPrinterNode = $xml.SelectSingleNode("//Delaprodrucker[@Name='$DelaproPrinter']")
 	}
 
+	If ($TypeValue.Length -eq 0) {
+		switch ($Type) {
+			"Computername"	{$TypeValue = $env:COMPUTERNAME}
+			"Username"		{$TypeValue = $env:USERNAME}
+			"Dlp_PrgVrt"	{$TypeValue = $env:DLp_PrgVrt}
+		}
+	}
+
 	$Druckernode= [xml]"<Drucker Type='$Type' TypeValue='$TypeValue' ID='$lastID'>$Printername</Drucker>"
 	$NewNode = $xml.ImportNode($Druckernode.Drucker, $true)
 
