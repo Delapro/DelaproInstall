@@ -4120,6 +4120,7 @@ Function Get-DelaproNetPrinter {
          [String]$XmlFile='.\NetzDrck.XML'
     )
 
+	# für die Ausgabe als Tabelle: https://learn-powershell.net/2013/08/03/quick-hits-set-the-default-property-display-in-powershell-on-custom-objects/
 	$defaultDisplaySet = 'DelaproPrinter','Printername','Type','TypeValue'
 	$defaultDisplayPropertySet = New-Object System.Management.Automation.PSPropertySet('DefaultDisplayPropertySet',[string[]]$defaultDisplaySet)
 	$PSStandardMembers = [System.Management.Automation.PSMemberInfo[]]@($defaultDisplayPropertySet)
@@ -4144,7 +4145,7 @@ Function Get-DelaproNetPrinter {
 
 				$object.PSObject.TypeNames.Insert(0,'Delapro.Netzwerkdrucker')
 				$object | Add-Member MemberSet PSStandardMembers $PSStandardMembers
-				
+
 				$Object
 			}
 		}
