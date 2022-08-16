@@ -4110,6 +4110,38 @@ Function Add-DelaproNetPrinter {
 	$xml.Save($XmlFile)
 }
 
+Function Get-DelaproNetPrinter {
+    [CmdletBinding()]
+    [OutputType([void])]
+    Param
+    (
+#        [Parameter(Mandatory=$true,
+#                   Position=0)]
+         [String]$XmlFile='.\NetzDrck.XML'
+    )
+
+	If (Test-Path $XmlFile) {
+		$xml = [xml](Get-Content -Path $XmlFile)
+	} else {
+		$xml = [xml]''
+	}
+
+	$DlpPrinterNodes = $xml.SelectNodes("//Delaprodrucker")
+    If ($null -ne $DlpPrinterNodes) {
+		foreach ($DlpPrinterNode in $DlpPrinterNodes) {
+			foreach ($Drucker in $DlpPrinterNode.Netzwerkdrucker.Drucker) {
+				[PSCustomObject]@{
+					 DelaproPrinter = $DlpPrinterNode.Name
+					;PrinterName = $Drucker.'#text'
+					;Type = $Drucker.Type
+					;TypeValue = $Drucker.TypeValue
+					;ID = $Drucker.ID
+				}
+			}
+		}
+	}
+}
+
 <#
 .Synopsis
    Ruft das VDDS Prüfmodul auf und öffnet ein Explorer-Fenster mit der übergebenen Datei selektiert
