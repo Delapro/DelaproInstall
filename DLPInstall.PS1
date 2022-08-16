@@ -4120,6 +4120,10 @@ Function Get-DelaproNetPrinter {
          [String]$XmlFile='.\NetzDrck.XML'
     )
 
+	$defaultDisplaySet = 'DelaproPrinter','Printername','Type','TypeValue'
+	$defaultDisplayPropertySet = New-Object System.Management.Automation.PSPropertySet('DefaultDisplayPropertySet',[string[]]$defaultDisplaySet)
+	$PSStandardMembers = [System.Management.Automation.PSMemberInfo[]]@($defaultDisplayPropertySet)
+	
 	If (Test-Path $XmlFile) {
 		$xml = [xml](Get-Content -Path $XmlFile)
 	} else {
@@ -4130,16 +4134,23 @@ Function Get-DelaproNetPrinter {
     If ($null -ne $DlpPrinterNodes) {
 		foreach ($DlpPrinterNode in $DlpPrinterNodes) {
 			foreach ($Drucker in $DlpPrinterNode.Netzwerkdrucker.Drucker) {
-				[PSCustomObject]@{
+				$object = [PSCustomObject]@{
 					 DelaproPrinter = $DlpPrinterNode.Name
 					;PrinterName = $Drucker.'#text'
 					;Type = $Drucker.Type
 					;TypeValue = $Drucker.TypeValue
 					;ID = $Drucker.ID
 				}
+
+				$object.PSObject.TypeNames.Insert(0,'Delapro.Netzwerkdrucker')
+				$object | Add-Member MemberSet PSStandardMembers $PSStandardMembers
+				
+				$Object
 			}
 		}
 	}
+
+
 }
 
 <#
