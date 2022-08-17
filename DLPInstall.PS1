@@ -4121,9 +4121,9 @@ Function Get-DelaproNetPrinter {
     )
 
 	# für die Ausgabe als Tabelle: https://learn-powershell.net/2013/08/03/quick-hits-set-the-default-property-display-in-powershell-on-custom-objects/
-	$defaultDisplaySet = 'DelaproPrinter','Printername','Type','TypeValue'
-	$defaultDisplayPropertySet = New-Object System.Management.Automation.PSPropertySet('DefaultDisplayPropertySet',[string[]]$defaultDisplaySet)
-	$PSStandardMembers = [System.Management.Automation.PSMemberInfo[]]@($defaultDisplayPropertySet)
+#	$defaultDisplaySet = 'DelaproPrinter','Printername','Type','TypeValue'#,'Id'
+#	$defaultDisplayPropertySet = New-Object System.Management.Automation.PSPropertySet('DefaultDisplayPropertySet',[string[]]$defaultDisplaySet)
+#	$PSStandardMembers = [System.Management.Automation.PSMemberInfo[]]@($defaultDisplayPropertySet)
 	
 	If (Test-Path $XmlFile) {
 		$xml = [xml](Get-Content -Path $XmlFile)
@@ -4140,18 +4140,19 @@ Function Get-DelaproNetPrinter {
 					;PrinterName = $Drucker.'#text'
 					;Type = $Drucker.Type
 					;TypeValue = $Drucker.TypeValue
-					;ID = $Drucker.ID
+					;ID = [int]$Drucker.ID
 				}
-
-				$object.PSObject.TypeNames.Insert(0,'Delapro.Netzwerkdrucker')
-				$object | Add-Member MemberSet PSStandardMembers $PSStandardMembers
+				
+				$object.PSTypeNames.Insert(0,'Delapro.Netzwerkdrucker')
+#				$object | Add-Member MemberSet PSStandardMembers $PSStandardMembers
 
 				$Object
 			}
 		}
 	}
-
-
+	If ($null -eq (Get-TypeData 'Delapro.Netzwerkdrucker')) {
+		Update-TypeData -TypeName 'Delapro.Netzwerkdrucker' -DefaultDisplayPropertySet Id, DelaproPrinter,Printername,Type,TypeValue -DefaultKeyPropertySet Printername
+	}
 }
 
 <#
