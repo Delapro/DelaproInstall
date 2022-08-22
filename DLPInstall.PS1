@@ -4155,6 +4155,28 @@ Function Get-DelaproNetPrinter {
 	}
 }
 
+Function Remove-DelaproNetPrinter {
+    [CmdletBinding()]
+    [OutputType([void])]
+    Param
+    (
+         [String]$XmlFile='.\NetzDrck.XML'
+		,[Int]$Id
+    )
+
+	If (Test-Path $XmlFile) {
+		$xml = [xml](Get-Content -Path $XmlFile)
+	}
+
+	# ID ermitteln
+	$node=$xml.SelectSingleNode("Delapro/Konfiguration/Delaprodrucker/Netzwerkdrucker/Drucker[@ID='$ID']") # alle ID-Attribute sammeln
+	If ($null -ne $node) {
+		$node.ParentNode.RemoveChild($node)
+		$xml.Save($XmlFile)
+	}
+
+}
+
 <#
 .Synopsis
    Ruft das VDDS Prüfmodul auf und öffnet ein Explorer-Fenster mit der übergebenen Datei selektiert
