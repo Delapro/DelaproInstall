@@ -4161,7 +4161,8 @@ Function Remove-DelaproNetPrinter {
     Param
     (
          [String]$XmlFile='.\NetzDrck.XML'
-		,[Int]$Id
+		,[Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+		 [Int]$Id
     )
 
 	If (Test-Path $XmlFile) {
