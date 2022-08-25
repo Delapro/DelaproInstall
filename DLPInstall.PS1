@@ -4178,6 +4178,28 @@ Function Remove-DelaproNetPrinter {
 
 }
 
+# weißt einem Drucker temporär einen anderen Druckerport zu dadurch wird
+# meist erreicht, dass der WSD-Drucker danach funktioniert
+Function Reset-WSD {
+	[CmdletBinding()]
+	Param(
+		[String]$PrinterName
+	)
+  
+	$tempPortName = 'TempResetPort'
+	$p = Get-Printer -Name $Printername
+	$pp = $p.Portname
+	
+	Add-PrinterPort -Name $tempPortName -PrinterHostAddress '0.0.0.0' -Verbose
+	$p | Set-Printer -Portname $tempPortName -Verbose
+	$p | Set-Printer -Portname $pp -Verbose
+  
+	Remove-PrinterPort -Name $tempPortName
+  
+	# gegebenfalls noch einen Spoolerneustart durchführen
+}
+
+  
 <#
 .Synopsis
    Ruft das VDDS Prüfmodul auf und öffnet ein Explorer-Fenster mit der übergebenen Datei selektiert
