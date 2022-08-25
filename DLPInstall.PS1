@@ -4183,6 +4183,8 @@ Function Remove-DelaproNetPrinter {
 Function Reset-WSD {
 	[CmdletBinding()]
 	Param(
+		[Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
+		[Alias('Name')] # damit Name von Get-Printer verstanden wird
 		[String]$PrinterName
 	)
   
@@ -4194,7 +4196,7 @@ Function Reset-WSD {
 	$p | Set-Printer -Portname $tempPortName -Verbose
 	$p | Set-Printer -Portname $pp -Verbose
   
-	Remove-PrinterPort -Name $tempPortName
+	Remove-PrinterPort -Name $tempPortName -Verbose
   
 	# gegebenfalls noch einen Spoolerneustart durchführen
 }
