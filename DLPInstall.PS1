@@ -4257,8 +4257,9 @@ Function Install-DPF {
 	)
 
 	Start-Process "https://www.kzbv.de/digitale-planungshilfe-dpf.336.de.html"
-	$version = "u3-1-0-0"
-	$id = 'd935d93fa50c805621bf4283d724cabb'
+	# https://www.kzbv.de/dpf-u3-1-6-0.download.274fbc588b6209fb299d221cc7114630.zip
+	$version = "u3-1-6-0"
+	$id = '274fbc588b6209fb299d221cc7114630' # 'd935d93fa50c805621bf4283d724cabb'
 	$url = "https://www.kzbv.de/dpf-$($version).download.$($id).zip"
 
 	Start-BitsTransfer -Source $url -Destination "$tempDirectory\DPF.zip"
