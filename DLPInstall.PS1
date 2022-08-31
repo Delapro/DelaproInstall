@@ -5878,6 +5878,8 @@ Function Install-DelaproNetClientSetup {
 
 	# TODO: Netzlaufwerk noch beachten und Delapro-Verknüpfung entsprechend anpassen,
 	# evtl. auch noch die Netzlaufwerkverbindung herstellen
+	# TODO: Hinweise von https://github.com/Delapro/DelaproInstallNet#umstellung-von-einzelplatz--auf-netzwerkversion
+	# beachten
 	
 	$DelaproInstParameterTest = @{
 		DlpPath = $DlpPath
