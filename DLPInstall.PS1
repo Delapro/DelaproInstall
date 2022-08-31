@@ -5867,6 +5867,29 @@ Function Install-DelaproTestSetup {
 	Set-LaborIdentifikation
 }
 
+<# 
+Installiert das übliche Delapro Netz-Client-Setup
+#>
+Function Install-DelaproNetClientSetup {
+	[CmdletBinding()]
+	Param (
+		[String]$Netzlaufwerk
+	)
+
+	# TODO: Netzlaufwerk noch beachten und Delapro-Verknüpfung entsprechend anpassen,
+	# evtl. auch noch die Netzlaufwerkverbindung herstellen
+	
+	$DelaproInstParameterTest = @{
+		DlpPath = $DlpPath
+		DlpGamePath = $DlpGamePath
+		DlpInstPath = $DlpInstPath
+		InstallSwitch = @('Main', 'Image', 'Chart', 'Zert', 'TeamViewer', 'AnyDesk', 'Mailer',
+							'eDocPrintPro')	
+	}
+
+	Install-Delapro @DelaproInstParameterTest
+}
+
 #If($PSReadlineActive) {
 #	# PSReadline wieder aktiveren, falls es vorher ausgeschaltet wurde.
 #	Import-Module PSReadline
