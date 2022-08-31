@@ -246,7 +246,12 @@ Set-Printer -Name "DelaproMail" -Drivername "Xerox Global Print Driver V4 PS"
 # keine PDF-Datei vorhanden ist
 # Lösung bringt die Installation der C++-Runtime für 64-Bit:
 https://aka.ms/vs/16/release/vc_redist.x64.exe
-
+# Der Aufruf von gswin64c.exe wenn VCRuntime140.dll fehlt, bringt die Fehlermeldungen:
+#   Can't load Ghostscript DLL
+#   Can't load DLL, LoadLibrary error code 126
+# d. h. der Aufruf mit
+# & "$(Get-GhostScriptExecutable)" -v
+# wird wie oben quitiert
 ```
 
 ### Ghostscript ältere Versionen unterstützen
