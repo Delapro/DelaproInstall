@@ -110,12 +110,29 @@ Function Install-StartBitsTransfer {
 			} finally {
 			  $wc.Dispose()
 			}
-
+			[console]::TreatControlCAsInput = $true
 			while ($job1.state -ne "Stopped" -and $job2.state -ne "Stopped") {
-			  Start-Sleep -Milliseconds 100
+				if ([console]::KeyAvailable)
+				{
+					$key = [system.console]::readkey($true)
+					if (($key.modifiers -band [consolemodifiers]"control") -and ($key.key -eq "C"))
+					{
+						Write-Host "Try Terminating..."
+						# klappt aber noch nicht
+						break
+					}
+				}
+				Start-Sleep -Milliseconds 100
 			}
+			[console]::TreatControlCAsInput = $false
 
-			Remove-Job $job1, $Job2
+			# wissenwertes zum Thema: https://blog.ironmansoftware.com/powershell-async-method/
+			# ohne Progressbar: https://gist.github.com/SidShetye/3d0570d8514f4388346d8af9f314920c
+			# noch weitere Informationen:
+			# https://stackoverflow.com/questions/4926060/powershell-runspace-problem-with-downloadfileasync
+			# https://stackoverflow.com/questions/73474912/powershell-100-ensure-idisposable-is-disposed-with-async-operations
+
+			Remove-Job $job1, $Job2 -Force
 
 		}
 	}
