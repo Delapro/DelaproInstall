@@ -3347,14 +3347,25 @@ Function Test-DelaproFormsAnomality {
 	}
 }
 
-# versucht den aktuellen Delapropfad zu ermitteln
+# versucht den aktuellen Delapropfad zu ermitteln, dazu werden Verknüpfungen zu Delapro gesucht
 Function Get-DelaproPath{
+	[CmdletBinding()]
+	Param(
+		 [String]$DlpLnkFile = 'Delapro.Lnk'
+		,[switch]$Delagame
+	)
 
+	Write-Verbose "Suche nach $DlpLnkFile"
 	$DlpPath='C:\Delapro'
+
+	If ([System.Management.Automation.WildcardPattern]::ContainsWildcardCharacters($DlpLnkFile)) {
+		# TODO: Get-DesktopFolder Currentuser und Public holen und nach $DlpLnkFile schauen
+	}
+
 	# TODO: auch noch zu beachten mehrere Verknüpfungen, für verschiedene Mandanten!
 	# oder die bessere Variante, den Pfad aus der Verknüpfung vom Desktop auslesen
 	# nach Delapro.exe Ausschau halten:  TargetPath       : C:\Delapro\Delapro.exe
-	$DlpPath=(Get-FileShortCut -LinkFilename Delapro.Lnk -Folder (Get-DesktopFolder -CurrentUser)).WorkingDirectory
+	$DlpPath=(Get-FileShortCut -LinkFilename $DlpLnkFile -Folder (Get-DesktopFolder -CurrentUser)).WorkingDirectory
 	# vor dem Prüfen muss getestet werden, ob die Shell mit Adminrechten läuft, da gerade hier oft die Verbindung
 	# der Laufwerke nachgeholt werden muss
 	If (Test-Admin) {
@@ -3364,10 +3375,13 @@ Function Get-DelaproPath{
 		# TODO
 	}
 	If ($DlpPath -eq '' -or $null -eq $DlpPath -or (-Not (Test-Path $DlpPath))) {
-		$DlpPath=(Get-FileShortCut -LinkFilename Delapro.Lnk).WorkingDirectory
+		$DlpPath=(Get-FileShortCut -LinkFilename $DlpLnkFile).WorkingDirectory
 		If ($DlpPath -eq '' -or $null -eq $DlpPath -or (-Not (Test-Path $DlpPath))) {
 			$DlpPath='C:\Delapro' # Standardpfad setzen
 		}
+	}
+	If ($DelaGame) {
+		$DlpPath = $DlpPath.Replace('\Delapro', '\DelaGame').Replace('\DELAPRO', '\DelaGame').Replace('\delapro', '\DelaGame')
 	}
 	$DlpPath
 }
