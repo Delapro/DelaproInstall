@@ -3362,10 +3362,8 @@ Function Get-DelaproPath{
 		Write-Verbose "Wildcardsuche aktiv"
 		$files = Get-ChildItem "$(Get-DesktopFolder -CurrentUser)\$DlpLnkFile"
 		$files | ForEach-Object {Get-DelaproPath -DlpLnkFile $_.Name -Delagame:$Delagame}
-		If (Test-Admin) {
-			$files = Get-ChildItem "$(Get-DesktopFolder -AllUsers)\$DlpLnkFile"
-			$files | ForEach-Object {Get-DelaproPath -DlpLnkFile $_.Name -Delagame:$Delagame}	
-		}
+		$files = Get-ChildItem "$(Get-DesktopFolder -AllUsers)\$DlpLnkFile"
+		$files | ForEach-Object {Get-DelaproPath -DlpLnkFile $_.Name -Delagame:$Delagame}	
 	} else {
 		# TODO: auch noch zu beachten mehrere Verknüpfungen, für verschiedene Mandanten!
 		# oder die bessere Variante, den Pfad aus der Verknüpfung vom Desktop auslesen
