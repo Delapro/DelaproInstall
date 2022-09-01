@@ -3355,35 +3355,41 @@ Function Get-DelaproPath{
 		,[switch]$Delagame
 	)
 
-	Write-Verbose "Suche nach $DlpLnkFile"
+	Write-Verbose "Suche nach '$DlpLnkFile'"
 	$DlpPath='C:\Delapro'
 
 	If ([System.Management.Automation.WildcardPattern]::ContainsWildcardCharacters($DlpLnkFile)) {
-		# TODO: Get-DesktopFolder Currentuser und Public holen und nach $DlpLnkFile schauen
-	}
-
-	# TODO: auch noch zu beachten mehrere Verknüpfungen, für verschiedene Mandanten!
-	# oder die bessere Variante, den Pfad aus der Verknüpfung vom Desktop auslesen
-	# nach Delapro.exe Ausschau halten:  TargetPath       : C:\Delapro\Delapro.exe
-	$DlpPath=(Get-FileShortCut -LinkFilename $DlpLnkFile -Folder (Get-DesktopFolder -CurrentUser)).WorkingDirectory
-	# vor dem Prüfen muss getestet werden, ob die Shell mit Adminrechten läuft, da gerade hier oft die Verbindung
-	# der Laufwerke nachgeholt werden muss
-	If (Test-Admin) {
-		# wenn der aktuelle Benutzer als Admin unterwegs ist, müssen noch die Laufwerke
-		# hergestellt werden
-		# dies gilts dabei zu beachten: https://devblogs.microsoft.com/oldnewthing/20190425-00/?p=102443
-		# TODO
-	}
-	If ($DlpPath -eq '' -or $null -eq $DlpPath -or (-Not (Test-Path $DlpPath))) {
-		$DlpPath=(Get-FileShortCut -LinkFilename $DlpLnkFile).WorkingDirectory
-		If ($DlpPath -eq '' -or $null -eq $DlpPath -or (-Not (Test-Path $DlpPath))) {
-			$DlpPath='C:\Delapro' # Standardpfad setzen
+		Write-Verbose "Wildcardsuche aktiv"
+		$files = Get-ChildItem "$(Get-DesktopFolder -CurrentUser)\$DlpLnkFile"
+		$files | ForEach-Object {Get-DelaproPath -DlpLnkFile $_.Name -Delagame:$Delagame}
+		If (Test-Admin) {
+			$files = Get-ChildItem "$(Get-DesktopFolder -AllUsers)\$DlpLnkFile"
+			$files | ForEach-Object {Get-DelaproPath -DlpLnkFile $_.Name -Delagame:$Delagame}	
 		}
+	} else {
+		# TODO: auch noch zu beachten mehrere Verknüpfungen, für verschiedene Mandanten!
+		# oder die bessere Variante, den Pfad aus der Verknüpfung vom Desktop auslesen
+		# nach Delapro.exe Ausschau halten:  TargetPath       : C:\Delapro\Delapro.exe
+		$DlpPath=(Get-FileShortCut -LinkFilename $DlpLnkFile -Folder (Get-DesktopFolder -CurrentUser)).WorkingDirectory
+		# vor dem Prüfen muss getestet werden, ob die Shell mit Adminrechten läuft, da gerade hier oft die Verbindung
+		# der Laufwerke nachgeholt werden muss
+		If (Test-Admin) {
+			# wenn der aktuelle Benutzer als Admin unterwegs ist, müssen noch die Laufwerke
+			# hergestellt werden
+			# dies gilts dabei zu beachten: https://devblogs.microsoft.com/oldnewthing/20190425-00/?p=102443
+			# TODO
+		}
+		If ($DlpPath -eq '' -or $null -eq $DlpPath -or (-Not (Test-Path $DlpPath))) {
+			$DlpPath=(Get-FileShortCut -LinkFilename $DlpLnkFile).WorkingDirectory
+			If ($DlpPath -eq '' -or $null -eq $DlpPath -or (-Not (Test-Path $DlpPath))) {
+				$DlpPath='C:\Delapro' # Standardpfad setzen
+			}
+		}
+		If ($DelaGame) {
+			$DlpPath = $DlpPath.Replace('\Delapro', '\DelaGame').Replace('\DELAPRO', '\DelaGame').Replace('\delapro', '\DelaGame')
+		}
+		$DlpPath
 	}
-	If ($DelaGame) {
-		$DlpPath = $DlpPath.Replace('\Delapro', '\DelaGame').Replace('\DELAPRO', '\DelaGame').Replace('\delapro', '\DelaGame')
-	}
-	$DlpPath
 }
 
 # spielt ein Delapro-PreUpdate ein, bzw. bereitet das Einspielen eines Updates bevor, aktualisiert die Fernwartung
