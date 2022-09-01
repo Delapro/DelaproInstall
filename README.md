@@ -79,9 +79,11 @@ $DlpPath=(Resolve-Path .).Path
 $DlpPath
 
 # oder 
+$DlpPath = Get-DelaproPath -DlpLnkFile Dela*.Lnk # für Mandanten
 $DlpPath = Get-DelaproPath
 $DlpPath
-# TODO: $DlpGamePath noch anpassen und prüfen, wenn $DlpPath von C:\Delapro abweicht!
+$DlpGamePath = Get-DelaproPath -Delagame
+$DlpGamePath
 ```
 
 ```Powershell
