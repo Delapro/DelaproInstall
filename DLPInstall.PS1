@@ -3358,6 +3358,8 @@ Function Get-DelaproPath{
 	Write-Verbose "Suche nach '$DlpLnkFile'"
 	$DlpPath='C:\Delapro'
 
+	# TODO: Auch Startmenülinks beachten: C:\ProgramData\Microsoft\Windows\Start Menu\Programs
+	#       also $env:programdata\...
 	If ([System.Management.Automation.WildcardPattern]::ContainsWildcardCharacters($DlpLnkFile)) {
 		Write-Verbose "Wildcardsuche aktiv"
 		$files = Get-ChildItem "$(Get-DesktopFolder -CurrentUser)\$DlpLnkFile"
