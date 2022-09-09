@@ -5546,10 +5546,13 @@ Function Set-LaborIdentifikation {
 Labor-ID="                    "`r
 // Primärer Herstellungsort`r
 Herstellungsort="D-GD"`r
-Abrechnungsbereich=BW `r
+Abrechnungsbereich=BW`r
 "@
 
 	$LaborIdent | Add-Content -Path $iniPath  -Encoding oem
+
+	# oder alternative über
+	# .\dlp_conf.exe /INISET DLP_MAIN.INI Labor Abrechnungsbereich "BW" "Abrechnungsbereich für XML-Datei"
 }
 
 Function Get-DelaproInstallPreparation {
