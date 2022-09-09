@@ -5719,7 +5719,7 @@ Function Install-Delapro {
 
 	Install-MissingPowershellCmdLets
 
-	New-Item $DlpPath -ItemType Directory
+	New-Item $DlpPath -ItemType Directory -ErrorAction SilentlyContinue # Fehler ignorieren, falls Verzeichnis schon da
 	# Prüfen, ob Verzeichnis angelegt werden konnte oder nicht, denn sonst bestehen
 	# evtl. Probleme mit Berechtigungen, wegen Netz usw.
 	If (-not (Test-Path $DlpPath)) {
