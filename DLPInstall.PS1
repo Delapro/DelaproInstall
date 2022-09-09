@@ -3299,8 +3299,12 @@ Function Invoke-DelaproUpdate {
 						Test-DelaproFormsAnomality $DlpPath -Verbose
 						Test-7ZipDLLMissing $DlpPath -Verbose
 						$licNew = Get-DelaproLicense -CompareParts -DelaproPath $DlpPath
-						If (Compare-Object -ReferenceObject $licOld -DifferenceObject $licNew) {
-							Write-Error "Lizenzdifferenzen"
+						If ($null -eq $licOld) {
+							Write-Error "Keine alten Lizenzdaten gefunden"
+						} else {
+							If (Compare-Object -ReferenceObject $licOld -DifferenceObject $licNew) {
+								Write-Error "Lizenzdifferenzen"
+							}
 						}
 					}
 				} else {
