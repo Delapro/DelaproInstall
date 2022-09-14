@@ -824,21 +824,21 @@ Function Import-OldDLPVersion {
 	Write-Verbose "DestinationPfad: $DestinationPath"
 
 	Write-Verbose "Hauptprogramm einspielen"
-	Copy-Item "$SourcePath\*.*" $DestinationPath -Force -Verbose
+	Copy-Item -Path "$SourcePath\*.*" $DestinationPath -Force -Verbose
 
 	Write-Verbose "Laser-Verzeichnis einspielen"
-	Copy-Item "$SourcePath\Laser\DlpWin.M*" "$($DestinationPath)\Laser" -Force -Verbose
-	Copy-Item "$SourcePath\Laser\DlpWinIn.M*" "$($DestinationPath)\Laser" -Force -Verbose
-	Copy-Item "$SourcePath\Laser\*.BMP" "$($DestinationPath)\Laser" -Force -Verbose
-	Copy-Item "$SourcePath\Laser\*.JPG" "$($DestinationPath)\Laser" -Force -Verbose
-	Copy-Item "$SourcePath\Laser\*.PDF" "$($DestinationPath)\Laser" -Force -Verbose
+	Copy-Item -Path "$SourcePath\Laser\DlpWin.M*" "$($DestinationPath)\Laser" -Force -Verbose
+	Copy-Item -Path "$SourcePath\Laser\DlpWinIn.M*" "$($DestinationPath)\Laser" -Force -Verbose
+	Copy-Item -Path "$SourcePath\Laser\*.BMP" "$($DestinationPath)\Laser" -Force -Verbose
+	Copy-Item -Path "$SourcePath\Laser\*.JPG" "$($DestinationPath)\Laser" -Force -Verbose
+	Copy-Item -Path "$SourcePath\Laser\*.PDF" "$($DestinationPath)\Laser" -Force -Verbose
+	# LASER\GHOSTPDFX.BAT usw. koperen
+	Copy-Item -Path "$SourcePath\Laser\*GHOST*.BAT" "$($DestinationPath)\Laser" -Force -Verbose
+	# TODO: Abklären, ob noch die Ghostversion aktualisiert werden muss: Ja muss!
 
 	Write-Verbose "Windowsformulare vorhanden?"
 	If (Test-Path "$SourcePath\XMLForm") {
 		Copy-Item -Path "$SourcePath\XMLForm" "$($DestinationPath)" -Force -Verbose -Recurse
-		# LASER\GHOSTPDFX.BAT usw. koperen
-		Copy-Item -Path "$SourcePath\Laser\*Ghost*.BAT" "$($DestinationPath)\Laser" -Force -Verbose
-		# TODO: Abklären, ob noch die Ghostversion aktualisiert werden muss
 	}
 
 	Write-Verbose "Bildarchivierung vorhanden?"
@@ -5830,7 +5830,7 @@ Function Install-Delapro {
 		# zum Direkt einspielen
 		# Import-OldDLPVersion -SourcePath G: -DestinationPath "$($DLPPath)"
 		# Import-OldDLPVersion -SourcePath C:\DelaproAlt -DestinationPath "$($DLPPath)"
-
+		Update-DelaproGhostscript -PathDelaproGhostscript "$($DLPPath)\LASER" -Verbose
 		Invoke-CleanupDelapro -DelaproPath $DLPPath
 	}
 
@@ -5842,6 +5842,7 @@ Function Install-Delapro {
 
 	If ($InstallSwitch -contains "ImportData") {
 		Import-OldDLPVersion -SourcePath $ImportDataPath -DestinationPath "$($DLPPath)"
+		Update-DelaproGhostscript -PathDelaproGhostscript "$($DLPPath)\LASER" -Verbose
 		Invoke-CleanupDelapro -DelaproPath $DLPPath
 	}
 
