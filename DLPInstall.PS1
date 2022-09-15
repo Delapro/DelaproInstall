@@ -4533,8 +4533,8 @@ Function Install-VDDSPrueftool {
 	}
 	New-Item $tempDir -ItemType Directory
 
-	$filename="XML-Prueftool-Setup_1_06.zip"
-	Start-BitsTransfer -Source "http://www.vdds.de/documents/$filename" -Destination $tempDir
+	$filename="VDDS-XML-Prueftool-Setup_1.0.8.zip"
+	Start-BitsTransfer -Source "https://www.vdds.de/wp-content/uploads/$filename" -Destination $tempDir
 	Expand-Archive "$tempDir\$($filename)" -DestinationPath "$tempDir\Entpackt"
 
 	# spezielle Vorgehensweise wegen dem ü in ...Prüf...
@@ -4553,21 +4553,24 @@ Function Install-VDDSPrueftool {
 			}
 			$XSDFolder="$($ProgramsFolder)\VDDS\xsd"
 
-			If (Test-Path $XSDFolder) {
-				# die fehlenden XSD-Versionen herunterladen und in das Verzeichnis kopieren
-				Start-BitsTransfer -Source 'http://www.vdds.de/documents/Laborabrechnungsdaten_(KZBV-VDZI-VDDS)_(V4-4).zip' -Destination $tempDir
-				Expand-Archive "$tempDir\Laborabrechnungsdaten*.zip" -DestinationPath $tempDir
-				$XSDfile=Get-ChildItem "$tempDir\*.xsd" -Recurse
-				Copy-Item $XSDFile $XSDFolder
-			}
+			<#
+			  wird momentan nicht benötigt, da nun Version 1.08 alles enthält
+				If (Test-Path $XSDFolder) {
+					# die fehlenden XSD-Versionen herunterladen und in das Verzeichnis kopieren
+					Start-BitsTransfer -Source 'http://www.vdds.de/documents/Laborabrechnungsdaten_(KZBV-VDZI-VDDS)_(V4-4).zip' -Destination $tempDir
+					Expand-Archive "$tempDir\Laborabrechnungsdaten*.zip" -DestinationPath $tempDir
+					$XSDfile=Get-ChildItem "$tempDir\*.xsd" -Recurse
+					Copy-Item $XSDFile $XSDFolder
+				}
 
-			# zu guter letzt noch die neue XSD-Version dem Prüftool als Vorgabe hinterlegen
-			$confFile = "$($ProgramsFolder)\VDDS\VDDSXMLPrüfmodul.CONF"
-			If (Test-Path $confFile) {
-				$confContent = Get-Content -Path $confFile
-				$confContent = $confContent -replace "^default.xsd=.*;$", "default.xsd=$($XSDFile.Name);"
-				$confContent | Set-Content $confFile
-			}
+				# zu guter letzt noch die neue XSD-Version dem Prüftool als Vorgabe hinterlegen
+				$confFile = "$($ProgramsFolder)\VDDS\VDDSXMLPrüfmodul.CONF"
+				If (Test-Path $confFile) {
+					$confContent = Get-Content -Path $confFile
+					$confContent = $confContent -replace "^default.xsd=.*;$", "default.xsd=$($XSDFile.Name);"
+					$confContent | Set-Content $confFile
+				}
+			#>
 		}
 	}
 
