@@ -1401,6 +1401,7 @@ Function Invoke-PDFTextExtraction {
 		[String]$PDFFile,
 		[ValidateScript({throw "Not yet implemented"})]
 		[version]$Version,
+		[String]$PageList,
 		[String[]]$OptArgs
 	)
 
@@ -1409,9 +1410,13 @@ Function Invoke-PDFTextExtraction {
 	Write-Verbose "PDF: $PDFFile"
 	Write-Verbose "Text: $TXTFile"
 
+	If ($null -ne $PageList) {
+		throw "-PageList wird noch nicht unterstützt! Gibt Probleme mit txtwrite und auch pdfwrite"
+	}
 	$gsPathExe = Get-GhostScriptExecutable  # TODO: Version noch durchreichen
 	If ($gsPathExe) {
 		$arg = @("-sOutputFile=""$TXTFile""",
+					# "-sPageList=""$PageList""",
 					"-sDEVICE=txtwrite",
 					"-dTextFormat=3",  # UTF-8, see https://www.ghostscript.com/doc/current/VectorDevices.htm#TXT
 					"-dNOPAUSE",
