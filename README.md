@@ -1072,6 +1072,8 @@ Get-GhostScriptExecutable
 # Bei Problemen kann man Debugparameter aktivieren, siehe auch https://www.ghostscript.com/doc/current/Use.htm#Debug_switches
 & "$(Get-GhostScriptExecutable)" -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile="test.pdf" .\test.ps -dPDFDEBUG
 
+# bei den bestehenden Funktionen wie z. B. Invoke-PDFTextExtraction welches OptArgs unterstützt, kann man so die Debuggeschichten aktivieren: -OptArgs '-dINITDEBUG'
+
 # Konvertieren einer JPG-Datei in PDF
 # viewjpeg.ps kommt aus dem Ghostscript-Lib-Verzeichnis
 # viewJPEG ist case sensitiv und ruft die passende Prozedur auf
