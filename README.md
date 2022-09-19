@@ -787,6 +787,27 @@ $text = Invoke-PDFTextExtraction -PDFFile $pdf
 $text.Length
 ```
 
+Zum Beispiel die offiziellen BEL2-Kurzbezeichnungen:
+
+```Powershell
+Start-BitsTransfer -Source https://www.gkv-spitzenverband.de/media/dokumente/krankenversicherung_1/zahnaerztliche_versorgung/zahntechniker/BEL_II_01_01_2022.pdf
+$text = Invoke-PDFTextExtraction -PDFFile .\BEL_II_01_01_2022.pdf -Verbose
+# eigentlich sollte man nur die betreffenden Seiten extrahieren aber das klappt von Ghostscript aus nicht
+$text2=$text[4409..4670]| Out-String
+# RegEx-Ausdruck definiert drei benannte Gruppierungen
+$r=[regex]::Matches($text2, "(?'Nummer'[0-9]{3,3} [0-9])(?'Leer'\s*)(?'Bezeichnung'.*)")
+# die ersten fünf Positionen ausgeben
+$r|% {[PSCustomObject]@{Nummer=$_.groups['Nummer'].Value;Bezeichnung=$_.groups['Bezeichnung'].value.Trim()}}| select -First 5|ft -AutoSize
+
+    Nummer Bezeichnung
+    ------ -----------
+    001 0  Modell
+    001 5  Modell UKPS
+    001 8  Modell bei Implantatversorgung
+    002 1  Doublieren eines Modells
+    002 2  Platzhalter einfügen
+```
+
 ### Syncfusion aktivieren für Verschlüsselung
 
 ```Powershell
