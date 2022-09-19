@@ -1069,6 +1069,9 @@ Get-GhostScriptExecutable
 # Konvertieren einer Postscriptdatei in PDF
 & "$(Get-GhostScriptExecutable)" -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile="test.pdf" .\test.ps
 
+# Bei Problemen kann man Debugparameter aktivieren, siehe auch https://www.ghostscript.com/doc/current/Use.htm#Debug_switches
+& "$(Get-GhostScriptExecutable)" -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile="test.pdf" .\test.ps -dPDFDEBUG
+
 # Konvertieren einer JPG-Datei in PDF
 # viewjpeg.ps kommt aus dem Ghostscript-Lib-Verzeichnis
 # viewJPEG ist case sensitiv und ruft die passende Prozedur auf
