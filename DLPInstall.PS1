@@ -1410,7 +1410,7 @@ Function Invoke-PDFTextExtraction {
 	Write-Verbose "PDF: $PDFFile"
 	Write-Verbose "Text: $TXTFile"
 
-	If ($null -ne $PageList) {
+	If ($PageList.Length -ne 0) {
 		throw "-PageList wird noch nicht unterstützt! Gibt Probleme mit txtwrite und auch pdfwrite"
 	}
 	$gsPathExe = Get-GhostScriptExecutable  # TODO: Version noch durchreichen
