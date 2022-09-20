@@ -5549,13 +5549,15 @@ Function Set-LaborIdentifikation {
 		$ini[0..($ini.Length-2)] | Set-Content -Path $iniPath -Encoding Byte
 	}
 
+	# Bitte beachten, wie die Zeilenenden zustandekommen!!
 	$LaborIdent= @"
-`r`r[Labor]`r
+`r`n`r`n[Labor]`r
 // Die Labor-ID zur Identifikation des Labors`r
 Labor-ID="                    "`r
 // Primärer Herstellungsort`r
 Herstellungsort="D-GD"`r
 Abrechnungsbereich=BW`r
+`r
 "@
 
 	$LaborIdent | Add-Content -Path $iniPath  -Encoding oem
