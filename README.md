@@ -808,6 +808,16 @@ $r|% {[PSCustomObject]@{Nummer=$_.groups['Nummer'].Value;Bezeichnung=$_.groups['
     002 2  Platzhalter einfügen
 ```
 
+Oder die Beschreibungen pro Leistungsposition, wobei es hier noch etwas Nacharbeit bedarf:
+
+```Powershell
+Start-BitsTransfer -Source https://www.gkv-spitzenverband.de/media/dokumente/krankenversicherung_1/zahnaerztliche_versorgung/zahntechniker/BEL_II_01_01_2022.pdf
+$text = Invoke-PDFTextExtraction -PDFFile .\BEL_II_01_01_2022.pdf -Verbose
+$treffer=$text|Select-String 'Leistungsinhalt\s*L-Nr.'
+$textblock=@();$index=1;foreach($t in $treffer) {if ($index -lt $treffer.length) {$texttemp=($text[($t.Linenumber)..(($treffer[$index].lineNumber)-2)]|out-string).Trim();If($texttemp -match 'Seite .{1,3} von .{3,3}') {$texttemp=($text[($t.Linenumber)..(($treffer[$index].lineNumber)-4)]|out-string).Trim()}; $textblock+=$texttemp}; $index++}
+# TODO: Einzelnes Textblockelement aufbereiten und in Objekt überführen
+```
+
 ### Syncfusion aktivieren für Verschlüsselung
 
 ```Powershell
