@@ -826,7 +826,7 @@ Copy-Item .\SynPDFB.dll Syncfusion.Pdf.Base.dll
 # WICHTIG: Um Encryption unter Windows 7 nutzen zu können, wird WMF 5.1 benötigt!
 # ansonsten meldet KZBVExp.EXE Fehler 53, weil es die verschlüsselte Delapro.DPF
 # nicht erstellen kann.
-Notepad EncrPdf.Ps1
+Notepad .\EncrPdf.Ps1
 ```
 
 ## Autostart einrichten
