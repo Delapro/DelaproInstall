@@ -4906,6 +4906,7 @@ Function Get-EMailClients {
 Function Set-DefaultEMailClient {
 	[CmdletBinding()]
 	Param(
+		[Parameter(Mandatory,ValueFromPipeline)]
 		[String]$DefaultClient,
 		[switch]$System
 	)
