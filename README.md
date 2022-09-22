@@ -815,7 +815,9 @@ Start-BitsTransfer -Source https://www.gkv-spitzenverband.de/media/dokumente/kra
 $text = Invoke-PDFTextExtraction -PDFFile .\BEL_II_01_01_2022.pdf -Verbose
 $treffer=$text|Select-String 'Leistungsinhalt\s*L-Nr.'
 $textblock=@();$index=1;foreach($t in $treffer) {if ($index -lt $treffer.length) {$texttemp=($text[($t.Linenumber)..(($treffer[$index].lineNumber)-2)]|out-string).Trim();If($texttemp -match 'Seite .{1,3} von .{3,3}') {$texttemp=($text[($t.Linenumber)..(($treffer[$index].lineNumber)-4)]|out-string).Trim()}; $textblock+=$texttemp}; $index++}
-# TODO: Einzelnes Textblockelement aufbereiten und in Objekt überführen
+# ConvertFrom-Bel2Beschreibung kommt aus DelaproPreise-Repository
+$Textblock[4] | ConvertFrom-Bel2Beschreibung 
+ConvertFrom-Bel2Beschreibung -Block $Textblock[4]
 ```
 
 ### Syncfusion aktivieren für Verschlüsselung
