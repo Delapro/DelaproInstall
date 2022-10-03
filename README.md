@@ -1,15 +1,21 @@
 # DelaproInstall
 
-Powershell Installationsskript um Delapro ab Windows 7 bis Windows 11 zu installieren.
+Powershell Installationsskript um Delapro ab Windows 8 bis Windows 11 zu installieren.
 
 Zur Installation auf Mac OSX siehe hier: [Virtuelle Maschine auf Mac](https://github.com/Delapro/DelaproInstall/wiki/MACOSX)
 
-> **Hinweis zu Windows Vista**
+> **Hinweis zu Windows Vista, Windows 7, Windows 8**
 >
-> Da der Microsoft Support für Windows Vista abgelaufen ist, wird Windows Vista von uns auch nicht mehr unterstützt.
-> Gleichwohl sind viele Funktionen und Vorgehensweisen noch für Windows Vista aktuell. Man kann die Installation für Windows Vista noch durchführen, wenn man im einen oder anderen Fall manuell nachhilft, bzw. auf einen etwas älteren Versionsstand der Scripte zurückgreift.
+> Da der Microsoft Support für Windows Vista, Windows 7 und Windows 8 abgelaufen ist, werden diese Windowsversionen von uns auch nicht mehr unterstützt.
+> Gleichwohl sind viele Funktionen und Vorgehensweisen noch für diese alten Windowsversionen aktuell. Man kann die Installation für Windows Vista noch durchführen, wenn man im einen oder anderen Fall manuell nachhilft, bzw. auf einen etwas älteren Versionsstand der Scripte zurückgreift. Gegebenenfalls muss man auf frühere Versionen des Repository zurückgreifen.
 
-Befehle, wenn man [Delapro Administrationsscript](https://easysoftware.de/ps) Cmdlets verwendet:
+Befehle, wenn man [Delapro Administrationsscript](https://easysoftware.de/ps) Cmdlets verwendet. Wenn man von der verlinkten Seite "easy.PS1" anklickt, erhält man in der Zwischenablage dieses Script:
+
+```Powershell
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoExit -NoProfile -Command '& {$s=(Invoke-WebRequest -UseBasicParsing -Uri https://raw.githubusercontent.com/Delapro/DelaproInstall/master/DLPInstall.PS1).Content.Replace([string][char]10,[char]13+[char]10); $s=$s.SubString(0, $s.IndexOf(''CMDLET-ENDE'')); $tempPath = ''C:\temp''; $scriptPath=Join-Path -Path $tempPath -ChildPath easy.PS1; If (-Not (Test-Path $tempPath)) {md $tempPath} ; Set-Content -path $scriptPath -value $s; cd $tempPath; powershell.exe -NoExit -NoProfile -executionPolicy Bypass -File $scriptPath }'
+```
+
+Dieses Script sollte in einer Powershell ausgeführt werden, bei Ausführung in einer normalen Eingabeaufforderung erscheint eine Fehlermeldung.
 
 ## Vorbereitende Maßnahmen für Windows Vista und Windows 7
 
