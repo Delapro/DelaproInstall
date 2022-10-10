@@ -1266,6 +1266,14 @@ Get-DelaproError| select *, @{Name="CallStackStr";Expression={($_.CallStack|out-
 
 ```
 
+### Probleme mit TEST.OUT-Dateien
+
+```Powershell
+$testout = Dir test.* | where LastWriteTime -lt (Get-Date).AddDays(-5)
+$testout.Length
+$testout | Remove-Item -Confirm
+```
+
 ### Probleme mit Werbetextzeilen mit Labor2.DBF
 
 Über diese Befehle werden die alten Werbetextzeilen ausgegeben:
