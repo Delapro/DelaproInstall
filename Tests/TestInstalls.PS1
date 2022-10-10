@@ -21,4 +21,10 @@ Write-Host "  Install"
 Install-7Zip
 # Write-Host "  $(Test-Thunderbird)"
 
+# Ghostscript
+Write-Host "Ghostscript"
+Get-Ghostscript
+Install-Ghostscript
+Get-Ghostscript
+
 Write-Host "Ende"
