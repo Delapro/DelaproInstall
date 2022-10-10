@@ -48,7 +48,7 @@ Write-Host "Acrobat Reader"
 Write-Host "  Install"
 Install-AcrobatDC
 
-Write-Hosts "MAPI"
+Write-Host "MAPI"
 # gibt den aktuellen Standard-E-Mail-Client aus
 Get-DefaultEMailClient
 # listet die verfügbaren E-Mail-Clients auf
