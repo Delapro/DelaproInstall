@@ -1,12 +1,24 @@
+Write-Host "Start"
+
 # Chrome
 Write-Host "Chrome"
-Test-Chrome
+Write-Host "  $(Test-Chrome)"
+Write-Host "  Install"
 Install-Chrome
-Test-Chrome
+Write-Host "  $(Test-Chrome)"
 
 # Thunderbird
 Write-Host "Thunderbird"
-Test-Thunderbird
+Write-Host "  $(Test-Thunderbird)"
+Write-Host "  Install"
 Install-Thunderbird
-Test-Thunderbird
+Write-Host "  $(Test-Thunderbird)"
 
+# 7Zip
+Write-Host "7Zip"
+# Write-Host "  $(Test-Thunderbird)"
+Write-Host "  Install"
+Install-7Zip
+# Write-Host "  $(Test-Thunderbird)"
+
+Write-Host "Ende"
