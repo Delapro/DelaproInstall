@@ -34,5 +34,6 @@ jobs:
           C:
           cd \temp
           . .\easy.PS1
-          $env:GITHUB_WORKSPACE\Tests\TestInstalls.PS1
+          Write-Host "$($env:GITHUB_WORKSPACE)\Tests\TestInstalls.PS1"
+          . $($env:GITHUB_WORKSPACE)\Tests\TestInstalls.PS1
           
