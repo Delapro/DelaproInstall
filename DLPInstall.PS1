@@ -5995,8 +5995,10 @@ $DelaproInstParameterMitDataImport = @{
 	ImportDataPath = 'D:\Delapro'
 }
 
-Get-DelaproInstallPreparation
-Install-Delapro @DelaproInstParameter
+If (-Not ($null -eq $env:GITHUB_WORKSPACE)) {
+	Get-DelaproInstallPreparation
+	Install-Delapro @DelaproInstParameter
+}
 
 # mal für später, anstatt Resolve-Path, wenn eine Datei nicht existiert:
 # $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath
