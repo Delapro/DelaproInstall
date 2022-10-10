@@ -1,0 +1,2 @@
+Install-Chrome
+Install-Thunderbird
