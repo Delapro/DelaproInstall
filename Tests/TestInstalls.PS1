@@ -1,3 +1,5 @@
+# Tests wird über GithubActions aufgerufen
+
 Write-Host "Start"
 
 # Chrome
@@ -28,17 +30,22 @@ Install-7Zip
 # Ghostscript
 Write-Host "Ghostscript"
 Get-Ghostscript
+Write-Host "  Install"
 Install-Ghostscript
+Write-Host "  Version"
+& "$(Get-GhostScriptExecutable)" -v
 Get-Ghostscript
 
 # GhostscriptPCL
 Write-Host "GhostscriptPCL"
 Get-GhostscriptPCL
+Write-Host "  Install"
 Install-GhostscriptPCL -Verbose
 Get-GhostscriptPCL
 
 # Acrobat
 Write-Host "Acrobat Reader"
+Write-Host "  Install"
 Install-AcrobatDC
 
 Write-Hosts "MAPI"
