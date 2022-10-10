@@ -31,6 +31,7 @@ jobs:
 
       - name: Installationsscript laden
         run: |
+          C:
           cd \temp
           . .\easy.PS1
           
