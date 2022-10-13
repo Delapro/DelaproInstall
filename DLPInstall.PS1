@@ -1545,9 +1545,9 @@ Function Install-eDocPrintPro {
 	#Start-BitsTransfer http://www.pdfprinter.at/de/download-links/download-edocprintpro.html $DLPInstPath
 	# FTP via http://technet.microsoft.com/en-us/library/hh849901.aspx laden
 	If (Test-64Bit) {
-		Invoke-WebRequest -UseBasicParsing "ftp://u179413-sub1:CpyO1idU6ti0fYDL@u179413.your-storagebox.de/MAYComp/Current/RO/eDocPrintPro.zip"  -OutFile "$($eDocPrintProDir)eDocPrintPro.zip"
+		Invoke-WebRequest -UseBasicParsing "https://nx8448.your-storageshare.de/s/gSdLzoo5JqB9Qy8/download?path=%2F&files=eDocPrintPro.zip"  -OutFile "$($eDocPrintProDir)eDocPrintPro.zip"
 	} else {
-		Invoke-WebRequest -UseBasicParsing "ftp://u179413-sub1:CpyO1idU6ti0fYDL@u179413.your-storagebox.de/MAYComp/Current/RO/eDocPrintPro_4.0.2.zip"  -OutFile "$($eDocPrintProDir)eDocPrintPro.zip"
+		Invoke-WebRequest -UseBasicParsing "https://www.xkey.at/d/file.php?file=MAYComp/Current/RO/eDocPrintPro_PDFA_4.0.2.zip"  -OutFile "$($eDocPrintProDir)eDocPrintPro.zip"
 	}
 	# http://www.xkey.at/d/file.php?file=MAYComp/Current/RO/eDocPrintPro.zip
 	# http://www.xkey.at/d/file.php?file=MAYComp/Current/RO/eDocPrintPro.zip
