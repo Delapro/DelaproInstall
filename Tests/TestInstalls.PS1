@@ -46,7 +46,7 @@ Get-GhostscriptPCL
 # eDocPrintPro
 Write-Host "eDocPrintPro"
 Write-Host "  Install"
-Install-eDocPrintPro
+Install-eDocPrintPro -Verbose
 
 # Acrobat
 Write-Host "Acrobat Reader"
