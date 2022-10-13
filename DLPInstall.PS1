@@ -1603,8 +1603,14 @@ Function Install-eDocPrintPro {
 	YWxhciIgVmFsdWU9IjAiLz48L0V4dGVuc2lvbj48L1NXRj48L0FkZC1vbnM+PFBsdWdpbi1jaGFpbnMgQ3VycmVudD0iIi8+PC9lRG9jUHJpbnRQcm8+
 "@
 
-	[System.Convert]::FromBase64String($DelaproESF) | Set-Content "C:\Users\All Users\eDocPrintPro\DelaproPDF.ESFX" -Encoding Byte
-	[System.Convert]::FromBase64String($DelaproESF) | Set-Content "C:\ProgramData\eDocPrintPro\DelaproPDF.ESFX" -Encoding Byte
+	# https://github.com/PowerShell/PowerShell/issues/7986
+	If ($PSVersionTable.PSEdition -eq 'Desktop') {
+		[System.Convert]::FromBase64String($DelaproESF) | Set-Content "C:\Users\All Users\eDocPrintPro\DelaproPDF.ESFX" -Encoding Byte
+		[System.Convert]::FromBase64String($DelaproESF) | Set-Content "C:\ProgramData\eDocPrintPro\DelaproPDF.ESFX" -Encoding Byte
+	} else {
+		[System.Convert]::FromBase64String($DelaproESF) | Set-Content "C:\Users\All Users\eDocPrintPro\DelaproPDF.ESFX" -AsByteStream
+		[System.Convert]::FromBase64String($DelaproESF) | Set-Content "C:\ProgramData\eDocPrintPro\DelaproPDF.ESFX" -AsByteStream
+	}
 	reg add "HKCU\SOFTWARE\MAY Computer\eDocPrintPro\DelaproPDF\Standard" /v "Esf" /t "reg_sz" /d "DelaproPDF"  /f
 
 	# zum Aktivieren der ESF-Datei
