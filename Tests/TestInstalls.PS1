@@ -53,6 +53,16 @@ Write-Host "Acrobat Reader"
 Write-Host "  Install"
 Install-AcrobatDC
 
+# VDDS Prüftool
+Write-Host "VDDS Prüftool"
+Write-Host "  Install"
+Install-VDDSPrueftool -Verbose
+
+# XEROX Druckertreiber
+Write-Host "XEROX Universal Druckertreiber"
+Write-Host "  Install"
+Install-XeroxUniversalDriver -Verbose
+
 Write-Host "MAPI"
 # gibt den aktuellen Standard-E-Mail-Client aus
 Get-DefaultEMailClient
