@@ -54,9 +54,9 @@ Write-Host "  Install"
 Install-AcrobatDC
 
 # VDDS Prüftool
-Write-Host "VDDS Prüftool"
-Write-Host "  Install"
-Install-VDDSPrueftool -Verbose
+#Write-Host "VDDS Prüftool"
+#Write-Host "  Install"
+#Install-VDDSPrueftool -Verbose
 
 # XEROX Druckertreiber
 Write-Host "XEROX Universal Druckertreiber"
