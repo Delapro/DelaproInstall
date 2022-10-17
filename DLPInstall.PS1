@@ -3426,28 +3426,31 @@ Function Invoke-DelaproPreUpdate {
 		[String]$DlpPath
 	)
 
-	If (Test-DelaproActive -Path $DlpPath -TolerateDays $DlpAlterInTagen) {
-		If (Test-DelaproNotRunning -Path $DlpPath) {
-			# Backup aktualisieren
-			Update-Backup -DelaproPath $DLPPath -Verbose
-			# PDF-Dateien in Archiv stellen, macht die Sicherung schneller
-			Compress-PDFArchive -DelaproPath $DLPPath -Verbose
-			# BIN-Dateien vom Barcodescanner in Archiv stellen
-			Compress-BarcodeBINArchive -DelaproPath $DelaproPath -Verbose
-			# Sicherung des aktuellen Programms durchführen
-			Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -IgnoreBilder -SecureBackup -Verbose
-			# Druckertreiber aktualisieren
-			Update-DlpWinPr -DelaproPath $DLPPath -Verbose
-			Update-DlpRawPr -DelaproPath $DLPPath -Verbose
-			Update-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -Verbose
-			Install-AnyDesk -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -Verbose
+	If (Test-Path $DlpPath -Type Container) {
+		If (Test-DelaproActive -Path $DlpPath -TolerateDays $DlpAlterInTagen) {
+			If (Test-DelaproNotRunning -Path $DlpPath) {
+				# Backup aktualisieren
+				Update-Backup -DelaproPath $DLPPath -Verbose
+				# PDF-Dateien in Archiv stellen, macht die Sicherung schneller
+				Compress-PDFArchive -DelaproPath $DLPPath -Verbose
+				# BIN-Dateien vom Barcodescanner in Archiv stellen
+				Compress-BarcodeBINArchive -DelaproPath $DelaproPath -Verbose
+				# Sicherung des aktuellen Programms durchführen
+				Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -IgnoreBilder -SecureBackup -Verbose
+				# Druckertreiber aktualisieren
+				Update-DlpWinPr -DelaproPath $DLPPath -Verbose
+				Update-DlpRawPr -DelaproPath $DLPPath -Verbose
+				Update-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -Verbose
+				Install-AnyDesk -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -Verbose
+			} else {
+				Write-Error "Delapro läuft noch!"
+			}
 		} else {
-			Write-Error "Delapro läuft noch!"
+			Write-Error 'Sicherheitshalber nochmal $DlpPath oder $DlpAlterInTagen prüfen!'
 		}
 	} else {
-		Write-Error 'Sicherheitshalber nochmal $DlpPath oder $DlpAlterInTagen prüfen!'
+		Write-Error "Verzeichnis '$DlpPath' existiert nicht!"
 	}
-	
 }
 
 # Delapro installieren, muss schon heruntergeladen sein und in $TempDirectory liegen
