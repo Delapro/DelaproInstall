@@ -986,10 +986,10 @@ Function Save-DlpUiResetScript {
 
 	If ($SetWindowSize) {
 		# aktuelle Werte notieren
-		$Height = (Get-ItemProperty `$regBase -Name "Height" -ErrorAction SilentlyContinue).Height;
-		$Width = (Get-ItemProperty `$regBase -Name "Width" -ErrorAction SilentlyContinue).Width;
-		$FontSize = (Get-ItemProperty `$regBase -Name "FontSize" -ErrorAction SilentlyContinue).FontSize;
-		$FontWidth = (Get-ItemProperty `$regBase -Name "FontWidth" -ErrorAction SilentlyContinue).FontWidth;
+		$Height = (Get-ItemProperty $regBase -Name "Height" -ErrorAction SilentlyContinue).Height;
+		$Width = (Get-ItemProperty $regBase -Name "Width" -ErrorAction SilentlyContinue).Width;
+		$FontSize = (Get-ItemProperty $regBase -Name "FontSize" -ErrorAction SilentlyContinue).FontSize;
+		$FontWidth = (Get-ItemProperty $regBase -Name "FontWidth" -ErrorAction SilentlyContinue).FontWidth;
 		
 		$script = @"
 		`$regBase = 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings'
@@ -1000,6 +1000,7 @@ Function Save-DlpUiResetScript {
 			Set-ItemProperty `$regBase -Name "Width" -Value $Width
 			Set-ItemProperty `$regBase -Name "FontSize" -Value $FontSize
 			Set-ItemProperty `$regBase -Name "FontWidth" -Value $FontWidth
+			"Einstellungen gesetzt."
 		} else {
 			'Keine Einstellungen zum Überschreiben vorhanden.'
 		}
