@@ -6005,7 +6005,8 @@ $DelaproInstParameterMitDataImport = @{
 	ImportDataPath = 'D:\Delapro'
 }
 
-If (-Not ($null -eq $env:GITHUB_WORKSPACE)) {
+# Installation soll nur ausgeführt werden wenn nicht im Github-Actions-Bereich
+If (($null -eq $env:GITHUB_WORKSPACE)) {
 	Get-DelaproInstallPreparation
 	Install-Delapro @DelaproInstParameter
 }
