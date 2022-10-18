@@ -3388,15 +3388,15 @@ Function Get-DelaproPath{
 	#       also $env:programdata\...
 	If ([System.Management.Automation.WildcardPattern]::ContainsWildcardCharacters($DlpLnkFile)) {
 		Write-Verbose "Wildcardsuche aktiv"
-		$files = Get-ChildItem "$(Get-DesktopFolder -CurrentUser)\$DlpLnkFile"
-		$files | ForEach-Object {Get-DelaproPath -DlpLnkFile $_.Name -Delagame:$Delagame}
 		$files = Get-ChildItem "$(Get-DesktopFolder -AllUsers)\$DlpLnkFile"
 		$files | ForEach-Object {Get-DelaproPath -DlpLnkFile $_.Name -Delagame:$Delagame}	
+		$files = Get-ChildItem "$(Get-DesktopFolder -CurrentUser)\$DlpLnkFile"
+		$files | ForEach-Object {Get-DelaproPath -DlpLnkFile $_.Name -Delagame:$Delagame}
 	} else {
 		# TODO: auch noch zu beachten mehrere Verknüpfungen, für verschiedene Mandanten!
 		# oder die bessere Variante, den Pfad aus der Verknüpfung vom Desktop auslesen
 		# nach Delapro.exe Ausschau halten:  TargetPath       : C:\Delapro\Delapro.exe
-		$DlpPath=(Get-FileShortCut -LinkFilename $DlpLnkFile -Folder (Get-DesktopFolder -CurrentUser)).WorkingDirectory
+		$DlpPath=(Get-FileShortCut -LinkFilename $DlpLnkFile -Folder (Get-DesktopFolder -AllUsers)).WorkingDirectory
 		# vor dem Prüfen muss getestet werden, ob die Shell mit Adminrechten läuft, da gerade hier oft die Verbindung
 		# der Laufwerke nachgeholt werden muss
 		If (Test-Admin) {
@@ -3406,7 +3406,7 @@ Function Get-DelaproPath{
 			# TODO
 		}
 		If ($DlpPath -eq '' -or $null -eq $DlpPath -or (-Not (Test-Path $DlpPath))) {
-			$DlpPath=(Get-FileShortCut -LinkFilename $DlpLnkFile).WorkingDirectory
+			$DlpPath=(Get-FileShortCut -LinkFilename $DlpLnkFile -Folder (Get-DesktopFolder -CurrentUser)).WorkingDirectory
 			If ($DlpPath -eq '' -or $null -eq $DlpPath -or (-Not (Test-Path $DlpPath))) {
 				$DlpPath='C:\Delapro' # Standardpfad setzen
 			}
