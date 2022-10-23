@@ -1891,7 +1891,7 @@ Function Install-OpenJDK {
 		$url = "https://corretto.aws/downloads/latest/amazon-corretto-11-x64-windows-jdk.msi"
 		# $url = "https://corretto.aws/downloads/resources/$($JavaVersion)/amazon-corretto-$($JavaVersion)-windows-x64.msi"
 		Start-BitsTransfer $url -Destination $tempDirectory
-		$msi = Join-Path -Path $tempDirectory -ChildPath "amazon-corretto-$($JavaVersion)-windows-x64.msi"
+		$msi = Join-Path -Path $tempDirectory -ChildPath "amazon-corretto-$($Version)-x64-windows-jdk.msi"
 		# mögliche Features zum installieren: ADDLOCAL=FeatureMain,FeatureSetupJavaHome,FeatureSetupEnv,FeatureAddPath
 		If (Test-Path $msi) {
 			Write-Verbose "Installiere $msi"
