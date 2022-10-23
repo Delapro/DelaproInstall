@@ -58,6 +58,13 @@ Write-Host "Ffmpeg"
 Write-Host "  Install"
 Install-FFMpeg -Verbose
 
+# OpenJDK
+Write-Host "OpenJDK"
+Write-Host "  Install"
+Install-OpenJDK -Verbose
+Write-Host "  Test"
+Test-OpenJDK -Verbose
+
 # VDDS Prüftool
 #Write-Host "VDDS Prüftool"
 #Write-Host "  Install"
