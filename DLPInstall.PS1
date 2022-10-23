@@ -1992,8 +1992,11 @@ Function Test-Java {
 		ABEAAQABAAAABSq3AAGxAAAAAAAJAAgACQABAAcAAAATAAEAAQAAAAcRAP+4AAKxAAAAAAAA
 "@
 		$tempPath = $env:Temp
-		[System.Convert]::FromBase64String($JavaRunCheckClass) | Set-Content "$($tempPath)\RunCheck.Class" -Encoding Byte
-
+		If ($PSVersionTable.PSEdition -eq 'Desktop') {
+			[System.Convert]::FromBase64String($JavaRunCheckClass) | Set-Content "$($tempPath)\RunCheck.Class" -Encoding Byte
+		} else {
+			[System.Convert]::FromBase64String($JavaRunCheckClass) | Set-Content "$($tempPath)\RunCheck.Class" -AsByteStream
+		}
 		# java.exe -cp C:\temp RunCheck
 		$p = Start-Process -Wait -FilePath $j -ArgumentList "-cp", $tempPath, "RunCheck" -PassThru
 		If ($p.ExitCode -eq 255) {
@@ -2050,7 +2053,11 @@ Function Test-OpenJDK {
 		ABEAAQABAAAABSq3AAGxAAAAAAAJAAgACQABAAcAAAATAAEAAQAAAAcRAP+4AAKxAAAAAAAA
 "@
 		$tempPath = $env:Temp
-		[System.Convert]::FromBase64String($JavaRunCheckClass) | Set-Content "$($tempPath)\RunCheck.Class" -Encoding Byte
+		If ($PSVersionTable.PSEdition -eq 'Desktop') {
+			[System.Convert]::FromBase64String($JavaRunCheckClass) | Set-Content "$($tempPath)\RunCheck.Class" -Encoding Byte
+		} else {
+			[System.Convert]::FromBase64String($JavaRunCheckClass) | Set-Content "$($tempPath)\RunCheck.Class" -AsByteStream
+		}
 
 		# java.exe -cp C:\temp RunCheck
 		$p = Start-Process -Wait -FilePath $j -ArgumentList "-cp", $tempPath, "RunCheck" -PassThru
