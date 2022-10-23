@@ -53,6 +53,11 @@ Write-Host "Acrobat Reader"
 Write-Host "  Install"
 Install-AcrobatDC
 
+# Ffmpeg
+Write-Host "Ffmpeg"
+Write-Host "  Install"
+Install-FFMpeg -Verbose
+
 # VDDS Prüftool
 #Write-Host "VDDS Prüftool"
 #Write-Host "  Install"
