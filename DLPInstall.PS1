@@ -5433,7 +5433,7 @@ Function Get-FertigteileText {
 
 }
 
-# räumt das Delapro-Verzeichnis auf
+# räumt das Delapro-Verzeichnis auf und löscht nicht mehr benötigte Dateien
 Function Invoke-CleanupDelapro {
 	[CmdletBinding()]
 	Param(
@@ -5513,6 +5513,37 @@ Function Invoke-CleanupDelapro {
 	Compress-PDFArchive -DelaproPath $DelaproPath -Verbose
 	# BIN-Dateien vom Barcodescanner in Archiv stellen
 	Compress-BarcodeBINArchive -DelaproPath $DelaproPath -Verbose
+
+}
+
+# verschiebt die Dateien in andere Verzeichnisse um das Stammverzeichnis übersichtlicher zu bekommen
+Function Invoke-CleanupDelaproDirectoryStructure {
+	[CmdletBinding()]
+	Param(
+		[System.String]$DelaproPath="C:\Delapro"
+	)
+
+	# TODO: was passiert bei einer Rücksicherung?!?!?
+
+	$Path = Join-Path -Path $DelaproPath -ChildPath 'DBFs'
+	If (-Not (Test-Path $Path)) {
+		New-Item -ItemType Directory -Path $Path
+	}
+	Move-Item -Path "$DelaproPath\*.DBF" -Destination $Path -Exclude 'Progvert.dbf'
+	Move-Item -Path "$DelaproPath\*.FPT" -Destination $Path
+	Move-Item -Path "$DelaproPath\*.CDX" -Destination $Path
+	Copy-Item -Path "$DelaproPath\DBU32.EXE" -Destination $Path
+
+	$Path = Join-Path -Path $DelaproPath -ChildPath 'REPs'
+	If (-Not (Test-Path $Path)) {
+		New-Item -ItemType Directory -Path $Path
+	}
+	Move-Item -Path "$DelaproPath\*.REP" -Destination $Path
+	Move-Item -Path "$DelaproPath\*.TXT" -Destination $Path
+
+	Write-Host 'TODO:'
+	Write-Host "DLP_Main.INI [Reports]Pfad=$Delapro setzen"
+	Write-Host "DLP_Main.INI [Dateien]Pfad=$Delapro setzen"
 
 }
 
