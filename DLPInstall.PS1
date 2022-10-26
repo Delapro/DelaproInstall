@@ -5523,13 +5523,14 @@ Function Invoke-CleanupDelaproDirectoryStructure {
 		[System.String]$DelaproPath="C:\Delapro"
 	)
 
+	# TODO: Windows-Formulare gegen checken
 	# TODO: was passiert bei einer Rücksicherung?!?!?
 
 	$Path = Join-Path -Path $DelaproPath -ChildPath 'DBFs'
 	If (-Not (Test-Path $Path)) {
 		New-Item -ItemType Directory -Path $Path
 	}
-	Move-Item -Path "$DelaproPath\*.DBF" -Destination $Path -Exclude 'Progvert.dbf'
+	Move-Item -Path "$DelaproPath\*.DBF" -Destination $Path -Exclude 'Progvert.dbf' # Progvert.DBF muss bleiben!
 	Move-Item -Path "$DelaproPath\*.FPT" -Destination $Path
 	Move-Item -Path "$DelaproPath\*.CDX" -Destination $Path
 	Copy-Item -Path "$DelaproPath\DBU32.EXE" -Destination $Path
@@ -5544,6 +5545,9 @@ Function Invoke-CleanupDelaproDirectoryStructure {
 	Write-Host 'TODO:'
 	Write-Host "DLP_Main.INI [Reports]Pfad=$Delapro setzen"
 	Write-Host "DLP_Main.INI [Dateien]Pfad=$Delapro setzen"
+	Write-Host 'oder:'
+	Write-Host "DLP_Main.INI [Reports]Pfad=.\REPs setzen"
+	Write-Host "DLP_Main.INI [Dateien]Pfad=.\DBFs setzen"
 
 }
 
