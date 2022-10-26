@@ -836,7 +836,11 @@ Function Disable-AcrobatReaderDCSendAndTrack {
 
 	# passende Einträge sind hier dokumentiert: https://www.adobe.com/devnet-docs/acrobatetk/tools/Wizard/WizardDC/online.html#acrobat-dc-services-integration
 	If (Test-64Bit) {
-		$regBase = 'registry::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown'
+		If ((Get-ExecutablePlatformInformation (Get-AcrobatReaderDCExe).Fullname).FileType -eq 'x64') {
+			$regBase = 'registry::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Adobe\Adobe Acrobat\DC\FeatureLockDown'
+		} else {
+			$regBase = 'registry::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown'
+		}
 	} else {
 		$regBase = 'registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown'
 	}
