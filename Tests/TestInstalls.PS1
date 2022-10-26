@@ -10,10 +10,14 @@ Install-Chrome
 Write-Host "  $(Test-Chrome)"
 
 # Thunderbird
-Write-Host "Thunderbird"
+Write-Host "Thunderbird $($env:Platform)"
 Write-Host "  $(Test-Thunderbird)"
 Write-Host "  Install"
-Install-Thunderbird
+If ($env:Platform -eq 'x86') {
+  Install-Thunderbird
+} else {
+  Install-Thunderbird -Platform win64
+}
 Write-Host "  $(Test-Thunderbird)"
 If (Test-Thunderbird) {
   (Get-ThunderbirdEXE).VersionInfo.ProductVersion
@@ -49,9 +53,13 @@ Write-Host "  Install"
 Install-eDocPrintPro -Verbose
 
 # Acrobat
-Write-Host "Acrobat Reader"
+Write-Host "Acrobat Reader $($env:Platform)"
 Write-Host "  Install"
-Install-AcrobatDC
+If ($env:Platform -eq 'x86') {
+  Install-AcrobatDC
+ } else {
+  Install-AcrobatDC -Platform x64
+ }
 
 # Ffmpeg
 Write-Host "Ffmpeg"
