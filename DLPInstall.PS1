@@ -4975,6 +4975,10 @@ Function Get-DefaultEMailClient {
 		$BuildNr = "0815" # TODO Buildnumber aus Outlook.EXE auslesen
 	}
 
+	If ($mailClient -eq "Mozilla Thunderbird") {
+		$bitness = (Get-ExecutablePlatformInformation -FilePath (Get-ThunderbirdEXE).Fullname).FileType 
+	}
+
 	"$mailClient, $bitness" #, $If($Click2Run){'Click2Run'}"
 }
 
