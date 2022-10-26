@@ -147,8 +147,63 @@ If (-Not ($?)) {
 	"Install-StartBitsTransfer aktiviert!"
 }
 
+# Testet ob der aktuelle Prozess ein 64-Bit Prozess ist
 Function Test-64Bit () {
 	[System.IntPtr]::Size -eq 8
+}
+
+# Gibt Informationen zur angegebene Datei zurück, z.B. 64-Bit Executable (PE Format)
+Function Get-ExecutablePlatformInformation () {
+	[CmdletBinding()]
+	Param(
+		[Parameter(Mandatory)]
+		[String]$FilePath
+	)
+
+	If (-Not ([System.IO.Path]::IsPathRooted(($FilePath)))) {
+    	$FilePath = Resolve-Path $FilePath
+    }
+
+	If (Test-Path $FilePath) {
+		[int32]$MACHINE_OFFSET = 4
+		[int32]$PE_POINTER_OFFSET = 60
+		[int32]$BufferSize = 4096
+
+		[byte[]]$data = New-Object -TypeName System.Byte[] -ArgumentList $BufferSize
+		$stream = New-Object -TypeName System.IO.FileStream -ArgumentList ($FilePath, 'Open', 'Read')
+		$stream.Read($data, 0, $BufferSize) | Out-Null
+		$stream.Close()
+		$stream.Dispose()
+
+		[int32]$PE_HEADER_ADDRESS = [System.BitConverter]::ToInt32($data, $PE_POINTER_OFFSET)
+		[int32]$machineUnit = [System.BitConverter]::ToInt16($data, $PE_HEADER_ADDRESS + $MACHINE_OFFSET)
+		Write-Verbose "$($data[$PE_HEADER_ADDRESS + $MACHINE_OFFSET]) $($data[$PE_HEADER_ADDRESS + $MACHINE_OFFSET+1]) "
+		Write-Verbose "PE_Header_Address: $PE_HEADER_ADDRESS"
+		Write-Verbose "MachineUnit: $machineUnit"
+
+		$result = [PSCustomObject]@{
+			FilePath = $FilePath
+			FileType = ''
+			Is64Bit = $false
+		}
+
+		switch($machineUnit) {
+			0		{$result.FileType = 'Native'}  # z.B. DOS
+			0x014c	{$result.FileType = 'x86'}
+			0x01c0	{$result.FileType = 'ARM little endian'}
+			0x01c2	{$result.FileType = 'ARM or Thumb (interworking)'}
+			0x01c4	{$result.FileType = 'ARMv7 (or higher) Thumb mode only'}
+			0x0200	{$result.FileType = 'Itanium'}
+			0x8664	{Write-Verbose "x64"; $result.FileType = 'x64'; $result.Is64Bit = $true}
+			# irgendwas passt da nicht, deshalb -31132
+			-31132	{Write-Verbose "x64:2"; $result.FileType = 'x64'; $result.Is64Bit = $true}
+			0xaa64	{$result.FileType = 'ARMv8 in 64Bit mode'; $result.Is64Bit = $true}
+		}
+
+		$result
+	} else {
+		throw 'Missing $FilePath'
+	}
 }
 
 Function Test-WindowsVista() {
