@@ -804,7 +804,11 @@ Function Set-AcrobatReaderDCViewerRightPaneOff {
 	)
 
 	# Viewer XML-Datei laden
-	$viewerFile = "$($AcrobatReaderDCEXE.Directory.Fullname)\AcroApp\DEU\Viewer.aapp"
+	If ((Get-ExecutablePlatformInformation (Get-AcrobatReaderDCExe).Fullname).FileType -eq 'x64') {
+		$viewerFile = "$($AcrobatReaderDCEXE.Directory.Fullname)\RdrApp\DEU\Viewer.aapp"
+	} else {
+		$viewerFile = "$($AcrobatReaderDCEXE.Directory.Fullname)\AcroApp\DEU\Viewer.aapp"
+	}
 	Write-Verbose $viewerFile
 	$viewer = [xml](Get-Content $viewerFile)
 	# Layout auskommentieren, hier die ausführliche Variante: http://stackoverflow.com/questions/6328288/how-to-comment-a-line-of-a-xml-file-in-c-sharp-with-system-xml
