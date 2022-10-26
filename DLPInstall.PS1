@@ -2522,7 +2522,7 @@ Function Install-Thunderbird {
 	# z. B. 60.50.0 unter: https://ftp.mozilla.org/pub/thunderbird/releases/60.5.0/win32/de/
 	If ($null -eq $Version) {
 		# aktuelle Version
-		$tbVersion = '91.13.1' # MAPI noch fehlerhaft: '102.0'
+		$tbVersion = '102.4.0' # MAPI noch fehlerhaft: '102.0'
 		$downloadUrlBase = "https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion"
 	} else {
 		$tbVersion = $Version
