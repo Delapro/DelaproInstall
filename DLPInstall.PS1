@@ -152,6 +152,10 @@ Function Test-64Bit () {
 	[System.IntPtr]::Size -eq 8
 }
 
+Function Test-ARM64 () {
+	(Get-CimInstance Win32_OperatingSystem).OSArchitecture -eq 'ARM 64-bit Processor'
+}
+
 # Gibt Informationen zur angegebene Datei zurück, z.B. 64-Bit Executable (PE Format)
 Function Get-ExecutablePlatformInformation () {
 	[CmdletBinding()]
@@ -4112,7 +4116,7 @@ Function Install-DelaproMailPrinter {
 						"10.0.19043" {$driverID = "add71423ba73e797"} # gleichgeblieben!
 						"10.0.19044" {$driverID = "add71423ba73e797"} # gleichgeblieben!
 						"10.0.22000" {$driverID = "b0d591b9cf5aba04"} # Win11
-						"10.0.22621" {$driverID = "b2cace2d3b2ffe99"} # Win11 22H2, es taucht nun auch 8a3bfbb177fb69e5 auf!
+						"10.0.22621" {If (Test-ARM64) {$driverID = '6ee1b90220efac21'} else {$driverID = "b2cace2d3b2ffe99"}} # Win11 22H2, es taucht nun auch 8a3bfbb177fb69e5 auf!
 						# neue IDs siehe: https://github.com/Delapro/DelaproInstall#druckertreiber-id-bei-neuen-windows-featureupdate-versionen-ermitteln
 					}
 				} else {
@@ -4138,7 +4142,7 @@ Function Install-DelaproMailPrinter {
 				If (-Not ($driverID)) {
 					Write-Verbose "Microsoft Postscriptdruckertreiber wird ermittelt"
 					$driver = Get-InstalledWindowsPrinterDriver -Vendor Microsoft -Driver $driverName
-					$driverIDFound = ($driver[0]).OriginalFilename -match '\\prnms005.inf_[amd_64|x86]+_([0-9a-fA-F]{16})\\prnms005.inf'
+					$driverIDFound = ($driver[0]).OriginalFilename -match '\\prnms005.inf_[amd_64|x86|arm64]+_([0-9a-fA-F]{16})\\prnms005.inf'
 					If ($driverIDFound) {
 						$driverID = $Matches[1]
 						Write-Verbose "ermittelte driverID: $driverID"
