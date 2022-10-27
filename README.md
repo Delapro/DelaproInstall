@@ -1545,6 +1545,14 @@ Show-eDocPrintProLogFile
 Install-DebWin -Verbose
 ```
 
+## ARM64 Unterstützung
+
+Momentan noch in der Erprobungsphase, aber hier einige Dinge die umgestellt, bzw. beachtet werden müssen:
+GHOSTPDF.BAT erweitern um:
+IF "%PROCESSOR_ARCHITECTURE%"=="AMD64" GOTO Ghostx64
+
+Zum Testen kann man auf Azure z.B. "Standard D4ps v5 (4 vcpus, 16 GiB Arbeitsspeicher)" benutzen. Weitere Infos: https://learn.microsoft.com/en-us/azure/virtual-machines/dpsv5-dpdsv5-series und https://learn.microsoft.com/en-us/azure/virtual-machines/dplsv5-dpldsv5-series.
+
 ## Script-Tests
 
 ### Obfuscation Score ermitteln
