@@ -4151,7 +4151,11 @@ Function Install-DelaproMailPrinter {
 					$driverInf = ($driver[0]).OriginalFilename
 				} else {
 					If (Test-64Bit) {
-						$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_$($driverID)\prnms005.inf"
+						If (Test-ARM64) {
+							$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_arm64_$($driverID)\prnms005.inf"
+						} else {
+							$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_$($driverID)\prnms005.inf"
+						}
 						If (-Not (Test-Path $driverInf)) {
 							$driverID = "8a3bfbb177fb69e5"
 							# Win11, Spezialfall muss noch abgeklärt werden, welcher Wert wirklich stimmt, oder ob es tatsächlich zwei geben kann
