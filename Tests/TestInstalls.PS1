@@ -69,7 +69,11 @@ Install-FFMpeg -Verbose
 # OpenJDK
 Write-Host "OpenJDK"
 Write-Host "  Install"
-Install-OpenJDK -Verbose
+If ($env:Platform -eq 'x86') {
+  Install-OpenJDK -Platform x86 -Version 11 -Verbose
+} else {
+  Install-OpenJDK -Platform x64 -Version 19 -Verbose
+}
 Write-Host "  Test"
 Test-OpenJDK -Verbose
 
