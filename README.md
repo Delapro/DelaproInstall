@@ -285,7 +285,7 @@ Ermittelt die Buildnummer und DriverID gibt diese aus.
 $driverName = "Microsoft PS Class Driver"
 $winBuild = (Get-CimInstance Win32_OperatingSystem).Version
 $driver = Get-InstalledWindowsPrinterDriver -Vendor Microsoft -Driver $driverName
-$driverIDFound = ($driver[0]).OriginalFilename -match '\\prnms005.inf_[amd_64|x86]+_([0-9a-fA-F]{16})\\prnms005.inf'
+$driverIDFound = ($driver[0]).OriginalFilename -match '\\prnms005.inf_[amd_64|x86|arm64]+_([0-9a-fA-F]{16})\\prnms005.inf'
 If ($driverIDFound) {
     $driverID = $Matches[1]
 }
@@ -1544,6 +1544,14 @@ Show-eDocPrintProLogFile
 # ladet und speichert Debwin4
 Install-DebWin -Verbose
 ```
+
+## ARM64 Unterstützung
+
+Momentan noch in der Erprobungsphase, aber hier einige Dinge die umgestellt, bzw. beachtet werden müssen:
+GHOSTPDF.BAT erweitern um:
+IF "%PROCESSOR_ARCHITECTURE%"=="AMD64" GOTO Ghostx64
+
+Zum Testen kann man auf Azure z.B. "Standard D4ps v5 (4 vcpus, 16 GiB Arbeitsspeicher)" benutzen. Weitere Infos: https://learn.microsoft.com/en-us/azure/virtual-machines/dpsv5-dpdsv5-series und https://learn.microsoft.com/en-us/azure/virtual-machines/dplsv5-dpldsv5-series.
 
 ## Script-Tests
 

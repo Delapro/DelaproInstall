@@ -152,6 +152,10 @@ Function Test-64Bit () {
 	[System.IntPtr]::Size -eq 8
 }
 
+Function Test-ARM64 () {
+	(Get-CimInstance Win32_OperatingSystem).OSArchitecture -eq 'ARM 64-bit Processor'
+}
+
 # Gibt Informationen zur angegebene Datei zurück, z.B. 64-Bit Executable (PE Format)
 Function Get-ExecutablePlatformInformation () {
 	[CmdletBinding()]
@@ -194,7 +198,9 @@ Function Get-ExecutablePlatformInformation () {
 			0x01c2	{$result.FileType = 'ARM or Thumb (interworking)'}
 			0x01c4	{$result.FileType = 'ARMv7 (or higher) Thumb mode only'}
 			0x0200	{$result.FileType = 'Itanium'}
-			0x8664	{Write-Verbose "x64"; $result.FileType = 'x64'; $result.Is64Bit = $true}
+			0x64aa  {Write-Verbose "ARM64"; $result.FileType = 'ARMv8 in 64Bit mode'; $result.Is64Bit = $true}
+			-21916  {Write-Verbose "ARM64:2"; $result.FileType = 'ARMv8 in 64Bit mode'; $result.Is64Bit = $true}
+			0x8664	{Write-Verbose "x64"; $result.FileType = 'x64'; $result.Is64Bit = $true}			
 			# irgendwas passt da nicht, deshalb -31132
 			-31132	{Write-Verbose "x64:2"; $result.FileType = 'x64'; $result.Is64Bit = $true}
 			0xaa64	{$result.FileType = 'ARMv8 in 64Bit mode'; $result.Is64Bit = $true}
@@ -4123,7 +4129,7 @@ Function Install-DelaproMailPrinter {
 						"10.0.19043" {$driverID = "add71423ba73e797"} # gleichgeblieben!
 						"10.0.19044" {$driverID = "add71423ba73e797"} # gleichgeblieben!
 						"10.0.22000" {$driverID = "b0d591b9cf5aba04"} # Win11
-						"10.0.22621" {$driverID = "b2cace2d3b2ffe99"} # Win11 22H2, es taucht nun auch 8a3bfbb177fb69e5 auf!
+						"10.0.22621" {If (Test-ARM64) {$driverID = '6ee1b90220efac21'} else {$driverID = "b2cace2d3b2ffe99"}} # Win11 22H2, es taucht nun auch 8a3bfbb177fb69e5 auf!
 						# neue IDs siehe: https://github.com/Delapro/DelaproInstall#druckertreiber-id-bei-neuen-windows-featureupdate-versionen-ermitteln
 					}
 				} else {
@@ -4149,7 +4155,7 @@ Function Install-DelaproMailPrinter {
 				If (-Not ($driverID)) {
 					Write-Verbose "Microsoft Postscriptdruckertreiber wird ermittelt"
 					$driver = Get-InstalledWindowsPrinterDriver -Vendor Microsoft -Driver $driverName
-					$driverIDFound = ($driver[0]).OriginalFilename -match '\\prnms005.inf_[amd_64|x86]+_([0-9a-fA-F]{16})\\prnms005.inf'
+					$driverIDFound = ($driver[0]).OriginalFilename -match '\\prnms005.inf_[amd_64|x86|arm64]+_([0-9a-fA-F]{16})\\prnms005.inf'
 					If ($driverIDFound) {
 						$driverID = $Matches[1]
 						Write-Verbose "ermittelte driverID: $driverID"
@@ -4158,7 +4164,11 @@ Function Install-DelaproMailPrinter {
 					$driverInf = ($driver[0]).OriginalFilename
 				} else {
 					If (Test-64Bit) {
-						$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_$($driverID)\prnms005.inf"
+						If (Test-ARM64) {
+							$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_arm64_$($driverID)\prnms005.inf"
+						} else {
+							$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_$($driverID)\prnms005.inf"
+						}
 						If (-Not (Test-Path $driverInf)) {
 							$driverID = "8a3bfbb177fb69e5"
 							# Win11, Spezialfall muss noch abgeklärt werden, welcher Wert wirklich stimmt, oder ob es tatsächlich zwei geben kann
