@@ -1941,7 +1941,7 @@ Function Install-OpenJDK {
 		[System.String]$tempDirectory="$Env:TEMP\",
 		[Validateset("x64", "x86")]
 		[System.String]$Platform="x64",
-		[Validateset("11", "8")]
+		[Validateset('19', '18', '17', '16', '15', "11", "8")]
 		[System.String]$Version="11"
 	)
 
@@ -1950,8 +1950,8 @@ Function Install-OpenJDK {
 	$JavaVersion = "11.0.17.8.1" # wird nicht mehr verwendet
 
 	# https://d2znqt9b1bc64u.cloudfront.net/amazon-corretto-8.202.08.2-windows-x64.msi
-	If ($Version -eq "11" -and $Platform -eq "x64") {
-		$url = "https://corretto.aws/downloads/latest/amazon-corretto-11-x64-windows-jdk.msi"
+	If ($Platform -eq "x64") {
+		$url = "https://corretto.aws/downloads/latest/amazon-corretto-$($Version)-x64-windows-jdk.msi"
 		# $url = "https://corretto.aws/downloads/resources/$($JavaVersion)/amazon-corretto-$($JavaVersion)-windows-x64.msi"
 		Start-BitsTransfer $url -Destination $tempDirectory
 		$msi = Join-Path -Path $tempDirectory -ChildPath "amazon-corretto-$($Version)-x64-windows-jdk.msi"
@@ -1961,7 +1961,20 @@ Function Install-OpenJDK {
 			Start-Process -Wait "msiexec.exe" -ArgumentList "/i", $msi, "/qn"
 		}
 	} else {
-		Write-Error "Wird noch nicht unterstützt."
+		# x86
+		If ($Version -eq "11" -or $Version -eq "8") {
+			$url = "https://corretto.aws/downloads/latest/amazon-corretto-$($Version)-x86-windows-jdk.msi"
+			# $url = "https://corretto.aws/downloads/resources/$($JavaVersion)/amazon-corretto-$($JavaVersion)-windows-x64.msi"
+			Start-BitsTransfer $url -Destination $tempDirectory
+			$msi = Join-Path -Path $tempDirectory -ChildPath "amazon-corretto-$($Version)-x86-windows-jdk.msi"
+			# mögliche Features zum installieren: ADDLOCAL=FeatureMain,FeatureSetupJavaHome,FeatureSetupEnv,FeatureAddPath
+			If (Test-Path $msi) {
+				Write-Verbose "Installiere $msi"
+				Start-Process -Wait "msiexec.exe" -ArgumentList "/i", $msi, "/qn"
+			}	
+		} else {
+			Write-Error "Wird nicht unterstützt."
+		}
 	}
 }
 
