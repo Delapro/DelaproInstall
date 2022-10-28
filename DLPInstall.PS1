@@ -2091,9 +2091,16 @@ Function Test-Java {
 
 Function Get-OpenJDK {
 	[CmdletBinding()]
-	Param()
+	Param(
+		[Validateset("x64", "x86")]
+		[System.String]$Platform="x64"
+	)
 
-	$j = Get-ChildItem "$($env:ProgramFiles)\Amazon Corretto\" "Java.exe" -Recurse
+	If ($Platform -eq 'x64') {
+		$j = Get-ChildItem "$($env:ProgramFiles)\Amazon Corretto\" "Java.exe" -Recurse
+	} else {
+		$j = Get-ChildItem "$(${env:ProgramFiles(x86)})\Amazon Corretto\" "Java.exe" -Recurse
+	}
 	If ($j) {
 		If ($j -is [array]) {
 			# TODO: Sortieren, damit man die neueste Version zurück bekommt
@@ -2108,9 +2115,11 @@ Function Get-OpenJDK {
 Function Test-OpenJDK {
 	[CmdletBinding()]
 	Param(
+		[Validateset("x64", "x86")]
+		[System.String]$Platform="x64"
 	)
 
-	$j = (Get-OpenJDK).Fullname
+	$j = (Get-OpenJDK -Platform $Platform).Fullname
 	If ($j) {
 		# Folgender Code liegt dem RunCheck-Javaprogramm zugrunde. Um ihn kompilieren zu können benötigt
 		# man allerdings das JDK in der zugehörigen Version, hier JDK8:
