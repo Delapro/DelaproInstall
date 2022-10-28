@@ -160,7 +160,8 @@ Function Test-ARM64 () {
 Function Get-ExecutablePlatformInformation () {
 	[CmdletBinding()]
 	Param(
-		[Parameter(Mandatory)]
+		[Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
+		[Alias('Fullname')]
 		[String]$FilePath
 	)
 
@@ -200,11 +201,9 @@ Function Get-ExecutablePlatformInformation () {
 			0x01c4	{$result.FileType = 'ARMv7 (or higher) Thumb mode only'}
 			0x0200	{$result.FileType = 'Itanium'}
 			0x64aa  {Write-Verbose "ARM64"; $result.FileType = 'ARMv8 in 64Bit mode'; $result.Is64Bit = $true}
-#			-21916  {Write-Verbose "ARM64:2"; $result.FileType = 'ARMv8 in 64Bit mode'; $result.Is64Bit = $true}
 			0x8664	{Write-Verbose "x64"; $result.FileType = 'x64'; $result.Is64Bit = $true}			
-			# irgendwas passt da nicht, deshalb -31132
-#			-31132	{Write-Verbose "x64:2"; $result.FileType = 'x64'; $result.Is64Bit = $true}
 			0xaa64	{$result.FileType = 'ARMv8 in 64Bit mode'; $result.Is64Bit = $true}
+			0x0ebc	{$result.FileType = 'EFI byte code'}
 		}
 
 		$result
