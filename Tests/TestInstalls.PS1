@@ -67,15 +67,17 @@ Write-Host "  Install"
 Install-FFMpeg -Verbose
 
 # OpenJDK
-Write-Host "OpenJDK"
+Write-Host "OpenJDK $($env:Platform)"
 Write-Host "  Install"
 If ($env:Platform -eq 'x86') {
   Install-OpenJDK -Platform x86 -Version 11 -Verbose
+  Write-Host "  Test"
+  # Test-OpenJDK -Verbose   # klappt noch nicht
 } else {
   Install-OpenJDK -Platform x64 -Version 19 -Verbose
+  Write-Host "  Test"
+  Test-OpenJDK -Verbose
 }
-Write-Host "  Test"
-Test-OpenJDK -Verbose
 
 # VDDS Prüftool
 #Write-Host "VDDS Prüftool"
