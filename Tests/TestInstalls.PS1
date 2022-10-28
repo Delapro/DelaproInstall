@@ -72,7 +72,7 @@ Write-Host "  Install"
 If ($env:Platform -eq 'x86') {
   Install-OpenJDK -Platform x86 -Version 11 -Verbose
   Write-Host "  Test"
-  # Test-OpenJDK -Verbose   # klappt noch nicht
+  Test-OpenJDK -Platform x86 -Verbose
 } else {
   Install-OpenJDK -Platform x64 -Version 19 -Verbose
   Write-Host "  Test"
