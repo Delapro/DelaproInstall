@@ -160,7 +160,8 @@ Function Test-ARM64 () {
 Function Get-ExecutablePlatformInformation () {
 	[CmdletBinding()]
 	Param(
-		[Parameter(Mandatory)]
+		[Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
+		[Alias('Fullname')]
 		[String]$FilePath
 	)
 
@@ -180,10 +181,10 @@ Function Get-ExecutablePlatformInformation () {
 		$stream.Dispose()
 
 		[int32]$PE_HEADER_ADDRESS = [System.BitConverter]::ToInt32($data, $PE_POINTER_OFFSET)
-		[int32]$machineUnit = [System.BitConverter]::ToInt16($data, $PE_HEADER_ADDRESS + $MACHINE_OFFSET)
+		[uint16]$machineType = [System.BitConverter]::ToUInt16($data, $PE_HEADER_ADDRESS + $MACHINE_OFFSET)
 		Write-Verbose "$($data[$PE_HEADER_ADDRESS + $MACHINE_OFFSET]) $($data[$PE_HEADER_ADDRESS + $MACHINE_OFFSET+1]) "
 		Write-Verbose "PE_Header_Address: $PE_HEADER_ADDRESS"
-		Write-Verbose "MachineUnit: $machineUnit"
+		Write-Verbose "MachineType: $machineType"
 
 		$result = [PSCustomObject]@{
 			FilePath = $FilePath
@@ -191,7 +192,8 @@ Function Get-ExecutablePlatformInformation () {
 			Is64Bit = $false
 		}
 
-		switch($machineUnit) {
+		# weitere Werte für MachineType: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#machine-types
+		switch($machineType) {
 			0		{$result.FileType = 'Native'}  # z.B. DOS
 			0x014c	{$result.FileType = 'x86'}
 			0x01c0	{$result.FileType = 'ARM little endian'}
@@ -199,11 +201,9 @@ Function Get-ExecutablePlatformInformation () {
 			0x01c4	{$result.FileType = 'ARMv7 (or higher) Thumb mode only'}
 			0x0200	{$result.FileType = 'Itanium'}
 			0x64aa  {Write-Verbose "ARM64"; $result.FileType = 'ARMv8 in 64Bit mode'; $result.Is64Bit = $true}
-			-21916  {Write-Verbose "ARM64:2"; $result.FileType = 'ARMv8 in 64Bit mode'; $result.Is64Bit = $true}
 			0x8664	{Write-Verbose "x64"; $result.FileType = 'x64'; $result.Is64Bit = $true}			
-			# irgendwas passt da nicht, deshalb -31132
-			-31132	{Write-Verbose "x64:2"; $result.FileType = 'x64'; $result.Is64Bit = $true}
 			0xaa64	{$result.FileType = 'ARMv8 in 64Bit mode'; $result.Is64Bit = $true}
+			0x0ebc	{$result.FileType = 'EFI byte code'}
 		}
 
 		$result
@@ -2091,9 +2091,16 @@ Function Test-Java {
 
 Function Get-OpenJDK {
 	[CmdletBinding()]
-	Param()
+	Param(
+		[Validateset("x64", "x86")]
+		[System.String]$Platform="x64"
+	)
 
-	$j = Get-ChildItem "$($env:ProgramFiles)\Amazon Corretto\" "Java.exe" -Recurse
+	If ($Platform -eq 'x64') {
+		$j = Get-ChildItem "$($env:ProgramFiles)\Amazon Corretto\" "Java.exe" -Recurse
+	} else {
+		$j = Get-ChildItem "$(${env:ProgramFiles(x86)})\Amazon Corretto\" "Java.exe" -Recurse
+	}
 	If ($j) {
 		If ($j -is [array]) {
 			# TODO: Sortieren, damit man die neueste Version zurück bekommt
@@ -2108,9 +2115,11 @@ Function Get-OpenJDK {
 Function Test-OpenJDK {
 	[CmdletBinding()]
 	Param(
+		[Validateset("x64", "x86")]
+		[System.String]$Platform="x64"
 	)
 
-	$j = (Get-OpenJDK).Fullname
+	$j = (Get-OpenJDK -Platform $Platform).Fullname
 	If ($j) {
 		# Folgender Code liegt dem RunCheck-Javaprogramm zugrunde. Um ihn kompilieren zu können benötigt
 		# man allerdings das JDK in der zugehörigen Version, hier JDK8:
