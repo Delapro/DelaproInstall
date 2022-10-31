@@ -1553,6 +1553,10 @@ IF "%PROCESSOR_ARCHITECTURE%"=="AMD64" GOTO Ghostx64
 
 Zum Testen kann man auf Azure z.B. "Standard D4ps v5 (4 vcpus, 16 GiB Arbeitsspeicher)" benutzen. Weitere Infos: https://learn.microsoft.com/en-us/azure/virtual-machines/dpsv5-dpdsv5-series und https://learn.microsoft.com/en-us/azure/virtual-machines/dplsv5-dpldsv5-series.
 
+Bei der Installation der Zusatzmodule kommt diese Fehlermeldung:
+![image](https://user-images.githubusercontent.com/16536936/198975912-226fe7e3-158d-4a7d-86e8-0e45fab722ca.png)
+Dadurch werden die Zusatzprogramm nicht im Installationspfad installiert sondern statt dessen unter "C:\Program Files (x86)\easy - innovative software\<Modulname>". Bei der Installation des Hauptprogramms werden die Druckertreiber nicht ermittelt und es erscheint eine entsprechende Meldung.
+
 ## Script-Tests
 
 ### Obfuscation Score ermitteln
