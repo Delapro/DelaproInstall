@@ -167,7 +167,7 @@ Function Get-ExecutablePlatformInformation () {
 		[String]$FilePath
 	)
 
-Begin {
+Process {
 	If (-Not ([System.IO.Path]::IsPathRooted(($FilePath)))) {
     	$FilePath = Resolve-Path $FilePath
     }
