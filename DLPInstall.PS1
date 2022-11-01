@@ -2989,6 +2989,9 @@ Function Install-LibreOffice {
 			$loVersion = '7.4.2.3'
 		} else {
 			$loVersion = '7.3.7.2'
+			If ($PlatformArm64) {
+				throw 'Geht nur mit NextVersion, bzw. ab 7.4.x.x'
+			}
 		}
 		$base = 'https://downloadarchive.documentfoundation.org/libreoffice/old'
 		If ($PlatformX64) {
