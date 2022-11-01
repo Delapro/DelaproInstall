@@ -154,6 +154,7 @@ Function Test-64Bit () {
 
 Function Test-ARM64 () {
 	# TODO: ist leider sprachabhängig, sollte irgendwie anders ermittelt werden, zunächst also mal DE und EN
+	# bessere Variante wäre wahrscheinlich $env:PROCESSOR_ARCHITECTURE, liefert dann AMD64, ARM64 oder x86
 	@('64-Bit-ARM-Prozessor', 'ARM 64-bit Processor') -contains (Get-CimInstance Win32_OperatingSystem).OSArchitecture
 }
 
