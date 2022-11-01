@@ -2968,6 +2968,7 @@ Function Install-LibreOffice {
 		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\",
 		[Switch]$PlatformX64,
+		[Switch]$PlatformArm64,
 		[Switch]$NextVersion
 	)
 
@@ -2975,11 +2976,10 @@ Function Install-LibreOffice {
 		# Infos zur aktuellen Version: https://de.libreoffice.org/download/release-notes/
 		# Installationsparameter: https://wiki.documentfoundation.org/Deployment_and_Migration
 		# Basispfad für Download der Versionen: https://downloadarchive.documentfoundation.org/libreoffice/old/
-		# TODO: 64-Bit
 		If ($NextVersion) {
-			$loVersion = '7.4.2.1'
+			$loVersion = '7.4.2.3'
 		} else {
-			$loVersion = '7.3.6.2'
+			$loVersion = '7.3.7.2'
 		}
 		$base = 'https://downloadarchive.documentfoundation.org/libreoffice/old'
 		If ($PlatformX64) {
@@ -2988,11 +2988,17 @@ Function Install-LibreOffice {
 			Start-BitsTransfer $url -Destination $tempDirectory
 			Start-Process -Wait "$($tempDirectory)\LibreOffice_$($loVersion)_Win_x64.msi"	
 		} else {
-			$url = "$($base)/$($loVersion)/win/x86/LibreOffice_$($loVersion)_Win_x86.msi"
-			Write-Verbose "Download von $url"
-			Start-BitsTransfer $url -Destination $tempDirectory
-			Start-Process -Wait "$($tempDirectory)\LibreOffice_$($loVersion)_Win_x86.msi"
-	
+			If ($PlatformArm64) {
+				$url = "$($base)/$($loVersion)/win/aarch64/LibreOffice_$($loVersion)_Win_aarch64.msi"
+				Write-Verbose "Download von $url"
+				Start-BitsTransfer $url -Destination $tempDirectory
+				Start-Process -Wait "$($tempDirectory)\LibreOffice_$($loVersion)_Win_aarch64.msi"
+			} else {
+				$url = "$($base)/$($loVersion)/win/x86/LibreOffice_$($loVersion)_Win_x86.msi"
+				Write-Verbose "Download von $url"
+				Start-BitsTransfer $url -Destination $tempDirectory
+				Start-Process -Wait "$($tempDirectory)\LibreOffice_$($loVersion)_Win_x86.msi"
+			}
 		}
 	}
 
