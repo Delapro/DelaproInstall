@@ -4473,6 +4473,7 @@ Function Install-FFMpeg {
 	# https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2020-10-27-12-34/ffmpeg-n4.3.1-20-g8a2acdc6da-win64-gpl-4.3.zip
 	# https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n5.0-latest-win64-gpl-5.0.zip
 	# https://github.com/PowerShell/PowerShell/releases/download/autobuild-2020-10-27-12-34/ffmpeg-n4.3.1-20-g8a2acdc6da-win64-gpl-4.3.zip
+	# TODO: ARM64 unterstützen, aktuell über: https://github.com/dvhh/ffmpeg-wos-arm64-build möglich
 
 	$baseVersion = '5.1'
     $Version = 'n5.1'
