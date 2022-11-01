@@ -153,7 +153,8 @@ Function Test-64Bit () {
 }
 
 Function Test-ARM64 () {
-	(Get-CimInstance Win32_OperatingSystem).OSArchitecture -eq 'ARM 64-bit Processor'
+	# TODO: ist leider sprachabhängig, sollte irgendwie anders ermittelt werden, zunächst also mal DE und EN
+	@('64-Bit-ARM-Prozessor', 'ARM 64-bit Processor') -contains (Get-CimInstance Win32_OperatingSystem).OSArchitecture
 }
 
 # Gibt Informationen zur angegebene Datei zurück, z.B. 64-Bit Executable (PE Format)
