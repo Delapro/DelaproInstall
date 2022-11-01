@@ -1919,18 +1919,22 @@ Function Install-Python {
 	Param(
 		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\",
-		[Validateset("x64", "x86")]
+		[Validateset("x64", "x86", 'arm64')]
 		[System.String]$Platform="x64"
 	)
 
 	# Installationsparameter siehe: https://docs.python.org/3.7/using/windows.html
 	# aktuelle Version von: https://python.org/downloads/windows
 
-	$version = "3.8.1"
+	$version = "3.11.0"
 	If ($Platform -eq "x64") {
 		$x64 = "-amd64"
 	} else {
-		$x64=""
+		If ($Platform -eq 'arm64') {
+			$x64 = "-arm64"
+		} else {
+			$x64=""
+		}
 	}
 	$url = "https://www.python.org/ftp/python/$version/python-$version$x64.exe"
 	$Dest = "$($tempDirectory)\python-$version$x64.exe"
