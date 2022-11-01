@@ -167,6 +167,7 @@ Function Get-ExecutablePlatformInformation () {
 		[String]$FilePath
 	)
 
+Begin {
 	If (-Not ([System.IO.Path]::IsPathRooted(($FilePath)))) {
     	$FilePath = Resolve-Path $FilePath
     }
@@ -212,6 +213,8 @@ Function Get-ExecutablePlatformInformation () {
 	} else {
 		throw 'Missing $FilePath'
 	}
+	
+}	
 }
 
 Function Test-WindowsVista() {
