@@ -2347,9 +2347,15 @@ Function Install-7Zip {
 
 	$Version = '2201'	# aktuelle offizielle Version: http://www.7-zip.org/
 	If (Test-64Bit) {
-		$url = "http://www.7-zip.org/a/7z$($Version)-x64.exe"
-		$Dest = "$($tempDirectory)\7z$($Version)-x64.exe"
-		$Sha256 = 'B055FEE85472921575071464A97A79540E489C1C3A14B9BDFBDBAB60E17F36E4'
+		If (Test-Arm64) {
+			$url = "http://www.7-zip.org/a/7z$($Version)-arm64.exe"
+			$Dest = "$($tempDirectory)\7z$($Version)-arm64.exe"
+			$Sha256 = '700DEA3E4012319A09CCADFCE91CF090334CFE658D0BDC42204E77ACBEA1EF99'
+		} else {			
+			$url = "http://www.7-zip.org/a/7z$($Version)-x64.exe"
+			$Dest = "$($tempDirectory)\7z$($Version)-x64.exe"
+			$Sha256 = 'B055FEE85472921575071464A97A79540E489C1C3A14B9BDFBDBAB60E17F36E4'
+		}
 	} else {
 		$url = "http://www.7-zip.org/a/7z$($Version).exe"
 		$Dest = "$($tempDirectory)\7z$($Version).exe"
