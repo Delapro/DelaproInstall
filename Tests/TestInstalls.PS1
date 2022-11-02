@@ -28,7 +28,7 @@ If (Test-Thunderbird) {
 Write-Host "7Zip"
 # Write-Host "  $(Test-Thunderbird)"
 Write-Host "  Install"
-Install-7Zip
+Install-7Zip -Verbose
 # Write-Host "  $(Test-Thunderbird)"
 
 # Ghostscript
