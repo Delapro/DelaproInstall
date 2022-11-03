@@ -1406,7 +1406,7 @@ New-PowershellScriptShortcut -Path C:\Users\User\DatumVerstellen.PS1 -Admin -Lin
 
 eine Verknüpfung auf dem Desktop erstellen.
 
-### fehlendes Programme bei Windows 11 nachinstallieren
+### Fehlende Programme bei Windows 11 nachinstallieren
 
 #### Notepad
 ```Powershell
