@@ -2429,7 +2429,7 @@ Function Install-VisualStudioCode {
 	)
 
 	If (Test-ARM64) {
-		$url = Resolve-HttpUrlRedirect https://code.visualstudio.com/sha/download?build=stable&os=win32-arm64-user
+		$url = Resolve-HttpUrlRedirect 'https://code.visualstudio.com/sha/download?build=stable&os=win32-arm64-user'
 	} else {
 		$url = Resolve-HttpUrlRedirect https://go.microsoft.com/fwlink/?Linkid=852157
 	}
