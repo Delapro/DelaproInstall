@@ -2428,7 +2428,11 @@ Function Install-VisualStudioCode {
 		[System.String]$tempDirectory="$Env:TEMP\"
 	)
 
-	$url = Resolve-HttpUrlRedirect https://go.microsoft.com/fwlink/?Linkid=852157
+	If (Test-ARM64) {
+		$url = Resolve-HttpUrlRedirect https://code.visualstudio.com/sha/download?build=stable&os=win32-arm64-user
+	} else {
+		$url = Resolve-HttpUrlRedirect https://go.microsoft.com/fwlink/?Linkid=852157
+	}
 	Start-Bitstransfer $url -Destination "$($tempDirectory)\VsCode.EXE"
 	Start-Process -Wait -FilePath "$($tempDirectory)\VsCode.EXE" -ArgumentList "/SILENT"
 
