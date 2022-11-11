@@ -959,12 +959,12 @@ Invoke-VDDSPruefTool -KZBVXMLFile .\KZBV-VDDS-Testdatei.XML
 
 ```Powershell
 # Installiert die neueste Java Version als 64-Bit Version
-Install-Java -Verbose
-Test-Java
+Install-OpenJDK -Verbose
+Test-OpenJDK
 
 # Installiert die neueste Java 8 Runtime als 32-Bit Version
-Install-Java -Platform x86 -Version 8 -Verbose
-Test-Java
+Install-OpenJDK -Platform x86 -Version 8 -Verbose
+Test-OpenJDK
 
 # Maven installieren
 Install-Maven -Verbose  # noch nicht komplett implementiert!
