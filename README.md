@@ -140,6 +140,12 @@ If (((Get-Item $DlpPath).Fullname.SubString(0, 3)) -eq ((Get-Item $DlpGamePath).
 
 ## Barcodescanner Vorbereitung
 
+In DLP_MAIN.INI müssen bestimmte Einstellungen für den Barcodescanner vorgenommen werden. Dazu gibt es unter der Sektion [Modus] die Variablen UseCOMPorts und DisableCOMPorts:
+```
+UseCOMPorts=COM13
+DisableCOMPorts=COM11,COM14
+```
+
 ```Powershell
 Set-Location C:\temp
 If (-Not (Test-Path SerialReader -Type Leaf)) {
