@@ -298,6 +298,10 @@ If ($driverIDFound) {
 """$winBuild"" {`$driverID = ""$driverID""}"
 ```
 
+### Windowsdruckertreiber aus Windows-Updatekatalog laden
+
+Manchmal muss man einen Treiber für einen Drucker direkt aus dem Windows-Update-Katalog laden. Z. B. so: https://www.catalog.update.microsoft.com/Search.aspx?q=<Druckername>
+
 ### Netzwerkdruckertreiber
 
 Wenn in einem Netz keine zentral freigebenen Drucker vorhanden sind, oder aus irgendeinem Grund flexibel reagiert werden muss, dann hilft die Verwendung von NETZDRCK.BAT.
