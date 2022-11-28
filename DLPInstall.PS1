@@ -2583,6 +2583,19 @@ Function Register-CombitMAPIProxy {
 	
 }
 
+function Get-CombitMAPIProxy {
+	[CmdletBinding()]
+	Param()
+	
+	$regProxy = 'registry::HKEY_CLASSES_ROOT\combit.MX.CrossBitnessProxy.ClassFactory\CurVer'
+	If (Test-Path $regProxy) {
+		$CurVer=(Get-ItemProperty $regProxy -Name '(default)').'(default)'
+		$CLSID=(Get-ItemProperty registry::HKEY_CLASSES_ROOT\$curVer\CLSID\ -Name '(default)').'(default)'
+		$ProxyExe=Get-ItemPropertyValue registry::HKEY_CLASSES_ROOT\CLSID\$CLSID\LocalServer32\ -name ServerExecutable
+		$ProxyExe
+	}
+}
+
 # installiert List&Label Debwin legt dazu ein eigenes Verzeichnis mit Namen combitProblemLösung an
 function Install-DebWin {
 	[CmdletBinding()]
