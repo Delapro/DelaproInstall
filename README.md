@@ -1357,10 +1357,18 @@ Wenn das E-Mailprogramm ein 64-Bit E-Mailprogramm ist, muss ein MAPI-Proxy von L
 
 ```Powershell
 # falls 64-Bit Delapro und 32-Bit Outlook:
-.\CMMP24.EXE /regserver
+.\CMMP27.EXE /regserver
 
 # bei 32-Bit Delapro und 64-Bit Outlook:
 Register-CombitMAPIProxy
+    
+# aktuelle Version des CombitMapiProxy ermitteln (falls registriert)
+Get-CombitMAPIProxy
+    
+# Registrierung rückgängig machen
+&(Get-CombitMAPIProxy) /unregserver
+# liefert dann nichts mehr:
+Get-CombitMAPIProxy
 ```
 
 ### Windows Standardprogramme einsehen, wie z. B. PDF, 7z oder ZIP-Dateizuordnungen:
