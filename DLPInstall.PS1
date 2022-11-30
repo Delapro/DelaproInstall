@@ -264,6 +264,26 @@ Function Test-WUARebootRequired {
     }
 }
 
+Function Get-RoamingProfile {
+
+	$objUser = New-Object System.Security.Principal.NTAccount($env:userdomain, $env:username)
+	$SID = $objUser.Translate([System.Security.Principal.SecurityIdentifier])
+	$profiles=Get-ChildItem "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\ProfileList"
+	$userprofile=$profiles | ?{($_.name).split("\")[-1] -eq $SID.value }
+	$userprofile.GetValue("centralprofile")
+	
+}
+
+Function Test-RoamingProfile {
+
+	If (Get-RoamingProfile) {
+		$true
+	} else {
+		$false
+	}
+	
+}
+
 Function Test-NetFramework45Installed()
 {
   # wie man die .Net -Version korrekt ermittelt: http://blogs.msdn.com/b/astebner/archive/2009/06/16/9763379.aspx
