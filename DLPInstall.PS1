@@ -3554,6 +3554,11 @@ Function Get-DelaproPath{
 		$files | ForEach-Object {Get-DelaproPath -DlpLnkFile $_.Name -Delagame:$Delagame}	
 		$files = Get-ChildItem "$(Get-DesktopFolder -CurrentUser)\$DlpLnkFile"
 		$files | ForEach-Object {Get-DelaproPath -DlpLnkFile $_.Name -Delagame:$Delagame}
+		If (Test-RoamingProfile) {
+			$roamPath=Get-RoamingProfile -replace '.V6','' # .V6 nur neuere Win10 (>1607)! https://www.windows-faq.de/2016/11/07/roaming-profiles-versionen-v6-seit-windows-10-anniversary/		
+			$files = Get-ChildItem "$($roamPath)\Desktop\$DlpLnkFile"
+			$files | ForEach-Object {Get-DelaproPath -DlpLnkFile $_.Name -Delagame:$Delagame}
+		}
 	} else {
 		# TODO: auch noch zu beachten mehrere Verknüpfungen, für verschiedene Mandanten!
 		# oder die bessere Variante, den Pfad aus der Verknüpfung vom Desktop auslesen
@@ -3568,7 +3573,12 @@ Function Get-DelaproPath{
 			# TODO
 		}
 		If ($DlpPath -eq '' -or $null -eq $DlpPath -or (-Not (Test-Path $DlpPath))) {
-			$DlpPath=(Get-FileShortCut -LinkFilename $DlpLnkFile -Folder (Get-DesktopFolder -CurrentUser)).WorkingDirectory
+			If (Test-RoamingProfile) {
+				Write-Verbose "Roaming-Profile: $(Get-RoamingProfile)"
+				$DlpPath=(Get-FileShortCut -LinkFilename $DlpLnkFile -Folder (($("(Get-RoamingProfile -replace '.V6','')\Desktop")))).WorkingDirectory
+			} else {
+				$DlpPath=(Get-FileShortCut -LinkFilename $DlpLnkFile -Folder (Get-DesktopFolder -CurrentUser)).WorkingDirectory
+			}
 			If ($DlpPath -eq '' -or $null -eq $DlpPath -or (-Not (Test-Path $DlpPath))) {
 				$DlpPath='C:\Delapro' # Standardpfad setzen
 			}
