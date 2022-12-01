@@ -747,6 +747,9 @@ und FORMWREK.TXT
 
 ## Ergänzungen zu Programmeinstellungen
 
+### Unterschiedlichen Liefer- und Rechnungsadressen
+Für die Ausgabe von [unterschiedlichen Liefer- und Rechnungsadressen](Doku/Rechnungsadresse.MD) beachten.
+
 ### Ausgabe eines Stern wenn Bilder in der Bildarchivierung vorhanden sind
 
 Im Konfigurationsprogramm unter ALT+F5-Fielddefinitionen, bei AUFTRAG im Feld Beleg unter F4-Ändern bei der BischiAusgabe diesen Eintrag machen: 
