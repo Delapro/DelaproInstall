@@ -142,6 +142,6 @@ muss durch folgendes ersetzt werden:
 .ENDIF
 .SET PITCH TO 12
 .SET WIDTH TO 96
-.*-----FORMMARGI
+.*-----FORMMARGIN
 ...
 ```
