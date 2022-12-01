@@ -8,29 +8,29 @@ Es wird auch ein aktuelles Delapro-Update benötigt, wo die Funktion <CODE>KUN_R
 In so einem Fall wird die normale Kundenadresse die Lieferadresse. Die zusätzliche Rechnungsadresse hinterlegt man bei den Kundenbemerkungen (F7). Die Struktur der hinterlegten Adresse wird durch ein kleines XML-Konstrukt gebildet. Dieses hat folgende Struktur:
 
 ```XML
-  <RECHNUNGSADRESSE>
-    <ANREDE>Praxis</ANREDE>
-    <TITEL>Titel</TITEL>
-    <VORNAME>Vorname</VORNAME>
-    <NAME>Name</NAME>
-    <NAME2>Name2</NAME2>
-    <ZUSATZ>Zusatz</ZUSATZ>
-    <STRASSE>Strasse</STRASSE>
-    <PLZ>11111</PLZ>
-    <ORT>Ort</ORT>
-  </RECHNUNGSADRESSE>
+<RECHNUNGSADRESSE>
+  <ANREDE>Praxis</ANREDE>
+  <TITEL>Titel</TITEL>
+  <VORNAME>Vorname</VORNAME>
+  <NAME>Name</NAME>
+  <NAME2>Name2</NAME2>
+  <ZUSATZ>Zusatz</ZUSATZ>
+  <STRASSE>Strasse</STRASSE>
+  <PLZ>11111</PLZ>
+  <ORT>Ort</ORT>
+</RECHNUNGSADRESSE>
 ```
 
 Es müssen nicht alle Elemente hinterlegt werden, d. h. es ist auch erlaubt:
 ```XML
-  <RECHNUNGSADRESSE>
-    <ANREDE>Praxis</ANREDE>
-    <VORNAME>Vorname</VORNAME>
-    <NAME>Name</NAME>
-    <STRASSE>Strasse</STRASSE>
-    <PLZ>11111</PLZ>
-    <ORT>Ort</ORT>
-  </RECHNUNGSADRESSE>
+<RECHNUNGSADRESSE>
+  <ANREDE>Praxis</ANREDE>
+  <VORNAME>Vorname</VORNAME>
+  <NAME>Name</NAME>
+  <STRASSE>Strasse</STRASSE>
+  <PLZ>11111</PLZ>
+  <ORT>Ort</ORT>
+</RECHNUNGSADRESSE>
 ```
 
 Damit die Ausgabe der Liefer- und Rechnungsadresse erfolgt, muss noch FORMKOPF.TXT (gilt nur für neue Formulare) dafür angepaßt werden.
