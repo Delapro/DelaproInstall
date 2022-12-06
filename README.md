@@ -503,14 +503,15 @@ Richtet eine Aufgabe unter Windows für die automatische Datensicherung des Dela
 Remotelaufwerk auf einem NAS. Rechner muss aber laufen und Benutzer muss angemeldet sein!
 
 ```Powershell
-Copy-Item C:\Delapro\BACKUP.BAT C:\Delapro\AUTOBACKUP.BAT
+# TODO: Delapro- und NAS-Pfad prüfen bzw. anpassen
+Copy-Item $DLPPath\BACKUP.BAT $DLPPath\AUTOBACKUP.BAT
 # gegebenfalls AUTOBACKUP.BAT anpassen wegen Zugriffsrechten, dies geschieht überlichweise unter dem Label
 # :NT
 # NET USE \\NAS\Freigabe /USER:Benutzer Passwort
 # CMD /X /C "START /W BACKUP\EASYBACKUP32 %2 /S /V %1 %3 %4 %5"
 # NET USE \\NAS\Freigabe /DELETE
 $taskname = 'Delapro Autosicherung auf NAS'
-$action = New-ScheduledTaskAction -Execute AUTOBACKUP.BAT -WorkingDirectory C:\Delapro -Argument '\\NAS\Freigabe\DelaproAutosicherung *.* /AUTO'
+$action = New-ScheduledTaskAction -Execute AUTOBACKUP.BAT -WorkingDirectory $DLPPath -Argument '\\NAS\Freigabe\DelaproAutosicherung *.* /AUTO'
 # Uhrzeit im Sommer -2 im Winter -1 dann passt die Stunde, wegen UTC+1 und eben Sommerzeit, 05:00 -2 = 03:00
 $trigger=New-ScheduledTaskTrigger -Daily -At 05:00
 $set=New-ScheduledTaskSettingsSet -ExecutionTimeLimit "8:00"
