@@ -4,7 +4,7 @@ Das Problem, dass vor allem beim Erzeugen von E-Mails die PDF-Datei im Anhang nu
 <CODE>xmlXPrintPDF.BAT</CODE> im BIN-Verzeichnis angepasst werden, damit es wartet, bis DlpXMLPr.EXE mit seiner Aufgabe fertig ist.
 
 ```CMD
-REM @CMD /C "%1DlpXMLpr.exe" %2 %3 %4 %5 %6
+@CMD /C "%1DlpXMLpr.exe" %2 %3 %4 %5 %6
 REM @ECHO %1 %2 %3 %4 %5 %6 >> LOG.TXT
 @CMD /C ".\LASER\XGHOSTPDFX.BAT" %2 %3 %4 %5 %6
 ```
