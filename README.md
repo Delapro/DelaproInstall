@@ -506,6 +506,7 @@ Remotelaufwerk auf einem NAS. Rechner muss aber laufen und Benutzer muss angemel
     
 ```Powershell
 # TODO: Delapro- und NAS-Pfad prüfen bzw. anpassen
+# TODO: Anstatt NET USE sollte New-SmbMapping, Remove-SmbMapping und Get-SmbMapping verwendet werden, dadurch wird man auch das Problem mit den Sonderzeichen bei Passwörtern los
 Copy-Item $DLPPath\BACKUP.BAT $DLPPath\AUTOBACKUP.BAT
 # gegebenfalls AUTOBACKUP.BAT anpassen wegen Zugriffsrechten, dies geschieht überlichweise unter dem Label
 # :NT
