@@ -502,6 +502,8 @@ Import-LastDelaproBackup -DestinationPath $DlpPath -Verbose
 Richtet eine Aufgabe unter Windows für die automatische Datensicherung des Delapros ein. Hier am Beispiel eines
 Remotelaufwerk auf einem NAS. Rechner muss aber laufen und Benutzer muss angemeldet sein!
 
+> Hinweis: Bei Passwortangabe muss % durch %% ersetzt werden, falls % vorkommt! Sonst gibt es immer einen Netzwerkfehler 85. Gegebenfalls weitere Sonderzeichen mittels ^ escapen.
+    
 ```Powershell
 # TODO: Delapro- und NAS-Pfad prüfen bzw. anpassen
 Copy-Item $DLPPath\BACKUP.BAT $DLPPath\AUTOBACKUP.BAT
@@ -521,7 +523,13 @@ $t | Register-ScheduledTask -TaskName $taskname -TaskPath '\easy\' -User (whoami
 # zum Testen dann direkt aufrufen:
 Start-ScheduledTask -TaskPath '\easy\' -TaskName $taskname
 ```
-
+    
+Will man die Autosicherung zusätzlich über den Programmverteiler verfügbar machen, braucht man eine AutoBackRun.BAT-Datei mit folgendem Inhalt:
+```CMD
+powershell -Command "& {Start-ScheduledTask -TaskPath '\easy\' -TaskName 'Delapro Autosicherung auf NAS'};While((Get-ScheduledTask -TaskName 'Delapro Autosicherung auf NAS').state -eq 'running'){Start-Sleep -Seconds 1}"
+```
+Im Programmverteiler ruft man einfach <CODE>CALL AutoBackRun.BAT</CODE> auf.
+    
 ### Einrichtung von bestimmten Backup-Laufwerken
 
 ```Powershell
