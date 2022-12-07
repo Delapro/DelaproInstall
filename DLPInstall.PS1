@@ -5049,7 +5049,7 @@ Function Remove-JetztBesprechen {
 
 	)
 
-	# von Hand: Einstellungen->System->Personalisieren->Systemsymbole
+	# von Hand: Einstellungen->Personalisieren->Taskleiste->Infobereich->Systemsymbole
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "HideSCAMeetNow" -Value 1
 	Write-Verbose "Neustart vom Rechner oder Explorer, damit die Einstellung Wirkung zeigt"
 }
