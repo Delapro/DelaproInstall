@@ -5051,7 +5051,24 @@ Function Remove-JetztBesprechen {
 
 	# von Hand: Einstellungen->Personalisieren->Taskleiste->Infobereich->Systemsymbole
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "HideSCAMeetNow" -Value 1
-	Write-Verbose "Neustart vom Rechner oder Explorer, damit die Einstellung Wirkung zeigt"
+	
+	# möglicher Refresh über, sollte eigentlich ausgegliedert werden:
+	$Type = ([System.Management.Automation.PSTypeName]'ChangeNotify').Type
+    	if (-not $Type) {
+        	$Signature = @'
+				[DllImport("Shell32.dll")]
+				public static extern int SHChangeNotify(int eventId, int flags, IntPtr item1, IntPtr item2);
+'@
+        	$Type = Add-Type -MemberDefinition $Signature -Name 'ChangeNotify' -Namespace 'SHChangeNotify' -PassThru
+	}
+ 	$SHCNE_ASSOCCHANGED = 0x8000000
+ 	$SHCNF_FLUSH = 0x1000
+ 	# oder?
+ 	$SHCNF_IDLIST = 0x0000
+ 	# ginge auch?
+ 	$SHCNF_FLUSHNOWAIT = 0x2000
+ 	$Type::SHChangeNotify($SHCNE_ASSOCCHANGED, $SHCNF_FLUSH, [IntPtr]::Zero, [IntPtr]::Zero)
+
 }
 
 # ermittelt das Standard-E-Mailprogramm
