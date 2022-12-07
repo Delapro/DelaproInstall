@@ -5042,6 +5042,18 @@ Function Set-SystemRestore {
 
 }
 
+Function Remove-JetztBesprechen {
+	[CmdletBinding()]
+	#[OutputType([System.Boolean])]
+	Param(
+
+	)
+
+	# von Hand: Einstellungen->System->Personalisieren->Systemsymbole
+	Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "HideSCAMeetNow" -Value 1
+	Write-Verbose "Neustart vom Rechner oder Explorer, damit die Einstellung Wirkung zeigt"
+}
+
 # ermittelt das Standard-E-Mailprogramm
 Function Get-DefaultEMailClient {
 	[CmdletBinding()]
