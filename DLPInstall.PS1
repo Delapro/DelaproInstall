@@ -5052,7 +5052,17 @@ Function Remove-JetztBesprechen {
 	# von Hand: Einstellungen->Personalisieren->Taskleiste->Infobereich->Systemsymbole
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "HideSCAMeetNow" -Value 1
 	
-	# möglicher Refresh über, sollte eigentlich ausgegliedert werden:
+	# Aktualisierung notwendig, damit die Registrierungsänderung sich auswirkt
+	Invoke-DesktopRefresh
+}
+
+Function Invoke-DesktopRefresh {
+	[CmdletBinding()]
+	#[OutputType([System.Boolean])]
+	Param(
+
+	)
+
 	$Type = ([System.Management.Automation.PSTypeName]'ChangeNotify').Type
     	if (-not $Type) {
         	$Signature = @'
@@ -5068,7 +5078,6 @@ Function Remove-JetztBesprechen {
  	# ginge auch?
  	$SHCNF_FLUSHNOWAIT = 0x2000
  	$Type::SHChangeNotify($SHCNE_ASSOCCHANGED, $SHCNF_FLUSH, [IntPtr]::Zero, [IntPtr]::Zero)
-
 }
 
 # ermittelt das Standard-E-Mailprogramm
