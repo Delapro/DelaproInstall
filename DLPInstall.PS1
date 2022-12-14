@@ -5054,6 +5054,27 @@ Function Remove-JetztBesprechen {
 	
 	# Aktualisierung notwendig, damit die Registrierungsänderung sich auswirkt
 	Invoke-DesktopRefresh
+	# obiges klappt nicht, ebenso
+<#	
+	     $sig = '
+	  [DllImport("user32.dll")] public static extern IntPtr FindWindow(string ClassName, string WindowName);
+          [DllImport("user32.dll", EntryPoint = "FindWindowEx")] public static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
+          [DllImport("User32.dll")] public static extern int SendMessage(IntPtr hWnd, int uMsg, int wParam, string lParam);
+        ' 
+     
+        $type = Add-Type -MemberDefinition $sig -Name APISendMessage -PassThru
+
+	[IntPtr]$shelltraywnd = $type::FindWindow("shell_traywnd", '')
+	[IntPtr]$traynotifywnd = $type::FindWindowEx($shelltraywnd, 0, "traynotifywnd", '')
+	[IntPtr]$trayclockwclass = $type::FindWindowEx($traynotifywnd, 0, "trayclockwclass", '')
+
+	$WMPaint = 0x000f
+	$type::SendMessage($traynotifywnd, $WMPaint, 0, 0)
+	$type::SendMessage($trayclockwclass, $WMPaint, 0, 0)  # oder so
+#>
+	# klappt auch nicht...
+	# Thema ist sowieso schwierig, da Windows 11 auch nochmal die notification area geändert hat
+
 }
 
 Function Invoke-DesktopRefresh {
