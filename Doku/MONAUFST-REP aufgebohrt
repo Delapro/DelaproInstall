@@ -1,0 +1,69 @@
+MwSt-Steuerausweisung auf Monatsaufstellung, MonLayoutPos 4 und 5
+
+```
+.IF .NOT. ABSVErweit
+.  IF ABSVMonPosi == 0
+.  ELSE
+.    IF ABSVMonPosi == 1
+!ueRg-Nr  Patient                                  Material     Leistung         Gesamt!ua
+.    ELSE
+.      IF ABSVMonPosi == 2
+!ueRg-Nr  Patient                                                                  Gesamt!ua
+.      ELSE
+.        IF ABSVMonPosi == 3
+!ueRg-Nr  Patient                                               Datum              Gesamt!ua
+.        ELSE
+.          IF ABSVMonPosi == 4
+!ueRg-Nr  Patient                                Nettosumme         MwSt         Gesamt!ua
+.          ELSE
+.            IF ABSVMonPosi == 5
+!ueRg-Nr  Patient                     Leistung     Material         MwSt         Gesamt!ua
+.            ELSE
+.            ENDIF
+.          ENDIF
+.        ENDIF
+.      ENDIF
+.    ENDIF
+.  ENDIF
+.ENDIF
+```
+
+```
+.  IF ABSVMonPosi == 0
+.    * hier kommen die Zeilen fr eine Spezialanpassung rein, fr jede 
+.    * Zeile die gedruckt werden muá ist ABSVZeile um eins zu erh”hen
+.    ABSVZeile := ABSVZeile +0
+.  ELSE
+.    IF ABSVMonPosi == 1
+.      * alte Methode mit Nettosummen
+@SUBSTR (RechnNr, 3, 2) + RIGHT (RechnNr, 3)@  @LEFT (Patient, 36)@ @DMNum (MOA_SummeEdel () + MOA_SummeZaeh () + MOA_SummeFert (), 12)@ @DMNum (MOA_SummeLeis (), 12)@ @DMNum (MOA_SummeGesa () + MOA_SMwStGesa (), 14)@ @ABSVKasPri@
+.      ABSVZeile := ABSVZeile +1
+.    ELSE
+.      IF ABSVMonPosi == 2
+.        * nur Rechnungsnummer, Patient und Bruttosummen ausgeben
+@SUBSTR (RechnNr, 3, 2) + RIGHT (RechnNr, 3)@  @LEFT (Patient, 38)@                           @DMNum (MOA_SummeGesa () + MOA_SMwStGesa (), 14)@ @ABSVKasPri@
+.        ABSVZeile := ABSVZeile +1
+.      ELSE
+.        IF ABSVMonPosi == 3
+.        * nur Rechnungsnummer, Patient, Datum und Bruttosummen ausgeben
+@SUBSTR (RechnNr, 3, 2) + RIGHT (RechnNr, 3)@  @LEFT (Patient, 38)@                @PADL (DTOC (Datum), 10)@ @DMNum (MOA_SummeGesa () + MOA_SMwStGesa (), 14)@ @ABSVKasPri@
+.          ABSVZeile := ABSVZeile +1
+.        ELSE
+.          IF ABSVMonPosi == 4
+.            * nur Rechnungsnummer, Patient, Netto, MwSt und Bruttosummen ausgeben
+@SUBSTR (RechnNr, 3, 2) + RIGHT (RechnNr, 3)@  @LEFT (Patient, 36)@ @DMNum (MOA_SummeLeis () + MOA_SummeEdel () + MOA_SummeZaeh () + MOA_SummeFert (), 12)@ @DMNum (MOA_SMwStGesa (), 12)@ @DMNum (MOA_SummeGesa () + MOA_SMwStGesa (), 14)@ @ABSVKasPri@
+.            ABSVZeile := ABSVZeile +1
+.          ELSE
+.            IF ABSVMonPosi == 5
+.              * nur Rechnungsnummer, Patient, Leistung, Material, MwSt und Bruttosummen ausgeben
+@SUBSTR (RechnNr, 3, 2) + RIGHT (RechnNr, 3)@  @LEFT (Patient, 23)@ @DMNum (MOA_SummeLeis (),12)@ @DMNum(MOA_SummeEdel () + MOA_SummeZaeh () + MOA_SummeFert (), 12)@ @DMNum (MOA_SMwStGesa (), 12)@ @DMNum (MOA_SummeGesa () + MOA_SMwStGesa (), 14)@ @ABSVKasPri@
+.              ABSVZeile := ABSVZeile +1
+.            ELSE
+.              * Weitere M”glichkeiten
+.            ENDIF
+.          ENDIF
+.        ENDIF
+.      ENDIF
+.    ENDIF
+.  ENDIF
+```
