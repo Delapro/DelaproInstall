@@ -67,3 +67,31 @@ MwSt-Steuerausweisung auf Monatsaufstellung, MonLayoutPos 4 und 5
 .    ENDIF
 .  ENDIF
 ```
+
+```
+.  IF ABSVZeile > 32 - ABSVMore
+
+.    IF ABSVMonPosi == 0
+.    ELSE
+.      IF ABSVMonPosi == 1
+                              Zwischensummen @DMNum (ABSVSummen [1, 2], 11)@  @DMNum (ABSVSummen [1, 1], 11)@
+.    NEWPAGE
+                                    šbertrag @DMNum (ABSVSummen [1, 2], 11)@  @DMNum (ABSVSummen [1, 1], 11)@
+.      ELSE
+.        IF ABSVMonPosi == 2 .OR. ABSVMonPosi == 3
+                                 Zwischensummen                         @DMNum (MOA_Gesamt (ABSVSummen), 14)@
+.    NEWPAGE
+                                       šbertrag                         @DMNum (MOA_Gesamt (ABSVSummen), 14)@
+.        ELSE
+.          IF ABSVMonPosi == 4 .OR. ABSVMonPosi == 5
+                             Zwischensummen                           @DMNum (MOA_Gesamt (ABSVSummen), 14)@
+.            NEWPAGE
+                                   šbertrag                           @DMNum (MOA_Gesamt (ABSVSummen), 14)@
+.          ELSE
+.          ENDIF
+.        ENDIF
+.      ENDIF
+.    ENDIF
+.    ABSVZeile := ABSVZeile +1
+.  ENDIF
+```
