@@ -3564,6 +3564,7 @@ Function Get-DelaproPath{
 		# oder die bessere Variante, den Pfad aus der Verknüpfung vom Desktop auslesen
 		# nach Delapro.exe Ausschau halten:  TargetPath       : C:\Delapro\Delapro.exe
 		$DlpPath=(Get-FileShortCut -LinkFilename $DlpLnkFile -Folder (Get-DesktopFolder -AllUsers)).WorkingDirectory
+		Write-Verbose "Pfad ermittelt aus WorkingDirectory(AllUsers): $DlpPath"
 		# vor dem Prüfen muss getestet werden, ob die Shell mit Adminrechten läuft, da gerade hier oft die Verbindung
 		# der Laufwerke nachgeholt werden muss
 		If (Test-Admin) {
@@ -3578,13 +3579,16 @@ Function Get-DelaproPath{
 				$DlpPath=(Get-FileShortCut -LinkFilename $DlpLnkFile -Folder (($("(Get-RoamingProfile -replace '.V6','')\Desktop")))).WorkingDirectory
 			} else {
 				$DlpPath=(Get-FileShortCut -LinkFilename $DlpLnkFile -Folder (Get-DesktopFolder -CurrentUser)).WorkingDirectory
+				Write-Verbose "Pfad ermittelt aus WorkingDirectory(CurrentUser): $DlpPath"
 			}
 			If ($DlpPath -eq '' -or $null -eq $DlpPath -or (-Not (Test-Path $DlpPath))) {
-				$DlpPath='C:\Delapro' # Standardpfad setzen
+				Write-Verbose "Pfad auf Standard gesetzt, wegen fehlendem Zugriff"
+				$DlpPath='C:\Delapro' # Standardpfad setzen			
 			}
 		}
 		If ($DelaGame) {
 			$DlpPath = $DlpPath.Replace('\Delapro', '\DelaGame').Replace('\DELAPRO', '\DelaGame').Replace('\delapro', '\DelaGame')
+			Write-Verbose "Delagamepfad erzeugt: $DlpPath"
 		}
 		$DlpPath
 	}
