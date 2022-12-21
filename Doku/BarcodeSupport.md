@@ -17,11 +17,12 @@ dir -Exclude '*.zip'|where lastwritetime -gt (Get-Date).AddDays(-30)|where lengt
 # zuerst erlaubte, bekannte Muster definieren
 $datamatrixHIBC = '\]d1\+.*$'
 $datamatrixGS1 = '\]d201.*$'
+$qrcodeHIBC = '\]Q1\+.*$'
 $strichcodeY = '\]C0\.\d{1,3}Y.*$'
 $datamatrixY = '\]d1\.\d{1,3}Y.*$'
 $Leerzeilen = '^$'
 $strichcodeHIBC = '\]C0+.*$'
-$patterns = @($datamatrixHIBC,$datamatrixGS1,$strichcodeY,$datamatrixY, $strichcodeHIBC,$Leerzeilen)
+$patterns = @($datamatrixHIBC,$datamatrixGS1,$strichcodeY,$datamatrixY, $strichcodeHIBC,$Leerzeilen,$qrcodeHIBC)
 # obige Muster auf alle anwenden 
 get-content alle.bin|Select-String -NotMatch -pattern $patterns
 
