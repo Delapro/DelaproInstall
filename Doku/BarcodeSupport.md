@@ -21,6 +21,6 @@ $strichcodeY = '\]C0\.\d{1,3}Y.*$'
 $Leerzeilen = '^$'
 $strichcodeHIBC = '\]C0+.*$'
 # obige Muster auf alle anwenden 
-get-content alle.bin|Select-String -NotMatch -pattern @($datamatrixHIBC,$datamatrixGS1,$strichcodeY,$strichcodeHIBC',$Leerzeilen)
+get-content alle.bin|Select-String -NotMatch -pattern @($datamatrixHIBC,$datamatrixGS1,$strichcodeY,$strichcodeHIBC,$Leerzeilen)
 
 ```
