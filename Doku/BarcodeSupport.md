@@ -21,8 +21,9 @@ $qrcodeHIBC = '\]Q1\+.*$'
 $strichcodeY = '\]C0\.\d{1,3}Y.*$'
 $datamatrixY = '\]d1\.\d{1,3}Y.*$'
 $Leerzeilen = '^$'
-$strichcodeHIBC = '\]C0+.*$'
-$patterns = @($datamatrixHIBC,$datamatrixGS1,$strichcodeY,$datamatrixY, $strichcodeHIBC,$Leerzeilen,$qrcodeHIBC)
+$code128HIBC = '\]C0+.*$'
+$code39HIBC = '\]A0+.*$'
+$patterns = @($datamatrixHIBC,$datamatrixGS1,$strichcodeY,$datamatrixY,$code128HIBC,$code39HIBC,$Leerzeilen,$qrcodeHIBC)
 # obige Muster auf alle anwenden 
 get-content alle.bin|Select-String -NotMatch -pattern $patterns
 
