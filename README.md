@@ -1218,13 +1218,15 @@ Get-Package -Providename Programs -Include WindowsInstaller -Name Delapro
 Get-Package -Name Delapro | Uninstall-Package
 ```
 
-Wenn die Installation trotzdem nicht möglich ist, hilft ein Blick direkt ins Verzeichnis mit den Installationsdateien. Üblicherweise findet man diese unter dem Pfad C:\Program Files\InstallShield Installation Information\ danach muss dann noch die InstallationsGuid hinzugefügt werden, also
+Wenn die Installation trotzdem nicht möglich ist, hilft ein Blick direkt ins Verzeichnis mit den Installationsdateien. Üblicherweise findet man diese unter dem Pfad <CODE>C:\Program Files\InstallShield Installation Information\</CODE> danach muss dann noch die InstallationsGuid hinzugefügt werden, also
 
-DlpWinPr, bzw. Windowsdruckertreiber: INSTALLATIONGUID=93973e0d-f4ef-11d3-b878-00a0c91d65ab
-DlpWinChart: INSTALLATIONGUID=75aa17e4-4d1f-11de-b236-0003ff4fd0b6
-DlpWinZert: INSTALLATIONGUID=7a7cb782-65ec-11d7-8af4-00805f199743
-easyBackup32: INSTALLATIONGUID=843687E8-EFBD-11D3-B878-00A0C91D65AB
-DlpWinIm: INSTALLATIONGUID=177cc921-ff8a-11d3-b878-00a0c91d65ab
+Programm|INSTALLATIONGUID
+---|---
+DlpWinPr, bzw. Windowsdruckertreiber|INSTALLATIONGUID=93973e0d-f4ef-11d3-b878-00a0c91d65ab
+DlpWinChart|INSTALLATIONGUID=75aa17e4-4d1f-11de-b236-0003ff4fd0b6
+DlpWinZert|INSTALLATIONGUID=7a7cb782-65ec-11d7-8af4-00805f199743
+easyBackup32|INSTALLATIONGUID=843687E8-EFBD-11D3-B878-00A0C91D65AB
+DlpWinIm|INSTALLATIONGUID=177cc921-ff8a-11d3-b878-00a0c91d65ab
 
 Als Pfad ergibt sich dann für DlpWinPr: "C:\Program Files\InstallShield Installation Information\{93973e0d-f4ef-11d3-b878-00a0c91d65ab}".
 
