@@ -29,8 +29,9 @@ get-content alle.bin|Select-String -NotMatch -pattern $patterns
 
 ```
 
-# nach Dateien mit Referenzbarcodes suchen
+# Barcodes durchsuchen 
 
-```CMD
+```Powershell
+# nach Dateien mit Referenzbarcodes suchen
 findstr /S /M ".8Y00" *.BIN
 ```
