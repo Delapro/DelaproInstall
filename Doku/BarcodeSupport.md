@@ -28,3 +28,9 @@ $patterns = @($datamatrixHIBC,$datamatrixGS1,$strichcodeY,$datamatrixY,$code128H
 get-content alle.bin|Select-String -NotMatch -pattern $patterns
 
 ```
+
+# nach Dateien mit Referenzbarcodes suchen
+
+```CMD
+findstr /S /M ".8Y00" *.BIN
+```
