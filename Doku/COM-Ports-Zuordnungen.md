@@ -18,3 +18,6 @@ devmgmt.msc
 # Ansicht->Ausgeblendete Geräte anzeigen
 # X = entfernen
 ```
+
+## sonstige Infos zu COM-Ports
+http://woshub.com/how-to-clean-up-and-reset-com-ports-in-windows-7/
