@@ -1534,10 +1534,7 @@ siehe [COM-Ports-Zuordnungen](./Doku/COM-Ports-Zuordnungen.md)
 
 ### Barcodes durchsuchen 
 
-```Powershell
-# nach Dateien mit Referenzbarcodes suchen
-findstr /S /M ".8Y00" *.BIN
-```
+siehe: [nach Barcodes suchen](./Doku/BarcodeSupport.md)
 
 ### Probleme in Zusatzprogrammen
 
