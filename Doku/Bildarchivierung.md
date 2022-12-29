@@ -15,6 +15,10 @@ Verschieben von lokal auf Netzlaufwerk mit eigenem Verzeichnis:
 
 <Code>Bildlink C:\DELAPRO\BILDER N:\BILDER</Code>
 
+ansonsten gilt:
+
+<Code>Bildlink C:\DELAPRO\BILDER N:\DELAPRO\BILDER</Code>
+
 ## Längsten Dateinamen feststellen
 
 ```Powershell
