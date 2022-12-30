@@ -1131,6 +1131,9 @@ Get-GhostScriptExecutable
 # Konvertieren einer Postscriptdatei in PDF
 & "$(Get-GhostScriptExecutable)" -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile="test.pdf" .\test.ps
 
+# Drucken einer PDF-Datei, %printer% muss so angegeben werden, LBP3560 ist der Druckername von Get-Printer
+&(Get-GhostScriptExecutable) -sOutputFile="%printer%LBP3560" -sDEVICE=mswinpr2 -dNOPAUSE -dBATCH "C:\temp\test.pdf"
+
 # Bei Problemen kann man Debugparameter aktivieren, siehe auch https://www.ghostscript.com/doc/current/Use.htm#Debug_switches
 & "$(Get-GhostScriptExecutable)" -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile="test.pdf" .\test.ps -dPDFDEBUG
 
