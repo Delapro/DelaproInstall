@@ -1197,6 +1197,18 @@ Falls man bei den 3D-Geschichten aus irgendeinem Grund auf OpenGL angewiesen ist
 
 ## Probleme ermitteln
 
+### Verschwommene Darstellung der Zeichen im Delapro-Fenster
+
+Liegt an Problemen mit hohen Auflösungen. Es muss HighDpiAware gesetzt werden. Falls manuell oder in einem Skript:
+
+```Powershell
+[System.Environment]::SetEnvironmentVariable('__COMPAT_LAYER', 'HighDpiAware')  # aktiveren
+# nun Programm aufrufen
+[System.Environment]::SetEnvironmentVariable('__COMPAT_LAYER', '')  #abschalten
+```
+
+Manuelle Einstellung in der Verknüpfung vom Apfel bei Kompatibilitäteinstellungen unten System(Erweitert) aktivieren.
+
 ### Problem, dass Delapro nicht deinstalliert werden kann
 
 In diesem Fall hilft die manuelle deinstallation vom Delapro. Man wird im Registrierungseditor unter HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall fündig um den Delaproeintrag zu finden. Unter Windows 32-Bit Versionen findet man den Eintrag unter HKLM:\SOFTWARE\Microsoft\windows\CurrentVersion\Uninstall\. Momentan findet man den konkreten Eintrag unter dem Key{61DB59C0-0B0E-11D4-B878-00A0C91D65AB}, welcher fürs Delapro zugeordnet ist.
