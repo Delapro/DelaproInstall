@@ -95,3 +95,22 @@ MwSt-Steuerausweisung auf Monatsaufstellung, MonLayoutPos 4 und 5
 .    ABSVZeile := ABSVZeile +1
 .  ENDIF
 ```
+
+Wenn Gesamtsummen der einzelnen Spalten ausgegben werden sollen:
+
+```
+.  IF ABSVMonPosi == 5
+               Monatssumme @DLP_Waehrung (Rechnung->KWaehrung)@  @DMNum (MOA_Gesamt (ABSVSummen, 1), 11)@  @DMNum (MOA_Gesamt (ABSVSummen, 2), 11)@  @DMNum (MOA_Gesamt (ABSVSummen)-(MOA_Gesamt (ABSVSummen, 1) + MOA_Gesamt (ABSVSummen, 2)), 11)@ @DMNum (MOA_Gesamt (ABSVSummen), 14)@
+.*                   Monatssumme @DLP_Waehrung (Rechnung->KWaehrung)@  @DMNum (MOA_Gesamt (ABSVSummen, 1), 11)@ @DMNum (MOA_Gesamt (ABSVSummen, 2), 11)@ @DMNum (MOA_Gesamt (ABSVSummen, 3) + MOA_Gesamt (ABSVSummen, 4), 11)@       @DMNum (MOA_Gesamt (ABSVSummen), 14)@
+.  ELSE
+                                  Monatssumme @DLP_Waehrung (Rechnung->KWaehrung)@                     @DMNum (MOA_Gesamt (ABSVSummen), 14)@
+.ENDIF
+.  IF ABSVMonPosi == 5
+               ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+.  ELSE
+                                  ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+.  ENDIF
+```
+
