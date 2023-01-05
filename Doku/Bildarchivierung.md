@@ -37,3 +37,22 @@ Bilderverzeichnis mit Dummies füllen für Tests:
 1..65532|%{Set-Content -Path (".\xht$((`"{0:x}`" -f $_).ToUpper()).PCX") -Value "$_"}
 1..65532|%{Set-Content -Path (".\xht$((`"{0:x}`" -f $_).ToUpper()).tmp") -Value "$_"}
 ``` 
+
+## Fehlermeldung beim Öffnen
+
+Ist die Einstellung, dass gleich nach Aufruf ein Livebild angezeigt werden soll und es gibt Probleme mit der Quelle, kann diese Meldung erscheinen:
+
+```
+---------------------------
+DlpWinIm - DELAPRO.TGA
+---------------------------
+Laufzeitfehler '-2147220969 (80040217)':
+
+Die Methode '~' für das Objekt '~' ist fehlgeschlagen
+---------------------------
+OK   
+---------------------------
+```
+
+Durch setzen des Registrierungsschlüssel unter Computer\HKEY_CURRENT_USER\Software\easy - innovative software\DLPWinIm\2.0 mit dem Namen OeffnenDialogBeiStart auf 0 kann diese Fehler umgangen werden.
+
