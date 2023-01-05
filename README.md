@@ -171,6 +171,7 @@ comp input%2-1.bin input%2-3.bin /M
 GOTO Ende
 :Parameter
 ECHO COM-Schnittstelle und Dateinummer muss angegeben werden
+ECHO Aufruf: ReadAndCompare <COM-Port> <Einlesevorgang-Nr>
 ECHO Beispiel: ReadAndCompare.BAT 3 1
 :Ende
 '@ | Set-Content -Path ReadAndCompare.BAT
