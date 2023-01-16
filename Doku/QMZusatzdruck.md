@@ -41,3 +41,8 @@ GOTO Ende
 REM echo %DATE% %TIME% >> NetzDrckSpez.LOG
 REM PAUSE
 ```
+
+## Bei Problemen
+
+Wenn es Probleme gibt, obige Batchdatei von der Commandline aufrufen und schauen was für Fehlermeldungen kommen. 
+>Speziell der Ghost-Aufruf. Es kann z. B. Probleme geben wenn **Umlaute** im PDF-Dateinamen verwendet werden!
