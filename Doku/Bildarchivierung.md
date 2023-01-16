@@ -56,3 +56,14 @@ OK
 
 Durch setzen des Registrierungsschlüssel unter Computer\HKEY_CURRENT_USER\Software\easy - innovative software\DLPWinIm\2.0 mit dem Namen OeffnenDialogBeiStart auf 0 kann diese Fehler umgangen werden.
 
+## Manuelle Registrierung der OCX/DLL-Dateien
+
+Auszuführen im <Code>C:\Windows\SysWOW64</Code> -Verzeichnis.
+```
+.\regsvr32.exe .\ltocx13n.ocx
+.\regsvr32.exe .\ltdlg13n.ocx
+.\regsvr32.exe .\CapStill.dll
+.\regsvr32.exe .\FSFWrap.dll
+.\regsvr32.exe .\sgwindow.dll
+.\regsvr32.exe .\SSTBARS2.OCX
+```
