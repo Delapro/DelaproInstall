@@ -1208,7 +1208,7 @@ Liegt an Problemen mit hohen Auflösungen. Es muss HighDpiAware gesetzt werden. 
 [System.Environment]::SetEnvironmentVariable('__COMPAT_LAYER', '')  #abschalten
 ```
 
-Manuelle Einstellung in der Verknüpfung vom Apfel bei Kompatibilitäteinstellungen unten System(Erweitert) aktivieren.
+Manuelle Einstellung in der Verknüpfung vom Apfel bei Kompatibilitäteinstellungen unten System(Erweitert) aktivieren. Diese Einstellung kann aber nachgelagerte Programme wie z. B. Outlook oder Thunderbird durcheinander bringen. Bei denen sollte dann bei den Kompätibilitätseinstellungen Anwendung ausgewählt werden.
 
 ### Problem, dass Delapro nicht deinstalliert werden kann
 
