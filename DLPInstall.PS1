@@ -784,6 +784,41 @@ Function Invoke-PrinterTestPage {
 	rundll32 printui.dll,PrintUIEntry /k /n "$PrinterName"
 }
 
+# Druckerwarteschlange anzeigen
+Function Show-PrinterQueue {
+	[CmdletBinding()]
+	Param(
+		[Parameter(ParameterSetName='name', Position=0)]
+		[ValidateNotNull()]
+		[ValidateNotNullOrEmpty()]
+		[string]
+		${PrinterName},
+
+		[Parameter(ParameterSetName='defaultPrinter', Position=0)]
+		[switch]
+		$DefaultPrinter,
+
+		[Parameter(ParameterSetName='object', Position=0,ValueFromPipeline)]
+		[PSTypeName('Microsoft.Management.Infrastructure.CimInstance#ROOT/StandardCimv2/MSFT_Printer')]
+		[ciminstance]
+		${PrinterObject}
+
+	)
+	
+	If ($PrinterObject) {
+		$PrinterName = $PrinterObject.Name
+	}
+
+	If (! $PrinterName) {
+		Write-Verbose "muss Standarddrucker ermitteln"
+		$PrinterName = (Get-DefaultPrinter).Name
+	}
+
+	Write-Verbose "PrinterName: $PrinterName"
+	rundll32 printui.dll,PrintUIEntry /o /n "$PrinterName"
+
+}
+
 # ermittelt den Windowsstandarddrucker
 Function Get-DefaultPrinter {
 	[CmdletBinding()]
