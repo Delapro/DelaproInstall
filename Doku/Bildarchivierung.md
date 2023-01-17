@@ -74,5 +74,5 @@ Benötigt wird https://www.naps2.com/, Profile liegen unter $env:APPDATA\naps2\p
 
 So könnte eine Scanner.BAT aussehen:
 ```
-C:\Program Files\NAPS2\NAPS2.Console.exe --profile "CanoScan LiDE 400" --output C:\temp\testscanNeu.pdf
+C:\Program Files\NAPS2\NAPS2.Console.exe --profile "CanoScan LiDE 400" --output C:\temp\testscanNeu.pdf --force
 ```
