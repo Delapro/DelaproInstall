@@ -264,6 +264,7 @@ muss, ohne dass man die Version tatsächlich installieren möchte. Man kann sich
 symbolische Links von Windows behelfen.
 
 ```Powershell
+#requires -RunAsAdministrator
 # im Netz bei nachträglicher Installation hat man meist eine neuere Version von Ghostscript
 # und muss diese auf eine ältere Version fürs Script kompatibel machen:
 cd $env:programfiles\gs
