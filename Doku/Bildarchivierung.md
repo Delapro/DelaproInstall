@@ -67,3 +67,12 @@ Auszuführen im <Code>C:\Windows\SysWOW64</Code> -Verzeichnis.
 .\regsvr32.exe .\sgwindow.dll
 .\regsvr32.exe .\SSTBARS2.OCX
 ```
+
+## Verwendung von NAPS2 und Scanner.BAT
+
+Benötigt wird https://www.naps2.com/, Profile liegen unter $env:APPDATA\naps2\profiles.xml
+
+So könnte eine Scanner.BAT aussehen:
+```
+C:\Program Files\NAPS2\NAPS2.Console.exe --profile "CanoScan LiDE 400" --output C:\temp\testscanNeu.pdf
+```
