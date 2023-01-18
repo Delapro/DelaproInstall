@@ -637,7 +637,7 @@ Set-Location $DlpPath
 
 ```
 
-### Art der Artbeit auf zwei Zeilen
+### Art der Arbeit auf zwei Zeilen
 
 Im Konfigurationsprogramm unter F4-Vorgabewerte kann die Länge der Art der Arbeit auf 120 Zeichen gesetzt werden. Einzeilig wäre 70 Zeichen.
 
