@@ -79,3 +79,23 @@ C:\Program Files\NAPS2\NAPS2.Console.exe --profile "CanoScan LiDE 400" --output 
 REM Aufruf in Powershell mit OCR
 &"c:\program files\NAPS2\NAPS2.Console.exe" --profile "CanoScan LiDE 400" --enableocr --ocrlang eng --output C:\temp\testscanNeuOCR.pdf --force -v
 ```
+
+Benötigt wird noch ein OK, dass die Aufnahme erfolgreich war. Dazu verwendet man diese Pseudo-XML-Datei mit Namen <Code>ScannerOK.XML</Code>:
+
+```XML
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<DELAPRO>
+  <BILDARCHIVIERUNG>
+    <BILD>
+      <SAVED>TRUE</SAVED>
+      <KOMMENTAR>vom Scanner</KOMMENTAR>
+    </BILD>
+  </BILDARCHIVIERUNG>
+</DELAPRO>
+```
+
+Die ScannerOK.XML muss über die gelieferte XML-Datei kopiert werden, so dass Scanner.BAT am Ende so aussieht:
+```
+"c:\program files\NAPS2\NAPS2.Console.exe" --profile "CanoScan LiDE 400" --output .\bilder\delapro.bmp --force -v
+COPY ScannerOK.XML %2
+```
