@@ -2,6 +2,17 @@
 
 Windows 8.1 verweigert von Haus aus die Verwendung von TLS 1.2.
 
+Eine Fehlermeldung kann z. B. so aussehen:
+```
+Invoke-WebRequest : Die Anfrage wurde abgebrochen: Es konnte kein geschützter SSL/TLS-Kanal erstellt werden..
+In C:\temp\easyUpdate.PS1:1 Zeichen:5
++ $s=(Invoke-WebRequest -UseBasicParsing -Uri https://raw.githubusercontent.com/De ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (System.Net.HttpWebRequest:HttpWebRequest) [Invoke-WebRequest], WebExc
+   eption
+    + FullyQualifiedErrorId : WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+```
+
 Hier das passende Script um die TLS1.2 Unterstützung zu aktivieren:
 
 ```Powershell
