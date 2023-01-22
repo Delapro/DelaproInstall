@@ -2690,7 +2690,7 @@ Function Install-Thunderbird {
 		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\",
 		[switch]$Force,
-		[Validateset('102.6.1', '102.6.1', '102.5.1', '102.5.0', '102.4.2', '102.4.1', '102.4.0', '102.3.3', '102.3.1', '102.3.0', '102.2.3', '102.2.2', '102.2.1', '102.2.0', '102.1.2', '102.0.3', '102.0', '91.13.1', '91.13.0', '91.12.0', '91.11.0', '91.9.1', '91.9.0', '91.8.0', '91.7.0', '91.6.2', '91.6.1', '91.6.0', '91.5.1', '91.5.0', '91.4.1', "78.14.0", "68.12.0", "60.9.1")]
+		[Validateset('102.7.0', '102.6.1', '102.6.1', '102.5.1', '102.5.0', '102.4.2', '102.4.1', '102.4.0', '102.3.3', '102.3.1', '102.3.0', '102.2.3', '102.2.2', '102.2.1', '102.2.0', '102.1.2', '102.0.3', '102.0', '91.13.1', '91.13.0', '91.12.0', '91.11.0', '91.9.1', '91.9.0', '91.8.0', '91.7.0', '91.6.2', '91.6.1', '91.6.0', '91.5.1', '91.5.0', '91.4.1', "78.14.0", "68.12.0", "60.9.1")]
 		[string[]]$Version,
 		[validateset("win32", "win64")]
 		[string]$Platform="win32"
@@ -2703,7 +2703,7 @@ Function Install-Thunderbird {
 	# z. B. 60.50.0 unter: https://ftp.mozilla.org/pub/thunderbird/releases/60.5.0/win32/de/
 	If ($null -eq $Version) {
 		# aktuelle Version
-		$tbVersion = '102.6.1'
+		$tbVersion = '102.7.0'
 		$downloadUrlBase = "https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion"
 	} else {
 		$tbVersion = $Version
