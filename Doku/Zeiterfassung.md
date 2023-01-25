@@ -18,6 +18,24 @@ in
 .              IF Feiertag (ABSVDatum)
 ```
 
+Und für Tagesbuchungen
+
+von
+```
+.            @ 1 SAY LEFT (CDOW (ABSVDatum), 2) + " " + DTOC (ABSVDatum) LINKSBšNDIG
+.            @ 17 SAY ZeitStatusText (AZTB (ABSVI, 3)) LINKSBšNDIG
+
+.          ENDIF
+```
+in
+```
+.            @ 1 SAY LEFT (CDOW (ABSVDatum), 2) + " " + DTOC (ABSVDatum) LINKSBšNDIG
+.            @ 17 SAY ZeitStatusText (AZTB (ABSVI, 3)) LINKSBšNDIG
+.            @ 44 SAY AZTB (ABSVI, 7) LINKSBšNDIG
+
+.          ENDIF
+```
+
 ## Darstellung von Stundenaufbau
 
 in FIELDNAM.DBF
