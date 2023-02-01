@@ -284,6 +284,39 @@ Function Test-RoamingProfile {
 	
 }
 
+# ermittelt den Benutzer des übergeordneten Prozesses
+Function Get-ParentProcessUser() {
+    [CmdletBinding()]
+    Param()
+
+    $procID = [System.Diagnostics.Process]::GetCurrentProcess().Id
+    # aktuellen Prozess holen
+    $proc = Get-WmiObject Win32_Process -Filter "ProcessId = '$($procID)'"
+    Write-Verbose "PID: $procID, ParentPID: $($proc.Parentprocessid)"
+    # Vater-Prozess holen
+    $proc = Get-WmiObject Win32_Process -Filter "ProcessId = '$($proc.Parentprocessid)'"
+    If ($Proc) {
+        $user = $proc.GetOwner() | Select-Object -ExpandProperty User
+        $domain = $proc.GetOwner() | Select-Object -ExpandProperty Domain
+        $NTUser = [System.Security.Principal.NTAccount]::new($domain, $user)
+        $Ident = $NTUser.Translate([System.Security.Principal.SecurityIdentifier])
+        $sid=$ident.Value
+
+        $userIdentity = New-Object System.Security.Principal.WindowsIdentity($user)
+        # holt nicht die Rechte vom richtigen Benutzer:
+        # $userPrincipal = New-Object System.Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+        # funktioniert nur in der Domäne:
+        $userPrincipal = New-Object System.Security.Principal.WindowsPrincipal($userIdentity)
+        $admin = $userPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+        # https://powershellmagazine.com/2013/03/29/pstip-detecting-if-a-certain-process-is-elevated/        
+
+        #'dummy' | Select-Object @{N='Domain';E={$domain}},@{N='User';E={$user}},@{N='Admin';E={$admin}},@{N='SID';E={$sid}}
+        'dummy' | Select-Object @{N='Domain';E={$domain}},@{N='User';E={$user}},@{N='SID';E={$sid}}
+    }
+    
+}
+
 Function Test-NetFramework45Installed()
 {
   # wie man die .Net -Version korrekt ermittelt: http://blogs.msdn.com/b/astebner/archive/2009/06/16/9763379.aspx
