@@ -4951,6 +4951,21 @@ Function Disable-Windows10DefaultPrinterRoaming {
 	}
 }
 
+Function Enable-Windows10DefaultPrinterRoaming {
+
+	# die ab Windows 10 v1511 Einstellung für den Standarddruckertreiber, welche immer den zuletzt benutzten Drucker zum
+	# Standarddrucker macht ausschalten
+	If ((Test-Windows10) -or (Test-Windows11)) {
+		# Key vorhanden?
+		If ($null -ne (Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows' -Name LegacyDefaultPrinterMode).LegacyDefaultPrinterMode) {
+			If ((Get-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows' -Name LegacyDefaultPrinterMode).LegacyDefaultPrinterMode -eq 1) {
+				Set-ItemProperty 'Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows' -Name LegacyDefaultPrinterMode -Value 0
+				"LegacyDefaultPrinterMode modifiziert"
+			}
+		}
+	}
+}
+
 # öffnet Drucker und Geräte
 Function Show-Printers {
 	[CmdletBinding(DefaultParameterSetName="All")]
