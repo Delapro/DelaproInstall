@@ -114,10 +114,10 @@ Formulardateien für Referenzbarcodes
 ```Powershell
 Set-Location C:\temp
 Start-BitsTransfer https://easysoftware.de/util/xml2021Def.zip
-Expand-Archive .\xml2021Def.zip -DestinationPath .\xml2021Def
+Expand-Archive .\xml2021Def.zip -DestinationPath .\xml2021Def -Force
 Set-Location .\xml2021Def\
 New-Item "$($DlpPath)\xml2021Def" -ItemType Directory
-Copy-Item .\xml2021Def\* "$($DlpPath)\xml2021Def\" -Recurse
+Copy-Item .\xml2021Def\* "$($DlpPath)\xml2021Def\" -Recurse  -Force
 New-Item "$($DlpPath)\Import\GUDID" -ItemType Directory
 New-Item "$($DlpPath)\Import\Barcodescanner" -ItemType Directory
 $NonAdmin = If (-Not (Test-Admin)) {'/H'} else {''}
