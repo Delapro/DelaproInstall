@@ -27,6 +27,10 @@ $patterns = @($datamatrixHIBC,$datamatrixGS1,$strichcodeY,$datamatrixY,$code128H
 # obige Muster auf alle anwenden 
 get-content alle.bin|Select-String -NotMatch -pattern $patterns
 
+# um die ermittelten Barcodes in die Zwischenablage zu bekommen, muss man vorher explizit in einen String wandeln:
+get-content alle.bin|Select-String -NotMatch -pattern $patterns|out-String|Set-Clipboard
+
+
 ```
 
 # Barcodes durchsuchen 
