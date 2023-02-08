@@ -38,4 +38,20 @@ get-content alle.bin|Select-String -NotMatch -pattern $patterns|out-String|Set-C
 ```Powershell
 # nach Dateien mit Referenzbarcodes suchen
 findstr /S /M ".8Y00" *.BIN
+
+# flexiblere Suche mit Powershell
+
+# Barcodeanomalie mit Abostroph suchen, unabhängig vom Barcodetyp
+select-string -path *.bin ']??`'
+
+# Barcodeanomalie mit Abostroph suchen, bei Code128
+select-string -path *.bin ']C0`'
+
+# damit die Anomalie ]C0`+J014660173530/$ gefunden werden kann, muss beim Pattern Parameter escaped werden!
+# bei + und $ muss ein \ davor gesetzt werden!
+select-string -path *.bin ']C0`\+J014660173530/\$'
+
+# oder mit kleiner Hilfsfunktion
+Function EscapeRegChar {Param([String]$String);$String.Replace('+','\+').Replace('$','\$'))
+select-string -path *.bin (EscapeRegChar ']C0`+J014660173530/$')
 ```
