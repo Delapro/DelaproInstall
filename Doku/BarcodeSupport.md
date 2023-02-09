@@ -52,6 +52,6 @@ select-string -path *.bin ']C0`'
 select-string -path *.bin ']C0`\+J014660173530/\$'
 
 # oder mit kleiner Hilfsfunktion
-Function EscapeRegChar {Param([String]$String);$String.Replace('+','\+').Replace('$','\$'))
+Function EscapeRegChar {Param([String]$Barcode);$Barcode.Replace('+','\+').Replace('$','\$')}
 select-string -path *.bin (EscapeRegChar ']C0`+J014660173530/$')
 ```
