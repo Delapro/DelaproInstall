@@ -54,4 +54,10 @@ select-string -path *.bin ']C0`\+J014660173530/\$'
 # oder mit kleiner Hilfsfunktion
 Function EscapeRegChar {Param([String]$Barcode);$Barcode.Replace('+','\+').Replace('$','\$')}
 select-string -path *.bin (EscapeRegChar ']C0`+J014660173530/$')
+
+# oder alles ordentlich in Objekte verpackt für etwaige Weiterverarbeitung
+select-string -path *.bin (EscapeRegChar ']C0`+J014660173530/$')| % {$null = $_ -match '(?<Dateiname>^.*\.bin):(?<Zeile>\d*):(?<Barcode>.*)'; [PSCustomObject]@{Zeile=$Matches.Zeile;Barcode=$Matches.Barcode;Dateiname=$Matches.Dateiname}}
+
+# damit kann man dann die eindeutigen Dateinamen ermitteln:
+select-string -path *.bin (EscapeRegChar ']C0`+J014660173530/$')| % {$null = $_ -match '(?<Dateiname>^.*\.bin):(?<Zeile>\d*):(?<Barcode>.*)'; [PSCustomObject]@{Zeile=$Matches.Zeile;Barcode=$Matches.Barcode;Dateiname=$Matches.Dateiname}}|% {dir $_.Dateiname} |% {$hash=@{}} {$h=Get-Filehash $_;If (-Not ($hash.ContainsKey($h.Hash))) {$hash.Add($h.Hash, $_)}} {$hash.Values|sort lastwriteTime}
 ```
