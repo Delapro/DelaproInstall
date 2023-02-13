@@ -55,8 +55,26 @@ select-string -path *.bin ']C0`\+J014660173530/\$'
 Function EscapeRegChar {Param([String]$Barcode);$Barcode.Replace('+','\+').Replace('$','\$')}
 select-string -path *.bin (EscapeRegChar ']C0`+J014660173530/$')
 
+# Hilfsfunktion um fehlende führende 0er bei der Uhrzeit auszugleichen
+Function GetDateFromStr {
+  Param([String]$DateTime)
+
+  If ($DateTime.Length -eq 17) {
+        # wegen fehlender führender 0er bei der Zeit muss evtl. die 0 hinzugefügt werden
+	$DateTime = ([RegEx]'_').Replace($DateTime, '_0', 1)
+  }
+  [DateTime]::ParseExact($DateTime, 'yyyyMMdd_HHmmss_ff', $null) 
+}
+Function GetDateFromDateiname {
+  Param([String]$Dateiname)
+
+  If ($Dateiname -match '^.*DLPBCImport-(?<Datum>.*)\.bin') {
+    GetDateFromStr $Matches.Datum
+  }
+}
+ 
 # oder alles ordentlich in Objekte verpackt für etwaige Weiterverarbeitung
-select-string -path *.bin (EscapeRegChar ']C0`+J014660173530/$')| % {$null = $_ -match '(?<Dateiname>^.*\.bin):(?<Zeile>\d*):(?<Barcode>.*)'; [PSCustomObject]@{Zeile=$Matches.Zeile;Barcode=$Matches.Barcode;Dateiname=$Matches.Dateiname}}
+select-string -path *.bin (EscapeRegChar ']C0`+J014660173530/$')| % {$null = $_ -match '(?<Dateiname>^.*\.bin):(?<Zeile>\d*):(?<Barcode>.*)'; [PSCustomObject]@{Zeile=$Matches.Zeile;Barcode=$Matches.Barcode;Dateiname=$Matches.Dateiname;Einlesedatum=(GetDateFromDateiname $Matches.Dateiname)}}
 
 # damit kann man dann die eindeutigen Dateinamen ermitteln:
 select-string -path *.bin (EscapeRegChar ']C0`+J014660173530/$')| % {$null = $_ -match '(?<Dateiname>^.*\.bin):(?<Zeile>\d*):(?<Barcode>.*)'; [PSCustomObject]@{Zeile=$Matches.Zeile;Barcode=$Matches.Barcode;Dateiname=$Matches.Dateiname}}|% {dir $_.Dateiname} |% {$hash=@{}} {$h=Get-Filehash $_;If (-Not ($hash.ContainsKey($h.Hash))) {$hash.Add($h.Hash, $_)}} {$hash.Values|sort lastwriteTime}
