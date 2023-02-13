@@ -87,4 +87,4 @@ $q=select-string -path *.bin '/Q'| % {$null = $_ -match '(?<Dateiname>^.*\.bin):
 $q|group barcode|select count, name
 ```
 
-Diese müssen nun in ARTIKEL.DBF und ARTUDI.DBF gefunden und ersetzt werden! Bzw. der Einfachheithalber die Zuordnungen gelöscht werden. In der IMPMATPO.DBF müssen die Chargennummern gesucht werden und dann die UDI-DI-Nummer durch die korrekte ersetzt werden.
+Diese müssen nun in ARTIKEL.DBF und ARTUDI.DBF gefunden und ersetzt werden! Bzw. der Einfachheithalber die Zuordnungen gelöscht werden. In der IMPMATPO.DBF müssen die Chargennummern gesucht werden und dann die UDI-DI-Nummer durch die korrekte ersetzt werden. Ein Hilfsprogramm welche die Chargen sucht und die UDI-DIs ersetzt findet man unter den TEST-Programmen im Verzeichnis ErkodentQ (lokal).
