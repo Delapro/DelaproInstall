@@ -67,15 +67,17 @@ select-string -path *.bin (EscapeRegChar ']C0`+J014660173530/$')| % {$null = $_ 
 Problem ist, dass die Delapromaterialzuordnungen nicht korrekt sind, sowie die UDI-DI-Nummern in der Datenbank für die direkte Suche falsch sind. Die Chargennummern wurden aber trotzdem richtig erkannt und korrekt abgespeichert.
 
 Beispiel:
-]d1+ERKO5212151/$$042411591/Q10B    => Q100, Charge: 11591
-]d1+ERKO5212151/$$072411670/Q10C    => Q100, Charge: 11670
-]d1+ERKO5212151/$$012550006201/Q106 => Q100, Charge: 50006201
-]d1+ERKO5842152/$$092411674/Q50W    => Q500, Charge: 11674
-]d1+ERKO5212101/$$122411754112/Q20B => Q200, Charge: 11754112
-]d1+ERKO5212151/$$062550013206/Q10E => Q100, Charge: 50013206
-]d1+ERKO5951201/$$072511884207/Q10Z => Q100, Charge: 11884207
-]d1+ERKO5842152/$$092511907209/Q500 => Q500, Charge: 11907209
-]d1+ERKO5242152/$$062550013206/Q50M => Q500, Charge: 50013206
+|Barcode|falsche UDI-DI|Charge|
+|-|-|-|
+|]d1+ERKO5212151/$$042411591/Q10B   | => Q100 | Charge: 11591|
+|]d1+ERKO5212151/$$072411670/Q10C   | => Q100 | Charge: 11670|
+|]d1+ERKO5212151/$$012550006201/Q106| => Q100 | Charge: 50006201|
+|]d1+ERKO5842152/$$092411674/Q50W   | => Q500 | Charge: 11674|
+|]d1+ERKO5212101/$$122411754112/Q20B| => Q200 | Charge: 11754112|
+|]d1+ERKO5212151/$$062550013206/Q10E| => Q100 | Charge: 50013206|
+|]d1+ERKO5951201/$$072511884207/Q10Z| => Q100 | Charge: 11884207|
+|]d1+ERKO5842152/$$092511907209/Q500| => Q500 | Charge: 11907209|
+|]d1+ERKO5242152/$$062550013206/Q50M| => Q500 | Charge: 50013206|
 
 D.h. die Mengenangabe wird immer mit einer nachstehenden 0 ergänzt (letztes Zeichen ist immer die Prüfziffer und entfällt). Dadurch entstehen dann Mehrdeutigkeiten!
 
