@@ -19,5 +19,9 @@ devmgmt.msc
 # X = entfernen
 ```
 
+## COM-Port Logging
+Sysinternals Portmon erlaubt auch eine genauere Analyse eines COM-Ports.
+https://learn.microsoft.com/en-us/sysinternals/downloads/portmon
+
 ## sonstige Infos zu COM-Ports
 http://woshub.com/how-to-clean-up-and-reset-com-ports-in-windows-7/
