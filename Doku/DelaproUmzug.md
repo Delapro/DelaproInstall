@@ -6,8 +6,8 @@ Wenn es aber trotzdem manuell gemacht werden soll muss folgendes beachtet werden
 
 - DELAPRO- und DELAGAME-Verzeichnis verschieben
 - Startmenüverknüpfung anpassen
-- <Code>dir "$([Environment]::GetFolderPath("StartMenu"))\Programs"</Code>
-- <Code>C:\ProgramData\Microsoft\Windows\Start Menu\Programs</Code>
+- <Code>dir "$([Environment]::GetFolderPath('StartMenu'))\Programs"</Code>
+- <Code>dir "$([Environment]::GetFolderPath('CommonStartMenu'))\Programs"</Code>
 - Desktop (User)
 - Desktop (Public)
 - Laser\*GHOST*.BAT
