@@ -18,7 +18,7 @@ Get-PrinterPort -name "C:\Delapro\Export\PDF\Delapro.eps"|Remove-PrinterPort
 - GRABBER.BAT evtl.
 - SCANNER.BAT evtl.
 - DLP_MAIN.INI Pfad für Bilder anpassen
-- BILDER.DBF-Pfade umbeamen
+- BILDER.DBF-Pfade umbeamen <Code>.\bildlink.exe C:\DELAPRO\BILDER D:\DELAPRO\BILDER</Code> groß/klein beachten!
 - Uninstalllink in Registry
 Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{61DB59C0-0B0E-11D4-B878-00A0C91D65AB}
 InstallLocation
