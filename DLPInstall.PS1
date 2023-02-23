@@ -563,12 +563,14 @@ Function Get-FileShortcut {
 	}
 }
 
+# benötigt Adminrechte
 Function Set-FileShortcut {
 	[CmdletBinding()]
 	Param (
 		[PSObject]$Shortcut,
 		[String]$TargetPath,
-		[String]$WorkingDirectory
+		[String]$WorkingDirectory,
+		[String]$IconLocation
 	)
 
 	$Shell = New-Object -ComObject Wscript.Shell
@@ -579,6 +581,9 @@ Function Set-FileShortcut {
 		}
 		If ($WorkingDirectory.Length -gt 0) {
 			$link.WorkingDirectory = $WorkingDirectory
+		}
+		If ($IconLocation.Length -gt 0) {
+			$link.IconLocation = $IconLocation
 		}
 		$link.Save()
 	}
