@@ -21,6 +21,10 @@ Set-FileShortcut -Shortcut ($dsc) -TargetPath ($dsc.TargetPath.Replace('C:\','D:
 $dsc=Get-FileShortcut -LinkFilename delapro.lnk -Folder (Get-DesktopFolder -CurrentUser)
 Set-FileShortcut -Shortcut ($dsc) -TargetPath ($dsc.TargetPath.Replace('C:\','D:\')) -WorkingDirectory
 ($dsc.WorkingDirectory.Replace('C:\','D:\')) -IconLocation $dsc.IconLocation.Replace('C:\','D:\')
+- evtl. Taskbar-Verknüpfungen anpassen
+$dsc=Get-FileShortcut -LinkFilename delapro.lnk -Folder "$($env:APPDATA)\microsoft\Internet Explorer\Quick Launch\User Pinned\Taskbar"
+Set-FileShortcut -Shortcut ($dsc) -TargetPath ($dsc.TargetPath.Replace('C:\','D:\')) -WorkingDirectory
+($dsc.WorkingDirectory.Replace('C:\','D:\')) -IconLocation $dsc.IconLocation.Replace('C:\','D:\')
 - Laser\*GHOST*.BAT
 - DelaproMail PrinterPort anpassen
 New-PrinterPort -Portname "D:\Delapro\Export\PDF\Delapro.eps" -Verbose
