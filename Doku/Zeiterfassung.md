@@ -48,3 +48,6 @@ in FIELDNAM.DBF
      Ausgabe IF(Status$"UA,YY",IF(Status=="YY","+","-")+AusbezStd,"   "+LEF...
   Colorblock {|| IF (EMPTY (Ende), {12, 13}, {1, 2})}                      
 ```
+
+## Uraltterminal auslesen
+In PROXDEMO32.EXE bei Mode PROX auswählen und bei BAUD 4800 aktivieren sowie die verwendete COM-Schnittstelle anklicken. Anschließend INITCOMM anklicken für COM1 erscheint 2F8 für COM2 erscheint 3F8, danach auf SetTerminal klicken und es sollte 0 erscheinen (-1 = Fehler) dann kann man mit GETTIME abfragen, ob die Zeit vom Gerät geliefert wird.
