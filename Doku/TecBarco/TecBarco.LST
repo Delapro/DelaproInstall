@@ -22,11 +22,11 @@
  CreatedByApp=<unknown>
  CreatedByDLL=<unknown>
  CreatedByUser=<unknown>
- LastModified=13.03.2023, 11:27:36
+ LastModified=13.03.2023, 12:48:54
  LastModifiedByApp=DLPXMLPR.EXE [3.0.0.100]
  LastModifiedByDLL=CMLL26.DLL [26.0.2020.29512 (20-10-16 12:16)F]
  LastModifiedByUser=MHaasl on VERONIKA7
- CreatedByCallFrom=atlthunk.dll
+ CreatedByCallFrom=
  [@DatabaseStructure]
   {
   [DatabaseStructures]
@@ -137,7 +137,7 @@
  DefaultFont/OutPrecision=Null()
  FgColor=RGB(180,180,180)
  bFill=0
- CurrentTable=
+ CurrentTable=0
  ColumnCount=1
  ColumnCount.Distance=1000
  [@Tables]
@@ -488,7 +488,7 @@
 		[Column]
 		 {
 		 Identifier=
-		 Text=Barcode ("T"+TechnikerBarcodes.Nummer, "3-aus-9")
+		 Text=Barcode (RIGHT$("000000"+LTRIM$(TechnikerBarcodes.Nummer),6), "3-aus-9")
 		 Width=45730
 		 Height=12000
 		 FixedHeight=0
@@ -623,7 +623,7 @@
 		[Column]
 		 {
 		 Identifier=
-		 Text=Barcode ("T"+TechnikerBarcodes.Nummer, "3-aus-9")
+		 Text=Barcode (RIGHT$("000000"+LTRIM$(TechnikerBarcodes.Nummer),6), "3-aus-9")
 		 Width=45730
 		 Height=12000
 		 FixedHeight=0
