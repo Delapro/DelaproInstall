@@ -1,0 +1,84 @@
+.* Formular fr Delapro-XML-Technikerbarcodes
+.*----------------------------------------
+.PROLOG
+.*
+.PUBLIC ABSVBaseDir
+.ABSVBaseDir := AddBackslash (ALLTRIM (PrnRepPath (_pdriver)) + "\..")
+.PUBLIC ABSVFormFile
+.ABSVFormFile := ABSVBaseDir + "LAYOUTS\TecBarco.LST"
+.PUBLIC ABSVXMLFile
+.ABSVXMLFile := TEMPFILE (ABSVBaseDir, "XML")
+.PUBLIC ABSVLanguage
+.* USA, GBR, CHE, AUT, FRA, DEU
+.ABSVLanguage := "DEU"
+.PUBLIC ABSVDesigner
+.ABSVDesigner := .F.
+.PUBLIC ABSVDebugMode
+.ABSVDebugMode := .NOT. EMPTY (GETENV ("DLPXMLDebug"))
+.PUBLIC ABSVRun
+.ABSVRun := ""
+.PUBLIC ABSVElement
+.ABSVElement := 1
+.PUBLIC ABSVContinue
+.ABSVContinue := .T.
+.PUBLIC ABSVOK
+.ABSVOK := .T.
+.*
+.INSERT PROLOG FORMXMLD.TXT
+.*
+.*-----XML
+.PUBLIC ABSVXML
+.ABSVXML := XMLInit ()
+.XMLSaveExOpen (ABSVXML, ABSVXMLFile)
+.XMLSaveExWrite (ABSVXML)
+.XMLWrTagBegin (ABSVXML, "Delapro")
+.  XMLWrTagBegin (ABSVXML, "Formular", XMLStrSetAttribute ("Typ", "TechnikerBarcodeliste") + " " + XMLStrSetAttribute ("Version", "1") + " " + XMLStrSetAttribute ("DebugMode", XTOC (ABSVDebugMode)))
+.    XMLWrTagBegin (ABSVXML, "FormularInfo")
+.      XMLWrTagValue (ABSVXML, "Name", "TechnikerBarcodeliste")
+.      XMLWrTagValue (ABSVXML, "Beschreibung", "Gibt eine Liste mit Barcodes fr markierte Techniker aus.")
+.      XMLWrTagValue (ABSVXML, "Erstellungsdatum", DTOC (DATE ()) + " " + TIME ())
+.    XMLWrTagEnd (ABSVXML)
+.    XMLWrTagBegin (ABSVXML, "Ausgabeeinstellungen")
+.      XMLWrTagValue (ABSVXML, "File", ABSVFormFile)
+.      XMLWrTagValue (ABSVXML, "Sheetfeeder", NTRIM (PRNSHEET ()), XMLStrSetAttribute ("Type", "Num"))
+.      XMLWrTagValue (ABSVXML, "FeedBin1", "1", XMLStrSetAttribute ("Type", "Num"))
+.      XMLWrTagValue (ABSVXML, "FeedBin2", "1", XMLStrSetAttribute ("Type", "Num"))
+.      XMLWrTagValue (ABSVXML, "Schacht1", "15", XMLStrSetAttribute ("Type", "Num"))
+.      XMLWrTagValue (ABSVXML, "Schacht2", "15", XMLStrSetAttribute ("Type", "Num"))
+.      XMLWrTagValue (ABSVXML, "Schacht3", "15", XMLStrSetAttribute ("Type", "Num"))
+.      XMLWrTagValue (ABSVXML, "Schacht4", "15", XMLStrSetAttribute ("Type", "Num"))
+.      XMLWrTagValue (ABSVXML, "Printgraphic", "1", XMLStrSetAttribute ("Type", "Num"))
+.      XMLWrTagValue (ABSVXML, "Copies", NTRIM (1), XMLStrSetAttribute ("Type", "Num"))
+.      XMLWrTagValue (ABSVXML, "Language", ABSVLanguage)
+.      XMLWrTagValue (ABSVXML, "WinDriver", PrnDrvWName (_pdriver))
+.      * M”gliche Target-Type-Werte: PRINT, FAX, MAIL, PREVIEW, DESIGN, EXPORT
+.      XMLWrTagValue (ABSVXML, "TargetType", PrnRepOutType (_pdriver))
+.      * TargetParamter sind z.B. PDF oder XPS, NOGRAPH1, NOGRAPH2 usw.
+.      XMLWrTagValue (ABSVXML, "TargetParameter", PrnRepPara (_pdriver))
+.    XMLWrTagEnd (ABSVXML, "Ausgabeeinstellungen")
+.    XMLWrTagBegin (ABSVXML, "Parameter")
+.      XMLWrTagValue (ABSVXML, "Pr„fix", STR (TEC_BCPraefix, 1))
+.      XMLWrTagValue (ABSVXML, "Art", STR (TEC_BCArt, 1))
+.    XMLWrTagEnd (ABSVXML)
+.    XMLWrTagBegin (ABSVXML, "TechnikerBarcodes")
+.*
+.      TecTemp->(DBGOTOP ())
+.      DO WHILE .NOT. TecTemp->(EOF ())
+.        XMLWrTagBegin (ABSVXML, "TechnikerBarcode")                                                                                                                                                             
+.          XMLWrTagValue (ABSVXML, "Nummer", RTRIM (TecTemp->Nummer))                                                                                                              
+.          XMLWrTagValue (ABSVXML, "Name", RTRIM (TecTemp->Name))
+.        XMLWrTagEnd (ABSVXML, "TechnikerBarcode")                                                                                                                                                               
+.        XMLSaveExWrite (ABSVXML)                                                                                                                                                                       
+.        TecTemp->(DBSKIP ())
+.        IF DruckAbbrechen ()
+.          EXIT
+.        ENDIF
+.      ENDDO
+.    XMLWrTagEnd (ABSVXML, "TechnikerBarcodes")
+.  XMLWrTagEnd (ABSVXML, "Formular")
+.XMLWrTagEnd (ABSVXML, "Delapro")
+.XMLSaveExClose (ABSVXML)
+.*
+.INSERT PROLOG FORMXML.TXT
+.*
+.* ENDE
