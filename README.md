@@ -414,7 +414,7 @@ Nennt sich "PC-FAX Software", kann mit dem Control Center in Verbindung stehen, 
 
 ### Canon
 
-?
+Canon Maxify (Tintenstrahler) installieren mittlerweile den Fax-Treiber automatisch, wenn der Drucker über "Geräte hinzufügen" installiert wurde. Die Verwaltung findet über die windowseigenen Mittel statt, also Druckerwarteschlange und Windows-Adressbuch.
 
 ### Epson
 
