@@ -1213,6 +1213,51 @@ Function Get-DlpUi {
 					 }
 }
 
+# zum ermitteln Monospaced Zeichensätze, diese können dann fürs Delapro verwendet werden, wenn nicht gerade exotische Zeichen enthalten sind
+Function Get-MonospacedFonts {
+
+	# private functions
+	function LoadAssembly {
+	    # PowerShell Desktop Edtion
+	    if ($null -eq $PSEdition) {
+		Add-Type -AssemblyName 'System.Drawing'
+		return
+	    }
+	    if ($PSEdition -eq 'Desktop') {
+		Add-Type -AssemblyName 'System.Drawing'
+		return
+	    }
+	    # PowerShell Core Edition(Win,Linux,Mac)
+	    # * pre-installation of libgdiplus is required on linux/mac
+	    Add-Type -AssemblyName (Join-Path $PSScriptRoot 'CoreCompat.System.Drawing.dll')
+	}
+	LoadAssembly
+
+	function Get-FontFamilies {
+	    return (New-Object "System.Drawing.Text.InstalledFontCollection").Families
+	}
+
+
+	function Measure-StringWidth {
+		[CmdletBinding()]
+		Param([String]$message, $font)
+
+		$format = New-Object "System.Drawing.StringFormat" -ArgumentList @([System.Drawing.StringFormat]::GenericTypographic)
+		$bitmap = New-Object "System.Drawing.Bitmap" -ArgumentList @(1, 1)
+		$graphic = [System.Drawing.Graphics]::FromImage($bitmap)
+		$measuredSize = $graphic.MeasureString($message, $font, (New-Object "System.Drawing.PointF" -ArgumentList @(0, 0)), $format)
+
+		[int]$measuredSize.Width
+	}
+
+        # zwei Teststring mit unterschiedlichen Zeichen, die Anzahl muss gleich sein, ist die gemessene Länge
+	# identisch haben wir eine Monospaced Zeichensatz
+	$test1 = 'Xefg0'
+	$test2 = '1l.;W'
+
+	Get-FontFamilies| % {If ((Measure-StringWidth -message $test1 -font $_.Name) -eq (Measure-StringWidth -message $test2 -font $_.Name)) {$_.Name}}
+}
+
 # Zum ermitteln der verfügbaren GhostScript-Versionen
 Function Get-Ghostscript {
 	[CmdletBinding()]
