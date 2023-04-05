@@ -1247,7 +1247,7 @@ Function Get-MonospacedFonts {
 		$graphic = [System.Drawing.Graphics]::FromImage($bitmap)
 		$measuredSize = $graphic.MeasureString($message, $font, (New-Object "System.Drawing.PointF" -ArgumentList @(0, 0)), $format)
 
-		[PSCustomObject]@{Width=[int]$measuredSize.Width;Height=[int]$measuredSize.Height}
+		[PSCustomObject]@{Width=[float]$measuredSize.Width;Height=[float]$measuredSize.Height}
 	}
 
         # zwei Teststring mit unterschiedlichen Zeichen, die Anzahl muss gleich sein, ist die gemessene Länge
