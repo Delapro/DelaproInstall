@@ -1238,7 +1238,7 @@ Function Get-MonospacedFonts {
 	}
 
 
-	function Measure-StringWidth {
+	function Measure-FontWidthHeight {
 		[CmdletBinding()]
 		Param([String]$message, $font)
 
@@ -1247,7 +1247,7 @@ Function Get-MonospacedFonts {
 		$graphic = [System.Drawing.Graphics]::FromImage($bitmap)
 		$measuredSize = $graphic.MeasureString($message, $font, (New-Object "System.Drawing.PointF" -ArgumentList @(0, 0)), $format)
 
-		[int]$measuredSize.Width
+		[PSCustomObject]@{Width=[int]$measuredSize.Width;Height=[int]$measuredSize.Height}
 	}
 
         # zwei Teststring mit unterschiedlichen Zeichen, die Anzahl muss gleich sein, ist die gemessene Länge
@@ -1255,7 +1255,7 @@ Function Get-MonospacedFonts {
 	$test1 = 'Xefg0'
 	$test2 = '1l.;W'
 
-	Get-FontFamilies| % {If ((Measure-StringWidth -message $test1 -font $_.Name) -eq (Measure-StringWidth -message $test2 -font $_.Name)) {$_.Name}}
+	Get-FontFamilies| % {If ((Measure-FontWidthHeight -message $test1 -font $_.Name).Width -eq (Measure-FontWidthHeight -message $test2 -font $_.Name).Width) {$_.Name}}
 }
 
 # Zum ermitteln der verfügbaren GhostScript-Versionen
