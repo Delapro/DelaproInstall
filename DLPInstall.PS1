@@ -1213,6 +1213,18 @@ Function Get-DlpUi {
 					 }
 }
 
+Function Measure-FontWidthHeight {
+	[CmdletBinding()]
+	Param([String]$message, $font)
+
+	$format = New-Object "System.Drawing.StringFormat" -ArgumentList @([System.Drawing.StringFormat]::GenericTypographic)
+	$bitmap = New-Object "System.Drawing.Bitmap" -ArgumentList @(1, 1)
+	$graphic = [System.Drawing.Graphics]::FromImage($bitmap)
+	$measuredSize = $graphic.MeasureString($message, $font, (New-Object "System.Drawing.PointF" -ArgumentList @(0, 0)), $format)
+
+	[PSCustomObject]@{Width=[float]$measuredSize.Width;Height=[float]$measuredSize.Height}
+}
+
 # zum ermitteln Monospaced Zeichensätze, diese können dann fürs Delapro verwendet werden, wenn nicht gerade exotische Zeichen enthalten sind
 Function Get-MonospacedFonts {
 
@@ -1237,19 +1249,6 @@ Function Get-MonospacedFonts {
 	    return (New-Object "System.Drawing.Text.InstalledFontCollection").Families
 	}
 
-
-	function Measure-FontWidthHeight {
-		[CmdletBinding()]
-		Param([String]$message, $font)
-
-		$format = New-Object "System.Drawing.StringFormat" -ArgumentList @([System.Drawing.StringFormat]::GenericTypographic)
-		$bitmap = New-Object "System.Drawing.Bitmap" -ArgumentList @(1, 1)
-		$graphic = [System.Drawing.Graphics]::FromImage($bitmap)
-		$measuredSize = $graphic.MeasureString($message, $font, (New-Object "System.Drawing.PointF" -ArgumentList @(0, 0)), $format)
-
-		[PSCustomObject]@{Width=[float]$measuredSize.Width;Height=[float]$measuredSize.Height}
-	}
-
         # zwei Teststring mit unterschiedlichen Zeichen, die Anzahl muss gleich sein, ist die gemessene Länge
 	# identisch haben wir eine Monospaced Zeichensatz
 	$test1 = 'Xefg0'
@@ -1257,7 +1256,7 @@ Function Get-MonospacedFonts {
 
 	Get-FontFamilies| % {If ((Measure-FontWidthHeight -message $test1 -font $_.Name).Width -eq (Measure-FontWidthHeight -message $test2 -font $_.Name).Width) {$_.Name}}
 }
-
+	
 # Zum ermitteln der verfügbaren GhostScript-Versionen
 Function Get-Ghostscript {
 	[CmdletBinding()]
