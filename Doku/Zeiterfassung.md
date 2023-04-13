@@ -59,14 +59,15 @@ Um Technikerbarcodes zu drucken, geht man in der Zeiterfassung in der Technikerv
 
 ```Powershell
 # Anzahl der Dateien
-(dir tage*,woche*,zei*).length
+(dir tage*,woche*,zei*,tech*,dlp_main.ini).length
 # ins aktuelle Verzeichnis kopieren
 COPY ZEI*
 COPY WOCH*
 COPY TAGE*
+COPY TECH*
 COPY DLP_MAIN.INI
 # oder gleich Archiv erzeugen, erstellt Zeitdaten.zip
-dir tage*,woche*,zei*,dlp_main.ini|Compress-Archive -DestinationPath Zeitdaten
+dir tage*,woche*,zei*,tech*,dlp_main.ini|Compress-Archive -DestinationPath Zeitdaten
 ```
 
 ## Zum temporären Testen von Zeitdaten die in einem anderen Verzeichnis liegen
