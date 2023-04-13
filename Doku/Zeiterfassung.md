@@ -54,3 +54,27 @@ In PROXDEMO32.EXE bei Mode PROX auswählen und bei BAUD 4800 aktivieren sowie di
 
 ## Technikerbarcodes aus Zeiterfassung drucken
 Um Technikerbarcodes zu drucken, geht man in der Zeiterfassung in der Technikerverwaltung auf das Barcodemenü und wählt Drucken aus. Man braucht einen XML-Druckertreiber mit Version 7 gesetzt. Barcodedruck muss aktiviert sein. Dann kann man REP-Pfad auf .\XML2021Def\REPS setzen. Damit alles funktioniert müssen TecBarco.LST und TecBarco.REP in den entsprechenden Verzeichnissen vorhanden sein. Siehe auch Verzeichnis [TecBarco](TecBarco).
+
+## Benötigte Dateien rein von der Zeiterfassung
+
+```Powershell
+# Anzahl der Dateien
+(dir tage*,woche*,zei*).length
+# ins aktuelle Verzeichnis kopieren
+COPY ZEI*
+COPY WOCH*
+COPY TAGE*
+# oder gleich Archiv erzeugen, erstellt Zeitdaten.zip
+dir tage*,woche*,zei*|Compress-Archive -DestinationPath Zeitdaten
+```
+
+## Zum temporären Testen von Zeitdaten die in einem anderen Verzeichnis liegen
+
+Die zu testenden Zeitdaten liegen in C:\Temp:
+
+```Powershell
+[System.Environment]::SetEnvironmentVariable('DLP_DEFA', 'C:\temp')
+.\Dlp_Time.exe
+# zum Aufheben, verwendet man
+[System.Environment]::SetEnvironmentVariable('DLP_DEFA', '')
+```
