@@ -1518,6 +1518,20 @@ Get-PhysicalDisk|% {Get-StorageReliabilityCounter -PhysicalDisk $_}|fl *
 # Hardwareprobleme bei der Festplattenkommunikation
 # mögliche Erläuterungen siehe: https://docs.microsoft.com/de-de/archive/blogs/ntdebugging/interpreting-event-153-errors
 Get-WinEvent -ProviderName disk
+# oder gezielter
+$xmlFilter=@"
+<QueryList>
+  <Query Id="0" Path="System">
+    <Select Path="System">
+       *[System[Provider[@Name='disk' or @Name='Microsoft-Windows-Disk'] 
+       and (EventID=7 or EventID=153)]]
+    </Select>
+  </Query>
+</QueryList>
+"@
+Get-WinEvent -FilterXml $xmlfilter
+# oder wenn es zuviele Meldungen gibt:
+Get-WinEvent -FilterXml $xmlfilter | select -First 5
 
 # für tiefergehende Infos bzw. genaueren Analyse smartmontools verwenden
 # www.smartmontools.org
