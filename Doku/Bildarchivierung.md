@@ -74,6 +74,8 @@ Auszuführen im <Code>C:\Windows\SysWOW64</Code> -Verzeichnis.
 
 Benötigt wird https://www.naps2.com/, Profile liegen unter $env:APPDATA\naps2\profiles.xml
 
+### einfache Variante
+
 So könnte eine Scanner.BAT aussehen:
 ```
 C:\Program Files\NAPS2\NAPS2.Console.exe --profile "CanoScan LiDE 400" --output C:\temp\testscanNeu.pdf --force
@@ -101,3 +103,87 @@ Die ScannerOK.XML muss über die gelieferte XML-Datei kopiert werden, so dass Sc
 "c:\program files\NAPS2\NAPS2.Console.exe" --profile "CanoScan LiDE 400" --output .\bilder\delapro.bmp --force -v
 COPY ScannerOK.XML %2
 ```
+
+### mehrere Seiten einlesen
+
+Bessere Variante die auch das Einlesen von mehreren Seiten vom Dokumentenscanner unterstützt. Benötigt wird ein aktuelles Delapro-Update. Ansonsten kommt eine Meldung, dass kein Bild zur Übernahme vorhanden ist.
+
+Scanner.BAT:
+```
+powershell -executionPolicy Bypass -File Scan.PS1 %2
+```
+
+Scan.PS1:
+```Powershell
+<#
+  SCAN.PS1
+  Skript zum Erfassen von Bildern per Scanner, wird von Scanner.BAT aufgerufen
+
+  Als Parameter muss eine XML-Datei für die Erfassung übergeben werden, diese XML-Datei wird auch mit den erfassten Bildern
+  erweitert und nach verlassen im Delapro interpretiert.
+#>
+Param ($xmlDatei)
+
+# Start-Transcript C:\DELAPRO\PS.log  # wenn die LOG-Datei aktiviert wurde aber nicht existiert dann gibt es einen Syntaxfehler im Skript!
+
+$Extension = 'jpg'
+# Profil muss vorhanden sein!
+$NAPS2Profil = 'IPEVO DocCam'   # 'CanoScan LiDE 400'
+$SaveDir = '.\bilder\scanner'  # oder $env:Temp
+$FilenameBase = 'DLPBild'
+$out = "$($SaveDir)\$($FilenameBase)`$(nnnn).$($Extension)"
+
+#
+If (-Not (Test-Path $SaveDir -PathType Container)) {
+  New-Item $SaveDir -Type Directory
+}
+Remove-Item "$SaveDir\$($FilenameBase)*" -Force  # mögliche alte Scan-Dateien entfernen
+
+# If ($env:Computername -eq '')
+$erg= &"c:\program files\NAPS2\NAPS2.Console.exe" --profile $NAPS2Profil --splitscans --output $out --force -v
+
+# $erg
+
+# Beispielausgabe eines erfolgreichen Scans:
+<#
+Beginning scan...
+Starting scan 1 of 1...
+Scanned page 1.
+1 page(s) scanned.
+Exporting...
+Exporting image 1 of 1...
+Finished saving images to C:\delapro\bilder\scanner\DLPBild0001.jpg
+#>
+
+$m=$erg |select-string 'Finished saving images to (?<Dateiname>.*)'
+$index = 0
+$x=[xml](Get-Content $xmlDatei)
+IF ($x) {
+  If ($m) {
+    If ($m.Matches.groups.Length -gt 1) {
+      $n=[xml]"<BILDER/>"
+      $in = $x.ImportNode($n.SelectSingleNode('BILDER'), $true)
+      $x.DELAPRO.BILDARCHIVIERUNG.AppendChild($in)	
+      $Dateiname = 'start'
+      while ($Dateiname) {
+        $Dateiname = $m.Matches.groups[0].Groups[++$index].Value
+        IF ($Dateiname) {
+          If (Test-Path $Dateiname) {
+            $BildTag = "BILD$($index)"
+            $n=[xml]"<$BildTag><DATEINAME>$Dateiname</DATEINAME><FILEEXTENSION>$Extension</FILEEXTENSION></$BildTag>"
+              $in = $x.ImportNode($n.SelectSingleNode($BildTag), $true)
+              $x.SelectSingleNode('DELAPRO/BILDARCHIVIERUNG/BILDER').AppendChild($in)
+          } else {
+              # wenn eine erwartete Datei nicht vorhanden ist, abbrechen
+            exit
+          }
+        }
+      }
+    }
+  }
+  $x.Save($xmlDatei)
+  # copy-Item $xmlDatei C:\Delapro\scannerdebug.xml
+}
+
+# EOF: Scan.PS1
+``` 
