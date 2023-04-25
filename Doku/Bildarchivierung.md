@@ -197,7 +197,7 @@ IF ($x) {
               $x.SelectSingleNode('DELAPRO/BILDARCHIVIERUNG/BILDER').AppendChild($in)
           } else {
               # wenn eine erwartete Datei nicht vorhanden ist, abbrechen
-            exit
+            break
           }
         }
         $index++
