@@ -154,6 +154,14 @@ Exporting...
 Exporting image 1 of 1...
 Finished saving images to C:\delapro\bilder\scanner\DLPBild0001.jpg
 #>
+# Beispielausgabe eines versuchten Scans aber kein Papier im Einzug:
+<#
+Beginning scan...
+Starting scan 1 of 1...
+In der Zuführung sind keine Seiten.
+0 page(s) scanned.
+No scanned pages to export.
+#>
 
 $m=$erg |select-string 'Finished saving images to (?<Dateiname>.*)'
 $index = 0
