@@ -111,6 +111,7 @@ Bessere Variante die auch das Einlesen von mehreren Seiten vom Dokumentenscanner
 Scanner.BAT:
 ```
 powershell -executionPolicy Bypass -File Scan.PS1 %2
+GOTO Ende
 ```
 
 Scan.PS1:
@@ -128,7 +129,10 @@ Param ($xmlDatei)
 
 $Extension = 'jpg'
 # Profil muss vorhanden sein!
-$NAPS2Profil = 'IPEVO DocCam'   # 'CanoScan LiDE 400'
+switch ($env:Computername) {
+  'BÜRO-3' {$NAPS2Profil = 'Fujitsu'}
+  default  {$NAPS2Profil = 'unbekannt'} # 'IPEVO DocCam' oder 'CanoScan LiDE 400'
+}
 $SaveDir = '.\bilder\scanner'  # oder $env:Temp
 $FilenameBase = 'DLPBild'
 $out = "$($SaveDir)\$($FilenameBase)`$(nnnn).$($Extension)"
@@ -139,7 +143,6 @@ If (-Not (Test-Path $SaveDir -PathType Container)) {
 }
 Remove-Item "$SaveDir\$($FilenameBase)*" -Force  # mögliche alte Scan-Dateien entfernen
 
-# If ($env:Computername -eq '')
 $erg= &"c:\program files\NAPS2\NAPS2.Console.exe" --profile $NAPS2Profil --splitscans --output $out --force -v
 
 # $erg
