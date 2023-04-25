@@ -178,6 +178,7 @@ No scanned pages to export.
 #>
 
 $m=$erg |select-string 'Finished saving images to (?<Dateiname>.*)'
+# Anzahl der Seiten gibts über RegEx '(?<Seiten>\d*) page\(s\) scanned.'
 $index = 0
 $x=[xml](Get-Content $xmlDatei)
 IF ($x) {
@@ -187,7 +188,7 @@ IF ($x) {
       $in = $x.ImportNode($n.SelectSingleNode('BILDER'), $true)
       $x.DELAPRO.BILDARCHIVIERUNG.AppendChild($in)	
       $index = 1
-      $Dateiname = $m.Matches.groups[0].Groups[$index].Value
+      $Dateiname = $m.Matches.groups[0].Groups[$index].Value  # eigentlich Blödsinn, denn der Dateiname kann auch anders ermittelt werden
       while ($Dateiname) {
         IF ($Dateiname) {
           If (Test-Path $Dateiname) {
