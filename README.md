@@ -1329,6 +1329,56 @@ $testout = Dir test.* | where LastWriteTime -lt (Get-Date).AddDays(-5)
 $testout.Length
 $testout | Remove-Item -Confirm
 ```
+    
+Am besten ist es im Zeitplaner eine Aufgabe anzulegen und dieses Script zu verwenden:
+
+CleanTestOut.PS1:
+```Powershell
+$testout = Dir test.* | where LastWriteTime -lt (Get-Date).AddDays(-5)
+$testout.Length
+$testout | Remove-Item -Confirm:$False
+```
+
+Bei der Aufgabe sind diese Parameter einzugeben:
+```
+PS D:\easy\delapro> (Get-ScheduledTask -TaskPath \ -TaskName *delapro*).Actions
+
+
+Id               :
+Arguments        : -executionPolicy ByPass -File CleanTestOut.PS1
+Execute          : C:\Windows\System32\WindowsPowerShell\v1.0\Powershell.exe
+WorkingDirectory : D:\easy\delapro
+PSComputerName   :
+
+PS D:\easy\delapro> (Get-ScheduledTask -TaskPath \ -TaskName *delapro*).Settings
+
+
+AllowDemandStart                : True
+AllowHardTerminate              : True
+Compatibility                   : Vista
+DeleteExpiredTaskAfter          :
+DisallowStartIfOnBatteries      : True
+Enabled                         : True
+ExecutionTimeLimit              : PT72H
+Hidden                          : False
+IdleSettings                    : MSFT_TaskIdleSettings
+MultipleInstances               : IgnoreNew
+NetworkSettings                 : MSFT_TaskNetworkSettings
+Priority                        : 7
+RestartCount                    : 0
+RestartInterval                 :
+RunOnlyIfIdle                   : False
+RunOnlyIfNetworkAvailable       : False
+StartWhenAvailable              : False
+StopIfGoingOnBatteries          : True
+WakeToRun                       : False
+DisallowStartOnRemoteAppSession : False
+UseUnifiedSchedulingEngine      : False
+MaintenanceSettings             :
+volatile                        : False
+PSComputerName                  :
+
+```
 
 ### Probleme mit Werbetextzeilen mit Labor2.DBF
 
