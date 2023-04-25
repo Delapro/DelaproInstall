@@ -187,7 +187,7 @@ IF ($x) {
       $in = $x.ImportNode($n.SelectSingleNode('BILDER'), $true)
       $x.DELAPRO.BILDARCHIVIERUNG.AppendChild($in)	
       $index = 1
-      $Dateiname = $m.Matches.groups[0].Groups[index].Value
+      $Dateiname = $m.Matches.groups[0].Groups[$index].Value
       while ($Dateiname) {
         IF ($Dateiname) {
           If (Test-Path $Dateiname) {
