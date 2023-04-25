@@ -186,9 +186,9 @@ IF ($x) {
       $n=[xml]"<BILDER/>"
       $in = $x.ImportNode($n.SelectSingleNode('BILDER'), $true)
       $x.DELAPRO.BILDARCHIVIERUNG.AppendChild($in)	
-      $Dateiname = 'start'
+      $index = 1
+      $Dateiname = $m.Matches.groups[0].Groups[index].Value
       while ($Dateiname) {
-        $Dateiname = $m.Matches.groups[0].Groups[++$index].Value
         IF ($Dateiname) {
           If (Test-Path $Dateiname) {
             $BildTag = "BILD$($index)"
@@ -200,6 +200,10 @@ IF ($x) {
             exit
           }
         }
+        $index++
+        $Dateiname -match '(?<Nummer>\d{4})'
+        $Zahl="000$(([int]$Matches.Nummer)+1)"
+        $Dateiname -replace $Matches.Nummer, $Zahl
       }
     }
   }
