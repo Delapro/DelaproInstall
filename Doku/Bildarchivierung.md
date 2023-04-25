@@ -203,7 +203,7 @@ IF ($x) {
         $index++
         $Dateiname -match '(?<Nummer>\d{4})'
         $Zahl="000$(([int]$Matches.Nummer)+1)"
-        $Dateiname -replace $Matches.Nummer, $Zahl
+        $Dateiname = $Dateiname -replace $Matches.Nummer, $Zahl
       }
     }
   }
