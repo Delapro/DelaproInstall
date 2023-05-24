@@ -32,13 +32,14 @@ Install-7Zip -Verbose
 # Write-Host "  $(Test-Thunderbird)"
 
 # Ghostscript
-Write-Host "Ghostscript"
-Get-Ghostscript
-Write-Host "  Install"
-Install-Ghostscript
-Write-Host "  Version"
-& "$(Get-GhostScriptExecutable)" -v
-Get-Ghostscript
+# leider ab 10.01.xx nicht mehr möglich! https://bugs.ghostscript.com/show_bug.cgi?id=706495
+# Write-Host "Ghostscript"
+# Get-Ghostscript
+# Write-Host "  Install"
+# Install-Ghostscript
+# Write-Host "  Version"
+# & "$(Get-GhostScriptExecutable)" -v
+# Get-Ghostscript
 
 # GhostscriptPCL
 Write-Host "GhostscriptPCL"
