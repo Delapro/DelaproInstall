@@ -1454,6 +1454,7 @@ Function Install-Ghostscript {
 	Invoke-WebRequest -UseBasicParsing -Uri $ghostUrl -OutFile $ghostCall
 
 	## /S muss groß sein!
+	# /S geht ab 10.01.xx nicht mehr! https://bugs.ghostscript.com/show_bug.cgi?id=706495
 	Start-Process -Wait $ghostcall -ArgumentList "/S"
 }
 
