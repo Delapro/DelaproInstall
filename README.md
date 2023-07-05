@@ -669,7 +669,7 @@ Evtl. FORMWREF.TXT um SET WIDTH TO 150 ergänzen:
 
 ### Abweichende Formularwerbetextzeilen bei Reparaturrechnungen
 
-Die Werbetextzeilen finden sich in LAB_Daten (132), LAB_Daten (133) und LAB_Daten (134). LAB_Daten (135) enthält die Information, ob die Reparatur-Werbetextzeilen gedruckt werden sollen.
+Die Werbetextzeilen finden sich in LAB_Daten (132), LAB_Daten (133) und LAB_Daten (134). LAB_Daten (135) enthält die Information, ob die Reparatur-Werbetextzeilen gedruckt werden sollen. Da momentan LAB_Daten (135) falsche Werte liefert bzw. zu einer Fehlermeldung führt, ist es besser LAB_Daten2(24)  abzufragen!
 
 Abgeändert werden muss FORMWREF.TXT in
 
@@ -722,7 +722,8 @@ und FORMWREK.TXT
 ```
 .* Verminderung der auszugebenden Positionsanzahl um die Anzahl der Werbetextzeilen bei Rechnungen
 .IF Auftrag->Reparatur == "J"
-.  IF LAB_Daten (135) == "J"
+.*  IF LAB_Daten (135) == "J"
+.  IF LAB_Daten2 (24) == "J"
 .    IF EMPTY (LAB_Daten (132))
 .      ABSVMore := ABSVMore -1
 .    ENDIF
