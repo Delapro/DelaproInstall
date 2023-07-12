@@ -55,10 +55,10 @@ In PROXDEMO32.EXE bei Mode PROX auswählen und bei BAUD 4800 aktivieren sowie di
 ## Supertrax Zugang
 Auf Zeitanzeige doppelt "tappen". Dann erscheint die Tastatur (Softkeyboard) mit der man dann wie üblich das Passwort eingeben kann. Das Standardpasswort ist "00000", es reicht wenn man fünfmal die Eingabetaste drückt, was automatisch fünf 0er eingibt. Eine Bestätigung des Codes muss nicht erfolgen. 
 
-Danach wird das Configuration-Menü sichtbar:
+Danach wird das Configuration-Menü sichtbar (Firmware LITE-Version):
 ![image](https://github.com/Delapro/DelaproInstall/assets/16536936/7ef4f790-014a-4fc0-85d4-58e4533d68d1)
  
-Info-Menü:
+Info-Menü (Firmware LITE-Version):
 ![image](https://github.com/Delapro/DelaproInstall/assets/16536936/8009eae8-0504-4893-ae74-890c0bbf2788)
 
 Mittels Doppeltap kann ein Menü direkt geöffnet werden oder mit Einfachtap und bestätigen des Pfeils. Zurück gehts immer unten links mit dem Pfeil nach links.
@@ -76,7 +76,7 @@ Parametermenü:
 
 Telnetzugang über die IP-Adresse und admin, admin ist auch möglich. Man bekommt dadurch direkt Zugriff auf das Windows CE Dateisystem.
 
-UltraVNC Zugang ist auch möglich:
+UltraVNC Zugang ist auch möglich (nachfolgende Bilder stammen aus der TRACK-Firmware):
 ![image](https://github.com/Delapro/DelaproInstall/assets/16536936/d56db75c-3439-4024-a0e0-564c2bc590c6)
 Es reicht, wenn man die ZIP-Datei von UltraVNC lädt, es wird nur der UVNCViewer benötigt um den Zugriff zu bekommen. https://uvnc.com/downloads/ultravnc.
 
