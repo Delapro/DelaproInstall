@@ -13,17 +13,18 @@ Schnittstelle=1
 Es wird unterschieden zwischen der Version welche die Aufträge exportiert und der Version welche die Aufträge importiert.
 
 ## Export
-Die Version welche die Daten automatisch exportiert benötigt noch diesen Eintrag
+Die Version welche die Daten automatisch beim Rechnungsdruck exportiert benötigt noch diesen Eintrag
 ```
 [MacDent]
 Schnittstelle=1
 ExportAktiv=1
 ```
 
-Soll der Export auch manuell möglich sein, fügt man noch diesen Eintrag bei [MacDent] hinzu:
+Soll der Export manuell möglich sein, fügt man noch diesen Eintrag bei [MacDent] hinzu:
 ```
 [MacDent]
 Schnittstelle=1
+ExportAktiv=1
 ManuellerExport=1
 ```
 
