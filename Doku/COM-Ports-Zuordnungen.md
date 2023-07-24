@@ -25,3 +25,6 @@ https://learn.microsoft.com/en-us/sysinternals/downloads/portmon
 
 ## sonstige Infos zu COM-Ports
 http://woshub.com/how-to-clean-up-and-reset-com-ports-in-windows-7/
+
+## Utility für COM-Port resett und Infos:
+https://www.uwe-sieber.de/ComPortInfo.html
