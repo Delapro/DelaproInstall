@@ -108,6 +108,8 @@ COPY ScannerOK.XML %2
 
 Bessere Variante die auch das Einlesen von mehreren Seiten vom Dokumentenscanner unterstützt. Benötigt wird ein aktuelles Delapro-Update. Ansonsten kommt eine Meldung, dass kein Bild zur Übernahme vorhanden ist.
 
+%3 bekommt das Scannerprofil übergeben, ist seit Sommer 2023 verfügbar.
+
 Scanner.BAT:
 ```
 powershell -executionPolicy Bypass -File Scan.PS1 %2 %3
