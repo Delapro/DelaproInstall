@@ -110,7 +110,7 @@ Bessere Variante die auch das Einlesen von mehreren Seiten vom Dokumentenscanner
 
 Scanner.BAT:
 ```
-powershell -executionPolicy Bypass -File Scan.PS1 %2
+powershell -executionPolicy Bypass -File Scan.PS1 %2 %3
 GOTO Ende
 ```
 
@@ -123,7 +123,7 @@ Scan.PS1:
   Als Parameter muss eine XML-Datei für die Erfassung übergeben werden, diese XML-Datei wird auch mit den erfassten Bildern
   erweitert und nach verlassen im Delapro interpretiert.
 #>
-Param ($xmlDatei)
+Param ($xmlDatei, $scannerProfil)
 
 # Start-Transcript C:\DELAPRO\PS.log  # wenn die LOG-Datei aktiviert wurde aber nicht existiert dann gibt es einen Syntaxfehler im Skript!
 
@@ -132,6 +132,10 @@ $Extension = 'jpg'
 switch ($env:Computername) {
   'BÜRO-3' {$NAPS2Profil = 'Fujitsu'}
   default  {$NAPS2Profil = 'unbekannt'} # 'IPEVO DocCam' oder 'CanoScan LiDE 400'
+}
+If ($scannerProfil) {
+  # falls das Scannerprofil mitübergeben wurde, dann darauf reagieren
+  $NAPS2Profil = $scannerProfil
 }
 $SaveDir = '.\bilder\scanner'  # oder $env:Temp
 $FilenameBase = 'DLPBild'
