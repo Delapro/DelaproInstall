@@ -779,6 +779,22 @@ Function Confirm-UTF8 {
 	$result
 }
 
+# konvertiert einen UTF-8 String in einen Windows 1252 Codepage-String
+# kann z. B. dafür verwendet werden, um ein PS-Skript welches in UTF-8 gespeichert wurde und unter einem Prozess mit Windows
+# Codepage 1252 ausgeführt wird, dass die Ausgaben Umlaute korrekt darstellen
+# zum Testen in der Konsole "chcp 65001" vorher setzen, falls nicht bereits UTF-8 aktiv sein sollte, prüfen
+# mittels [Console]::OutputEncoding, [Console]::InputEncoding
+Function ConvertFrom-UTF8 {
+	[CmdletBinding()]
+	Param(
+	  [Parameter(ValueFromPipeline)]
+	  [String]$String
+	)
+  
+	$Bytes=[System.Text.Encoding]::GetEncoding(1252).GetBytes($String)
+	return [System.Text.Encoding]::UTF8.GetString($Bytes)
+}
+
 # druckt eine Windowstestseite vom angegebenen Drucker
 Function Invoke-PrinterTestPage {
 	[CmdletBinding()]
