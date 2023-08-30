@@ -6390,6 +6390,20 @@ Function Install-DelaproNetClientSetup {
 	Install-Delapro @DelaproInstParameterTest
 }
 
+Function New-Password {
+    param (
+        [Parameter(Mandatory)]
+        [int] $length,
+        [int] $NonAlphanumericChars = 1
+    )
+
+    # einfachste Variante: -join([char[]](33..122) | Get-Random -Count 10)
+    Add-Type -AssemblyName 'System.Web'
+    return [System.Web.Security.Membership]::GeneratePassword($length, $NonAlphanumericChars)
+}
+ 
+
+#Read more: https://www.sharepointdiary.com/2020/04/powershell-generate-random-password.html#ixzz8BrA66ijd
 #If($PSReadlineActive) {
 #	# PSReadline wieder aktiveren, falls es vorher ausgeschaltet wurde.
 #	Import-Module PSReadline
