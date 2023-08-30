@@ -302,6 +302,15 @@ If ($driverIDFound) {
     $driverID = $Matches[1]
 }
 """$winBuild"" {`$driverID = ""$driverID""}"
+
+# wenn auch noch DelaproMail mit oben ermittelten Angaben installiert werden soll, Achtung AMD64:
+$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_$($driverID)\prnms005.inf"
+Add-PrinterDriver -name $driverName -InfPath $driverInf
+$printername='DelaproMail'
+$PortName="$($DelaproPath)\Export\PDF\Delapro.EPS"
+New-PrinterPort -Portname $PortName
+Add-Printer -Name $PrinterName -DriverName $driverName -PortName $Portname
+
 ```
 
 ### Windowsdruckertreiber aus Windows-Updatekatalog laden
