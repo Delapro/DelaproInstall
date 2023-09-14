@@ -2501,21 +2501,21 @@ Function Install-7Zip {
 		[System.String]$tempDirectory="$Env:TEMP\"
 	)
 
-	$Version = '2201'	# aktuelle offizielle Version: http://www.7-zip.org/
+	$Version = '2301'	# aktuelle offizielle Version: http://www.7-zip.org/
 	If (Test-64Bit) {
 		If (Test-Arm64) {
 			$url = "http://www.7-zip.org/a/7z$($Version)-arm64.exe"
 			$Dest = "$($tempDirectory)\7z$($Version)-arm64.exe"
-			$Sha256 = '700DEA3E4012319A09CCADFCE91CF090334CFE658D0BDC42204E77ACBEA1EF99'
+			$Sha256 = '6FA4CB35CBEBB0A46B8BBC22D1686A340E183C1F875D8B714EFDC39AF93DEBDA'
 		} else {			
 			$url = "http://www.7-zip.org/a/7z$($Version)-x64.exe"
 			$Dest = "$($tempDirectory)\7z$($Version)-x64.exe"
-			$Sha256 = 'B055FEE85472921575071464A97A79540E489C1C3A14B9BDFBDBAB60E17F36E4'
+			$Sha256 = '26CB6E9F56333682122FAFE79DBCDFD51E9F47CC7217DCCD29AC6FC33B5598CD'
 		}
 	} else {
 		$url = "http://www.7-zip.org/a/7z$($Version).exe"
 		$Dest = "$($tempDirectory)\7z$($Version).exe"
-		$Sha256 = '71E94E6038F4D42ED8F0F38C0E6C3846F21D13527139EFA9EF8B8F6312AB6C90'
+		$Sha256 = '9B6682255BED2E415BFA2EF75E7E0888158D1AAF79370DEFAA2E2A5F2B003A59'
 	}
 
 	Write-Verbose "Lade $url nach $Dest"
