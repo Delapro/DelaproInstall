@@ -28,6 +28,7 @@ If (Test-Thunderbird) {
 Write-Host "7Zip"
 # Write-Host "  $(Test-Thunderbird)"
 Write-Host "  Install"
+# TODO: Platform-Parameter für 7Zip einführen, damit x86 ordentlich getestet werden kann!
 Install-7Zip -Verbose
 # Write-Host "  $(Test-Thunderbird)"
 
