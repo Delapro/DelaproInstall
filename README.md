@@ -122,8 +122,8 @@ New-Item "$($DlpPath)\Import\GUDID" -ItemType Directory
 New-Item "$($DlpPath)\Import\Barcodescanner" -ItemType Directory
 $NonAdmin = If (-Not (Test-Admin)) {'/H'} else {''}
 cmd.exe /c mklink $NonAdmin "$($DlpPath)\Import\Barcodescanner\SerialReader.exe" "$($DlpPath)\SerialReader.exe"
-If (Test-Path .\..\GetUDIDIData.PS1) {
-    Copy-Item .\..\GetUDIDIData.PS1 "$($DlpPath)\Import\GUDID\"
+If (Test-Path .\temp\GetUDIDIData.PS1) {
+    Copy-Item .\temp\GetUDIDIData.PS1 "$($DlpPath)\Import\GUDID\"
 }
 If (((Get-Item $DlpPath).Fullname.SubString(0, 3)) -eq ((Get-Item $DlpGamePath).Fullname.SubString(0, 3))) {
     New-Item "$($DlpGamePath)\xml2021Def" -ItemType Directory
@@ -131,8 +131,8 @@ If (((Get-Item $DlpPath).Fullname.SubString(0, 3)) -eq ((Get-Item $DlpGamePath).
     New-Item "$($DlpGamePath)\Import\GUDID" -ItemType Directory
     New-Item "$($DlpGamePath)\Import\Barcodescanner" -ItemType Directory
     cmd.exe /c mklink $NonAdmin "$($DlpGamePath)\Import\Barcodescanner\SerialReader.exe" "$($DlpGamePath)\SerialReader.exe"
-    If (Test-Path .\..\GetUDIDIData.PS1) {
-       Copy-Item .\..\GetUDIDIData.PS1 "$($DlpGamePath)\Import\GUDID\"
+    If (Test-Path .\temp\GetUDIDIData.PS1) {
+       Copy-Item .\temp\GetUDIDIData.PS1 "$($DlpGamePath)\Import\GUDID\"
     }
 } else {
     Write-Host '$DlpGamePath anpassen!'
