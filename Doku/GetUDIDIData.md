@@ -1,4 +1,4 @@
-# Beispiele für GetUDIDIData.PS1 abfragen
+# Beispiele für manuelle GetUDIDIData.PS1 Abfragen zum Testen
 
 Am einfachsten man geht ins GetUDIDI-Verzeichnis.
 
