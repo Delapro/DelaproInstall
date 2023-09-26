@@ -127,7 +127,7 @@ dir tage*,woche*,zei*,tech*,tecz*,tecr*,wego*,dlp_main.ini|Compress-Archive -Des
 
 Die zu testenden Zeitdaten liegen in C:\Temp:
 
-> Vorsicht! Funktioniert noch nicht in allen Situationen!
+> Vorsicht! Funktioniert noch nicht in allen Situationen! *.PRN-Dateien müssen im DLP_DEFA-Verzeichnis vorhanden sein. *.REP-Dateien werden vom Startverzeichnis und nicht DLP_DEFA-Verzeichnis verwendet, bzw. DLP_MAIN.INI RepPath beachten! CDX-Dateien? Gegenenfalls neu aufbauen.
 
 ```Powershell
 [System.Environment]::SetEnvironmentVariable('DLP_DEFA', 'C:\temp')
