@@ -127,7 +127,7 @@ dir tage*,woche*,zei*,tech*,tecz*,tecr*,wego*,dlp_main.ini|Compress-Archive -Des
 
 Die zu testenden Zeitdaten liegen in C:\Temp:
 
-> Vorsicht! Funktioniert noch nicht in allen Situationen! *.PRN-Dateien müssen im DLP_DEFA-Verzeichnis vorhanden sein. *.REP-Dateien werden vom Startverzeichnis und nicht DLP_DEFA-Verzeichnis verwendet, bzw. DLP_MAIN.INI RepPath beachten! CDX-Dateien? Gegenenfalls neu aufbauen. Test.out-Dateien werden im Startverzeichnis mit einem Byte angelegt und im DLP_DEFA-Verzeichnis nochmal aber mit Inhalt angelegt. Abhängigkeiten, müssen also darauf ausgerichtet werden!
+> Vorsicht! Funktioniert noch nicht in allen Situationen! *.PRN-Dateien müssen im DLP_DEFA-Verzeichnis vorhanden sein. *.REP-Dateien werden vom Startverzeichnis und nicht DLP_DEFA-Verzeichnis verwendet, bzw. DLP_MAIN.INI RepPath beachten! CDX-Dateien? Gegenenfalls neu aufbauen. Test.out-Dateien werden im Startverzeichnis mit einem Byte angelegt und im DLP_DEFA-Verzeichnis nochmal aber mit Inhalt angelegt. Abhängigkeiten, müssen also darauf ausgerichtet werden! Test.Out-Datei mittels MKLINK Startverzeichnis\test.out DLP_DEFA-Verzeichnis\test.out verlinken. Dann klappts auch ohne extra Anpassungen. 
 
 ```Powershell
 [System.Environment]::SetEnvironmentVariable('DLP_DEFA', 'C:\temp')
