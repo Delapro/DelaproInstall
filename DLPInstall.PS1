@@ -1167,6 +1167,8 @@ Function Save-DlpUiResetScript {
 		[Switch]$SetWindowSize
 	)
 
+	$regBase = 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings'
+
 	If ($SetWindowSize) {
 		# aktuelle Werte notieren
 		$Height = (Get-ItemProperty $regBase -Name "Height" -ErrorAction SilentlyContinue).Height;
