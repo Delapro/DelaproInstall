@@ -5,9 +5,7 @@ Soll das Delaprofenster dynamisch seine Größe ändern, je nachdem ob z. B. ein
 > HINWEIS: Das Skript ändert die Größe nur beim Programmstart, wird während einer laufenden Instanz ein Sitzungswechsel vorgenommen hat dieser keine Auswirkung auf die aktuelle Fenstergröße.
 
 ```Powershell
-# New-PowershellScriptShortcut -Path .\StartDelapro.PS1 -LinkFilename 'Delapro starten' -Description 'Startet den Delapro Programmverteiler.'
-
-
+# StartDelapro.PS1
 Add-Type -AssemblyName System.Windows.Forms
 
 # hier soll auf eine RDP-Session reagiert werden
