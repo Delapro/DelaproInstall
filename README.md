@@ -596,6 +596,8 @@ Save-DlpUiResetScript -File .\SetDelapro.PS1 -SetWindowSize
 New-PowershellScriptShortcut -Path .\SetDelapro.PS1 -LinkFilename 'Delapro-Fenster Größe setzen' -Description 'Setzt die Delapro-Fenstereinstellungen auf die aktuell aktiven Einstellungen.'
 ```
 
+Für ein Beispiel mit unterschiedlichen Fenstergrößen je nach Sitzung, siehe: [Start mit unterschiedlichen Auflösungen](Doku/StartMitUnterschiedlichenAufl%C3%B6sungen.md)
+
 ## Formulare überprüfen und aktualisieren
 
 ### Prüfen, ob man es mit neuen Formularen zu tun hat
