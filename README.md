@@ -1152,6 +1152,9 @@ Get-GhostScriptExecutable
 # Konvertieren einer Postscriptdatei in PDF
 & "$(Get-GhostScriptExecutable)" -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile="test.pdf" .\test.ps
 
+# Konvertieren einer PDF-Datei von Farbe in Graustufen
+& "$(Get-GhostScriptExecutable)" -dBATCH -dNOPAUSE -sProcessColorModel=DeviceGray -sColorConversionStrategy=Gray -dOverrideICC -sDEVICE=pdfwrite -sOutputFile="testBW.pdf" .\test.pdf
+
 # Drucken einer PDF-Datei, %printer% muss so angegeben werden, LBP3560 ist der Druckername von Get-Printer
 &(Get-GhostScriptExecutable) -sOutputFile="%printer%LBP3560" -sDEVICE=mswinpr2 -dNOPAUSE -dBATCH "C:\temp\test.pdf"
 
