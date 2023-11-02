@@ -681,6 +681,13 @@ Evtl. FORMWREF.TXT um SET WIDTH TO 150 ergänzen:
 ...
 ```
 
+Eine besondere Form der Art der Arbeit mit nur einer Zeile erreicht man mittels Steuerzeichen für eine kleinere Schrift, dazu muss in <Code>FORMPATI.TXT</Code> die Art der Arbeit durch folgenden Eintrag ersetzt werden, welcher die Funktion AVD_ADArbeit() aufruft:
+```
+.SET WIDTH TO 150
+Art der Arbeit: @AVD_ADArbeit(AVD_Master (19))@
+.SET WIDTH TO 80
+```
+
 ### Abweichende Formularwerbetextzeilen bei Reparaturrechnungen
 
 Die Werbetextzeilen finden sich in LAB_Daten (132), LAB_Daten (133) und LAB_Daten (134). LAB_Daten (135) enthält die Information, ob die Reparatur-Werbetextzeilen gedruckt werden sollen. Da momentan LAB_Daten (135) falsche Werte liefert bzw. zu einer Fehlermeldung führt, ist es besser LAB_Daten2(24)  abzufragen!
