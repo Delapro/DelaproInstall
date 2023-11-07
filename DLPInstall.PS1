@@ -1160,6 +1160,9 @@ Function Set-DlpUi {
 
 }
 
+# damit die Suche nach dem Reset aufhört:
+Function Reset-DlpUi {Set-DlpUi -Reset}
+
 Function Save-DlpUiResetScript {
 	[CmdletBinding()]
 	Param(
