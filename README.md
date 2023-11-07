@@ -583,6 +583,8 @@ Get-DlpUI
 Set-DlpUi -Fontname "Lucida Console"
 # Wenn es zu Durcheinander geht, alles wieder zurücksetzen:
 Set-DlpUi -Reset
+# oder anstatt obigem:
+Reset-DlpUi
 
 # Ausgabe von verfügbaren, möglichen Monospaced-Fonts
 Get-MonospacedFonts
