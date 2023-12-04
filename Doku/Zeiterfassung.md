@@ -192,7 +192,7 @@ $V0006 = @(,"0700001$RFID"   # Kommt 07:00
            ,"0759590$RFID"   # Geht  07:59:59
 	   ,"0900001$RFID"   # Kommt 09:00
            ,"0959590$RFID"   # Geht  09:59:59
-           ,"1600001$RFID"   # Geht  16:00
+           ,"1600000$RFID"   # Geht  16:00
           )
 
 # obige Testdaten lassen sich beliebig erweitern solange
