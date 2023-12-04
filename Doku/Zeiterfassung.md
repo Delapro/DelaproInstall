@@ -212,3 +212,5 @@ $AlleBuchungen| % { $ZeitenSortiert.AddRange($_) }
 # bestimmten Tests nicht gewünscht ist
 $ZeitenSortiert | Select @{N='Eintrag';E={$_}},@{N='Zeit';E={$_.substring(0,6)}} | Sort Zeit | Select -ExpandProperty Eintrag | Set-Content $PRE 
 ```
+
+Für das Powershellscript zum Einlesen der Zeiten sollte [Zeiterfassung]KommtGehtErzwingen=1 gesetzt sein, sonst machen die Kommentare keinen Sinn, bzw. Kommt/Geht wird nicht beachtet.
