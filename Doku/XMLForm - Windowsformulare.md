@@ -67,4 +67,4 @@ REM @ECHO %1 %2 %3 %4 %5 %6 >> LOG.TXT
 
 Zudem sollte noch alle Aufrufe in FORMXML.TXT von SwpRunCMD in SwapRunEXE geändert werden, damit mittels DebugPrnDrvRun und PrnDrv.LOG-Datei die Aufrufe nachvollzogen werden können.
 
-Zum aktivieren des Debugging: DebugPrnDrvRun =1 unter Modus in DLP_MAIN.INI setzen.
+Zum aktivieren des Debugging: DebugPrnDrvRun =1 unter Modus in DLP_MAIN.INI setzen. Ist das Debugging aktiv wird die Datei PrnDrv.LOG im Delapro-Verzeichnis erzeugt.
