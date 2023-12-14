@@ -1,10 +1,12 @@
-XML-Druckertreiber und KZBV-Emailversand in Kombination!! XMLForm-Windowsformulare
+# XML-Druckertreiber und KZBV-Emailversand in Kombination!! XMLForm-Windowsformulare
+
+## Druckerfassung
 
 Beim Druckertreiber muss der Druckertyp auf 9 XML+PDF gesetzt werden
 
 Der Druckertreibername muss auf DelaproMail gesetzt werden
 
-? Previewprogramm+Pfad auf LASER\GHOSTPDFX.BAT %1 setzen
+Beim Previewprogramm+Pfad auf LASER\GHOSTPDFX.BAT %1 setzen
 
 Im REP-Verzeichnis muss FORMXML.TXT folgendes anstatt 
 
@@ -41,9 +43,11 @@ Im LASER-Verzeichnis sollte GHOSTPDFX.BAT welche eine Kopie von GHOSTPDF.BAT sei
 REM LASER\DLPWINPR.EXE %1 "" %PDFPRINTER% 
 
 
-// Mailfassung:
+## Mailfassung
 
-? Previewprogramm+Pfad auf LASER\XGHOSTPDFX.BAT %1 setzen
+Die Mailfassung kann auch PDF-Dateien verschlüsseln, deshalb wird klar zwischen Erzeugung und Ausgabe unterschieden.
+
+Beim Previewprogramm+Pfad auf LASER\XGHOSTPDFX.BAT %1 setzen
 
 
 Weitere Ergänzungen zu XGhostPDFX.BAT und XXGhostPDFX.BAT in Datei FormXML.TXT (C:\Delapro\XMLForm\Reps):
