@@ -1160,12 +1160,17 @@ Function Set-DlpUi {
 
 }
 
+# damit die Suche nach dem Reset aufhört:
+Function Reset-DlpUi {Set-DlpUi -Reset}
+
 Function Save-DlpUiResetScript {
 	[CmdletBinding()]
 	Param(
 		[String]$File,
 		[Switch]$SetWindowSize
 	)
+
+	$regBase = 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings'
 
 	If ($SetWindowSize) {
 		# aktuelle Werte notieren
@@ -1436,13 +1441,14 @@ Function Install-Ghostscript {
 	Param(
 		#[parameter(Mandatory=$true)]
 		[System.String]$tempPath="$Env:TEMP\",
-		[Validateset("Newest", '10.01.01', '10.0.0', '9.56.1', '9.55.0', "9.54.0", "9.53.3", "9.52", "9.51", "9.50", "9.27","9.26", "9.25", "9.24")]
+		[Validateset("Newest", '10.02.00', '10.01.01', '10.0.0', '9.56.1', '9.55.0', "9.54.0", "9.53.3", "9.52", "9.51", "9.50", "9.27","9.26", "9.25", "9.24")]
 		[string[]]$Version='Newest'
 	)
 
 	# Infos zur aktuellen Version: http://ghostscript.com/Releases.html
 	switch ($Version) {
-		'Newest' {$ghostVersion="gs10011"}
+		'Newest' {$ghostVersion="gs10020"}
+		'10.02.0' {$ghostVersion="gs10020"}
 		'10.01.01' {$ghostVersion="gs10011"}
 		"10.0.0" {$ghostVersion="gs1000"}
 		"9.56.1" {$ghostVersion="gs9561"}
@@ -2039,7 +2045,7 @@ Function Install-AcrobatDC {
 	# Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/11.x/11.0.10/de_DE/AdbeRdr11010_de_DE.exe
 	# DC Release-Infos: http://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html
 	# WICHTIG: Nur die Planned Updates können verwendet werden!!
-	$dcVersion = "23.003.20269".Replace(".", "")
+	$dcVersion = "23.006.20320".Replace(".", "")
 	$dcOptionalVersion = "19.021.20061".Replace(".", "")
 	$useOptionalUpdate = $false	# falls es mal kein aktuelles optionales Update gibt auf $false setzen
 	$x64Bit = ''
@@ -2790,7 +2796,7 @@ Function Install-Thunderbird {
 		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\",
 		[switch]$Force,
-		[Validateset('115.3.0', '115.2.3', '115.2.2', '115.2.1', '115.2.0', '115.1.0', '102.14.0', '102.13.1', '102.12.0', '102.11.2', '102.11.0', '102.10.1', '102.10.0', '102.9.1', '102.9.0', '102.8.0', '102.7.2', '102.6.1', '102.6.1', '102.5.1', '102.5.0', '102.4.2', '102.4.1', '102.4.0', '102.3.3', '102.3.1', '102.3.0', '102.2.3', '102.2.2', '102.2.1', '102.2.0', '102.1.2', '102.0.3', '102.0', '91.13.1', "78.14.0", "68.12.0", "60.9.1")]
+		[Validateset('115.5.1', '115.4.3', '115.4.2', '115.4.1', '115.3.3', '115.3.2', '115.3.0', '115.2.3', '115.2.2', '115.2.1', '115.2.0', '115.1.0', '102.14.0', '102.13.1', '102.12.0', '102.11.2', '102.11.0', '102.10.1', '102.10.0', '102.9.1', '102.9.0', '102.8.0', '102.7.2', '102.6.1', '102.6.1', '102.5.1', '102.5.0', '102.4.2', '102.4.1', '102.4.0', '102.3.3', '102.3.1', '102.3.0', '102.2.3', '102.2.2', '102.2.1', '102.2.0', '102.1.2', '102.0.3', '102.0', '91.13.1', "78.14.0", "68.12.0", "60.9.1")]
 		[string[]]$Version,
 		[validateset("win32", "win64")]
 		[string]$Platform="win32"
@@ -2803,7 +2809,7 @@ Function Install-Thunderbird {
 	# z. B. 60.50.0 unter: https://ftp.mozilla.org/pub/thunderbird/releases/60.5.0/win32/de/
 	If ($null -eq $Version) {
 		# aktuelle Version
-		$tbVersion = '115.3.0'
+		$tbVersion = '115.5.1'
 		$downloadUrlBase = "https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion"
 	} else {
 		$tbVersion = $Version
@@ -3165,9 +3171,9 @@ Function Install-LibreOffice {
 		# Installationsparameter: https://wiki.documentfoundation.org/Deployment_and_Migration
 		# Basispfad für Download der Versionen: https://downloadarchive.documentfoundation.org/libreoffice/old/
 		If ($NextVersion) {
-			$loVersion = '7.6.1.2'
+			$loVersion = '7.6.2.1'
 		} else {
-			$loVersion = '7.5.6.2'
+			$loVersion = '7.5.8.1'
 		}
 		$base = 'https://downloadarchive.documentfoundation.org/libreoffice/old'
 		If ($PlatformX64) {

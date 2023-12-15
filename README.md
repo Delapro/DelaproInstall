@@ -583,6 +583,8 @@ Get-DlpUI
 Set-DlpUi -Fontname "Lucida Console"
 # Wenn es zu Durcheinander geht, alles wieder zurücksetzen:
 Set-DlpUi -Reset
+# oder anstatt obigem:
+Reset-DlpUi
 
 # Ausgabe von verfügbaren, möglichen Monospaced-Fonts
 Get-MonospacedFonts
@@ -595,6 +597,8 @@ New-PowershellScriptShortcut -Path .\ResetDelapro.PS1 -LinkFilename Delapro-Fens
 Save-DlpUiResetScript -File .\SetDelapro.PS1 -SetWindowSize
 New-PowershellScriptShortcut -Path .\SetDelapro.PS1 -LinkFilename 'Delapro-Fenster Größe setzen' -Description 'Setzt die Delapro-Fenstereinstellungen auf die aktuell aktiven Einstellungen.'
 ```
+
+Für ein Beispiel mit unterschiedlichen Fenstergrößen je nach Sitzung, siehe: [Start mit unterschiedlichen Auflösungen](Doku/StartMitUnterschiedlichenAufl%C3%B6sungen.md)
 
 ## Formulare überprüfen und aktualisieren
 
@@ -677,6 +681,13 @@ Evtl. FORMWREF.TXT um SET WIDTH TO 150 ergänzen:
 .SET WIDTH TO 150
 .IF ABSVKP == "K"
 ...
+```
+
+Eine besondere Form der Art der Arbeit mit nur einer Zeile erreicht man mittels Steuerzeichen für eine kleinere Schrift, dazu muss in <Code>FORMPATI.TXT</Code> die Art der Arbeit durch folgenden Eintrag ersetzt werden, welcher die Funktion AVD_ADArbeit() aufruft:
+```
+.SET WIDTH TO 150
+Art der Arbeit: @AVD_ADArbeit(AVD_Master (19))@
+.SET WIDTH TO 80
 ```
 
 ### Abweichende Formularwerbetextzeilen bei Reparaturrechnungen
@@ -1149,6 +1160,9 @@ Get-GhostScriptExecutable
 
 # Konvertieren einer Postscriptdatei in PDF
 & "$(Get-GhostScriptExecutable)" -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile="test.pdf" .\test.ps
+
+# Konvertieren einer PDF-Datei von Farbe in Graustufen
+& "$(Get-GhostScriptExecutable)" -dBATCH -dNOPAUSE -sProcessColorModel=DeviceGray -sColorConversionStrategy=Gray -dOverrideICC -sDEVICE=pdfwrite -sOutputFile="testBW.pdf" .\test.pdf
 
 # Drucken einer PDF-Datei, %printer% muss so angegeben werden, LBP3560 ist der Druckername von Get-Printer
 &(Get-GhostScriptExecutable) -sOutputFile="%printer%LBP3560" -sDEVICE=mswinpr2 -dNOPAUSE -dBATCH "C:\temp\test.pdf"

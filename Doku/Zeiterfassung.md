@@ -135,3 +135,82 @@ Die zu testenden Zeitdaten liegen in C:\Temp:
 # zum Aufheben, verwendet man
 [System.Environment]::SetEnvironmentVariable('DLP_DEFA', '')
 ```
+
+## PRE-Testdateien erstellen und einlesen
+
+Zum Einlesen aller PRE-Dateien aus einem bestimmten Verzeichnis:
+```
+DLP_TIME /WEGO .\WEGO\PRE*
+```
+
+Man kann auch eine einzelne Datei angeben:
+```
+DLP_TIME /WEGO .\WEGO\PRE31204
+```
+Beim Einlesen mittels /WEGO-Schalter wird die WEGO.LOG Datei mit Informationen beschrieben.
+
+Powershell-Skript um PRE-Dateien zu erstellen, ErstelleTestBuchungen.PS1
+```Powershell
+$PRE="PRE31204" # 4.12.2023
+Remove-Item $PRE -Force -EA SilentlyContinue
+
+$RFID = "500000"
+$V0001 = @(,"0800001$RFID"   # Kommt 08:00, nur Kommtbuchung
+          )
+
+$RFID = "500001"
+$V0002 = @(,"0800001$RFID"   # Kommt 08:00
+           ,"0859590$RFID"   # Geht  08:59:59
+          )
+
+$RFID = "500002"
+$V0003 = @(,"0700001$RFID"   # Kommt 07:00
+           ,"0759590$RFID"   # Geht  07:59:59
+	   ,"0900001$RFID"   # Kommt 09:00
+           ,"0959590$RFID"   # Geht  09:59:59
+          )
+
+$RFID = "500003"
+$V0004 = @(,"0700001$RFID"   # Kommt 07:00
+           ,"0700000$RFID"   # Geht  07:00
+          )
+
+$RFID = "500004"
+$V0004 = @(,"1500000$RFID"   # Geht  15:00, nur Geht-Buchung
+          )
+
+$RFID = "500005"
+$V0005 = @(,"0700001$RFID"   # Kommt 07:00
+           ,"0759590$RFID"   # Geht  07:59:59
+	   ,"0900001$RFID"   # Kommt 09:00
+           ,"0959590$RFID"   # Geht  09:59:59
+           ,"1100001$RFID"   # Kommt 11:00
+          )
+
+$RFID = "500006"
+$V0006 = @(,"0700001$RFID"   # Kommt 07:00
+           ,"0759590$RFID"   # Geht  07:59:59
+	   ,"0900001$RFID"   # Kommt 09:00
+           ,"0959590$RFID"   # Geht  09:59:59
+           ,"1600000$RFID"   # Geht  16:00
+          )
+
+# obige Testdaten lassen sich beliebig erweitern solange
+# der Variablenname mit $V0 beginnt
+# es dürfen aber keine anderen Variablen mit $V0 beginnen, gegebenfalls
+# Get-Variable -Include 'V0*' | Remove-Variable
+# aufrufen um aufzuräumen
+
+$AlleBuchungen = Get-Variable -Include 'V0*' -ValueOnly
+
+# wird benötigt für die Sortierung, sonst klappt die nicht
+$ZeitenSortiert=[System.Collections.ArrayList]::new()
+$AlleBuchungen| % { $ZeitenSortiert.AddRange($_) }
+
+# es wird eine extra Spalte Zeit eingeführt, damit nach dieser kontrolliert sortiert werden kann
+# ansonsten könnte es passieren, dass Kommt/Geht-Vorgaben evtl. umsortiert werden, was bei 
+# bestimmten Tests nicht gewünscht ist
+$ZeitenSortiert | Select @{N='Eintrag';E={$_}},@{N='Zeit';E={$_.substring(0,6)}} | Sort Zeit | Select -ExpandProperty Eintrag | Set-Content $PRE 
+```
+
+Für das Powershellscript zum Einlesen der Zeiten sollte [Zeiterfassung]KommtGehtErzwingen=1 gesetzt sein, sonst machen die Kommentare keinen Sinn, bzw. Kommt/Geht wird nicht beachtet.
