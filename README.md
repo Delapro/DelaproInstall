@@ -307,7 +307,7 @@ If ($driverIDFound) {
 $driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_$($driverID)\prnms005.inf"
 Add-PrinterDriver -name $driverName -InfPath $driverInf
 $printername='DelaproMail'
-$PortName="$($DelaproPath)\Export\PDF\Delapro.EPS"
+$PortName="$($DlpPath)\Export\PDF\Delapro.EPS"
 New-PrinterPort -Portname $PortName
 Add-Printer -Name $PrinterName -DriverName $driverName -PortName $Portname
 
