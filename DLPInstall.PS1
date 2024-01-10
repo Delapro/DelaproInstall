@@ -3331,19 +3331,19 @@ Function Invoke-SysInternalTool {
 Function Install-DotNetCore {
 	[CmdletBinding()]
 	Param(
-		 [System.String]$tempDirectory="$Env:TEMP\"
-		,[Validateset(3,6)] [String]$Version=3
+		[Validateset(6,8)] [String]$Version=8,
+		[System.String]$tempDirectory="$Env:TEMP\"
 	)
 
 	# TODO: Version, Platform, OS beachten
 
 	# Infos: https://dotnet.microsoft.com/download/dotnet-core/3.1
-	If ($Version -eq 3) {
-		$filename = "dotnet-runtime-3.1.28-win-x64.exe"
-	} else {
-		$filename = "dotnet-runtime-6.0.8-win-x64.exe"
+	switch ($Version) {
+		'6' {$filename = "windowsdesktop-runtime-6.0.26-win-x64.exe"; $base='3136e217-e5b7-4899-9b7e-aa52ecb8b108/d74134edaa75e3300f8692660b9fb7b5'}
+		'8' {$filename = "windowsdesktop-runtime-8.0.1-win-x64.exe"; $base='f18288f6-1732-415b-b577-7fb46510479a/a98239f751a7aed31bc4aa12f348a9bf'}
 	}
-	Start-BitsTransfer "https://download.visualstudio.microsoft.com/download/pr/9f010da2-d510-4271-8dcc-ad92b8b9b767/d2dd394046c20e0563ce5c45c356653f/$Filename" -Destination "$($tempDirectory)\$Filename"
+	Write-Verbose "https://download.visualstudio.microsoft.com/download/pr/$base/$Filename"
+	Start-BitsTransfer "https://download.visualstudio.microsoft.com/download/pr/$base/$Filename" -Destination "$($tempDirectory)\$Filename"
 	Start-Process -Wait -FilePath "$($tempDirectory)\$Filename"
 
 }
