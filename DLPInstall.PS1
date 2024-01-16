@@ -1182,12 +1182,6 @@ Function Save-DlpUiResetScript {
 		$script = @"
 		`$regBase = 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings'
 
-		$dlpProc = get-process @('delapro', 'dlp_main', 'dlp_time', 'dlp_conf', 'dlp_mate') -ea SilentlyContinue
-		If ($dlpProc) {
-			'Delapro läuft noch, wird zwangsbeendet!'
-			$dlpProc|stop-process -force -Verbose
-		}
-
 		If (Test-Path `$regBase) {
 			# Werte überschreiben
 			Set-ItemProperty `$regBase -Name "Height" -Value $Height
@@ -1206,6 +1200,12 @@ Function Save-DlpUiResetScript {
 	$script = @'
 
 	$regBase = 'registry::HKEY_CURRENT_USER\SOFTWARE\easy - innovative software\Delapro\Settings'
+
+	$dlpProc = get-process @('delapro', 'dlp_main', 'dlp_time', 'dlp_conf', 'dlp_mate') -ea SilentlyContinue
+	If ($dlpProc) {
+		'Delapro läuft noch, wird zwangsbeendet!'
+		$dlpProc|stop-process -force -Verbose
+	}
 
 	If (Test-Path $regBase) {
 		Remove-Item $regBase
