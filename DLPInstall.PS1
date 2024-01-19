@@ -5033,7 +5033,7 @@ Function Install-XeroxUniversalDriver {
 			$platform='ARM64'
 		} else {
 			# trotz Win10 im Link ist die gleiche Datei für Win7!
-  			$download="http://download.support.xerox.com/pub/drivers/GLOBALPRINTDRIVER/drivers/win10x64/ar/$($prefix)_$($xeroxVersion)_PS_x64.zip"
+  			$download="http://download.support.xerox.com/pub/drivers/VLC8000W/drivers/win10x64/ar/$($prefix)_$($xeroxVersion)_PS_x64.zip"
 			$platform='x64'
 		}
 	} else {
