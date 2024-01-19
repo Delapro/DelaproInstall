@@ -5019,7 +5019,7 @@ Function Install-XeroxUniversalDriver {
 	# kann hier gefunden werden: http://www.support.xerox.com/support/global-printer-driver/downloads/enus.html?operatingSystem=win10x64&fileLanguage=de
 	# Xerox Randlos Installation
 	If ($Version -eq "V3") {
-		$xeroxVersion = "5.810.8.0"
+		$xeroxVersion = "5.979.3.0"
 		$prefix = "UNIV"
 	} else {
 		# V4
@@ -5028,9 +5028,14 @@ Function Install-XeroxUniversalDriver {
 	}
 
 	If (Test-64Bit) {
-		# trotz Win10 im Link ist die gleiche Datei für Win7!
-  		$download="http://download.support.xerox.com/pub/drivers/GLOBALPRINTDRIVER/drivers/win10x64/ar/$($prefix)_$($xeroxVersion)_PS_x64.zip"
-		$platform='x64'
+		If (Test-Arm64) {
+			$download="https://download.support.xerox.com/pub/drivers/VLC8000W/drivers/win11arm64/ar/$($prefix)_$($xeroxVersion)_PS_ARM64.zip"
+			$platform='ARM64'
+		} else {
+			# trotz Win10 im Link ist die gleiche Datei für Win7!
+  			$download="http://download.support.xerox.com/pub/drivers/GLOBALPRINTDRIVER/drivers/win10x64/ar/$($prefix)_$($xeroxVersion)_PS_x64.zip"
+			$platform='x64'
+		}
 	} else {
 		# trotz Win10 im Link ist die gleiche Datei für Win7!
   		$download="http://download.support.xerox.com/pub/drivers/GLOBALPRINTDRIVER/drivers/win10/ar/$($prefix)_$($xeroxVersion)_PS_x86.zip"
