@@ -1682,6 +1682,8 @@ Bei der Installation der Zusatzmodule kommt diese Fehlermeldung:
 ![image](https://user-images.githubusercontent.com/16536936/198975912-226fe7e3-158d-4a7d-86e8-0e45fab722ca.png)
 Dadurch werden die Zusatzprogramm nicht im Installationspfad installiert sondern statt dessen unter "C:\Program Files (x86)\easy - innovative software\<Modulname>". Bei der Installation des Hauptprogramms werden die Druckertreiber nicht ermittelt und es erscheint eine entsprechende Meldung.
 
+Die Drucker-Treiber bei ARM64 sind sehr begrenzt. Durch die Rand-Problematik mit den Microsoftstandardtreibern ist man aber gezwungen auf einen anderen Druckertreiber zu wechseln. Das Windowsupdate bietet aber keinerlei weiteren Druckertreiber an. Zum Glück hat Xerox mit seinem Global Printer Driver eine ARM64-Unterstützung implmentiert, d. h. dadurch bekommt man einen randlosen PS-Treiber auf ARM64.
+
 ## Script-Tests
 
 ### Obfuscation Score ermitteln
