@@ -1675,6 +1675,8 @@ Install-DebWin -Verbose
 Momentan noch in der Erprobungsphase, aber hier einige Dinge die umgestellt, bzw. beachtet werden müssen:
 GHOSTPDF.BAT erweitern um:
 IF "%PROCESSOR_ARCHITECTURE%"=="ARM64" GOTO Ghostx64
+IF "%PROCESSOR_ARCHITEW6432%"=="ARM64" GOTO Ghostx64
+> Wichtig: %PROCESSOR_ARCHITECTURE% meldet in der Commandline ARM64, wenn die Batch aber ausgeführt wird x86! Deshalb muss %PROCESSOR_ARCHITEW6432% noch geprüft werden, welches in der Batch dann ARM64 meldet. Der Verweis auf Ghostx64 ist auch nicht völlig korrekt da eigentlich eine spezielle ARM64 Version von Ghost angesprochen werden sollte, aber funktioniert trotzdem und vereinfacht die Installation.
 
 Zum Testen kann man auf Azure z.B. "Standard D4ps v5 (4 vcpus, 16 GiB Arbeitsspeicher)" benutzen. Weitere Infos: https://learn.microsoft.com/en-us/azure/virtual-machines/dpsv5-dpdsv5-series und https://learn.microsoft.com/en-us/azure/virtual-machines/dplsv5-dpldsv5-series.
 
