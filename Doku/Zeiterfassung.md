@@ -136,6 +136,50 @@ Die zu testenden Zeitdaten liegen in C:\Temp:
 [System.Environment]::SetEnvironmentVariable('DLP_DEFA', '')
 ```
 
+## Programmverteilereintrag um Datum/Uhrzeit auf Terminal zu setzen
+
+Im Programmverteiler erstellt man mittels ALT+F-Taste einen Eintrag z.B. 
+<img width="497" alt="image" src="https://github.com/Delapro/DelaproInstall/assets/16536936/57608369-da16-4f25-8e3b-a2d25cdcdce9">
+
+
+SetDateTime.BAT im WEGO-Unterverzeichnis:
+```CMD
+@ECHO OFF
+REM Zum Setzen des Datum und Uhrzeit im Terminal
+REM
+REM (C) 2023 by easy innovative software
+REM
+CLS
+
+IF %1A == /?A GOTO parameter
+
+IF %OS%A == Windows_NTA GOTO NT
+
+GOTO Weiter
+
+:NT
+REM
+CMD /X /C "START /W DLPPROX /SETDATETIME /ETHERNET 192.168.178.101"
+
+
+:Weiter
+GOTO Ende
+
+:fehler
+:parameter
+ECHO.
+ECHO ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+ECHO ³ Aufruf: SetDateTime                       ³
+ECHO ³                                           ³
+ECHO ³ Beisp.: SetDateTime                       ³
+ECHO ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+ECHO.
+ECHO Zum Weitermachen eine Taste drcken...
+PAUSE > NUL
+
+:Ende
+```
+
 ## PRE-Testdateien erstellen und einlesen
 
 Zum Einlesen aller PRE-Dateien aus einem bestimmten Verzeichnis:
