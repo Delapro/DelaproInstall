@@ -195,6 +195,9 @@ Beim Einlesen mittels /WEGO-Schalter wird die WEGO.LOG Datei mit Informationen b
 
 Powershell-Skript um PRE-Dateien zu erstellen, ErstelleTestBuchungen.PS1
 ```Powershell
+# Sicherheitshalber alte Daten löschen?
+# Get-Variable -Include 'V0*' | Remove-Variable
+
 $PRE="PRE31204" # 4.12.2023
 Remove-Item $PRE -Force -EA SilentlyContinue
 
@@ -254,7 +257,7 @@ $AlleBuchungen = Get-Variable -Include 'V0*' -ValueOnly
 
 # wird benötigt für die Sortierung, sonst klappt die nicht
 $ZeitenSortiert=[System.Collections.ArrayList]::new()
-$AlleBuchungen| % { $ZeitenSortiert.AddRange($_) }
+$AlleBuchungen| % {If ($_ -is [array]) {$ZeitenSortiert.AddRange($_)} else {$Zeitensortiert.Add($_) }}
 
 # es wird eine extra Spalte Zeit eingeführt, damit nach dieser kontrolliert sortiert werden kann
 # ansonsten könnte es passieren, dass Kommt/Geht-Vorgaben evtl. umsortiert werden, was bei 
