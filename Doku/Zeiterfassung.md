@@ -259,7 +259,13 @@ $AlleBuchungen| % { $ZeitenSortiert.AddRange($_) }
 # es wird eine extra Spalte Zeit eingeführt, damit nach dieser kontrolliert sortiert werden kann
 # ansonsten könnte es passieren, dass Kommt/Geht-Vorgaben evtl. umsortiert werden, was bei 
 # bestimmten Tests nicht gewünscht ist
-$ZeitenSortiert | Select @{N='Eintrag';E={$_}},@{N='Zeit';E={$_.substring(0,6)}} | Sort Zeit | Select -ExpandProperty Eintrag | Set-Content $PRE 
+$ZeitenSortiert | Select @{N='Eintrag';E={$_}},@{N='Zeit';E={$_.substring(0,6)}} | Sort Zeit | Select -ExpandProperty Eintrag | Set-Content $PRE
+
+# verwendete RFID-Nummern ermitteln
+$Rfid=$ZeitenSortiert | select @{N='RFID';E={$_.SubString(7)}}| select rfid -Unique
+
+# mittels DelaproAutomate kann man die Techniker mit den passenden RFID-Nummern automatisch anlegen lassen
+$Rfid | % {$TNr=1}{New-Techniker -TecName "Techniker$($TNr)" -RFID $_.RFId; $TNr++}
 ```
 
 Für das Powershellscript zum Einlesen der Zeiten sollte [Zeiterfassung]KommtGehtErzwingen=1 gesetzt sein, sonst machen die Kommentare keinen Sinn, bzw. Kommt/Geht wird nicht beachtet.
