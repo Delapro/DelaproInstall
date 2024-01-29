@@ -3901,6 +3901,46 @@ Function Install-DelaproPreisupdate {
 #>
 }
 
+# installiert die Windows XML-Formulardateien
+Function Install-DelaproXMLFormulardateien {
+	[CmdletBinding()]
+	Param(
+		[String]$TempDirectory=$Env:TEMP,
+		[string]$DelaproPath="C:\Delapro",
+		[string]$DelaGamePath="C:\Delagame"
+	)
+
+	Set-Location $TempDirectory
+	Start-BitsTransfer https://easysoftware.de/util/xml2021Def.zip
+	Expand-Archive .\xml2021Def.zip -DestinationPath .\xml2021Def -Force
+	Set-Location .\xml2021Def\
+	New-Item "$($DelaproPath)\xml2021Def" -ItemType Directory
+	Copy-Item .\xml2021Def\* "$($DelaproPath)\xml2021Def\" -Recurse  -Force
+	New-Item "$($DelaproPath)\Import\GUDID" -ItemType Directory
+	New-Item "$($DelaproPath)\Import\Barcodescanner" -ItemType Directory
+	$NonAdmin = If (-Not (Test-Admin)) {'/H'} else {''}
+	cmd.exe /c mklink $NonAdmin "$($DelaproPath)\Import\Barcodescanner\SerialReader.exe" "$($DelaproPath)\SerialReader.exe"
+	If (Test-Path .\temp\GetUDIDIData.PS1) {
+	    Copy-Item .\temp\GetUDIDIData.PS1 "$($DlpPath)\Import\GUDID\"
+	}
+	If (Test-Path $DelaGamePath) {
+		If (((Get-Item $DelaproPath).Fullname.SubString(0, 3)) -eq ((Get-Item $DelaGamePath).Fullname.SubString(0, 3))) {
+		    New-Item "$($DelaGamePath)\xml2021Def" -ItemType Directory
+		    Copy-Item .\xml2021Def\* "$($DelaGamePath)\xml2021Def\" -Recurse
+		    New-Item "$($DelaGamePath)\Import\GUDID" -ItemType Directory
+		    New-Item "$($DelaGamePath)\Import\Barcodescanner" -ItemType Directory
+		    cmd.exe /c mklink $NonAdmin "$($DelaGamePath)\Import\Barcodescanner\SerialReader.exe" "$($DelaGamePath)\SerialReader.exe"
+		    If (Test-Path .\temp\GetUDIDIData.PS1) {
+		       Copy-Item .\temp\GetUDIDIData.PS1 "$($DelaGamePath)\Import\GUDID\"
+		    }
+		} else {
+		    Write-Host '$DelaGamePath anpassen!'
+		    $DelaproPath
+		    $DelaGamePath
+		}
+	}
+}
+
 # legt ein Backup eines Delapro-Verzeichnis mittels easyBackup32.exe an
 # der Parameter SecureBackup sorgt nur für das Umbenennen der ZIP-Datei in eyBZIP um sie gegenüber
 # anderen Dateien abzugrenzen
