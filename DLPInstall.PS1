@@ -112,14 +112,18 @@ Function Install-StartBitsTransfer {
 			}
 			[console]::TreatControlCAsInput = $true
 			while ($job1.state -ne "Stopped" -and $job2.state -ne "Stopped") {
-				if ([console]::KeyAvailable)
-				{
-					$key = [system.console]::readkey($true)
-					if (($key.modifiers -band [consolemodifiers]"control") -and ($key.key -eq "C"))
+				if (-Not ([Console]::IsInputRedirected)) {
+					# nur ausführen, wenn nicht im Direktmodus, sonst gibts Streß unter Linux mit der Fehlermeldung:
+					# Cannot see if a key has been pressed when either application does not have a console or when console input has been redirected from a file. Try Console.In.Peek.
+					if ([console]::KeyAvailable)
 					{
-						Write-Host "Try Terminating..."
-						# klappt aber noch nicht
-						break
+						$key = [system.console]::readkey($true)
+						if (($key.modifiers -band [consolemodifiers]"control") -and ($key.key -eq "C"))
+						{
+							Write-Host "Try Terminating..."
+							# klappt aber noch nicht
+							break
+						}
 					}
 				}
 				Start-Sleep -Milliseconds 100
