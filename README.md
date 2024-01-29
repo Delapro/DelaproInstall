@@ -110,36 +110,9 @@ Invoke-DelaproUpdate -DlpPath $DlpPath -DlpUpdateFile 'C:\temp\Exes.exe' -Verbos
 
 ```
 
-Formulardateien für Referenzbarcodes
+Formulardateien für Referenzbarcodes installieren
 ```Powershell
-Set-Location C:\temp
-Start-BitsTransfer https://easysoftware.de/util/xml2021Def.zip
-Expand-Archive .\xml2021Def.zip -DestinationPath .\xml2021Def -Force
-Set-Location .\xml2021Def\
-New-Item "$($DlpPath)\xml2021Def" -ItemType Directory
-Copy-Item .\xml2021Def\* "$($DlpPath)\xml2021Def\" -Recurse  -Force
-New-Item "$($DlpPath)\Import\GUDID" -ItemType Directory
-New-Item "$($DlpPath)\Import\Barcodescanner" -ItemType Directory
-$NonAdmin = If (-Not (Test-Admin)) {'/H'} else {''}
-cmd.exe /c mklink $NonAdmin "$($DlpPath)\Import\Barcodescanner\SerialReader.exe" "$($DlpPath)\SerialReader.exe"
-If (Test-Path .\temp\GetUDIDIData.PS1) {
-    Copy-Item .\temp\GetUDIDIData.PS1 "$($DlpPath)\Import\GUDID\"
-}
-If (((Get-Item $DlpPath).Fullname.SubString(0, 3)) -eq ((Get-Item $DlpGamePath).Fullname.SubString(0, 3))) {
-    New-Item "$($DlpGamePath)\xml2021Def" -ItemType Directory
-    Copy-Item .\xml2021Def\* "$($DlpGamePath)\xml2021Def\" -Recurse
-    New-Item "$($DlpGamePath)\Import\GUDID" -ItemType Directory
-    New-Item "$($DlpGamePath)\Import\Barcodescanner" -ItemType Directory
-    cmd.exe /c mklink $NonAdmin "$($DlpGamePath)\Import\Barcodescanner\SerialReader.exe" "$($DlpGamePath)\SerialReader.exe"
-    If (Test-Path .\temp\GetUDIDIData.PS1) {
-       Copy-Item .\temp\GetUDIDIData.PS1 "$($DlpGamePath)\Import\GUDID\"
-    }
-} else {
-    Write-Host '$DlpGamePath anpassen!'
-    $DlpPath
-    $DlpGamePath
-}
-
+Install-DelaproXMLFormulardateien -DelaproPath $DlpPath -DelaGamePath $DlpGamePath
 ```
 
 ## Barcodescanner Vorbereitung
