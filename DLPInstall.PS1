@@ -2128,9 +2128,13 @@ Function Install-OpenJDK {
 		[System.String]$tempDirectory="$Env:TEMP\",
 		[Validateset("x64", "x86")]
 		[System.String]$Platform="x64",
-		[Validateset('19', '18', '17', '16', '15', "11", "8")]
+		[Validateset('22', '21', '20', '19', '18', '17', "11", "8")]
 		[System.String]$Version="11"
 	)
+
+	# TODO: ARM64 Unterstützung abklären, aber offenbar kennt Corretto bei Version 22 noch keine Arm64-Unterstützung unter Windows sondern nur Mac und Linux
+	# alternative wäre Microsofts OpenJDK: https://learn.microsoft.com/de-de/java/openjdk/download
+	# dazu evtl. einen Parameter Vendor hinzufügen, dass man zwischen den Herstellern der OpenJDK wechseln kann
 
 	# Infos: https://docs.aws.amazon.com/de_de/corretto/latest/corretto-8-ug/downloads-list.html
 	# Source: https://github.com/corretto/corretto-8
