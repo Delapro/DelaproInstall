@@ -1,6 +1,15 @@
-Sektion [Modus] Variable AuftragsaufkleberNeu auf 1 setzen, wenn die neue Variante über AUFAUFKL.REP erfolgen soll
-"AuftragsaufkleberNeuDruckertreiber" bestimmt die Nummer des Druckertreibers der verwendet werden soll.
+# Auftragsaufkleberdruck über Windowsformularen
 
+Sektion [Modus] Variable <Code>AuftragsaufkleberNeu</Code> auf 1 setzen, wenn die neue Variante über AUFAUFKL.REP erfolgen soll
+<Code>AuftragsaufkleberNeuDruckertreiber</Code> bestimmt die Nummer des Druckertreibers der verwendet werden soll. Der zugeordnete Druckertreiber muss als Windowsformular-Druckertreiber eingerichtet sein. Diese Variante verwendet die Layout-Datei <Code>AufZt.LBL</Code>.
+
+Damit der Druck direkt angestoßen werden kann, kann man die Datei <Code>WINAVWAU.BAT</Code> im Delapro-Verzeichnis anlegen, dann erscheint ein weiterer Menüpunkt beim Nachweisdruck-Dialog, wo man dann den Druck des Aufklebers aktivieren kann. Damit erübrigt sich der separate Aufruf über das Auftragsmenü.
+
+## mögliche Probleme
+
+Aktuell kann XML2021Def nicht verwendet werden! Beim Laden im Designer kommt eine Fehlermeldung, dass "Auftrag.Patient" nicht gefunden werden kann. Es wird die Version XmlV10-2018-LL24 benötigt!
+
+# Auftragsaufkleberdruck über alte Variante
 Alte Variante, also wenn AuftragsaufkleberNeu nicht gesetzt oder 0 ist, exportiert die Daten in AUFAUFKL.TXT und startet dann AUFAUFKL.BAT mit dem Parameter Anzahl der Ausdrucke.
 
 Die AUFAUFKL.BAT könnte z. B. so aussehen:
@@ -30,9 +39,7 @@ dlpwinzt /DESIGNKUNAUFZET NACHEXPO.TXT
 PS C:\delapro\zert> type .\matedit.bat
 DLPWINIM /DESIGNER2 NACHEXPO.TXT NEU\KONMAT.LBL
 
-
-
-# Fehlermeldungen
+## Fehlermeldungen
 
 ---------------------------
 DLPWinZt
