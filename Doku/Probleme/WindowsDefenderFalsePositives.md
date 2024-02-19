@@ -10,6 +10,8 @@ Virustotal meldete allerdings Program:Win32/Wacapew.B!ml, weitere Links dazu:
 https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=Program:Win32/Wacapew.B!ml&threatId=251868
 https://www.microsoft.com/en-us/wdsi/threats/threat-search?query=Wacapew
 
+Noch von Bedeutung: Ausschließlich der Windows Defender, kein anderer nahmhafter Virenscanner, prangerte die Delapro-Dateien an.
+
 # Hintergrund
 Der eigentliche Grund warum auf einmal die ganze Panik losging, dürfte wahrscheinlich diese YARA-Regel sein: SUSP_BAT_Start_Min_Combo_PowerShell_Jul23_1. Da das Delapro tatsächlich Powershellskripte aufruft um Verwaltungsaktionen durchführen zu können.
 
