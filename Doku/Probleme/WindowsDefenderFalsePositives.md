@@ -19,4 +19,6 @@ https://valhalla.nextron-systems.com/info/rule/SUSP_BAT_Start_Min_Combo_PowerShe
 
 Die Regel wurde wahrscheinlich von Florian Roth (Neo23x0), (Twitter https://twitter.com/cyb3rops) erstellt: https://github.com/Neo23x0.
 
+Damit schaffte es die erkannte Malware in die Microsoft Top 10:
+<img width="788" alt="image" src="https://github.com/Delapro/DelaproInstall/assets/16536936/5966979f-268e-4222-82a9-0f042ebe411a">
 
