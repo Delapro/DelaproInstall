@@ -24,3 +24,27 @@ Die Regel wurde wahrscheinlich von Florian Roth (Neo23x0), (Twitter https://twit
 Damit schaffte es die erkannte Malware in die Microsoft Top 10:
 <img width="788" alt="image" src="https://github.com/Delapro/DelaproInstall/assets/16536936/5966979f-268e-4222-82a9-0f042ebe411a">
 
+# Zum besseren Nachvollziehen was YARA hier gefunden hat
+
+Ein kleines Powershellscript, was YARA sieht/sah:
+```Powershell
+# PS7
+$dlp=Get-content dlp_main.exe -Raw
+
+# wenn man nach Bytefolgen sucht, kann dies verwendet werden
+# $searchArray=[byte[]]("powershell".ToCharArray())
+# oder eben
+# $searchArray=[byte[]]@(112, 111, 119, 101, 114, 115, 104, 101, 108,108)
+# $searchString = ($searchArray | ForEach-Object { '\x{0:X2}' -f $_ }) -join ''
+# $regex = [regex]$searchString
+
+$regex=[regex]::new('powershell',[System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+$found=$regex.Matches($dlp) # findet alle Stellen, ansonsten Match verwenden
+
+$found
+
+# nicht optimal aber für einen schnellen Einblick ausreichend
+$Encoding = [System.Text.Encoding]::GetEncoding(28591)
+[string] $command = $Encoding.GetString($dlp[($found[0].Index)..$($found[0].Index+70)])
+$command
+```
