@@ -226,4 +226,9 @@ IF ($x) {
 }
 
 # EOF: Scan.PS1
-``` 
+```
+
+### Arbeiten mit mehreren Scanprofilen
+
+Setzt man in der DLP_MAIN.INI unter der Sektion \[Bilder\] die Variable ScanDirektModusAktiv=1 ändert sich das Verhalten wenn man in der Bildarchivierung bei F8 die F9-Taste für das Umschalten des Modus drückt. Es wird dann sofort der Scan gestartet. Es wird immer das Scanprofil mit Namen DelaproScan verwendet. Möchte man mehrere Profile unterstützen, so kann man die Profilnamen bei ScannerProfile= angeben. Tilde ist auch erlaubt. Beispiel: ScannerProfile=Delapro\~Farbscan,Delapro\~SW-Scan. Arbeitet man mit mehreren Scannerprofilen, so erscheint ein kleines Auswahlfenster wo man das Profil wählen kann. Das Profil wird als dritter Parameter (%3) an Scanner.BAT übergeben, [siehe oben Beschreibung](#mehrere-seiten-einlesen).
+
