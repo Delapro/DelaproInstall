@@ -180,7 +180,7 @@ PAUSE > NUL
 :Ende
 ```
 
-## PRE-Testdateien erstellen und einlesen
+## PRE-Testdateien erstellen und ins Delapro einlesen
 
 Zum Einlesen aller PRE-Dateien aus einem bestimmten Verzeichnis:
 ```
@@ -272,3 +272,24 @@ $Rfid | % {$TNr=1}{New-Techniker -TecName "Techniker$($TNr)" -RFID $_.RFId -Woch
 ```
 
 Für das Powershellscript zum Einlesen der Zeiten sollte [Zeiterfassung]KommtGehtErzwingen=1 gesetzt sein, sonst machen die Kommentare keinen Sinn, bzw. Kommt/Geht wird nicht beachtet.
+
+## PRE-Dateien direkt auswerten
+
+```Powershell
+# die letzten 10 Monate einlesen und in die Datei Alle schreiben
+dir PRE*|where lastwritetime -gt (Get-Date).AddMonths(-10)|sort lastwritetime|get-content|Set-Content Alle
+
+# Datei alle einlesen und die Daten umwandeln und schön ausgeben
+$a=get-content .\Alle
+$Daten=$a|select @{N='Uhrzeit';E={$_.substring(0,6) -split '(..)' -ne '' -join ':'}}, @{N='Status';E={If($_.SubString(6,1)-eq'1'){'Kommt'}else{'Geht'}}}, @{N='Rfid';E={$_.Substring(7)}}
+$Daten | select -unique
+
+# alle Zeiten aufführen wo eine bestimmte RFID vorkommt
+dir PRE*|Get-Content | select @{N='Uhrzeit';E={$_.substring(0,6) -split '(..)' -ne '' -join ':'}}, @{N='Status';E={If($_.SubString(6,1)-eq'1'){'Kommt'}else{'Geht'}}}, @{N='Rfid';E={$_.Substring(7)}}| where rfid -eq '619168'
+
+# Suche nach der Datei wo eine bestimmte RFID vorkommt
+Select-String -Path PRE* -SimpleMatch '395859'
+
+# die ultimative Ausgabe mit PRE-Datei Zuordnung
+dir PRE* | % {$PreName=$_.Name; Get-Content $_} | select @{N='PREDatei';E={$PreName}}, @{N='Uhrzeit';E={$_.substring(0,6) -split '(..)' -ne '' -join ':'}}, @{N='Status';E={If($_.SubString(6,1)-eq'1'){'Kommt'}else{'Geht'}}}, @{N='Rfid';E={$_.Substring(7)}} |Out-GridView
+```
