@@ -49,6 +49,9 @@ in FIELDNAM.DBF
   Colorblock {|| IF (EMPTY (Ende), {12, 13}, {1, 2})}                      
 ```
 
+## Fehler darstellen
+ZEITPROT Colorblock auf "{|| IF (EMPTY (Ende) .OR. EMPTY (Beginn), {12, 13}, {1, 2})}" setzen
+
 ## Dateinamenkonvention von PRE-Dateien
 PREymmdd
 Die Parameter 01, 18, 43, und 60 bestimmen Form und Inhalt eines erfassten Zeiteintrags.
