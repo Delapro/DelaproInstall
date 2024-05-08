@@ -49,6 +49,17 @@ in FIELDNAM.DBF
   Colorblock {|| IF (EMPTY (Ende), {12, 13}, {1, 2})}                      
 ```
 
+Die bessere Variante ist beim Feld Ausgabe die Funktion ZVW_FAnwesend() zu verwenden (erfordert ein Update von mind. 2023):
+
+```
+       Datei ZEITPROT                                                      
+         Nr.  4                                                            
+    Feldname                                                               
+ Überschrift Anwesend                                                      
+     Ausgabe ZVW_FAnwesend()
+  Colorblock {|| IF (EMPTY (Ende), {12, 13}, {1, 2})}                      
+```
+
 ## Fehler darstellen
 ZEITPROT Colorblock auf "{|| IF (EMPTY (Ende) .OR. EMPTY (Beginn), {12, 13}, {1, 2})}" setzen
 
