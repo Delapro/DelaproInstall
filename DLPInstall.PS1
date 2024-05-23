@@ -3695,7 +3695,11 @@ Function Invoke-DelaproUpdate {
 			}
 		} else {
 			If (Test-Path $DlpPath) {
-				Write-Error "Delapro läuft noch! Evtl. Suchserver?"
+				If (Test-Path "$($DlpPath)\Search\" -PathType Container) {
+					Write-Error "Delapro läuft noch! Evtl. Suchserver?"
+				} else {
+					Write-Error "Delapro läuft noch!"
+				}
 			} else {
 				Write-Error "Delapro nicht unter $DLPPath gefunden!!"
 			}
