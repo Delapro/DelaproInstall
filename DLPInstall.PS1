@@ -3186,9 +3186,9 @@ Function Install-LibreOffice {
 		# Installationsparameter: https://wiki.documentfoundation.org/Deployment_and_Migration
 		# Basispfad für Download der Versionen: https://downloadarchive.documentfoundation.org/libreoffice/old/
 		If ($NextVersion) {
-			$loVersion = '7.6.4.1'
+			$loVersion = '24.2.3.2'
 		} else {
-			$loVersion = '7.5.9.2'
+			$loVersion = '7.6.7.2'
 		}
 		$base = 'https://downloadarchive.documentfoundation.org/libreoffice/old'
 		If ($PlatformX64) {
