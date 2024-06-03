@@ -2056,7 +2056,7 @@ Function Install-AcrobatDC {
 	# Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/11.x/11.0.10/de_DE/AdbeRdr11010_de_DE.exe
 	# DC Release-Infos: http://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html
 	# WICHTIG: Nur die Planned Updates können verwendet werden!!
-	$dcVersion = "24.002.20687".Replace(".", "")
+	$dcVersion = "24.002.20759".Replace(".", "")
 	$dcOptionalVersion = "19.021.20061".Replace(".", "")
 	$useOptionalUpdate = $false	# falls es mal kein aktuelles optionales Update gibt auf $false setzen
 	$x64Bit = ''
@@ -2811,7 +2811,7 @@ Function Install-Thunderbird {
 		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\",
 		[switch]$Force,
-		[Validateset('115.11.0', '115.10.1', '115.9.0', '115.8.1', '115.8.0', '115.7.0', '115.6.1', '115.6.0', '115.5.1', '115.4.3', '115.4.2', '115.4.1', '115.3.3', '115.3.2', '115.3.0', '115.2.3', '115.2.2', '115.2.1', '115.2.0', '115.1.0', '102.14.0', '102.13.1', '102.12.0', '102.11.2', '102.11.0', '102.10.1', '102.10.0', '102.9.1', '102.9.0', '102.8.0', '102.7.2', '102.6.1', '102.6.1', '102.5.1', '102.5.0', '102.4.2', '102.4.1', '102.4.0', '102.3.3', '102.3.1', '102.3.0', '102.2.3', '102.2.2', '102.2.1', '102.2.0', '102.1.2', '102.0.3', '102.0', '91.13.1', "78.14.0", "68.12.0", "60.9.1")]
+		[Validateset('115.11.1', '115.11.0', '115.10.1', '115.9.0', '115.8.1', '115.8.0', '115.7.0', '115.6.1', '115.6.0', '115.5.1', '115.4.3', '115.4.2', '115.4.1', '115.3.3', '115.3.2', '115.3.0', '115.2.3', '115.2.2', '115.2.1', '115.2.0', '115.1.0', '102.14.0', '102.13.1', '102.12.0', '102.11.2', '102.11.0', '102.10.1', '102.10.0', '102.9.1', '102.9.0', '102.8.0', '102.7.2', '102.6.1', '102.6.1', '102.5.1', '102.5.0', '102.4.2', '102.4.1', '102.4.0', '102.3.3', '102.3.1', '102.3.0', '102.2.3', '102.2.2', '102.2.1', '102.2.0', '102.1.2', '102.0.3', '102.0', '91.13.1', "78.14.0", "68.12.0", "60.9.1")]
 		[string[]]$Version,
 		[validateset("win32", "win64")]
 		[string]$Platform="win32"
@@ -2824,7 +2824,7 @@ Function Install-Thunderbird {
 	# z. B. 60.50.0 unter: https://ftp.mozilla.org/pub/thunderbird/releases/60.5.0/win32/de/
 	If ($null -eq $Version) {
 		# aktuelle Version
-		$tbVersion = '115.11.0'
+		$tbVersion = '115.11.1'
 		$downloadUrlBase = "https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion"
 	} else {
 		$tbVersion = $Version
