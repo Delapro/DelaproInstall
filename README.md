@@ -1597,6 +1597,8 @@ Start-ThunderbirdLogging -Modules IMAP,POP3 -AddTimeStamp -Verbose
 Get-Content $Env:Temp\Thunderbird.Log | Out-GridView
 ```
 
+Bei weiteren Problemen siehe auch [Thunderbird Probleme](Doku/Probleme/Thunderbird.md)
+ 
 ### Sysinternals Tools
 
 ```Powershell
