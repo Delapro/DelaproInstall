@@ -53,4 +53,4 @@ Behandler: @AVD_Master(36)@, @BEH_NameOrt (Auftrag->KunNummer, Auftrag->Behandle
 
 Monatsaufstellungen nach Behandlern sortiert ausgeben.
 
-siehe (Behandler auf Monatsaufstellungen)[Monatsaufstellung-Behandler.MD].
+siehe [Behandler auf Monatsaufstellungen](Monatsaufstellung-Behandler.MD).
