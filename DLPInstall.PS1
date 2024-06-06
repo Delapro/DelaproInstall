@@ -4462,6 +4462,7 @@ Function Install-DelaproMailPrinter {
 						"10.0.19044" {$driverID = "add71423ba73e797"} # gleichgeblieben!
 						"10.0.19045" {$driverID = "add71423ba73e797"} # gleichgeblieben! Win10 22H2
 						"10.0.22000" {$driverID = "b0d591b9cf5aba04"} # Win11
+						# "10.0.22621" {$driverID = "63b2b03e6b568836"} # Win11, 22H2 aber von HP!
 						# "10.0.22621" {$driverID = "8a3bfbb177fb69e5"} # Win11, 22H2, wird über extra Abfrage unten abgefangen, vorher b2cace2d3b2ffe99
 						# "10.0.22621" {$driverID = "890f4aa8c4a4dba6"} # ist auch mal aufgetaucht Herm
 						"10.0.22621" {If (Test-ARM64) {$driverID = '6ee1b90220efac21'} else {$driverID = "890f4aa8c4a4dba6"}} # Win11 22H2
@@ -4504,8 +4505,13 @@ Function Install-DelaproMailPrinter {
 						} else {
 							$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_$($driverID)\prnms005.inf"
 						}
-						If (-Not (Test-Path $driverInf)) {
+						If (-Not (Test-Path $driverInf)) { # Win11 Sonderfälle
 							$driverID = "8a3bfbb177fb69e5"
+							# Win11, Spezialfall muss noch abgeklärt werden, welcher Wert wirklich stimmt, oder ob es tatsächlich zwei geben kann
+							$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_$($driverID)\prnms005.inf"
+						}
+						If (-Not (Test-Path $driverInf)) {  # Win11 Sonderfälle
+							$driverID = "63b2b03e6b568836"
 							# Win11, Spezialfall muss noch abgeklärt werden, welcher Wert wirklich stimmt, oder ob es tatsächlich zwei geben kann
 							$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_$($driverID)\prnms005.inf"
 						}
