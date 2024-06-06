@@ -37,6 +37,8 @@ Versorgung=2
 
 Nach rechts versetzen macht allerdings keinen Sinn wenn die Versorgung zur Festlegung der Abrechnungsart benutzt wird (siehe VERSORGU.DBF).
 
+Bei Fieldnam kann man bei AUFTRAG die Ausgabe mittels "KUNNUMMER+'/'+BEHANDLER" setzen, dann erscheint der Behandler auch in der Auftragsverwaltungs-Tabelle neben der Kundennummer. Allerdings verschwindet dann das Belegfeld, dieses muss dann also entsprechend gekürzt werden, aktuell um zwei Zeichen.
+
 ## Formulare
 
 Zur Ausgabe der Behandlernummer auf den Formularen kann man AVD_Master(36) verwenden. Über die Funktion DLP_BehandlerAktiv() kann abgefragt werden, ob das Behandlermodul aktiv ist. Mittels der Funktion BEH_NameOrt (cKunNummer, cBehandlerNr) kann man den Namen des Behandlers erhalten.
