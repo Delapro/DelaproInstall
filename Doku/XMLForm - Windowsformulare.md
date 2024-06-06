@@ -71,4 +71,25 @@ REM @ECHO %1 %2 %3 %4 %5 %6 >> LOG.TXT
 
 Zudem sollte noch alle Aufrufe in FORMXML.TXT von SwpRunCMD in SwapRunEXE geändert werden, damit mittels DebugPrnDrvRun und PrnDrv.LOG-Datei die Aufrufe nachvollzogen werden können.
 
-Zum aktivieren des Debugging: DebugPrnDrvRun =1 unter Modus in DLP_MAIN.INI setzen. Ist das Debugging aktiv wird die Datei PrnDrv.LOG im Delapro-Verzeichnis erzeugt.
+Zum aktivieren des Debugging: DebugPrnDrvRun =1 unter Modus in DLP_MAIN.INI setzen. Ist das Debugging aktiv wird die 
+Datei PrnDrv.LOG im Delapro-Verzeichnis erzeugt.
+
+Bei Problemen, vor allem wenn die Uhrzeiten von DELAPRO.EPS und DELAPRO.PDF unterschiedlich sind, gibt es wahrscheinlich Probleme mit dem START /WAIT Aufruf. Eine Lösung war 
+```Diff
+.  IF PrnDrvType (_pdriver) == 9
+.    IF "XGHOSTPDFX.BAT" $ UPPER (PrnDrvRunEXE (_pdriver))
++.      SwapRunEXE (ABSVBaseDir + "BIN\DLPXmlPr.EXE " + ABSVRun + ABSVXMLFile)
+.      ABSVRun := ABSVBaseDir + "BIN\XMLXPrintPDF.BAT " + ABSVBaseDir + "BIN\ "+ ABSVRun + ABSVXMLFile
+.    ELSE
+.      ABSVRun := ABSVBaseDir + "BIN\XMLPrintPDF.BAT " + ABSVBaseDir + "BIN\ "+ ABSVRun + ABSVXMLFile
+.    ENDIF
+.  ELSE
+```
+den Aufruf von DlpXMLPr.exe direkt in FORMXML.TXT aufzunehmen und dafür bei XMLXPrint.BAT darauf zu verzichten!
+Also
+```Diff
+REM @CMD /C "%1DlpXMLpr.exe" %2 %3 %4 %5 %6
++REM @START /WAIT "%1DlpXMLpr.exe" %2 %3 %4 %5 %6
+REM @ECHO %1 %2 %3 %4 %5 %6 >> LOG.TXT
+@CMD /C ".\LASER\XGHOSTPDFX.BAT" %2 %3 %4 %5 %6
+```
