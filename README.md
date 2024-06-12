@@ -481,6 +481,7 @@ IF ($skipError.length -ne 0) {
 Import-LastDelaproBackup -DestinationPath $DlpPath -Verbose
 # zum Direkt einspielen
 # Import-OldDLPVersion -SourcePath G:\Delapro\ -DestinationPath "$($DLPPath)"
+# Update-DelaproGhostscript -PathDelaproGhostscript "$($DLPPath)\LASER" -Verbose
 # Invoke-CleanupDelapro $DlpPath -Verbose
 
 ```
