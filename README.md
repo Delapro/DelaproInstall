@@ -864,6 +864,11 @@ Copy-Item .\SynPDFB.dll Syncfusion.Pdf.Base.dll
 Notepad .\EncrPdf.Ps1
 ```
 
+> Weiter muss der Druckertreiber auf XGhostPdf.BAT, bzw. XGhostPdfX.BAT umgestellt sein und XXGhostPdf.BAT bzw. XXGhostPdfX.BAT müssen für die Ausgabe existieren!
+> X* wie XX*-Dateien müssen entsprechend angepasst sein. Passwort muss hinterlegt und die Verschlüsselung beim Kunden aktiv sein.
+
+Bei Problemen siehe auch: [Probleme mit PDF-Erzeugung aus dem Delapro heraus](#Probleme-mit-PDF-Erzeugung-aus-dem-Delapro-heraus)
+
 ## Autostart einrichten
 
 ```Powershell
