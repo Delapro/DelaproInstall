@@ -602,6 +602,7 @@ Function New-FileShortcut {
 		[String]$WorkingDirectory,
 		[String]$Description,
 		[String]$Arguments,
+		[ValidateSet('Normal', 'Maximized', 'Minimized')][String]$WindowStyle='Normal',
 		[String]$Folder=(Get-DesktopFolder -AllUsers)
 	)
 
@@ -617,6 +618,11 @@ Function New-FileShortcut {
 	$link.Description = $Description
 	If ($Arguments) {
 		$link.Arguments=$Arguments
+	}
+	switch ($WindowStyle) {
+		'Normal' 	{$link.WindowStyle = 1}
+		'Maximized'	{$link.WindowStyle = 3}
+		'Minimized'	{$link.WindowStyle = 7}
 	}
 	$link.Save()
 
