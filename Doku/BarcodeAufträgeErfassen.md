@@ -2,6 +2,8 @@
 
 In Verbindung mit SerialReader.EXE und einem speziellen Modus (Dispatch) kann man Referenzbarcodes mit einem fest zugewiesenen Barcodescanner erfassen bzw. automatisch einen zugeordneten Auftrag anspringen.
 
+> Probleme gibts noch, wenn der Scanner nicht verfügbar oder zwischendrin ausgeschaltet wurde!
+
 Einrichtung:
 ```Powershell
 md .\JumpToReference
