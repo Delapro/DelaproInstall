@@ -372,6 +372,12 @@ Function Test-DelaproNotRunning {
 		$result = $false
 	} else {
 		If (Test-DelaproDirectoryExists -Path $Path) {
+			If ((Test-Path "$($Path)\Search" -PathType Container)) {
+				# wenn Suchserver aktiv, dann beenden
+				'Ende' | Set-Content "$($Path)\Search\ExitDLPSs.ID"
+				# etwas Zeit geben
+				Start-Sleep -Milliseconds 500
+			}
 			If (Test-Path "$($Path)\KillNTX.BAT") {
 				$oldPath = Get-Location
 				Set-Location $Path
