@@ -609,7 +609,8 @@ Function New-FileShortcut {
 		[String]$Description,
 		[String]$Arguments,
 		[ValidateSet('Normal', 'Maximized', 'Minimized')][String]$WindowStyle='Normal',
-		[String]$Folder=(Get-DesktopFolder -AllUsers)
+		[String]$Folder=(Get-DesktopFolder -AllUsers),
+		[String]$IconLocation
 	)
 
 	$Shell = New-Object -ComObject Wscript.Shell
@@ -624,6 +625,9 @@ Function New-FileShortcut {
 	$link.Description = $Description
 	If ($Arguments) {
 		$link.Arguments=$Arguments
+	}
+	If ($IconLocation) {
+		$link.IconLocation = $IconLocation
 	}
 	switch ($WindowStyle) {
 		'Normal' 	{$link.WindowStyle = 1}
