@@ -883,6 +883,14 @@ Show-StartupFolder
 
 ```
 
+## Verknüpfung und Zuordnung eines bestimmten Icons
+
+Erzeugt eine Verknüpfung auf dem Desktop mit Namen test und verwendet das 138. Icon aus der DDORes.dll (Barcodeleser)
+
+```Powershell
+New-FileShortcut -LinkFilename test.lnk -FileTarget c:\temp\test.bat -Description "Beschreibung" -WorkingDirectory c:\temp -IconLocation "c:\windows\system32\ddores.dll,138" -Verbose
+```
+
 ## beliebiges Powershellscript (auch als Admin) ausführen mit Desktop-Verknpüfung
 ```Powershell
 # Powershellscript mit Admin-Rechten ausführen
