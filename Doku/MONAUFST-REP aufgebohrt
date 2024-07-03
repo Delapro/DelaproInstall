@@ -114,3 +114,36 @@ Wenn Gesamtsummen der einzelnen Spalten ausgegben werden sollen:
 .  ENDIF
 ```
 
+Zusätzliche explizite Ausgabe der MwSt bei Kunde 1,geht von reinen 7% Arbeiten, also keine 0 oder 19% Arbeiten aus:
+```
+.INSERT TEXT FormSkon.TXT
+.* Spezielle Anpassung zur Ausgabe der Rechnungssummen
+.IF Kunde->Nummer == "  1"
+.  ABSVErweit := .T.
+.  NEWPAGE
+
+
+
+Summenaufstellung:
+
+Summe Material @DMNum (MOA_Gesamt (ABSVSummen, 2), 14)@           
+MwSt  Material @DMNum (ABSVSummen [1, 4], 14)@     
+
+Summe Leistung @DMNum (MOA_Gesamt (ABSVSummen, 1), 14)@               
+MwSt  Leistung @DMNum (ABSVSummen [1, 3], 14)@
+
+MwSt-Satz @LTRIM (STR (LAB_Daten (32), 5, 2))@%
+
+Gesamtsumme    @DMNum (MOA_Gesamt (ABSVSummen), 14)@
+.JUMP TO LINE 31 - ABSVMore
+
+
+
+
+
+.  INSERT TEXT FormSkon.TXT
+.ENDIF
+.*
+.*--------------------------------Erweiterte Sammelrechnung------------
+.IF Kunde->ErwSammelR == "J"
+```
