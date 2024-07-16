@@ -6477,7 +6477,8 @@ Installiert das übliche Delapro Test-Setup
 Function Install-DelaproTestSetup {
 	[CmdletBinding()]
 	Param (
-		[Switch]$x64
+		[Switch]$x64,
+		[Switch]$Force
 	)
 
 	If ($x64) {
@@ -6500,7 +6501,7 @@ Function Install-DelaproTestSetup {
 		}
 	}
 
-	Install-Delapro @DelaproInstParameterTest
+	Install-Delapro @DelaproInstParameterTest -Force:$Force
 	Set-LaborIdentifikation
 }
 
