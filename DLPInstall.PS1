@@ -6242,9 +6242,11 @@ Function Install-Delapro {
 	}
 
 	If (Test-WindowsServer) {
-		Write-Error "Windows Server erkannt, bitte Installation manuell durchführen!"
-		# weitere Scriptausführung anhalten
-		throw "Server"
+		If (-Not $Force) {
+			Write-Error "Windows Server erkannt, bitte Installation manuell durchführen!"
+			# weitere Scriptausführung anhalten
+			throw "Server"
+		}
 	}
 
 	If (-Not (Test-Admin)) {
