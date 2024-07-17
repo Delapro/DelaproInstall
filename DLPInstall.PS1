@@ -915,6 +915,17 @@ Function Get-DefaultPrinter {
 	}
 }
 
+# setzt den Windowsstandarddrucker
+Function Set-DefaultPrinter {
+	[CmdletBinding()]
+	# inkompatibel zu PS2.0: [OutputType([Microsoft.Management.Infrastructure.CimInstance[]])]
+	Param([String]$PrinterName)
+
+	$Printer = Get-CimInstance -Class Win32_Printer -Filter "Name=$PrinterName"
+	Invoke-CimMethod -InputObject $Printer -MethodName SetDefaultPrinter
+
+}
+
 # ermittelt den Pfad der AcroRd32.exe gibt diesen als [FileInfo]-Objekt zurück
 Function Get-AcrobatReaderDCEXE {
 	[CmdletBinding()]
