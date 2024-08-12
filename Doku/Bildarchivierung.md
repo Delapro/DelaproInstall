@@ -74,6 +74,9 @@ Auszuführen im <Code>C:\Windows\SysWOW64</Code> -Verzeichnis.
 
 Dafür gibts eine Software mit Namen SnapTwain: https://www.jse.de/products.html#snaptwain. Diese kann mit der ScanSnap-Software kommunizieren und liefert dann per TWAIN-Schnittstelle die gescannten Bilder.
 
+## HP Universal Scan Software für Windows
+siehe: https://www.hp.com/hpscan
+
 ## Verwendung von NAPS2 und Scanner.BAT
 
 Benötigt wird https://www.naps2.com/, Profile liegen unter $env:APPDATA\naps2\profiles.xml
