@@ -1,6 +1,6 @@
 # DelaproInstall
 
-Powershell Installationsskript um Delapro ab Windows 8 bis Windows 11 zu installieren.
+Powershell Installationsskript um Delapro ab Windows 8 bis Windows 11 zu installieren. Für die Netzwerkinstallation bitte das Repository https://github.com/Delapro/DelaproInstallNet beachten. 
 
 Zur Installation auf Mac OSX siehe hier: [Virtuelle Maschine auf Mac](https://github.com/Delapro/DelaproInstall/wiki/MACOSX)
 
