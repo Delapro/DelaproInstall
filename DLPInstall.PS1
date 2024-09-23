@@ -703,6 +703,8 @@ Function Invoke-DelaproInstallNetDownloadAndInit {
 			. .\$file
 		}
 	}
+
+	Write-Host "https://raw.githubusercontent.com/Delapro/DelaproInstallNet/refs/heads/master/DLPInstallNet.PS1 wegen Variablen beachten oder manuell setzen" -ForegroundColor Green
 }
 
 Function Invoke-DelaproAutomateDownloadAndInit {
