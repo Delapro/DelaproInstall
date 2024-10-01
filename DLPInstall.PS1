@@ -253,6 +253,10 @@ Function Test-Windows11() {
 	(Get-CimInstance Win32_OperatingSystem).Caption -match "Windows 11"
 }
 
+Function Test-Windows11-24H2() {
+	((Get-CimInstance Win32_OperatingSystem).Caption -match "Windows 11") -and (([Version](Get-CimInstance Win32_OperatingSystem).Version).Build -ge '26100')
+}
+
 Function Test-WindowsServer() {
 	# 1 = Desktop OS
 	# 2 = Server OS DC
