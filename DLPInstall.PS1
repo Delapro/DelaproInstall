@@ -2938,12 +2938,20 @@ Function Get-ThunderbirdUpdates {
 	
 	# Pfad hat sich von AppData nach Programdata geändert und umfasst nun gegebenenfalls auch Firefox,
 	# deshalb wird am Ende auf Thunderbird gefiltert
-	$thunderbirdBasePath = "$env:Programdata\Mozilla\updates"
+	$thunderbirdBasePath = "$env:Programdata\Mozilla*\updates"
 	$thunderbirdTempPath = (Get-ChildItem $thunderbirdBasePath -Directory).FullName
+	# da war nun seither in $thunderbirdTempPath die updates.xml-Datei, nun aber wird diese eine Stufe tiefer mit eine ID gelegt
 	$updateXMLFile = Join-Path $thunderbirdTempPath -ChildPath "updates.xml"
+	# alte Variante
 	If (Test-Path $updateXMLFile) {
 		$updates = [xml](Get-Content $updateXMLFile)
 		$updates.updates.update | Where-Object name -match 'Thunderbird'
+	} else {
+		$updateXMLFile = (Get-ChildItem -Path $thunderbirdTempPath -Include 'updates.xml' -Recurse).Fullname
+		If (Test-Path $updateXMLFile) {
+			$updates = [xml](Get-Content $updateXMLFile)
+			$updates.updates.update | Where-Object name -match 'Thunderbird'
+		}
 	}
 }
 
