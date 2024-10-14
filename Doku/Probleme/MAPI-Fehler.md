@@ -16,6 +16,7 @@ Man startet nun einfach Debwin und startet nochmal den E-Mailversandvorgang und 
 
 Weitere Dinge die bei der Fehlersuche interessant sein könnten:
 ```
+Get-DefaultEMailClient
 get-content c:\windows\win.ini|Select-String "MAPI="
 get-content c:\windows\win.ini|Select-String "XMAPI="
 Get-ItemProperty 'registry::\HKLM\SOFTWARE\Microsoft\Windows Messaging Subsystem'
@@ -26,6 +27,10 @@ dir registry::hklm\SOFTWARE\Clients\Mail\
 # Default-E-Mailprogramm
 Get-itemproperty registry::hkcu\SOFTWARE\Clients\Mail\
 Get-itemproperty registry::hklm\SOFTWARE\Clients\Mail\
+# 64-Bit Einstellungen
+Get-itemproperty registry::hkcu\SOFTWARE\WOW6432Node\Clients\Mail\
+Get-itemproperty registry::hklm\SOFTWARE\WOW6432Node\Clients\Mail\
+
 
 cmd /c assoc|Select-String mapimail
 cmd /c ftype|select-string mailto
@@ -35,6 +40,11 @@ dir msmapi -Directory -Recurse -ErrorAction SilentlyContinue| % {dir $_ -Recurse
 # alle MSMAPI32.DLL-Dateien finden
 dir msmapi32.dll -Recurse -ErrorAction SilentlyContinue
 
+# Thunderbird spezifische Einstellungen
+dir 'C:\Program Files\Mozilla Thunderbird\*mapi*'
+
+# MAPI-Datei, passt die Version zur installierten Version?
+(dir 'C:\Program Files\Mozilla Thunderbird\mozMapi32.dll').versioninfo|fl *
 
 ```
 
