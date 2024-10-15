@@ -6100,6 +6100,36 @@ Function Compress-BarcodeBINArchive {
 
 }
 
+# erstellt ein PRE-Dateiarchiv, wenn mehr als 50 PRE-Dateien gefunden werden 
+# und die älteste PRE-Datei mindestens älter als 7 Tage ist.
+# diese Logik kann mit dem Parameter Force umgangen werden
+# wurde das PRE-Archiv erfolgreich erstellt werden die BIN-Dateien gelöscht
+Function Compress-WegoPREArchive {
+	[CmdLetBinding()]
+	Param(
+		[System.String]$DelaproPath="C:\Delapro",
+		[switch]$Force
+	)
+    	$baseDir = "$($DelaproPath)\WEGO\Backup"
+	$Destination = "$($baseDir)\PRE-Archiv-$(Get-Date -format 'yyyyMMdd_HHmm')"
+
+	If (Test-Path $baseDir) {
+		$files = Get-ChildItem -Path "$($baseDir)\PRE*" -Exclude '*.zip' | Where-Object LastWriteTime -lt (Get-Date).AddDays(-7)
+		$files = $files | Sort-Object Lastwritetime
+		Write-Verbose "Anzahl Dateien: $($files.Length)"
+		If ($files) {
+			If ($Force -or (($files.Length -gt 50) -and ($files[0].LastWriteTime -lt (Get-Date).AddDays(-14)))) {
+				Write-Verbose "Erstelle Archiv $($Destination)"
+				Compress-Archive -Path $files -DestinationPath $Destination
+				If ($?) {
+					$files | Remove-Item
+				}
+			}	
+		}
+	}
+
+}
+
 Function Invoke-CleanupLL {
 	[CmdLetBinding()]
 	Param(
