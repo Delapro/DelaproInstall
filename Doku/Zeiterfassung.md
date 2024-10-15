@@ -261,6 +261,18 @@ $V0007 = @(,"0700001$RFID"   # Kommt 07:00
 	   ,"0900001$RFID"   # Kommt 09:00
           )
 
+$RFID = "500008"
+$V0008 = @(,"0700001$RFID"   # Kommt 07:00
+           ,"0759590$RFID"   # Geht  07:59:59
+           ,"0959590$RFID"   # Geht  09:59:59
+           ,"1600000$RFID"   # Geht  16:00
+          )
+
+$RFID = "500009"
+$V0009 = @(,"0759590$RFID"   # Geht  07:59:59
+           ,"0959590$RFID"   # Geht  09:59:59
+          )
+
 # obige Testdaten lassen sich beliebig erweitern solange
 # der Variablenname mit $V0 beginnt
 # es dürfen aber keine anderen Variablen mit $V0 beginnen, gegebenfalls
