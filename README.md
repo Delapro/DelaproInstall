@@ -645,7 +645,7 @@ Art der Arbeit: @MEMOLINE (AVD_Master (19), 70, 1)@
                 @MEMOLINE (AVD_Master (19), 70, 2)@
 .                ABSVMore := ABSVMore +1
 .ELSE
-Art der Arbeit: @AVD_Master (19)@
+Art der Arbeit: @RTRIM (AVD_Master (19))@
 .ENDIF
 ```
 
