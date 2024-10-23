@@ -1689,3 +1689,13 @@ Import-Module Revoke-Obfuscation
 Measure-RvoObfuscation -Url 'https://raw.githubusercontent.com/Delapro/DelaproInstall/master/DLPInstall.PS1' -Verbose | Select Obf*, Hash
 
 ```
+
+## Windows App(lication) Control und Hardening
+
+Windows App Control: https://learn.microsoft.com/en-us/powershell/scripting/security/app-control/how-app-control-works?view=powershell-7.4
+Feature-Übersicht: https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/feature-availability
+Beispiel wie man es Testen kann: https://learn.microsoft.com/en-us/powershell/scripting/security/app-control/how-to-use-app-control?view=powershell-7.4
+Beschreibt wie man mittels PackageInspector eine Policy erstellen kann: https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/deployment/deploy-catalog-files-to-support-appcontrol#create-catalog-files-using-package-inspector
+Depolyment mittels Powershell: https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/deployment/deploy-appcontrol-policies-with-script
+
+Powershell Modul für Windows Hardening: https://github.com/HotCakeX/Harden-Windows-Security
