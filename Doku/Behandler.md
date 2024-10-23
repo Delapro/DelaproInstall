@@ -47,7 +47,17 @@ In Kombination kann man diese Funktionen bei den Formularen z. B. so einsetzen:
 ```
 .IF DLP_BehandlerAktiv()
 .                ABSVMore := ABSVMore -1
-Behandler: @AVD_Master(36)@, @BEH_NameOrt (Auftrag->KunNummer, Auftrag->Behandler)@
+Behandler: @LTRIM (AVD_Master(36))@, @BEH_NameOrt (Auftrag->KunNummer, Auftrag->Behandler)@
+.ENDIF
+```
+
+oder Ausgabe anstatt der XML-Auftragsnummer, dabei ist Behandler bündig zur Zahnfarbe (falls ausgegeben) und der Behandler wird nur ausgegeben wenn auch einer Hinterlegt wurde:
+```
+.IF DLP_BehandlerAktiv() .AND. .NOT. EMPTY (AVD_Master (36))
+.*!12@LTRIM (AVD_LTExtAusgabe () + "  ") + "          Behandler: " + LTRIM (AVD_Master(36)) + ", " + BEH_NameOrt (Auftrag->KunNummer, Auftrag->Behandler)@
+!12@LTRIM (AVD_LTExtAusgabe () + "  ") + "          Behandler: " + BEH_NameOrt (Auftrag->KunNummer, Auftrag->Behandler)@
+.ELSE
+!12@LTRIM (AVD_LTExtAusgabe () + "  ") + AVD_ZAAusgabe ()@
 .ENDIF
 ```
 
