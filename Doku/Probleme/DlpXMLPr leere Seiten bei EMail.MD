@@ -3,6 +3,8 @@
 Das Problem, dass vor allem beim Erzeugen von E-Mails die PDF-Datei im Anhang nur 2KB groß ist und damit eine leere Seite darstellt, tritt vor allem bei längeren Druckvorgängen bzw. bei langsamen Rechnern auf. Im Grunde ein Timingproblem. Deshalb muss 
 <CODE>xmlXPrintPDF.BAT</CODE> im BIN-Verzeichnis angepasst werden, damit es wartet, bis DlpXMLPr.EXE mit seiner Aufgabe fertig ist.
 
+> Seit Oktober 2024 gibt es eine Version vom DlpXmlPr welche die Version 30 von List&Label verwendet, hier wurde ein neuer Parameter implementiert der das Problem direkt an der Wurzel erledigen sollte. Man gibt einfach /WAIT beim Aufruf von DlpXmlPr mit an. Dies geschieht üblicherweise in <Code>XMLPrintPDF.BAT</Code> bzw. <Code>XMLXPrintPDF</Code>.
+
 Benötigt wird ein kleines VBscript. Powershell wäre einfacher und komfortabler aber ist einfach vieeeel langsamer.
 
 Die einfache aber langsame Variante
