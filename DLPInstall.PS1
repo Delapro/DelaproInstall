@@ -2028,6 +2028,7 @@ Function Convert-IPAddress {
 
 }
 
+# unbedingt beachten: https://stackoverflow.com/a/1391405
 # ein Redirect auflösen und die tatsächliche URL zurückgeben
 function Resolve-HttpUrlRedirect {
     [CmdletBinding()]
@@ -2039,11 +2040,11 @@ function Resolve-HttpUrlRedirect {
     while (Test-HttpUrlRedirect -Uri $uri) {
         $rd=Invoke-WebRequest -Uri $Uri -MaximumRedirection 0 -UseBasicParsing -ErrorAction SilentlyContinue
         Write-Verbose "$($rd.StatusCode) - $($rd.StatusDescription)"
-        If ($rd.StatusCode -eq 301) {
+        If ($rd.StatusCode -eq [System.Net.HttpStatusCode]::Moved) { # Statuscode 301
             $Uri = $rd.Headers.Location
             Write-Verbose "Permanent nach: $Uri"
         }
-        If ($rd.StatusCode -eq 302) {
+        If ($rd.StatusCode -eq [System.Net.HttpStatusCode]::Redirect) {  # Statuscode 302
             $Uri = $rd.Headers.Location
             Write-Verbose "Nach: $Uri"
         }
@@ -2052,6 +2053,7 @@ function Resolve-HttpUrlRedirect {
     $Uri
 }
 
+# unbedingt beachten: https://stackoverflow.com/a/1391405
 # Prüfen, ob hinter einer URL ein Redirect stattfindet
 Function Test-HttpUrlRedirect {
     [CmdletBinding()]
