@@ -4,7 +4,7 @@
 
 ### Einheitlich für alle Aufträge
 
-Gibt es nur einen Herstellungsort so kann dieser fix im Programm hinterlegt werden. Der Herstelleungsort wird im Konfigurationsprogramm unter F4-Vorgabewerte auf der Seite "Vorgabewerte 5" (sieben mal F3) hinterlegt.
+Gibt es nur einen Herstellungsort so kann dieser fix im Programm hinterlegt werden. Der Herstellungsort wird im Konfigurationsprogramm unter F4-Vorgabewerte auf der Seite "Vorgabewerte 5" (sieben mal F3) hinterlegt.
 
 ### Manuelle Eingabe des Herstellungsorts pro Auftrag
 
