@@ -2,7 +2,7 @@ Um das Delapro zu entfernen am besten Sysinternals SDelete verwenden.
 
 Generelle Vorgehensweise
 
--evtl. C:\Delapro\Fernwartung auf Desktop legen
+- evtl. C:\Delapro\Fernwartung auf Desktop legen
 -Invoke-SysInternalTool -Tool Sdelete -Verbose
 -Pfad merken für den Aufruf
 -Sdelete.exe -s C:\Delapro\*.dbf
