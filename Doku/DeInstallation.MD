@@ -13,6 +13,7 @@ Generelle Vorgehensweise
 - Links entfernen Desktop evtl. Startmenü
 - Sdelete.exe -s C:\Delapro\*.*
 - Sdelete.exe -s C:\Delagame\*.*
+- Sdelete.exe -s C:\Temp\DelaproInstall
+- Sdelete.exe -s C:\Temp\DelaproSicherung
 - Sdelete.exe -c C:   # freien Platz aufräumen
-
-
+- evtl. Thunderbird entfernen, wenn ja dann auch Profil
