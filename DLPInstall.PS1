@@ -4077,6 +4077,7 @@ Function Backup-Delapro {
 				# alle möglichen Varianten abdecken
 				$Argumente += '--exclude', '[bB][iI][lL][dD][eE][rR]'
 			}
+			$Argumente += '--options=zip:zip64'
 			$Argumente += '--format=zip', '-cf'
 			$BackupFile = "Delapro_FULL_$(get-date -format "yyyyMMdd_HHmm")"
 			$BackupFile = Join-Path -Path $BackupPath -ChildPath $BackupFile
