@@ -437,6 +437,153 @@ Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -Ign
 Backup-Delapro -DelaproPath $DLPPath -BackupPath 'C:\Temp\DelaproSicherung' -Zip64 -SecureBackup -Verbose
 ```
 
+### Alternative Sicherung mittels Powershell
+
+Im Programmverteiler z. B. <Code>CALL PSBackup.BAT E:</Code> eintragen.
+
+Datei PSBackup.BAT muss im Delapro-Verzeichnis vorhanden sind, mit diesem Inhalt:
+```
+PowerShell -NoProfile -executionPolicy Bypass -Command "& {. .\Powershell\Backup.PS1; Backup-Delapro -DelaproPath .\ -BackupPath %1 -Zip64 -Verbose -RegExport}"
+```
+
+Im Powershell-Unterverzeichnis muss die Datei Backup.PS1 mit folgender Funktion vorhanden sein:
+```Powershell
+# legt ein Backup eines Delapro-Verzeichnis mittels easyBackup32.exe an
+# der Parameter SecureBackup sorgt nur für das Umbenennen der ZIP-Datei in eyBZIP um sie gegenüber
+# anderen Dateien abzugrenzen
+Function Backup-Delapro {
+	[CmdletBinding()]
+	#[OutputType([System.Boolean])]
+	Param(
+		[System.String]$DelaproPath="C:\Delapro",
+		[System.String]$BackupPath="C:\Temp\DelaproSicherung",
+		[Switch]$IgnoreBilder,
+		[Switch]$SecureBackup,
+		[Switch]$Zip64,
+		[Switch]$SimpleBackup,
+		[Switch]$RegExport
+	)
+
+	Write-Verbose "Sichere $DelaproPath nach $BackupPath"
+
+	If ($SimpleBackup) {
+		# einfache Backupmenthode für NAS usw.
+		If (-Not (Test-Path $BackupPath -PathType Container)) {
+			throw "$BackupPath existiert nicht oder es handelt sich nicht um einen Verzeichnispfad!"
+		}
+		If (-Not (Test-Path $DelaproPath -PathType Container)) {
+			throw "$DelaproPath existiert nicht oder es handelt sich nicht um einen Verzeichnispfad!"
+		}
+		$BackupDir = "Delapro_FULL_$($env:COMPUTERNAME)_$(get-date -format "yyyyMMdd_HHmm")"
+		$BackupPath = Join-Path -Path $BackupPath -ChildPath $BackupDir
+		If (Test-Path $BackupPath) {
+			throw "Backupverzeichnis $BackupPath existiert bereits und wird nicht überschrieben!"
+		}
+		$ts = Start-Transcript
+		$ts
+		# Sicherungsverzeichnis anlegen
+		New-Item $BackupPath -ItemType Directory
+		$SourceFiles = Get-ChildItem $DelaproPath\* -Recurse
+		$SourceSize = ($SourceFiles | Measure-Object -Property Length -Sum).Sum /1GB
+		$statistic = $SourceFiles | Group-Object PSIsContainer
+		"zu sichern: $SourceSize GB"
+		"$($statistic| Where-Object Name -eq True) Verzeichnisse"
+		"$($statistic| Where-Object Name -eq False) Dateien"
+		Push-location $BackupPath
+		If ($?) {
+			# eigentlich sollte es mittels funktionieren, allerdings werden dann keine Unterverzeichnisse kopiert!!
+			# Copy-Item $DelaproPath\* $BackupPath -Recurse -Verbose
+			# deshalb Push-Location und dann dieser Aufruf:
+			Copy-Item $DelaproPath\*  -Recurse -Verbose
+			# zum Abschluss noch gleich die Registrierung mit sichern, wegen Druckereinstellungen
+			$regPath = Join-Path -Path $BackupPath -ChildPath "HKEY_CURRENT_USER" 
+			New-Item $regPath -ItemType Directory
+			reg.exe export "HKCU\Software\easy - innovative software" "$($regPath)\easy.reg"
+			reg.exe export "HKCU\Software\combit" "$($regPath)\combit.reg"
+			Pop-Location
+		}
+		$DestFiles = Get-ChildItem $BackupPath\* -Exclude @('HKEY_CURRENT_USER', 'combit.reg', 'easy.reg') -Recurse
+		$DestSize = ($DestFiles | Measure-Object -Property Length -Sum).Sum /1GB
+		"Vergleich Quelle und Ziel"
+		"Quelle: $SourceSize GB"
+		"Ziel  : $DestSize GB"
+		"Diff  : $(If ($SourceSize -eq $DestSize) {'Nein'} else {'Ja'}), $($SourceSize - $DestSize) GB"
+		"Dateivergleich:"
+		Compare-Object -ReferenceObject $SourceFiles -DifferenceObject $DestFiles -Property Name, Length
+		Stop-Transcript
+		$tsf = Get-Item $ts.Replace('Die Aufzeichnung wurde gestartet. Die Ausgabedatei ist "', '').Replace('".', '')
+		Write-Verbose $tsf
+		
+	} elseIf ($Zip64) {
+		# easyBackup32 unterstützt keine Dateien >4GB also tar verwenden
+		If (-Not (Test-Path $BackupPath -PathType Container)) {
+			New-Item $BackupPath -ItemType Directory
+		}
+		If ($RegExport) {
+			If (-Not (Test-Path $DelaproPath\HKEY_CURRENT_USER2\Software)) {
+				New-Item $DelaproPath\HKEY_CURRENT_USER2\Software -ItemType Directory
+			}
+			reg export "HKCU\Software\easy - innovative software" "$($DelaproPath)\HKEY_CURRENT_USER2\Software\easy - innovative software.reg" /Y
+			reg export "HKCU\Software\combit\cmbtmx" "$($DelaproPath)\HKEY_CURRENT_USER2\Software\combit\cmbtmx\kzbvexp.reg" /Y
+		}
+		$tarEXE = Join-Path -Path (Join-Path -Path $env:SystemRoot -ChildPath 'system32') -ChildPath 'tar.exe'
+		If (Test-Path -Path $tarEXE) {
+			$Argumente = @('--verbose', '--exclude', 'copy', '--exclude', 'copy',
+						   '--exclude', 'Fernwartung', '--exclude', 'Export/KZBV/Temp')
+			If ($IgnoreBilder) {
+				# alle möglichen Varianten abdecken
+				$Argumente += '--exclude', '[bB][iI][lL][dD][eE][rR]'
+			}
+			$Argumente += '--options=zip:zip64'
+			$Argumente += '--format=zip', '-cf'
+			$BackupFile = "Delapro_FULL_$(get-date -format "yyyyMMdd_HHmm")"
+			$BackupFile = Join-Path -Path $BackupPath -ChildPath $BackupFile
+			If ($SecureBackup) {
+				$BackupFile += '.eyBZip'
+			} else {
+				$BackupFile += '.zip'
+			}
+			$Argumente += $BackupFile
+			$Argumente += "*.*"
+			Write-Verbose "Argumente: $Argumente"
+			Write-Verbose "Starte $tarEXE"
+			Write-Verbose "Kommandozeilenlänge: $(($Argumente|ForEach-Object{$l=0}{$l+=$_.length;$l+=1}{$l}) + $tarEXE.Length)"
+			Start-Process -Wait $tarEXE -ArgumentList $Argumente -WorkingDirectory $DelaproPath -NoNewWindow
+		} else {
+			Write-Error "tar.exe konnte nicht gefunden werden (benötigt Win >= 1803)"
+		}
+	} else {
+		# normales Backup über easyBackup32
+		$Argumente = @("*.*", "/S", "/V", "/AUTO", $BackupPath)
+		If ($IgnoreBilder) {
+			$Argumente += "/IB"
+		}
+		Write-Verbose "Argumente: $Argumente"
+		Start-Process -Wait (Join-Path -Path $($DelaproPath) -ChildPath "Backup\easyBackup32.EXE") -ArgumentList $Argumente -WorkingDirectory $DelaproPath
+
+		If ($SecureBackup) {
+			# Dateinamen des letzten Backups ermitteln
+			$backups = Get-ChildItem "$($BackupPath)\Delapro*.ZIP"
+			# Sortieren mit neuester zuerst
+			$backups = $backups| Sort-Object -Descending Name
+			If ($backups -is [Array]) {
+				$backups = $backups[0]
+			}
+			If ($backups) {
+				# umbenennen
+				If (Test-Path $backups.FullName) {
+					$NewName = [System.IO.Path]::ChangeExtension($backups.FullName, "eyBZIP")
+					Write-Verbose "SecureBackup-Name: $NewName"
+					Rename-Item -Path $backups.FullName -NewName $NewName
+				}
+			}
+		}
+
+	}
+}
+
+```
+
 ### Auswerten von Backups
 
 ```Powershell
