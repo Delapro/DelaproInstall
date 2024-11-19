@@ -4071,8 +4071,8 @@ Function Backup-Delapro {
 			throw "$BackupPath existiert nicht!"
 		}
 		If ($RegExport) {
-			If (-Not (Test-Path $DelaproPath\HKEY_CURRENT_USER)) {
-				New-Item $DelaproPath\HKEY_CURRENT_USER -ItemType Directory
+			If (-Not (Test-Path $DelaproPath\HKEY_CURRENT_USER2)) {
+				New-Item $DelaproPath\HKEY_CURRENT_USER2 -ItemType Directory
 			}
 			reg export "HKCU\Software\easy - innovative software" "$($DelaproPath)\HKEY_CURRENT_USER2\easy - innovative software.reg" /Y
 			reg export "HKCU\Software\combit\cmbtmx" "$($DelaproPath)\HKEY_CURRENT_USER2\combit\cmbtmx\kzbvexp.reg" /Y
