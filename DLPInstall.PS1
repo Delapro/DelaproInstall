@@ -4074,8 +4074,8 @@ Function Backup-Delapro {
 			If (-Not (Test-Path $DelaproPath\HKEY_CURRENT_USER)) {
 				New-Item $DelaproPath\HKEY_CURRENT_USER -ItemType Directory
 			}
-			reg export "HKCU\Software\easy - innovative software" "$($DelaproPath)\HKEY_CURRENT_USER\easy - innovative software.reg" /Y
-			reg export "HKCU\Software\combit\cmbtmx" "$($DelaproPath)\HKEY_CURRENT_USER\combit\cmbtmx\kzbvexp.reg" /Y
+			reg export "HKCU\Software\easy - innovative software" "$($DelaproPath)\HKEY_CURRENT_USER2\easy - innovative software.reg" /Y
+			reg export "HKCU\Software\combit\cmbtmx" "$($DelaproPath)\HKEY_CURRENT_USER2\combit\cmbtmx\kzbvexp.reg" /Y
 		}
 		$tarEXE = Join-Path -Path (Join-Path -Path $env:SystemRoot -ChildPath 'system32') -ChildPath 'tar.exe'
 		If (Test-Path -Path $tarEXE) {
