@@ -4071,11 +4071,11 @@ Function Backup-Delapro {
 			throw "$BackupPath existiert nicht!"
 		}
 		If ($RegExport) {
-			If (-Not (Test-Path $DelaproPath\HKEY_CURRENT_USER2)) {
-				New-Item $DelaproPath\HKEY_CURRENT_USER2 -ItemType Directory
+			If (-Not (Test-Path $DelaproPath\HKEY_CURRENT_USER2\Software)) {
+				New-Item $DelaproPath\HKEY_CURRENT_USER2\Software -ItemType Directory
 			}
-			reg export "HKCU\Software\easy - innovative software" "$($DelaproPath)\HKEY_CURRENT_USER2\easy - innovative software.reg" /Y
-			reg export "HKCU\Software\combit\cmbtmx" "$($DelaproPath)\HKEY_CURRENT_USER2\combit\cmbtmx\kzbvexp.reg" /Y
+			reg export "HKCU\Software\easy - innovative software" "$($DelaproPath)\HKEY_CURRENT_USER2\Software\easy - innovative software.reg" /Y
+			reg export "HKCU\Software\combit\cmbtmx" "$($DelaproPath)\HKEY_CURRENT_USER2\Software\combit\cmbtmx\kzbvexp.reg" /Y
 		}
 		$tarEXE = Join-Path -Path (Join-Path -Path $env:SystemRoot -ChildPath 'system32') -ChildPath 'tar.exe'
 		If (Test-Path -Path $tarEXE) {
