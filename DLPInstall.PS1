@@ -4067,8 +4067,8 @@ Function Backup-Delapro {
 		
 	} elseIf ($Zip64) {
 		# easyBackup32 unterstützt keine Dateien >4GB also tar verwenden
-		If (-Not (Test-Path $BackupPath)) {
-			throw "$BackupPath existiert nicht!"
+		If (-Not (Test-Path $BackupPath -PathType Container)) {
+			New-Item $BackupPath -ItemType Directory
 		}
 		If ($RegExport) {
 			If (-Not (Test-Path $DelaproPath\HKEY_CURRENT_USER2\Software)) {
