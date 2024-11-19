@@ -4011,7 +4011,8 @@ Function Backup-Delapro {
 		[Switch]$IgnoreBilder,
 		[Switch]$SecureBackup,
 		[Switch]$Zip64,
-		[Switch]$SimpleBackup
+		[Switch]$SimpleBackup,
+		[Switch]$RegExport
 	)
 
 	Write-Verbose "Sichere $DelaproPath nach $BackupPath"
@@ -4068,6 +4069,10 @@ Function Backup-Delapro {
 		# easyBackup32 unterstützt keine Dateien >4GB also tar verwenden
 		If (-Not (Test-Path $BackupPath)) {
 			throw "$BackupPath existiert nicht!"
+		}
+		If ($RegExport) {
+			reg export "HKCU\Software\easy - innovative software" ".\HKEY_CURRENT_USER\easy - innovative software.reg" /Y
+			reg export "HKCU\Software\combit\cmbtmx" ".\HKEY_CURRENT_USER\combit\cmbtmx\kzbvexp.reg" /Y
 		}
 		$tarEXE = Join-Path -Path (Join-Path -Path $env:SystemRoot -ChildPath 'system32') -ChildPath 'tar.exe'
 		If (Test-Path -Path $tarEXE) {
