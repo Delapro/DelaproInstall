@@ -290,6 +290,8 @@ $Rfid | % {$TNr=1}{New-Techniker -TecName "Techniker$($TNr)" -RFID $_.RFId -Woch
 
 Für das Powershellscript zum Einlesen der Zeiten sollte [Zeiterfassung]KommtGehtErzwingen=1 gesetzt sein, sonst machen die Kommentare keinen Sinn, bzw. Kommt/Geht wird nicht beachtet.
 
+WICHTIG: Hier sollte noch auf das [Problem mit den Leerzeiten](Probleme/Zeiterfassungsprobleme.md#generell) eingegangen werden!
+
 ## PRE-Dateien direkt auswerten
 
 ```Powershell
