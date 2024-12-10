@@ -1338,7 +1338,8 @@ Function Get-Ghostscript {
 		$gsDirs += Get-ChildItem "$($Env:ProgramFiles)\GS" -ErrorAction SilentlyContinue -Directory -Exclude $exclude
 		$gsDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\GS" -ErrorAction SilentlyContinue -Directory -Exclude $exclude
 	}
-	$gsDirs = $gsDirs | Sort-Object Name -Descending
+	$gsDirs | Add-Member -MemberType ScriptProperty -Name Version -Value {[Version]$this.name.Replace('gs','').Replace('GS','').Replace('Gs','')}
+        $gsDirs = $gsDirs | Sort-Object Version -Descending
 	$gsDirs
 }
 
