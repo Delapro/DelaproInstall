@@ -1398,15 +1398,25 @@ Function Get-GhostScriptPCLExecutable {
 
 # ermittelt den Pfad zur Konsolen-Ghostscript-EXE
 Function Get-GhostScriptExecutable {
-	[CmdletBinding()]
+	[CmdletBinding(DefaultParameterSetName='default')]  # Parameterset gibts nicht, ist wenn kein Parameter angegeben wird
 	Param(
-		[ValidateScript({throw "Not yet implemented"})]
-		[version]$Version
+		[Parameter(ParameterSetName='version', Position=0, ValueFromPipeline,ValueFromPipelineByPropertyName)]
+                [version]$Version,
+
+		[Parameter(ParameterSetName='directoryInfo', Position=0,ValueFromPipeline)]
+		[System.IO.DirectoryInfo]$directoryInfo
 		)
 
-	$gs=Get-GhostScript
-	If ($gs) {
-		$GhostScriptBasePath=$gs[0].Fullname
+	If ($PSCmdlet.ParameterSetName -contains 'directoryInfo') {
+		$GhostScriptBasePath=$directoryInfo[0].Fullname
+	} else {
+	        $gs=Get-GhostScript
+		If ($Version) {
+			$gs = $gs | where version -eq $Version
+		} 
+	        If ($gs) {
+       		        $GhostScriptBasePath=$gs[0].Fullname
+	        }
 	}
 
 	If ($GhostScriptBasePath) {
