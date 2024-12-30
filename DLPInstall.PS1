@@ -3897,7 +3897,7 @@ Function Invoke-DelaproPreUpdate {
 				Write-Error "Delapro läuft noch!"
 			}
 		} else {
-			Write-Error 'Sicherheitshalber nochmal $DlpPath oder $DlpAlterInTagen prüfen!'
+			Write-Error "Sicherheitshalber nochmal $DlpPath oder $DlpAlterInTagen prüfen! Letzte Benutzung: $(Get-DelaproLastActiveUsage -Path $DlpPath)"
 		}
 	} else {
 		Write-Error "Verzeichnis '$DlpPath' existiert nicht!"
