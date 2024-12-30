@@ -428,6 +428,21 @@ Function Test-DelaproActive {
 	}
 }
 
+# ermittelt wann das Delapro zuletzt aktiv benutzt wurde (also Aufträge geschrieben oder verändert)
+Function Get-DelaproLastActiveUsage {
+	[CmdletBinding()]
+	Param (
+		[String]$Path = 'C:\DELAPRO'
+	)
+
+	$LastUsage = (Get-Item (Join-Path -Path $Path -ChildPath 'auftrpos.dbf')).LastWriteTime
+	If ($LastUsage -lt ((Get-Item (Join-Path -Path $Path -ChildPath 'auftrag.dbf')).LastWriteTime)) {
+		$LastUsage = (Get-Item (Join-Path -Path $Path -ChildPath 'auftrag.dbf')).LastWriteTime
+	}
+
+	$LastUsage
+}
+
 # Mal sehen, ob es was bringt unter alten Windowsversionen
 Function Copy-FileWithDateTime ($source, $dest) {
 
