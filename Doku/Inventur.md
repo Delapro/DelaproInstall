@@ -17,5 +17,7 @@ Zu beachtende Punkte:
 <Code>ARTINVEN.DBL</Code> enthält nur die Daten wann die Inventurliste verbucht wurde.
 
 ## Datum ändern um eine nochmalige Verbuchung durchführen zu können
+```Powershell
 (dir artinven.dbl).LastWriteTime = (Get-Date).AddYears(-1)
+```
 
