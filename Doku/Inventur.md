@@ -16,3 +16,6 @@ Zu beachtende Punkte:
 <Code>ARTINVEN.LOG</Code> enthält die einzelnen Umbuchungen.
 <Code>ARTINVEN.DBL</Code> enthält nur die Daten wann die Inventurliste verbucht wurde.
 
+## Datum ändern um eine nochmalige Verbuchung durchführen zu können
+(dir artinven.dbl).LastWriteTime = (Get-Date).AddYears(-1)
+
