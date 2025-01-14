@@ -3025,11 +3025,16 @@ Function Get-ThunderbirdEXE {
 	)
 
 	# TODO: verfeinern und für andere Platformen bereit machen
+	# TODO: die neuen Pfade sehen so aus: C:\Program Files\WindowsApps\MozillaThunderbird.MZLA_128.5.2.0_x64__h5892qc0xkpca\VFS\ProgramFiles\MZLA Package Root\thunderbird.exe'
 	If (Test-Path "C:\Program Files (x86)\Mozilla Thunderbird\Thunderbird.exe") {
 		$tbPath = Get-ChildItem "C:\Program Files (x86)\Mozilla Thunderbird\Thunderbird.exe"
 	}
 	If (Test-Path "C:\Program Files\Mozilla Thunderbird\Thunderbird.exe") {
 		$tbPath = Get-ChildItem "C:\Program Files\Mozilla Thunderbird\Thunderbird.exe"
+	}
+	If ($null -eq $tbPath) {
+		# um den Pfad bei den neuen Installationen unter Windows zu finden
+		$tbPath = Get-ChildItem "C:\Program Files\WindowsApps\MozillaThunderbird.MZLA_*_x64__h5892qc0xkpca\VFS\ProgramFiles\MZLA Package Root\thunderbird.exe"
 	}
 	If ($tbPath -and $Path) {
 		$tbPath.Directory.Fullname
