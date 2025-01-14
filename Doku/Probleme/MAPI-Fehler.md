@@ -69,3 +69,11 @@ tiefergehendes MAPI (man findet ein paar RegKeys): https://github.com/tpn/winsdk
 
 Was hat es mit MapiSvc.inf auf sich? Eine INI-Datei mit Verweisen oder Einstellungen für mehrere MAPI-Provider? Oder nur für MSFax?
 Doku zu Office MAPI: https://github.com/MicrosoftDocs/office-developer-client-docs/tree/main/docs/outlook/mapi
+
+## Thunderbird
+
+Bei neueren Versionen von Thunderbird kann mit diesem Aufruf, die MAPI-Registrierung erzwungen werden, auch wenn die Thunderbird GUI sagt, dass bereits registriert wäre.
+
+```Powershell
+& (Get-ThunderbirdEXE).fullname "-setDefaultMail" | Out-Host
+```
