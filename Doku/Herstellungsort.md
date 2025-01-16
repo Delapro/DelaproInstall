@@ -33,4 +33,8 @@ Soll der Herstellungsort auf Formularen ausgegeben werden kann man den Platzhalt
 
 ## Besonderheit
 
+### Platzhalter
 Es gibt noch für Formulare den Platzhalter <CODE>%HERSTORT%</CODE>. Dabei wird Zeile 4 von der Laboranschrift von F8-Labordaten verwendet!
+
+### Abrechnungsbereich
+Seit Mitte Januar 2025 ist es auch möglich den Abrechnungsbereich in der <CODE>LAENDER.DBF</CODE> zu definieren. Damit erlaubt die Verwendung des Herstellungsland Rechnungen für unterschiedliche Bundesländer zu schreiben, ohne dass man mit den Maximalpreisen in Konflikt kommt. Dazu muss das passende Kürzel aus <CODE>ABRECHBE.DBF</CODE> eingetragen werden.
