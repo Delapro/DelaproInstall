@@ -17,6 +17,9 @@ Wird diese Option aktiviert kann bei jedem einzelnen Auftrag der Herstellungsort
 HerstellungslandEintragbar=1
 ```
 
+> [!IMPORTANT]
+> Obige Zeile aktiviert nur die Eingabe! Damit die Ausgabe auch Beachtung findet, muss im Konfigurationsprogramm wie bei [Einheitlich für alle Aufträge](#einheitlich-f%C3%BCr-alle-auftr%C3%A4ge) beschrieben, der Herstellungsort noch auf Leer gesetzt werden!
+
 #### Orte hinterlegen
 
 In der Datei <CODE>LAENDER.DBF</CODE> können die erlaubten Herstellungsorte hinterlegt werden. Für ISO-Codes siehe: https://de.wikipedia.org/wiki/ISO_3166. Man muss aber nicht zwingend Herstellungsorte für Länder hinterlegen sondern kann die grundsätzliche Funktion auch mißbrauchen, dann hinterlegt man z. B. für zwei verschiedene Standorte einfach einen intern definierten Code. Hierbei ist es auch möglich zwei Preislisten für Kassen- und Privatleistungen für den jeweiligen Herstellungsort zu hinterlegen.
