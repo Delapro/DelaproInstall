@@ -29,11 +29,13 @@ Param ($xmlDatei, $scannerProfil)
       	{
       		$gsDirs += Get-ChildItem "$($Env:ProgramFiles)\GS" -ErrorAction SilentlyContinue -Exclude $exclude | Where-Object { $_.PSIsContainer}
       		$gsDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\GS" -ErrorAction SilentlyContinue -Exclude $exclude| Where-Object { $_.PSIsContainer}
-      		$gsDirs += Get-ChildItem "$(${Env:ProgramW6432})\GS" -ErrorAction SilentlyContinue -Exclude $exclude| Where-Object { $_.PSIsContainer}   # wegen [System.Environment]::Is64BitProcess -eq $false
+		 # wegen [System.Environment]::Is64BitProcess -eq $false
+      		$gsDirs += Get-ChildItem "$(${Env:ProgramW6432})\GS" -ErrorAction SilentlyContinue -Exclude $exclude| Where-Object { $_.PSIsContainer}  
       	} else {
       		$gsDirs += Get-ChildItem "$($Env:ProgramFiles)\GS" -ErrorAction SilentlyContinue -Directory -Exclude $exclude
       		$gsDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\GS" -ErrorAction SilentlyContinue -Directory -Exclude $exclude
-      		$gsDirs += Get-ChildItem "$(${Env:ProgramW6432})\GS" -ErrorAction SilentlyContinue -Directory -Exclude $exclude		# wegen [System.Environment]::Is64BitProcess -eq $false
+		# wegen [System.Environment]::Is64BitProcess -eq $false
+      		$gsDirs += Get-ChildItem "$(${Env:ProgramW6432})\GS" -ErrorAction SilentlyContinue -Directory -Exclude $exclude		
       	}
       	$gsDirs | Add-Member -MemberType ScriptProperty -Name Version -Value {[Version]$this.name.Replace('gs','').Replace('GS','').Replace('Gs','')}
               $gsDirs = $gsDirs | Sort-Object Version -Descending
