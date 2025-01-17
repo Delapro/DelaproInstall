@@ -213,7 +213,8 @@ namespace WebCamLib
         { 
             String dName = "".PadRight(100); 
             String dVersion = "".PadRight(100); 
- 
+            devices.Clear();                     // Liste explizit löschen, damit mehrere Aufrufe möglich sind!
+
             for (short i = 0; i < 10; i++) 
             { 
                 if (capGetDriverDescriptionA(i, ref dName, 100, ref dVersion, 100)) 
