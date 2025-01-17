@@ -4,6 +4,8 @@
 
   Als Parameter muss eine XML-Datei für die Erfassung übergeben werden, diese XML-Datei wird auch mit den erfassten Bildern
   erweitert und nach verlassen im Delapro interpretiert.
+
+  ACHTUNG: Prozess läuft als 32-Bit und nicht als 64-Bit-Prozess!! Gegebenenfalls [System.Environment]::Is64BitProcess abfragen.
 #>
 Param ($xmlDatei, $scannerProfil)
 
@@ -27,9 +29,11 @@ Param ($xmlDatei, $scannerProfil)
       	{
       		$gsDirs += Get-ChildItem "$($Env:ProgramFiles)\GS" -ErrorAction SilentlyContinue -Exclude $exclude | Where-Object { $_.PSIsContainer}
       		$gsDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\GS" -ErrorAction SilentlyContinue -Exclude $exclude| Where-Object { $_.PSIsContainer}
+      		$gsDirs += Get-ChildItem "$(${Env:ProgramW6432})\GS" -ErrorAction SilentlyContinue -Exclude $exclude| Where-Object { $_.PSIsContainer}   # wegen [System.Environment]::Is64BitProcess -eq $false
       	} else {
       		$gsDirs += Get-ChildItem "$($Env:ProgramFiles)\GS" -ErrorAction SilentlyContinue -Directory -Exclude $exclude
       		$gsDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\GS" -ErrorAction SilentlyContinue -Directory -Exclude $exclude
+      		$gsDirs += Get-ChildItem "$(${Env:ProgramW6432})\GS" -ErrorAction SilentlyContinue -Directory -Exclude $exclude		# wegen [System.Environment]::Is64BitProcess -eq $false
       	}
       	$gsDirs | Add-Member -MemberType ScriptProperty -Name Version -Value {[Version]$this.name.Replace('gs','').Replace('GS','').Replace('Gs','')}
               $gsDirs = $gsDirs | Sort-Object Version -Descending
