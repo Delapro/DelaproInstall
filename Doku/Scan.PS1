@@ -4,8 +4,6 @@
 
   Als Parameter muss eine XML-Datei für die Erfassung übergeben werden, diese XML-Datei wird auch mit den erfassten Bildern
   erweitert und nach verlassen im Delapro interpretiert.
-
-  ACHTUNG: Prozess läuft als 32-Bit und nicht als 64-Bit-Prozess!! Gegebenenfalls [System.Environment]::Is64BitProcess abfragen.
 #>
 Param ($xmlDatei, $scannerProfil)
 
@@ -29,13 +27,10 @@ Param ($xmlDatei, $scannerProfil)
       	{
       		$gsDirs += Get-ChildItem "$($Env:ProgramFiles)\GS" -ErrorAction SilentlyContinue -Exclude $exclude | Where-Object { $_.PSIsContainer}
       		$gsDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\GS" -ErrorAction SilentlyContinue -Exclude $exclude| Where-Object { $_.PSIsContainer}
-		 # wegen [System.Environment]::Is64BitProcess -eq $false
-      		$gsDirs += Get-ChildItem "$(${Env:ProgramW6432})\GS" -ErrorAction SilentlyContinue -Exclude $exclude| Where-Object { $_.PSIsContainer}  
       	} else {
       		$gsDirs += Get-ChildItem "$($Env:ProgramFiles)\GS" -ErrorAction SilentlyContinue -Directory -Exclude $exclude
       		$gsDirs += Get-ChildItem "$(${Env:ProgramFiles(x86)})\GS" -ErrorAction SilentlyContinue -Directory -Exclude $exclude
-		# wegen [System.Environment]::Is64BitProcess -eq $false
-      		$gsDirs += Get-ChildItem "$(${Env:ProgramW6432})\GS" -ErrorAction SilentlyContinue -Directory -Exclude $exclude		
+      		$gsDirs += Get-ChildItem "$(${Env:ProgramW6432})\GS" -ErrorAction SilentlyContinue -Directory -Exclude $exclude
       	}
       	$gsDirs | Add-Member -MemberType ScriptProperty -Name Version -Value {[Version]$this.name.Replace('gs','').Replace('GS','').Replace('Gs','')}
               $gsDirs = $gsDirs | Sort-Object Version -Descending
@@ -185,6 +180,32 @@ Param ($xmlDatei, $scannerProfil)
       	}
       }
 
+	# Export die angegebene Funktion als Text
+        # Export-Function -Name @('Append-DelaproBildeintrag', 'Get-Ghostscript')
+	# für kpnftige Erweiterungen: https://github.com/lzybkr/ShowPSAst
+	# https://powershell.one/powershell-internals/parsing-and-tokenization/abstract-syntax-tree
+	Function Export-Function {
+      		[CmdletBinding()]
+	      	Param(
+	     		[String[]]$Name
+		)
+
+		If ($Name -is [array] -and $Name.Count -gt 1) {
+			$Name | % {Export-Function $_}
+		} else {
+		
+			If (Get-Command $Name -EA SilentlyContinue) {
+			@"
+Function $Name {
+	 $((get-content Function:\$Name).tostring()) 
+}
+"@
+			} else {
+				"Function $Name {'Funktion nicht gefunden, deshalb nicht exportiert!'}"
+			}
+		}
+	}
+
 $Extension = 'jpg'
 # Profil muss vorhanden sein!
 switch ($env:Computername) {
@@ -205,6 +226,7 @@ If (-Not (Test-Path $SaveDir -PathType Container)) {
 }
 Remove-Item "$SaveDir\$($FilenameBase)*" -Force  # mögliche alte Scan-Dateien entfernen
 
+"$($scannerProfil.toLower())"
 switch ($scannerProfil.toLower()) {
 	'scan-erfassen' {
 	        # PDF-Scandatei erfassen, in JPG wandeln und an Delapro übergeben
@@ -267,7 +289,24 @@ switch ($scannerProfil.toLower()) {
 	}
 
   'powershell' {
-    Start-Process -Wait -FilePath Powershell.exe
+	$f=@('Append-DelaproBildEintrag', 'Get-Ghostscript', 'Get-GhostScriptExecutable', 'Convert-PDF')
+	$runCommand = @"
+Dir Bil*.xml
+`$xmlFile=(Dir Bil*.xml)[-1].fullname; 
+`$Bitness = If ([Environment]::Is64BitProcess) {'64Bit'} else {'32Bit'}
+`$host.ui.RawUI.WindowTitle = 'PS Delapro Scan ' + `$Bitness
+If (Test-Path .\Powershell\BilderLib.PS1) {. .\Powershell\BilderLib.PS1}
+`$x=[xml](Get-Content $xmlDatei)
+$(Export-Function -Name $f)
+'Die Variablen x, xmlFile sowie die Funktionen ' + (`$f -join ', ') + ' stehen zur Verfügung, Speichern über `$x.Save(`$xmlFile)'
+"@
+
+# 	$((get-content Function:\Append-DelaproBildEintrag).tostring().replace('$','`$'))
+$runCommand | Set-Content .\Powershell\ScanPSInit.PS1 -Encoding UTF8
+
+	Start-Process -Wait Powershell.exe -ArgumentList @('-NoExit', '-ExecutionPolicy ByPass', '-File .\Powershell\ScanPSInit.PS1')
+#	Start-Process -Wait Powershell.exe -ArgumentList @('-NoExit', '-ExecutionPolicy ByPass')
+
   }
 
 	default {
