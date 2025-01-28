@@ -1,5 +1,16 @@
 # Zeiterfassung
 
+- [Ausgabe von hinterlegten Kommentaren](#ausgabe-von-hinterlegten-kommentaren)
+- [Darstellung von Stundenaufbau](#darstellung-von-stundenaufbau)
+- [Fehler darstellen](#fehler-darstellen)
+- [Dateinamenkonvention von PRE-Dateien](#dateinamenkonvention-von-pre-dateien)
+- [Uraltterminal auslesen](#uraltterminal-auslesen)
+- [Supertrax Zugang](#supertrax-zugang)
+- [Technikerbarcodes aus Zeiterfassung drucken](#technikerbarcodes-aus-zeiterfassung-drucken)
+- [Benötigte Dateien rein von der Zeiterfassung](#benötigte-dateien-rein-von-der-zeiterfassung)
+- [Zum temporären Testen von Zeitdaten die in einem anderen Verzeichnis liegen](#zum-temporären-testen-von-zeitdaten-die-in-einem-anderen-verzeichnis-liegen)
+
+
 ## Ausgabe von hinterlegten Kommentaren
 
 <Code>ZEISTUND.REP</Code> ändern
@@ -114,10 +125,8 @@ Bei Änderungen erfolgt immer eine Rückfrage, z. B. so:
 Zeit-Datum-Einstellungen:
 ![image](https://github.com/Delapro/DelaproInstall/assets/16536936/ab154139-0b95-4d0a-a00c-6503c54b0acd)
 
-
-
 ## Technikerbarcodes aus Zeiterfassung drucken
-Um Technikerbarcodes zu drucken, geht man in der Zeiterfassung in der Technikerverwaltung auf das Barcodemenü und wählt Drucken aus. Die ausgewählte Liste bzw. der gewählte Präfix spielt aktuell keine Rolle, bzw. es kann in TecBarco darauf reagiert werden. Die ausgewählte Liste wird als Parameter Art durchgereicht. D.h. Art="Tech.-Liste(1)@Zeiterf.(2)@Zeiterf. klein(3)@VIP-Cards(4)". Bei den Parametern wird auch der Präfix durchgereicht. D.h. Präfix="Zeiterfassung(1)@Technikererfassung(2)". Man braucht einen XML-Druckertreiber mit Version 7 gesetzt. Barcodedruck muss aktiviert sein. Dann kann man REP-Pfad auf .\XML2021Def\REPS setzen. Damit alles funktioniert müssen TecBarco.LST und TecBarco.REP in den entsprechenden Verzeichnissen vorhanden sein. Siehe auch Verzeichnis [TecBarco](TecBarco).
+Um Technikerbarcodes zu drucken, geht man in der Zeiterfassung in der Technikerverwaltung auf das Barcodemenü und wählt Drucken aus. Die ausgewählte Liste bzw. der gewählte Präfix spielt aktuell keine Rolle, bzw. es kann in TecBarco darauf reagiert werden. Die ausgewählte Liste wird als Parameter Art durchgereicht. D.h. Art="Tech.-Liste(1)@Zeiterf.(2)@Zeiterf. klein(3)@VIP-Cards(4)". Bei den Parametern wird auch der Präfix (Menüpunkt taucht nur in der Zeiterfassung auf!) durchgereicht. D.h. Präfix="Zeiterfassung(1)@Technikererfassung(2)". Man braucht einen XML-Druckertreiber mit Version 7 gesetzt. Barcodedruck muss aktiviert sein. Dann kann man REP-Pfad auf .\XML2021Def\REPS setzen. Damit alles funktioniert müssen TecBarco.LST und TecBarco.REP in den entsprechenden Verzeichnissen vorhanden sein. Siehe auch Verzeichnis [TecBarco](TecBarco).
 
 ## Benötigte Dateien rein von der Zeiterfassung
 
