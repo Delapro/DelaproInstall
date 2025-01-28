@@ -117,7 +117,7 @@ Zeit-Datum-Einstellungen:
 
 
 ## Technikerbarcodes aus Zeiterfassung drucken
-Um Technikerbarcodes zu drucken, geht man in der Zeiterfassung in der Technikerverwaltung auf das Barcodemenü und wählt Drucken aus. Man braucht einen XML-Druckertreiber mit Version 7 gesetzt. Barcodedruck muss aktiviert sein. Dann kann man REP-Pfad auf .\XML2021Def\REPS setzen. Damit alles funktioniert müssen TecBarco.LST und TecBarco.REP in den entsprechenden Verzeichnissen vorhanden sein. Siehe auch Verzeichnis [TecBarco](TecBarco).
+Um Technikerbarcodes zu drucken, geht man in der Zeiterfassung in der Technikerverwaltung auf das Barcodemenü und wählt Drucken aus. Die ausgewählte Liste bzw. der gewählte Präfix spielt aktuell keine Rolle, bzw. es kann in TecBarco darauf reagiert werden. Die ausgewählte Liste wird als Parameter Art durchgereicht. D.h. Art="Tech.-Liste(1)@Zeiterf.(2)@Zeiterf. klein(3)@VIP-Cards(4)". Bei den Parametern wird auch der Präfix durchgereicht. D.h. Präfix="Zeiterfassung(1)@Technikererfassung(2)". Man braucht einen XML-Druckertreiber mit Version 7 gesetzt. Barcodedruck muss aktiviert sein. Dann kann man REP-Pfad auf .\XML2021Def\REPS setzen. Damit alles funktioniert müssen TecBarco.LST und TecBarco.REP in den entsprechenden Verzeichnissen vorhanden sein. Siehe auch Verzeichnis [TecBarco](TecBarco).
 
 ## Benötigte Dateien rein von der Zeiterfassung
 
