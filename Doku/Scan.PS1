@@ -291,14 +291,14 @@ switch ($scannerProfil.toLower()) {
   'powershell' {
 	$f=@('Append-DelaproBildEintrag', 'Get-Ghostscript', 'Get-GhostScriptExecutable', 'Convert-PDF')
 	$runCommand = @"
-Dir Bil*.xml
-`$xmlFile=(Dir Bil*.xml)[-1].fullname; 
+Dir Bil*.xml -File
+`$xmlDatei=(Dir Bil*.xml)[-1].fullname; 
 `$Bitness = If ([Environment]::Is64BitProcess) {'64Bit'} else {'32Bit'}
 `$host.ui.RawUI.WindowTitle = 'PS Delapro Scan ' + `$Bitness
 If (Test-Path .\Powershell\BilderLib.PS1) {. .\Powershell\BilderLib.PS1}
 `$x=[xml](Get-Content $xmlDatei)
 $(Export-Function -Name $f)
-'Die Variablen x, xmlFile sowie die Funktionen ' + (`$f -join ', ') + ' stehen zur Verfügung, Speichern über `$x.Save(`$xmlFile)'
+'Die Variablen x, xmlDatei sowie die Funktionen ' + (`$f -join ', ') + ' stehen zur Verfügung, Speichern über `$x.Save(`$xmlDatei)'
 "@
 
 # 	$((get-content Function:\Append-DelaproBildEintrag).tostring().replace('$','`$'))
