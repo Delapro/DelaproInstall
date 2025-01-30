@@ -137,6 +137,22 @@ Param ($xmlDatei, $scannerProfil)
       	}
       }
 
+	# Konvertiert eine Bilddatei JPG, PNG in eine BMP-Datei
+	Function Convert-Image2BMP ([string]$ImageFile) {
+		If (-not ([System.Management.Automation.PSTypeName]'System.DrawingWindows.Forms.Form').Type) {
+			[Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") | Out-Null
+		}
+		If (Test-Path $ImageFile) {
+			$bmpFile = Dir $ImageFile
+			$bmpFile = $bmpFile.DirectoryName + '\' + $bmpFile.BaseName + '.bmp'
+			$convertfile = new-object System.Drawing.Bitmap($ImageFile)
+			$convertfile.Save($bmpFile, "bmp")
+			$convertfile.Dispose()
+			$bmpFile
+		}
+	}
+
+
       # Append-DelaproBildEitnrag erlaubt beliebig viele Bilder abzuspeichern
       # Beispielaufruf:
       # $x=[xml](get-content .\biltest.xml)
