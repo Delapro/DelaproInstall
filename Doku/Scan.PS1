@@ -267,22 +267,22 @@ switch ($scannerProfil.toLower()) {
 		$x=[xml](Get-Content $xmlDatei)
 		If ($x) {
 			If (Test-Path $photoPath) {
-				$Bilder= dir $photoPath
+				$Bilder= dir $photoPath -File
 				If ($Bilder.Length -ge 1) {
-         		$index = 0
-					  $Dateiname = $Bilder[$Index]
-     			  while ($Dateiname) {
-        	    IF ($Dateiname) {
-	              If (Test-Path $Dateiname) {
-                  Append-DelaproBildEintrag -xmldoc $x -Dateiname $Dateiname -FileExtension $Extension # -Kommentar 'no Comment'
-       		      } else {
-                	# wenn eine erwartete Datei nicht vorhanden ist, abbrechen
-        	        break
-	              }
-       		    }
-	            $index++
-       		    $Dateiname = $Bilder[$Index]
-	          }				
+         				$index = 0
+					$Dateiname = $Bilder[$Index].Fullname
+     			  		while ($Dateiname) {
+        	    				IF ($Dateiname) {
+	              					If (Test-Path $Dateiname) {
+                  						Append-DelaproBildEintrag -xmldoc $x -Dateiname $Dateiname -FileExtension $Extension # -Kommentar 'no Comment'
+       		      					} else {
+                						# wenn eine erwartete Datei nicht vorhanden ist, abbrechen
+        	        					break
+	              					}
+       		    				}
+	            				$index++
+       		    				$Dateiname = $Bilder[$Index].Fullname
+	          			}				
 				}
 			}
 		}
