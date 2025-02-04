@@ -82,7 +82,7 @@ Die Parameter 01, 18, 43, und 60 bestimmen Form und Inhalt eines erfassten Zeite
 In PROXDEMO32.EXE bei Mode PROX auswählen und bei BAUD 4800 aktivieren sowie die verwendete COM-Schnittstelle anklicken. Anschließend INITCOMM anklicken für COM1 erscheint 2F8 für COM2 erscheint 3F8, danach auf SetTerminal klicken und es sollte 0 erscheinen (-1 = Fehler) dann kann man mit GETTIME abfragen, ob die Zeit vom Gerät geliefert wird.
 
 ## Supertrax Zugang
-Auf Zeitanzeige doppelt "tappen". Dann erscheint die Tastatur (Softkeyboard) mit der man dann wie üblich das Passwort eingeben kann. Das Standardpasswort ist "00000", es reicht wenn man fünfmal die Eingabetaste drückt, was automatisch fünf 0er eingibt. Eine Bestätigung des Codes muss nicht erfolgen. 
+Auf Zeitanzeige doppelt "tappen". Dann erscheint die Tastatur (Softkeyboard) mit der man dann wie üblich das Passwort eingeben kann. Das Standardpasswort ist "00000", es reicht wenn man fünfmal die Eingabetaste drückt, was automatisch fünf 0er eingibt. Eine Bestätigung des Codes muss nicht erfolgen. Ein weiteres Passwort ist "54321".
 
 Danach wird das Configuration-Menü sichtbar (Firmware LITE-Version):
 ![image](https://github.com/Delapro/DelaproInstall/assets/16536936/7ef4f790-014a-4fc0-85d4-58e4533d68d1)
