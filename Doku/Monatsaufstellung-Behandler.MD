@@ -1,6 +1,6 @@
 # Behandler auf Monatsaufstellung ausgeben
 
-Hat man das Behandler-Modul aktiviert (DLP_MAIN.INI \[Modus\]BehandlerModulAktiv=1), kann man die Rechnungen auf den Monatsaufstellungen nach Behandler sortiert ausgeben lassen. Dazu muss bei den Kundenparametern (3. Seite) "Behan.-Grupp" mit J aktiviert sein.
+Hat man das Behandler-Modul aktiviert (DLP_MAIN.INI \[Modus\]BehandlerModulAktiv=1), kann man die Rechnungen auf den Monatsaufstellungen nach Behandler sortiert ausgeben lassen (siehe auch: [Behandler](Behandler.MD)). Dazu muss bei den Kundenparametern (3. Seite) "Behan.-Grupp" mit J aktiviert sein.
 
 Folgende Änderungen müssen in <Code>MONAUFST.REP</CODE> durchgeführt werden (Plus-Zeichen dürfen nicht übernommen werden!)
 ```diff
