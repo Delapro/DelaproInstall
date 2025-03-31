@@ -81,63 +81,96 @@ Function Test-Admin() {
 # Falls man nach Aufruf von Install-StartBitsTransfer doch die Originalvariante aufrufen möchte, muss man
 # Bitstransfer\Start-BitsTransfer verwenden!
 Function Install-StartBitsTransfer {
+	[CmdletBinding()]
+	Param(
+		[switch]$DisableAsync
+	)
 
-	# damit die Function verfügbar wird, muss sie mittels & ausgeführt werden und mit dem Scope global: versehen werden
-	&{
-		Function global:Start-BitsTransfer {
-			[CmdletBinding()]
-			Param(
-				$Source, $Destination
+	If ($DisableAsync) {
+		&{
+			Function global:Start-BitsTransfer {
+				[CmdletBinding()]
+				Param(
+					$Source, $Destination
+	
+				)
 
-			)
-
-			If (-Not $Destination) {
-				$Destination = $PWD
+				If (-Not $Destination) {
+					$Destination = $PWD
+				}
+				If (Test-Path -Type Container $Destination) {
+					$Destination = Join-Path -Path $Destination -ChildPath ([System.IO.Path]::GetFilename($Source))
+				}
+	
+				$wc = New-Object System.Net.WebClient
+	
+				try {
+				  $wc.DownloadFile($Source, $Destination)
+				} catch [System.Net.WebException] {
+				  Write-Host "Cannot download $Source"
+				} finally {
+				  $wc.Dispose()
+				}
 			}
-			If (Test-Path -Type Container $Destination) {
-				$Destination = Join-Path -Path $Destination -ChildPath ([System.IO.Path]::GetFilename($Source))
-			}
-
-			$wc = New-Object System.Net.WebClient
-
-			$job1 = Register-ObjectEvent -InputObject $wc -EventName DownloadProgressChanged -SourceIdentifier WebClient.DownloadProgressChanged -MessageData $Source -Action {Write-Progress "Downloading: $($EventArgs.ProgressPercentage)% Completed" -Status $event.MessageData -PercentComplete $EventArgs.ProgressPercentage; }
-			$job2 = Register-ObjectEvent -InputObject $wc -EventName DownloadFileCompleted -SourceIdentifier WebClient.DownloadFileComplete -MessageData $Destination -Action {Write-Host "Download Complete - $($event.MessageData)"; Unregister-Event -SourceIdentifier WebClient.DownloadProgressChanged; Unregister-Event -SourceIdentifier WebClient.DownloadFileComplete; }
-
-			try {
-			  $wc.DownloadFileAsync($Source, $Destination)
-			} catch [System.Net.WebException] {
-			  Write-Host "Cannot download $Source"
-			} finally {
-			  $wc.Dispose()
-			}
-			[console]::TreatControlCAsInput = $true
-			while ($job1.state -ne "Stopped" -and $job2.state -ne "Stopped") {
-				if (-Not ([Console]::IsInputRedirected)) {
-					# nur ausführen, wenn nicht im Direktmodus, sonst gibts Streß unter Linux mit der Fehlermeldung:
-					# Cannot see if a key has been pressed when either application does not have a console or when console input has been redirected from a file. Try Console.In.Peek.
-					if ([console]::KeyAvailable)
-					{
-						$key = [system.console]::readkey($true)
-						if (($key.modifiers -band [consolemodifiers]"control") -and ($key.key -eq "C"))
+		}
+	} else {
+		# damit die Function verfügbar wird, muss sie mittels & ausgeführt werden und mit dem Scope global: versehen werden
+		&{
+			Function global:Start-BitsTransfer {
+				[CmdletBinding()]
+				Param(
+					$Source, $Destination
+	
+				)
+	
+				If (-Not $Destination) {
+					$Destination = $PWD
+				}
+				If (Test-Path -Type Container $Destination) {
+					$Destination = Join-Path -Path $Destination -ChildPath ([System.IO.Path]::GetFilename($Source))
+				}
+	
+				$wc = New-Object System.Net.WebClient
+	
+				$job1 = Register-ObjectEvent -InputObject $wc -EventName DownloadProgressChanged -SourceIdentifier WebClient.DownloadProgressChanged -MessageData $Source -Action {Write-Progress "Downloading: $($EventArgs.ProgressPercentage)% Completed" -Status $event.MessageData -PercentComplete $EventArgs.ProgressPercentage; }
+				$job2 = Register-ObjectEvent -InputObject $wc -EventName DownloadFileCompleted -SourceIdentifier WebClient.DownloadFileComplete -MessageData $Destination -Action {Write-Host "Download Complete - $($event.MessageData)"; Unregister-Event -SourceIdentifier WebClient.DownloadProgressChanged; Unregister-Event -SourceIdentifier WebClient.DownloadFileComplete; }
+	
+				try {
+				  $wc.DownloadFileAsync($Source, $Destination)
+				} catch [System.Net.WebException] {
+				  Write-Host "Cannot download $Source"
+				} finally {
+				  $wc.Dispose()
+				}
+				[console]::TreatControlCAsInput = $true
+				while ($job1.state -ne "Stopped" -and $job2.state -ne "Stopped") {
+					if (-Not ([Console]::IsInputRedirected)) {
+						# nur ausführen, wenn nicht im Direktmodus, sonst gibts Streß unter Linux mit der Fehlermeldung:
+						# Cannot see if a key has been pressed when either application does not have a console or when console input has been redirected from a file. Try Console.In.Peek.
+						if ([console]::KeyAvailable)
 						{
-							Write-Host "Try Terminating..."
-							# klappt aber noch nicht
-							break
+							$key = [system.console]::readkey($true)
+							if (($key.modifiers -band [consolemodifiers]"control") -and ($key.key -eq "C"))
+							{
+								Write-Host "Try Terminating..."
+								# klappt aber noch nicht
+								break
+							}
 						}
 					}
+					Start-Sleep -Milliseconds 100
 				}
-				Start-Sleep -Milliseconds 100
+				[console]::TreatControlCAsInput = $false
+	
+				# wissenwertes zum Thema: https://blog.ironmansoftware.com/powershell-async-method/
+				# ohne Progressbar: https://gist.github.com/SidShetye/3d0570d8514f4388346d8af9f314920c
+				# noch weitere Informationen:
+				# https://stackoverflow.com/questions/4926060/powershell-runspace-problem-with-downloadfileasync
+				# https://stackoverflow.com/questions/73474912/powershell-100-ensure-idisposable-is-disposed-with-async-operations
+	
+				Remove-Job $job1, $Job2 -Force
+	
 			}
-			[console]::TreatControlCAsInput = $false
-
-			# wissenwertes zum Thema: https://blog.ironmansoftware.com/powershell-async-method/
-			# ohne Progressbar: https://gist.github.com/SidShetye/3d0570d8514f4388346d8af9f314920c
-			# noch weitere Informationen:
-			# https://stackoverflow.com/questions/4926060/powershell-runspace-problem-with-downloadfileasync
-			# https://stackoverflow.com/questions/73474912/powershell-100-ensure-idisposable-is-disposed-with-async-operations
-
-			Remove-Job $job1, $Job2 -Force
-
 		}
 	}
 
