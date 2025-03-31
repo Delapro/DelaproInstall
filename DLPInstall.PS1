@@ -6300,6 +6300,11 @@ Function Install-Delapro {
 		[Switch]$Force
 	)
 
+	If (($DlpInstPath.Length -eq 0) -or ($DlpPath.Length -eq 0) -or ($DlpGamePath.Length -eq 0)) {
+		Write-Error "Pfadangaben von DLPInstPath, DlpPath und/oder DlpGamePath fehlen!"
+		throw "Pfadangaben fehlen!"
+	}
+
 	If (($InstallSwitch -contains "Acrobatx64") -and ($InstallSwitch -contains "AcrobatConfig")) {
 		Write-Warning "AcrobatConfig wird automatisch durch Acrobat ausgeführt"
 	}
