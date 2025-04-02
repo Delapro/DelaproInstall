@@ -321,3 +321,7 @@ Select-String -Path PRE* -SimpleMatch '395859'
 # die ultimative Ausgabe mit PRE-Datei Zuordnung
 dir PRE* | % {$PreName=$_.Name; Get-Content $_} | select @{N='PREDatei';E={$PreName}}, @{N='Uhrzeit';E={$_.substring(0,6) -split '(..)' -ne '' -join ':'}}, @{N='Status';E={If($_.SubString(6,1)-eq'1'){'Kommt'}else{'Geht'}}}, @{N='Rfid';E={$_.Substring(7)}} |Out-GridView
 ```
+
+## Technikernamen auf Terminal übertragen
+
+In der RFID-Verwaltung bei den Technikern kann man mittels F7-Übertagen die aktuellen Daten an die <Code>WMSG.TXT</Code>-Datei übertragen, welche mittels <Code>WEGO\SETTECID.BAT</Code> an das Terminal übertragen werden kann.
