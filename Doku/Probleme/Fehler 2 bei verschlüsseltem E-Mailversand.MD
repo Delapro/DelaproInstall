@@ -1,4 +1,4 @@
-Beim verschlüsselten E-Mailversand erscheinen die Fehlermeldungen
+Beim verschlüsselten E-Mailversand (ZipCrypto oder AES256), egal ob KZBV-XML oder PDF, erscheinen die Fehlermeldungen
 
 ```
 ---------------------------
