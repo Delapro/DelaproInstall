@@ -23,3 +23,5 @@ OK
 ```
 
 hintereinander, dann wurde beim Kunden ein ungültiges Passwort bzw. ein ungültiger Buchstabe beim Passwort hinterlegt.
+
+Oder es fehlt die <Code>7z.dll</Code>-Datei im Delapro-Verzeichnis.
