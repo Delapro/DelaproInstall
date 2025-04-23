@@ -516,42 +516,48 @@ Function Backup-Delapro {
 		
 	} elseIf ($Zip64) {
 		# easyBackup32 unterstützt keine Dateien >4GB also tar verwenden
-		If (-Not (Test-Path $BackupPath -PathType Container)) {
-			New-Item $BackupPath -ItemType Directory
-		}
-		If ($RegExport) {
-			If (-Not (Test-Path $DelaproPath\HKEY_CURRENT_USER2\Software)) {
-				New-Item $DelaproPath\HKEY_CURRENT_USER2\Software -ItemType Directory
+		If (Test-Path ([System.IO.Path]::GetPathRoot($BackupPath))) {
+			If (-Not (Test-Path $BackupPath -PathType Container)) {
+				New-Item $BackupPath -ItemType Directory
 			}
-			reg export "HKCU\Software\easy - innovative software" "$($DelaproPath)\HKEY_CURRENT_USER2\Software\easy - innovative software.reg" /Y
-			reg export "HKCU\Software\combit\cmbtmx" "$($DelaproPath)\HKEY_CURRENT_USER2\Software\combit\cmbtmx\kzbvexp.reg" /Y
-		}
-		$tarEXE = Join-Path -Path (Join-Path -Path $env:SystemRoot -ChildPath 'system32') -ChildPath 'tar.exe'
-		If (Test-Path -Path $tarEXE) {
-			$Argumente = @('--verbose', '--exclude', 'copy', '--exclude', 'copy',
-						   '--exclude', 'Fernwartung', '--exclude', 'Export/KZBV/Temp')
-			If ($IgnoreBilder) {
-				# alle möglichen Varianten abdecken
-				$Argumente += '--exclude', '[bB][iI][lL][dD][eE][rR]'
+			If ($RegExport) {
+				If (-Not (Test-Path $DelaproPath\HKEY_CURRENT_USER2\Software)) {
+					New-Item $DelaproPath\HKEY_CURRENT_USER2\Software -ItemType Directory
+				}
+				reg export "HKCU\Software\easy - innovative software" "$($DelaproPath)\HKEY_CURRENT_USER2\Software\easy - innovative software.reg" /Y
+				reg export "HKCU\Software\combit\cmbtmx" "$($DelaproPath)\HKEY_CURRENT_USER2\Software\combit\cmbtmx\kzbvexp.reg" /Y
 			}
-			$Argumente += '--options=zip:zip64'
-			$Argumente += '--format=zip', '-cf'
-			$BackupFile = "Delapro_FULL_$(get-date -format "yyyyMMdd_HHmm")"
-			$BackupFile = Join-Path -Path $BackupPath -ChildPath $BackupFile
-			If ($SecureBackup) {
-				$BackupFile += '.eyBZip'
+			$tarEXE = Join-Path -Path (Join-Path -Path $env:SystemRoot -ChildPath 'system32') -ChildPath 'tar.exe'
+			If (Test-Path -Path $tarEXE) {
+				$Argumente = @('--verbose', '--exclude', 'copy', '--exclude', 'copy',
+							   '--exclude', 'Fernwartung', '--exclude', 'Export/KZBV/Temp')
+				If ($IgnoreBilder) {
+					# alle möglichen Varianten abdecken
+					$Argumente += '--exclude', '[bB][iI][lL][dD][eE][rR]'
+				}
+				$Argumente += '--options=zip:zip64'
+				$Argumente += '--format=zip', '-cf'
+				$BackupFile = "Delapro_FULL_$(get-date -format "yyyyMMdd_HHmm")"
+				$BackupFile = Join-Path -Path $BackupPath -ChildPath $BackupFile
+				If ($SecureBackup) {
+					$BackupFile += '.eyBZip'
+				} else {
+					$BackupFile += '.zip'
+				}
+				$Argumente += $BackupFile
+				$Argumente += "*.*"
+				Write-Verbose "Argumente: $Argumente"
+				Write-Verbose "Starte $tarEXE"
+				Write-Verbose "Kommandozeilenlänge: $(($Argumente|ForEach-Object{$l=0}{$l+=$_.length;$l+=1}{$l}) + $tarEXE.Length)"
+				Start-Process -Wait $tarEXE -ArgumentList $Argumente -WorkingDirectory $DelaproPath -NoNewWindow
 			} else {
-				$BackupFile += '.zip'
+				Write-Error "tar.exe konnte nicht gefunden werden (benötigt Win >= 1803)"
 			}
-			$Argumente += $BackupFile
-			$Argumente += "*.*"
-			Write-Verbose "Argumente: $Argumente"
-			Write-Verbose "Starte $tarEXE"
-			Write-Verbose "Kommandozeilenlänge: $(($Argumente|ForEach-Object{$l=0}{$l+=$_.length;$l+=1}{$l}) + $tarEXE.Length)"
-			Start-Process -Wait $tarEXE -ArgumentList $Argumente -WorkingDirectory $DelaproPath -NoNewWindow
 		} else {
-			Write-Error "tar.exe konnte nicht gefunden werden (benötigt Win >= 1803)"
+			Write-Error "Sicherungslaufwerk $([System.IO.Path]::GetPathRoot($BackupPath)) nicht verfügbar!"		
 		}
+		"Vorgang wird beendet und abgeschlossen."
+		Start-Sleep -Seconds 10
 	} else {
 		# normales Backup über easyBackup32
 		$Argumente = @("*.*", "/S", "/V", "/AUTO", $BackupPath)
