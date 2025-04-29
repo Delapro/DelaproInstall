@@ -4,10 +4,15 @@
 
 ![image](https://github.com/user-attachments/assets/8acce137-921f-41e3-8aed-edf32653a4c3)
 
+### Variante 1
 Wird erzeugt, wenn der Einzelpreis einer Rechnungsposition über 9999,99€ liegt. also ab 10000,00€.
 
 Mögliche Lösung: Die Position einfach auf zwei Positionen aufsplitten.
 
+### Variante 2
+Das gleiche Problem kann aber auch beim "reduzierten Datenexport" auftauchen, wenn die Summe der Privatpositionen für die Position "Auftragsbezogene Mehrleistungen" eben über 9999,99€ liegt!
+
+Die Lösung, wenn auch nicht optimal, ist das deaktivieren des "reduzierten Datenexports" für diesen Vorfall.
 
 ## negativer Wert im Einzelpreis
 
