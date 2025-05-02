@@ -21,3 +21,11 @@ Die Lösung, wenn auch nicht optimal, ist das deaktivieren des "reduzierten Date
 Wird erzeugt, wenn der Einzelpreis einen Wert <0 zugewiesen ist, also alles ab -0,01€ und weniger.
 
 Mögliche Lösung: Den Preis positiv eintragen, also z. B. aus -54,12€ werden 54,12€ und zusätzlich wird die Menge dafür ins Minus gesetzt. Dadurch erreicht man, dass der Export funktioniert und dass die Position in der XML-Datei als Rabattposition (RAB) ausgewiesen wird. Was meistens sowieso in so einem Fall gewünscht ist.
+
+## keine Position im Auftrag eingetragen
+
+![image](https://github.com/user-attachments/assets/b08306b2-ac46-4ad9-83ea-2af89a694ad9)
+
+Sollte es eigentlich nicht geben, aber wird trotzdem mal dokumentiert.
+
+Lösung: Etwas abrechnen oder keine XML-Datei erstellen.
