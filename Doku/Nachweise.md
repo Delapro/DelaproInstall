@@ -2,6 +2,136 @@
 
 Die hier hinterlegten Infos sind für Prothetikpäße, Materialnachweise, Konformitätserklärungen, also allgemein Nachweise.
 
+## Layoutplatzhalter
+
+Zur Verwendung für 
+
+FORMLANG.TXT
+```
+{Hersteller____________________________} {Bestandteile1_________________________} {CE______}
+{Charge____________}                     {Bestandteile2_________________________} 
+{KILLSPACE}{KILLCHARGE}
+```
+
+<Code>{KILLSPACE}</Code> entfernt unnötige Leerzeilen. <Code>{KILLCHARGE}</Code> entfernt unnötige Charge oder LOT-Ausgaben. Also wenn die Chargennummer leer ist. Kommt also z. B. in diesem Fall zur Anwendung:
+```
+{Hersteller____________________________} {Bestandteile1_________________________} {CE______}
+Lot: {Charge____________}                {Bestandteile2_________________________} 
+{KILLSPACE}{KILLCHARGE}
+```
+Ist also die Charge leer, wird automatisch Lot: entfernt. Ist dann noch Bestandteile2 leer, dann greift zusätzliche KILLSPACE und entfernt die komplette leere Zeile.
+
+## Zuordnungen
+
+Kürzel|Bedeutung
+--|--
+L|Legierungen
+Z|Zähne
+B|Verbindungselemente
+V|Verblendungselemente
+M|Modellguß
+B|Basiskunststoff
+C|Zirkon
+
+Siehe auch <Code>MATERIAL.DBF</Code>. Wird für {Kürzel-Überschrift__}-Platzhalter verwendet. Z. B. wird {L-Überschrift} durch Legierung ersetzt.
+
+## alle bekannten Platzhalter
+
+Platzhalter|Bemerkung
+--|--
+{ZAnrede___________}
+{ZName_________________________________}
+{ZName2______________________}
+{ZStraße_____________________}
+{ZOrt____________________}
+{Zahnarzt}
+{Datum_}
+{Zahnfarbe_________}
+{Patient_____________________}
+{Beleg___}
+{Auftrag}
+{Materialien}
+{Legierungen-1_________________________}
+{Legierungen-2_________________________}
+{L-Hersteller__________________________}
+{L-Leerzeile}
+{Zähne-1_______________________________}
+{Zähne-2_______________________________}
+{Z-Hersteller__________________________}
+{Z-Leerzeile}
+{Verbindungselemente-1_________________}
+{Verbindungselemente-2_________________}
+{B-Hersteller__________________________}
+{B-Leerzeile}
+{Verblendungsmaterial-1________________}
+{Verblendungsmaterial-2________________}
+{V-Hersteller__________________________}
+{V-Leerzeile}
+{Modellguß-1___________________________}
+{Modellguß-2___________________________}
+{M-Hersteller__________________________}
+{M-Leerzeile}
+{Basis-Kunststoff-1____________________}
+{Basis-Kunststoff-2____________________}
+{K-Hersteller__________________________}
+{K-Leerzeile}
+{LegierungHalb_____}
+{VerblendungHalb___}
+{ZahnHalb__________}
+{VerbindungHalb____}
+{KunststoffHalb____}
+{ModellgußHalb_____}
+{PatientHalb_______}
+{L-Charge__________}
+{Z-Charge__________}
+{B-Charge__________}
+{V-Charge__________}
+{M-Charge__________}
+{K-Charge__________}
+{L-CE____}
+{Z-CE____}
+{B-CE____}
+{V-CE____}
+{M-CE____}
+{K-CE____}
+{L-Langtext}
+{Z-Langtext}
+{B-Langtext}
+{V-Langtext}
+{M-Langtext}
+{K-Langtext}
+{L-Überschrift}
+{Z-Überschrift}
+{B-Überschrift}
+{V-Überschrift}
+{M-Überschrift}
+{K-Überschrift}
+{Art_der_Arbeit_____________________________}
+{Datum4__}
+{ZName1+2______________________________}
+{Rechnungsnummer}
+{Art_der_Arbeit______________________________________________________}
+{C-Langtext}
+{C-Überschrift}
+{C-Hersteller__________________________}
+{Zirkon-1______________________________}
+{Zirkon-2______________________________}
+{C-Leerzeile}
+{C-Charge__________}
+{C-CE____}
+{ZAnredeLang________________________}
+{ZName2Lang_________________________}
+{ZStraßeLang________________________}
+{ZOrtLang___________________________}
+{ZZusatzLang________________________}
+{Herstellungsland__}
+{Art_der_Arbeit_1____________________________________________________}
+{Art_der_Arbeit_2____________________________________________________}
+{Langtext}|gibt automatisch LZBVMKC-Langtexte untereinander aus
+{MDR-Langtext}| noch nicht implementiert!
+{Besonderheiten}| Ermittelt aus den Auftragsbemerkungen hinterlegte Besonderheiten zwischen den Platzhaltern *BESBEGIN und *BESENDE und gibt diese aus.
+{Seitenumbruch<Code>\<Z\></Code>}| Ist ein besonderer, da dynamischer Platzhalter. <Code>\<Z\></Code> definiert eine Zahl und stellt die Anzahl der Zeilen dar, die nachfolgend zusammengehalten werden sollen. Wenn dies nicht möglich ist, wird ein Seitenumbruch ausgelöst. {Seitenumbruch5} erzeugt also einen Seitenumbruch wenn die nächsten 5 Zeilen nicht mehr auf die aktuelle Seite passen.
+
 ## Druckertyp 8, bzw. wenn NachweisExecute definiert ist
 
 Bei Druckertreibertyp 8 und Ausgabe mittels [Modus]NachweisExecute über Dlpwinim oder DlpZert, damit der Nachweis per E-Mail versandt werden kann, muss WinMatDr.BAT so aufgebohrt werden:
