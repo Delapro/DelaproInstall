@@ -1,6 +1,6 @@
 # Aufträge erfassen mittels Barcodes (JumpToReference)
 
-In Verbindung mit SerialReader.EXE und einem speziellen Modus (Dispatch) kann man Referenzbarcodes mit einem fest zugewiesenen Barcodescanner erfassen bzw. automatisch einen zugeordneten Auftrag anspringen.
+In Verbindung mit SerialReader.EXE und einem speziellen Modus (Dispatch) kann man Referenzbarcodes mit einem fest zugewiesenen Barcodescanner erfassen bzw. automatisch einen zugeordneten Auftrag anspringen. Der Barcodescanner muss wie üblich konfiguriert werden, danach muss allerdings der Storagemodus deaktiviert werden: https://github.com/Delapro/DelaproInstall/wiki/NetumC990_Anbindung-Storage#storagemodus-abschalten-und-normalen-modus-aktivieren.
 
 > Probleme gibts noch, wenn der Scanner nicht verfügbar oder zwischendrin ausgeschaltet wurde!
 
