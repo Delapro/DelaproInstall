@@ -1543,13 +1543,14 @@ Function Install-Ghostscript {
 	Param(
 		#[parameter(Mandatory=$true)]
 		[System.String]$tempPath="$Env:TEMP\",
-		[Validateset("Newest", '10.05.0', '10.04.0', '10.03.1', '10.02.01', '10.02.00', '10.01.01', '10.0.0', '9.56.1', '9.55.0', "9.54.0", "9.53.3", "9.52", "9.51", "9.50", "9.27","9.26", "9.25", "9.24")]
+		[Validateset("Newest", '10.05.1', '10.05.0', '10.04.0', '10.03.1', '10.02.01', '10.02.00', '10.01.01', '10.0.0', '9.56.1', '9.55.0', "9.54.0", "9.53.3", "9.52", "9.51", "9.50", "9.27","9.26", "9.25", "9.24")]
 		[string[]]$Version='Newest'
 	)
 
 	# Infos zur aktuellen Version: https://ghostscript.com/releases/index.html
 	switch ($Version) {
-		'Newest' {$ghostVersion="gs10050"}
+		'Newest' {$ghostVersion="gs10051"}
+		'10.05.1' {$ghostVersion="gs10051"}
 		'10.05.0' {$ghostVersion="gs10050"}
 		'10.04.0' {$ghostVersion="gs10040"}
 		'10.03.1' {$ghostVersion="gs10031"}
