@@ -46,3 +46,6 @@ TRX40 WRX80
 X399 X370 X470 X570
 Z370
 
+## mögliche Updateverlängerung
+
+https://learn.microsoft.com/de-de/windows/whats-new/extended-security-updates
