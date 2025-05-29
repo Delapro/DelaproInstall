@@ -1,5 +1,5 @@
 # diese Action soll das grundsätzliche Script testen
-name: GrundTest
+name: GrundTestArm64
 
 # Controls when the workflow will run
 on:
