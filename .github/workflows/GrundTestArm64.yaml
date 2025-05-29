@@ -1,0 +1,45 @@
+# diese Action soll das grundsätzliche Script testen
+name: GrundTest
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "master" branch
+  # push:
+  #  branches: [ "master" ]
+  # pull_request:
+  #  branches: [ "master" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: windows-11-arm
+    strategy:
+      matrix:
+        platform: [x64]
+        
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      # startet das Installationsscript
+      - name: Installationsscript ausführen
+        run: |
+          C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoExit -NoProfile -Command '& {$s=(Invoke-WebRequest -UseBasicParsing -Uri https://raw.githubusercontent.com/Delapro/DelaproInstall/master/DLPInstall.PS1).Content.Replace([string][char]10,[char]13+[char]10); $s=$s.SubString(0, $s.IndexOf(''CMDLET-ENDE'')); $tempPath = ''C:\temp''; $scriptPath=Join-Path -Path $tempPath -ChildPath easy.PS1; If (-Not (Test-Path $tempPath)) {md $tempPath} ; Set-Content -path $scriptPath -value $s; cd $tempPath; powershell.exe -NoExit -NoProfile -executionPolicy Bypass -File $scriptPath }'
+
+      - name: Installationsscript laden und Tests ausführen
+        env:
+          Platform: ${{ matrix.platform }}
+        run: |
+          C:
+          cd \temp
+          . .\easy.PS1
+          Write-Host "$($env:GITHUB_WORKSPACE)\Tests\TestInstalls.PS1"
+          Test-Path "$($env:GITHUB_WORKSPACE)\Tests\TestInstalls.PS1"
+          &"$($env:GITHUB_WORKSPACE)\Tests\TestInstalls.PS1"
+          
