@@ -39,6 +39,9 @@ jobs:
           C:
           cd \temp
           . .\easy.PS1
+          # Environment ausgeben
+          [System.Environment]::GetEnvironmentVariables()
+          Write-Host ""
           Write-Host "$($env:GITHUB_WORKSPACE)\Tests\TestInstalls.PS1"
           Test-Path "$($env:GITHUB_WORKSPACE)\Tests\TestInstalls.PS1"
           &"$($env:GITHUB_WORKSPACE)\Tests\TestInstalls.PS1"
