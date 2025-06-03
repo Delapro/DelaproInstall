@@ -3188,8 +3188,10 @@ Function Install-OpenGPG {
 		[System.String]$tempDirectory="$Env:TEMP\"
 	)
 
-	# andere Platformen unterstützten
-	$gpgVersion = "4.0.3"
+	# verfügbare Versionen: https://files.gpg4win.org/
+	# Infos zu aktueller Version: https://gpg4win.org/download.html
+	# TODO: andere Platformen unterstützten
+	$gpgVersion = "4.4.1"
 
 	$Filename = "gpg4win-$($gpgVersion).exe"
 	Write-Verbose "Download $gpgVersion, Dateiname: $Filename"
