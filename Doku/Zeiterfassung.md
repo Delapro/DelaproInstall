@@ -137,6 +137,17 @@ Um Technikerbarcodes zu drucken, geht man in der Zeiterfassung in der Technikerv
 dir tage*,woch*,zei*,tech*,tecz*,tecr*,wego*,dlp_main.ini,feiert*|Compress-Archive -DestinationPath Zeitdaten
 ```
 
+## Zusatzinformationen auf Stundenliste ausgeben
+
+```
+Vortrag auf nächsten Monat: @MinToTime (ABSVSumme-TimeToMin(ZeitSoll->SollStd)+ZVW_UStdAktuell (Technike->Nummer, Technike->Eintritt, ADDMONTH (ZVW_Ende, -1)))@
+
+Minuten Vormat      : @STR (ZVW_UStdAktuell (Technike->Nummer, Technike->Eintritt, ADDMONTH (ZVW_Ende, -1)))@
+Minuten diesen Monat: @STR (ABSVSumme)@
+Minuten Vortrag n. M: @STR (ABSVSumme-TimeToMin(ZeitSoll->SollStd)+ZVW_UStdAktuell (Technike->Nummer, Technike->Eintritt, ADDMONTH (ZVW_Ende, -1)))@
+```
+
+
 ## Zum temporären Testen von Zeitdaten die in einem anderen Verzeichnis liegen
 
 Die zu testenden Zeitdaten liegen in C:\Temp:
