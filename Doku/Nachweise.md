@@ -2,6 +2,16 @@
 
 Die hier hinterlegten Infos sind für Prothetikpäße, Materialnachweise, Konformitätserklärungen, also allgemein Nachweise.
 
+## Konfigurationseinstellungen
+
+### Nachweis immer drucken
+
+In <Code>DLP_MAIN.INI</Code> kann man unter <Code>[Modus]</Code> die Einstellung <Code>ProthImmerDrucken</Code> auf 0 (Nein, Vorgabe) oder 1 (Ja) stellen. Ist dieser Schalter aktiv erscheint nach dem Rechnungskopiedruck immer die Aufforderung auch den Nachweis auszudrucken. Ansonsten erfolgt dies nur, nach dem Erstellen oder Ändern einer Rechnung.
+
+### Nachweis immer neu erstellen
+
+In <Code>DLP_MAIN.INI</Code> kann man unter <Code>[Modus]</Code> die Einstellung <Code>ProthImmerNeu</Code> auf 0 (Nein, Vorgabe) oder 1 (Ja) stellen. Dabei wird bei jedem Nachweisdruck zuvor der Nachweis immer neu erstellt, dadurch finden evtl. Änderungen in den Auftragspositionen immer ihren Weg in den aktuellen Ausdruck. Allerdings gehen gleichzeitig evtl. manuell eingetragene Änderungen verloren.
+
 ## Layoutplatzhalter
 
 Zur Verwendung für 
