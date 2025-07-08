@@ -1078,7 +1078,17 @@ Function Get-DelaproBackups {
 
 	# Laufwerksbuchstaben ermitteln
 	$dl = Get-Volume| Where-Object {$null -ne $_.Driveletter} | Where-Object {$_.OperationalStatus -eq "OK"} |  Select-Object -ExpandProperty Driveletter
+	# in $dl sind keine Laufwerke enthalten wo z. B. nicht sauber abemeldet wurden, deren Status meldet:
+	# 	DriveType HealthStatus OperationalStatus 
+	#	--------- ------------ ----------------- 
+	#	Removable Warning      Full Repair Needed
+	# TODO: obiges sollte irgendwie abgecheckt werden und mittels "Repair-Volume f -Verbose" evtl. automatisch repariert werden!
+	# evtl. in Verbindung mit dem Volumenamen 
+	#	FriendlyName
+	#	------------
+	#	PKBACK# 001 
 	#  Sicherungen ermitteln und nach Datum sortieren
+
 	$ds = $dl | ForEach-Object {Get-ChildItem ("$($_):\Delapro*.ZIP", "$($_):\Delapro*.eyBZIP")}
 	# Sortieren mit neuester zuerst
 	$ds = $ds| Sort-Object -Descending Name
