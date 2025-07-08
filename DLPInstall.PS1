@@ -1971,6 +1971,16 @@ Function Configure-eDocPrintProDelapro {
 	# zum Aktivieren der ESF-Datei
 	Start-Process -Wait 'C:\Program Files\Common Files\MAYComputer\eDocPrintPro\ApplyESF.EXE'
 
+	# abklären, ob die Util-Methode besser ist anstatt Rename:
+	# C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDocPrintProUtil.EXE /AddPrinter /Printer="$($ESFFile)" /Driver="eDocPrintPro" /Silent
+	Start-Process -Wait "C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDocPrintProUtil.EXE" -ArgumentList "/AddPrinter", '/Printer="$($ESFFile)"', '/Driver="eDocPrintPro"', '/ProfilePath="C:\ProgramData\eDocPrintPro\$($ESFFile).ESFX"', "/Silent"
+	# WENN der Aufruf hier hängen bleibt, dann liegt es an fehlenden LOKALEN Adminrechten!!
+	# Rename-Printer -Name eDocPrintPro -NewName DelaproPDF
+	# durch Aufruf von eDocPrintProUtil.EXE sind zwei Druckertreiber vorhanden, deshalb den Standard eDocPrintPro löschen
+	If (Get-Printer eDocPrintPro -ErrorAction SilentlyContinue) {
+		Remove-Printer -Name eDocPrintPro	# Falls noch vorhanden eDocPrintPro-Warteschlange entfernen
+	}
+
 }
 
 function Enable-eDocPrintProLogFile {
@@ -6508,14 +6518,6 @@ Function Install-Delapro {
 	# Druckertreiber Installation
 	If ($InstallSwitch -contains "eDocPrintPro") {	
 		Install-eDocPrintPro -tempPath "$($DLPInstPath)"
-
-		# abklären, ob die Util-Methode besser ist anstatt Rename:
-		# C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDocPrintProUtil.EXE /AddPrinter /Printer="DelaproPDF" /Driver="eDocPrintPro" /Silent
-		Start-Process -Wait "C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDocPrintProUtil.EXE" -ArgumentList "/AddPrinter", '/Printer="DelaproPDF"', '/Driver="eDocPrintPro"', '/ProfilePath="C:\ProgramData\eDocPrintPro\DelaproPDF.ESFX"', "/Silent"
-		# WENN der Aufruf hier hängen bleibt, dann liegt es an fehlenden LOKALEN Adminrechten!!
-		# Rename-Printer -Name eDocPrintPro -NewName DelaproPDF
-		# durch Aufruf von eDocPrintProUtil.EXE sind zwei Druckertreiber vorhanden, deshalb den Standard eDocPrintPro löschen
-		Remove-Printer -Name eDocPrintPro
 	}
 
 	If ($InstallSwitch -contains "Mailer") {	
