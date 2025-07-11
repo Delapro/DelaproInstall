@@ -46,6 +46,10 @@ TRX40 WRX80
 X399 X370 X470 X570
 Z370
 
+#### Probleme mit AMD TPM
+
+https://www.heise.de/news/AMD-fTPM-Bug-Einige-Mainboard-Hersteller-verteilen-den-Fix-nicht-10482771.html
+
 ## mögliche Updateverlängerung
 
 https://learn.microsoft.com/de-de/windows/whats-new/extended-security-updates
