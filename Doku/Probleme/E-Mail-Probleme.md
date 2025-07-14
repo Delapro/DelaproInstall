@@ -10,6 +10,14 @@ curl smtps://mail.server.de:587 -v --mail-from "info@domain.de" --mail-rcpt "sup
 curl smtps://mail.server.de:465 -v --mail-from "info@domain.de" --mail-rcpt "support@easysoftware.de" -u "info@domain.de:pw" -k --anyauth --trace c:\temp\smtp.log --trace-time
 ```
 
+# Rückfrage von E-Mailprogramm bei Versand
+
+Erscheint diese Rückfrage (hier von Outlook):
+
+<img width="847" height="258" alt="image" src="https://github.com/user-attachments/assets/1d565dd8-bee9-484e-b494-ca8b57b1f177" />
+
+und man möchte die Meldung weghaben, muss man beim betreffenden Kunden eine Einstellungsänderung vornehmen. F4-Ändern -> F4-3. Seite -> F7-Optionen und E-Mail anzeigen aktiveren.
+
 # Spezielles Problem wegen IPv4 und IPv6 Prioritäten wegen Auto-Ip-Adresse:
 
 Das Problem äußert sich z. B. dadurch:
