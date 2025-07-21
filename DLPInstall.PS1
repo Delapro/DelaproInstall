@@ -2941,7 +2941,7 @@ Function Install-Thunderbird {
 		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\",
 		[switch]$Force,
-		[Validateset('139.0', '138.0.2', '137.0.2', '128.9.2esr', '128.7.1esr', '128.7.0esr', '128.6.0esr', '128.5.2esr', '128.4.3esr', '128.4.2esr', '128.4.0esr', '128.3.3esr', '128.3.0esr', '128.2.3esr', '128.1.1esr', '128.0.1esr', '115.13.0', '115.12.2', '115.12.1', '115.11.1', '115.11.0', '115.10.1', '115.9.0', '115.8.1', '115.8.0', '115.7.0', '115.6.1', '115.6.0', '115.5.1', '115.4.3', '115.4.2', '115.4.1', '115.3.3', '115.3.2', '115.3.0', '115.2.3', '115.2.2', '115.2.1', '115.2.0', '115.1.0', '102.15.1', '91.13.1', "78.14.0", "68.12.0", "60.9.1")]
+		[Validateset('140.0.1esr', '139.0.2', '139.0.1', '139.0', '138.0.2', '137.0.2', '128.9.2esr', '128.7.1esr', '128.7.0esr', '128.6.0esr', '128.5.2esr', '128.4.3esr', '128.4.2esr', '128.4.0esr', '128.3.3esr', '128.3.0esr', '128.2.3esr', '128.1.1esr', '128.0.1esr', '115.13.0', '115.12.2', '115.12.1', '115.11.1', '115.11.0', '115.10.1', '115.9.0', '115.8.1', '115.8.0', '115.7.0', '115.6.1', '115.6.0', '115.5.1', '115.4.3', '115.4.2', '115.4.1', '115.3.3', '115.3.2', '115.3.0', '115.2.3', '115.2.2', '115.2.1', '115.2.0', '115.1.0', '102.15.1', '91.13.1', "78.14.0", "68.12.0", "60.9.1")]
 		[string[]]$Version,
 		[validateset("win32", "win64")]
 		[string]$Platform="win32"
@@ -2954,7 +2954,7 @@ Function Install-Thunderbird {
 	# z. B. 60.50.0 unter: https://ftp.mozilla.org/pub/thunderbird/releases/60.5.0/win32/de/
 	If ($null -eq $Version) {
 		# aktuelle Version
-		$tbVersion = '139.0'  # evtl. mal umstellen auf (Get-Variable "Version").Attributes.ValidValues[0]? Aber Achtung wegen Set-ScriptMode...
+		$tbVersion = '140.0.1esr'  # evtl. mal umstellen auf (Get-Variable "Version").Attributes.ValidValues[0]? Aber Achtung wegen Set-ScriptMode...
 		$downloadUrlBase = "https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion"
 	} else {
 		$tbVersion = $Version
