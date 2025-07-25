@@ -4,6 +4,10 @@
 
 Direkter Download zum Check: https://aka.ms/GetPCHealthCheckApp
 
+## Von BIOS auf UEFI umstellen
+
+Umstellung ohne Windows-Neuinstallation: https://woshub.com/change-legacy-bios-to-uefi-windows/
+
 ## TPM
 Benötigt TPM 2.0.
 
