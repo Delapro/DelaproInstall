@@ -1983,7 +1983,7 @@ Function Configure-eDocPrintProDelapro {
 
 	# abklären, ob die Util-Methode besser ist anstatt Rename:
 	# C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDocPrintProUtil.EXE /AddPrinter /Printer="$($ESFFile)" /Driver="eDocPrintPro" /Silent
-	Start-Process -Wait "C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDocPrintProUtil.EXE" -ArgumentList "/AddPrinter", '/Printer="$($ESFFile)"', '/Driver="eDocPrintPro"', '/ProfilePath="C:\ProgramData\eDocPrintPro\$($ESFFile).ESFX"', "/Silent"
+	Start-Process -Wait "C:\Program Files\Common Files\MAYComputer\eDocPrintPro\eDocPrintProUtil.EXE" -ArgumentList "/AddPrinter", "/Printer=`"$($ESFFile)`"", '/Driver="eDocPrintPro"', "/ProfilePath=`"C:\ProgramData\eDocPrintPro\$($ESFFile).ESFX`"", "/Silent"
 	# WENN der Aufruf hier hängen bleibt, dann liegt es an fehlenden LOKALEN Adminrechten!!
 	# Rename-Printer -Name eDocPrintPro -NewName DelaproPDF
 	# durch Aufruf von eDocPrintProUtil.EXE sind zwei Druckertreiber vorhanden, deshalb den Standard eDocPrintPro löschen
