@@ -1792,6 +1792,8 @@ Measure-RvoObfuscation -Url 'https://raw.githubusercontent.com/Delapro/DelaproIn
 
 ```
 
+Kann nun direkt mittels GithubAction ausgeführt werden: https://github.com/Delapro/DelaproInstall/actions/workflows/ObfuscationScore.yaml
+
 ## Windows App(lication) Control und Hardening
 
 Windows App Control: https://learn.microsoft.com/en-us/powershell/scripting/security/app-control/how-app-control-works?view=powershell-7.4
