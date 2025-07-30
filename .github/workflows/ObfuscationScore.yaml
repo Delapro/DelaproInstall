@@ -31,7 +31,7 @@ jobs:
         env:
           Platform: ${{ matrix.platform }}
         run: |
-          Install-Module Revoke-Obfuscation
+          Install-Module Revoke-Obfuscation -Force
           Import-Module Revoke-Obfuscation
           # Obfuscation-Score ermitteln
           Measure-RvoObfuscation -Url 'https://raw.githubusercontent.com/Delapro/DelaproInstall/master/DLPInstall.PS1' -Verbose | Select Obf*, Hash
