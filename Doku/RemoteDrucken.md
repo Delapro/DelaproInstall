@@ -1,9 +1,18 @@
 # Kommerzielle Varianten
 
-Teamviewer https://www.teamviewer.com/de/global/support/knowledge-base/teamviewer-classic/remote-control/in-session-features/use-remote-printing/
+## Teamviewer
+Anleitung: https://www.teamviewer.com/de/global/support/knowledge-base/teamviewer-classic/remote-control/in-session-features/use-remote-printing/
 
+Es wird ein XPS-Druckertreiber mit Typ V4 eingerichtet, ist dem NUL: Port zugeordnet. Der Name des Druckers lautet "Teamviewer Benutzername (Teamviewer-ID)". Dieser Treiber steht dann bei einer Remotesitzung zur Verfügung. Wird dieser beim Druck ausgewählt erscheint nach den Druckvorgang ein weiterer Dialog von Teamviewer wo man dann festlegen kann auf welchem lokalen Drucker der Druck dann erfolgen soll.
+
+Die manuelle Installation des Teamviewer-Druckertreibers findet über die Einstellungen->Erweitert->Erweiterte Netzwerkeinstellungen statt.
+
+Bei Problemen: https://www.teamviewer.com/de/global/support/knowledge-base/teamviewer-classic/troubleshooting/troubleshoot-remote-printing/
+
+## AnyDesk
 Anydesk https://support.anydesk.com/knowledge/remote-print
 
+## Rustdesk
 RustDesk momentan Dez 2024 nicht möglich.
 
 # Variante über RDP
