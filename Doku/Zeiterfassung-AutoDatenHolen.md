@@ -38,7 +38,7 @@ Start-Process -FilePath "powershell.exe" -ArgumentList "-ExecutionPolicy Bypass 
 $DLPPath\WEGO\TerminalDatenHolen.ps1
 ```Powershell
 $logPath = "C:\Delapro\WEGO\TerminalDatenHolen.log"
-$timestamp = Get-Date -Format "dd-MM-yyyy HH:mm:ss"
+$timestamp = Get-Date -Format "dd.MM.yyyy HH:mm:ss"
 Add-Content -Path $logPath -Value "$($timestamp): Skript gestartet"
 Add-Content -Path $logPath -Value "$($timestamp):   Daten vom Terminal holen"
 CALL WEGO2DLP.BAT
