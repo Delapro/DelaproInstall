@@ -56,7 +56,8 @@ Einrichtungsfunktionen
 function Register-TerminalDatenHolen {
     $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-ExecutionPolicy Bypass -File C:\Delapro\WEGO\TerminalDatenHolenCaller.ps1"
     $trigger = New-ScheduledTaskTrigger -Daily -At 3am
-    Register-ScheduledTask -TaskName "TerminalDatenHolenTask" -TaskPath '\easy\' -Action $action -Trigger $trigger -User "$env:USERNAME" -RunLevel Limited
+    $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit ([timespan]::FromHours(2))
+    Register-ScheduledTask -TaskName "TerminalDatenHolenTask" -TaskPath '\easy\' -Action $action -Trigger $trigger -User "$env:USERNAME" -RunLevel Limited -Setting $settings
 }
 ```
 
@@ -74,6 +75,8 @@ function Get-TerminalDatenHolenLastRunStatus {
         | Select-Object -First 1
     return $events
 }
+
+Unregister-ScheduledTask -TaskName "TerminalDatenHolenTask" -TaskPath '\easy\' 
 ```
 
 Aufgabenplanung aufrufen: <CODE>taskschd</CODE>.
