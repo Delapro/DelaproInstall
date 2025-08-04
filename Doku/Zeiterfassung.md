@@ -10,7 +10,7 @@
 - [Technikerbarcodes aus Zeiterfassung drucken](#technikerbarcodes-aus-zeiterfassung-drucken)
 - [Benötigte Dateien rein von der Zeiterfassung](#benötigte-dateien-rein-von-der-zeiterfassung)
 - [Zum temporären Testen von Zeitdaten die in einem anderen Verzeichnis liegen](#zum-temporären-testen-von-zeitdaten-die-in-einem-anderen-verzeichnis-liegen)
-- [Daten vom Terminal automatisch holen](zeiterfassung-autodatenholen.md)
+- [Daten vom Terminal automatisch holen](Zeiterfassung-AutoDatenHolen.md)
 
 ## Ausgabe von hinterlegten Kommentaren
 
