@@ -54,13 +54,9 @@ Add-Content -Path $logPath -Value "$($timestamp): Skript beendet"
 Einrichtungsfunktionen
 ```Powershell
 function Register-TerminalDatenHolen {
-    $action = New-ScheduledTaskAction -Execute "powershell.exe" `
-              -Argument "-ExecutionPolicy Bypass -File C:\Delapro\WEGO\TerminalDatenHolenCaller.ps1"
+    $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-ExecutionPolicy Bypass -File C:\Delapro\WEGO\TerminalDatenHolenCaller.ps1"
     $trigger = New-ScheduledTaskTrigger -Daily -At 3am
-    $trigger.DaysOfWeek = "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"
-
-    Register-ScheduledTask -TaskName "TerminalDatenHolenTask" -TaskPath '\easy\' `
-        -Action $action -Trigger $trigger -User "$env:USERNAME" -RunLevel LeastPrivilege
+    Register-ScheduledTask -TaskName "TerminalDatenHolenTask" -TaskPath '\easy\' -Action $action -Trigger $trigger -User "$env:USERNAME" -RunLevel Limited
 }
 ```
 
@@ -79,3 +75,6 @@ function Get-TerminalDatenHolenLastRunStatus {
     return $events
 }
 ```
+
+Aufgabenplanung aufrufen: <CODE>taskschd</CODE>.
+
