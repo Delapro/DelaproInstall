@@ -136,7 +136,7 @@ Bei Änderungen erfolgt immer eine Rückfrage, z. B. so:
 Zeit-Datum-Einstellungen:
 ![image](https://github.com/Delapro/DelaproInstall/assets/16536936/ab154139-0b95-4d0a-a00c-6503c54b0acd)
 
-Eine Besonderheit hat es noch mit dem Button "Exit to CE" auf sich, dieser fragt wiederum nach einem Passwort, das ist per Default 67890, bzw. was bei Parameter 100 definiert wurde.
+Eine Besonderheit hat es noch mit dem Button "Exit to CE" auf sich, dieser fragt wiederum nach einem Passwort, das ist per Default 67890, bzw. was bei Parameter 100 definiert wurde. Um den CE-Desktop wieder zu verlassen am einfachsten eine Commandline aufmachen und restart eingeben.
 
 ## Technikerbarcodes aus Zeiterfassung drucken
 Um Technikerbarcodes zu drucken, geht man in der Zeiterfassung in der Technikerverwaltung auf das Barcodemenü und wählt Drucken aus. Die ausgewählte Liste bzw. der gewählte Präfix spielt aktuell keine Rolle, bzw. es kann in TecBarco darauf reagiert werden. Die ausgewählte Liste wird als Parameter Art durchgereicht. D.h. Art="Tech.-Liste(1)@Zeiterf.(2)@Zeiterf. klein(3)@VIP-Cards(4)". Bei den Parametern wird auch der Präfix (Menüpunkt taucht nur in der Zeiterfassung auf!) durchgereicht. D.h. Präfix="Zeiterfassung(1)@Technikererfassung(2)". Man braucht einen XML-Druckertreiber mit Version 7 gesetzt. Barcodedruck muss aktiviert sein. Dann kann man REP-Pfad auf .\XML2021Def\REPS setzen. Damit alles funktioniert müssen TecBarco.LST und TecBarco.REP in den entsprechenden Verzeichnissen vorhanden sein. Siehe auch Verzeichnis [TecBarco](TecBarco).
