@@ -145,7 +145,7 @@ Um Technikerbarcodes zu drucken, geht man in der Zeiterfassung in der Technikerv
 # Anzahl der Dateien
 (dir tage*,woch*,zei*,tech*,tecz*,tecr*,wego*,dlp_main.ini,feiert*).length
 # oder gleich Archiv erzeugen, erstellt Zeitdaten.zip
-dir tage*,woch*,zei*,tech*,tecz*,tecr*,wego*,dlp_main.ini,feiert*|Compress-Archive -DestinationPath Zeitdaten
+dir tage*,woch*,zei*,tech*,tecz*,tecr*,wego*,dlp_main.ini,feiert*|Compress-Archive -DestinationPath "Zeitdaten-$(get-date -format 'yyyy-MM-dd')"
 ```
 
 ## Zum temporären Testen von Zeitdaten die in einem anderen Verzeichnis liegen
