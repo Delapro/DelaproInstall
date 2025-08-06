@@ -10,6 +10,8 @@ Eine Softneustart kann man z. B. mit <CODE>%E{14}K{255}</CODE> auslösen, wobei 
 
 Mittels <CODE>%SText</CODE> kann man Text auf dem Terminal an der aktuellen Position ausgeben. Die Position kann mittels <CODE>%S@0,0</CODE> in die linke obere Ecke gesetz werden.
 
+Mittels <CODE>%S{12}</CODE> kann man ein quasi Formfeed auslösen was einem Löschen des Bildschirms entspricht und wieder die Standardeinstellung aktiviert. {12} muss über den Ziffernblock mit 0, 1, 2 eingegeben werden.
+
 Die Message <CODE>CFG 97</CODE> gibt den Inhalt des Parameters 97 zurück. Das ist in der Regel der zuletzt eingelesene RFID-Code. Mittels <CODE>CFG 97 999999</CODE> wird 999999 als neuer Wert gesetzt.
 
 Mittels <CODE>DIR</CODE> können die Dateien vom Terminal aufgelistet werden. Mittels <CODE>TYPE \<Dateiname></CODE> kann der Dateiinhalt ausgegeben werden.
