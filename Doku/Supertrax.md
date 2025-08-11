@@ -23,3 +23,58 @@ Mittels <CODE>OFFLINE</CODE> kann man es wieder reaktivieren.
 Die Hintergrundgrafik mit dem easy-Logo wird ausgegeben durch <CODE>BMP desktop.bmp 0 0</CODE>. Man sieht das es richtig ist wenn man die Positionswerte verändert von 0 0 auf z. B. 10 10.
 
 Obige Befehle funktionieren nur über das Message Feld. Man kann mittels dem Command-Feld die im Handuch unter Punk 7.5 festgelegten Ethernet Konfigurationen abfragen. So kann man mittels X Informationen über die aktuellebn IP-Einstellungen bekommen.
+
+## NAMEN
+
+Es gibt eine <CODE>NAMEN</CODE>-Datei, wenn man sie hochlädt sollte sie <CODE>NAMEN.N000.txf</CODE> heißen. Diese kann direkt ins <CODE>\Flash Disk\Ultrax\Trax</CODE>-Verzeichnis per FTP hochgeladen werden. Diese Datei kann beliebige Namenszuordnungen zu einzelnen Kartennummern haben.
+
+Hier ein Beispiel, wie eine Zeile generiert werden kann, dabei werden noch ein paar Besonderheiten integriert:
+```Powershell
+$rfid='999999'
+$Techniker='Benutzer, Test'
+$Zeile2='zweite Zeile'
+$Zeile3='dritte Zeile'  # Ausgabe in kleinem Font!
+$rgb=@(240,0,0)
+$FarbeRot="$($rgb[0]),$($rgb[1]),$($rgb[2]),"
+# die genauen Parameter und Möglichkeiten sind im Supertrax-Handbuch unter 7.11 beschrieben
+"$($rfid) $($Techniker)|$([char]24)R$($Zeile2)|$([char]24)=010$([char]24)R$([char]25)$FarbeRot$($Zeile3)`r`n"|Set-Content NAMEN.n000.txf
+```
+Kleine Erklärung: <CODE>$([char]24)</CODE>leitet ein Formatierungszeichen ein, wobei <CODE>$([char]24)R</CODE> die Zeile horizontal zentriert, während <CODE>$([char]24)=010</CODE> den Zeichensatz auf die Schriftgröße 10 reduziert. <CODE>$([char]25)$FarbeRot$</CODE> sorgt für eine Farbausgabe in diesem Fall rot.
+
+**HINWEIS:** Leider geht die dritte Zeile momentan verloren wenn Farbangaben eingebunden werden.
+
+Zum automatischen Hochladen der Datei kann man FTP verwenden, z. B. so, als script.ftp:
+
+**`script.ftp`**
+```ftp
+open <IP-Adresse Terminal>
+<Benutzer>
+<Password>
+cd "Flash Disk\Ultrax\Trax"
+send NAMEN.n000.txf
+quit
+```
+
+Mittels <CODE>ftp -s:script.ftp</CODE> kann man das Script ausführen und die NAMEN-Datei hochladen.
+
+## Emulieren von Buchungen
+
+Zum emulieren von Buchungen, kann man folgendes Script verwenden:
+**`PROC_T`**
+```
+@ Ich bin PROC_T, und mich löst man über "CFG 128 n" aus (z.B. n=2 für 2 Sekunden)
+@%KAusweisnummerÿ
+@%E
+@QR
+```
+Im Source siehts so aus:
+```
+@ Ich bin PROC_T, und mich löst man über "CFG 128 n" aus (z.B. n=2 für 2 Sekunden)
+@%KAusweisnummer{255}   ;ersetzen Sie "12345678901234" durch Ihre gewünschte Kartennummer
+@%E{14}
+@QR
+```
+
+Wird die Datei hochgeladen, muss sie ins Verzeichnis <CODE>\Flash Disk\Ultrax\Trax</CODE> aber mit dem Namen <CODE>PROC_T.n000.txf</CODE>.
+
+**PROC_T** wird immer dann aufgerufen, wenn Parameter 128 auf 1 oder höher gesetzt wird, wobei 1 die Anzahl der Sekunden ist, die gewartet wird, bevor PROC_T ausgeführt wird.
