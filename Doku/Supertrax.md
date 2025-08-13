@@ -57,7 +57,7 @@ quit
 
 Mittels <CODE>ftp -s:script.ftp</CODE> kann man das Script ausführen und die NAMEN-Datei hochladen.
 
-## Emulieren von Buchungen
+## Emulieren von Buchungen über PROC_T
 
 Zum emulieren von Buchungen, kann man folgendes Script verwenden:
 **`PROC_T`**
@@ -78,3 +78,21 @@ Im Source siehts so aus:
 Wird die Datei hochgeladen, muss sie ins Verzeichnis <CODE>\Flash Disk\Ultrax\Trax</CODE> aber mit dem Namen <CODE>PROC_T.n000.txf</CODE>.
 
 **PROC_T** wird immer dann aufgerufen, wenn Parameter 128 auf 1 oder höher gesetzt wird, wobei 1 die Anzahl der Sekunden ist, die gewartet wird, bevor PROC_T ausgeführt wird.
+
+Man kann die PROC_T auch ganz einfach mittels Powershell-Script anpassen
+```Powershell
+$pt=get-content .\PROC_T
+$karte='999999'
+$pt -replace 'Ausweisnummer', $karte | Set-Content .\PROC_T.n000.txf
+# TODO: PROC_T.n000.txf hochladen
+```
+
+z.B. so:
+```ftp
+open <IP-Adresse Terminal>
+<Benutzer>
+<Password>
+cd "Flash Disk\Ultrax\Trax"
+send PROC_T.n000.txf
+quit
+```
