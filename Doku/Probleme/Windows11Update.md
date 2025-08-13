@@ -59,3 +59,10 @@ https://www.heise.de/news/AMD-fTPM-Bug-Einige-Mainboard-Hersteller-verteilen-den
 https://learn.microsoft.com/de-de/windows/whats-new/extended-security-updates
 
 Das wesentliche kurz zusammengefasst: https://www.deskmodder.de/blog/2025/06/25/windows-10-esu-fuer-privat-in-drei-varianten-von-kostenlos-bis-30-dollar/
+
+## Board-Hersteller Hinweise
+
+### ASUS
+
+https://www.asus.com/microsite/motherboard/ASUS-motherboards-Win11-ready/. Zeigt eine Seite von der PTT (Intel) bzw. TPM (AMD)-Bild aus dem BIOS-Setup zu sehen ist und alle Boards die unterstützt werden aufgeführt sind. Mit Links zu BIOS-Updates.
+
