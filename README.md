@@ -550,6 +550,13 @@ Function Backup-Delapro {
 				Write-Verbose "Starte $tarEXE"
 				Write-Verbose "Kommandozeilenlänge: $(($Argumente|ForEach-Object{$l=0}{$l+=$_.length;$l+=1}{$l}) + $tarEXE.Length)"
 				Start-Process -Wait $tarEXE -ArgumentList $Argumente -WorkingDirectory $DelaproPath -NoNewWindow
+				If ($LastExitCode -ne 0) {
+					If ((Get-Volume -DriveLetter ([System.IO.Path]::GetPathRoot('C:\Delacdx').Substring(0,1))).SizeRemaining -eq 0) {
+						Write-Error "Auf dem Sicherungslaufwerk $([System.IO.Path]::GetPathRoot($BackupPath)) ist kein Speicherplatz mehr verfügbar!"
+					} else {
+						Write-Error "Fehler beim Schreiben in $BackupPath!"
+					}
+				}
 			} else {
 				Write-Error "tar.exe konnte nicht gefunden werden (benötigt Win >= 1803)"
 			}
