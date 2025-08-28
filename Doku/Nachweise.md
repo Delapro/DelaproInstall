@@ -209,6 +209,6 @@ KZBVEXP Export\PDF\KZBVMetaMail.XML /DEBUG
 ECHO %DATE% %TIME% Fertig >> %LOGFILE%
 ```
 
-## Probleme bei Materialnachweisdruck über DLPWinImage und Schachtzuordnungen
+## Probleme bei Materialnachweisdruck über DLPWinImage mit WINMATDR.BAT und Schachtzuordnungen
 
 Hat man Schächte fest zugeordnet muss man den Edit-Modus im Imageverzeichnis (C:\DELAPRO\IMAGE) aufrufen. Dort unter Projekt die Seitenausgabe bzw. Zuordnung explizit auf den passenden Drucker mit dem passenden Schacht legen.
