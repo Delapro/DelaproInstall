@@ -3144,7 +3144,14 @@ Function New-IsoFile
     [ValidateSet('CDR','CDRW','DVDRAM','DVDPLUSR','DVDPLUSRW','DVDPLUSR_DUALLAYER','DVDDASHR','DVDDASHRW','DVDDASHR_DUALLAYER','DISK','DVDPLUSRW_DUALLAYER','BDR','BDRE')][string] $Media = 'DVDPLUSRW_DUALLAYER', 
     [string]$Title = (Get-Date).ToString("yyyyMMdd-HHmmss.ffff"),  
     [switch]$Force, 
-    [parameter(ParameterSetName='Clipboard')][switch]$FromClipboard 
+    [parameter(ParameterSetName='Clipboard')][switch]$FromClipboard,
+	[int][ValidateScript({
+        $allowed = 1,3,5,7  # 1=ISO9660, 3=ISO9660+Joliet, 5=ISO9660+UDF, 7=ISO9660+Joliet+UDF
+        if ($allowed -notcontains $_) {
+            throw "Ungültiger Wert '$($_)'. Erlaubt sind: 1 (ISO9660), 3 (ISO9660+Joliet), 5 (ISO9660+UDF), 7 (ISO9660+Joliet+UDF)."
+        }
+        $true
+    })]$FileSystem = -1
   ) 
   
   Begin {  
@@ -3183,8 +3190,11 @@ public class ISOFile
   
     Write-Verbose -Message "Selected media type is $Media with value $($MediaType.IndexOf($Media))"
     ($Image = New-Object -com IMAPI2FS.MsftFileSystemImage -Property @{VolumeName=$Title}).ChooseImageDefaultsForMediaType($MediaType.IndexOf($Media)) 
-   
-    if (!($Target = New-Item -Path $Path -ItemType File -Force:$Force -ErrorAction SilentlyContinue)) { Write-Error -Message "Cannot create file $Path. Use -Force parameter to overwrite if the target file already exists."; break } 
+	If ($FileSystem -ne -1) {
+	    $Image.FileSystemsToCreate = $FileSystem     #   0 = None, 1 = ISO9660, 2 = Joliet, 4 = UDF, Kombinationen möglich
+	}
+
+	if (!($Target = New-Item -Path $Path -ItemType File -Force:$Force -ErrorAction SilentlyContinue)) { Write-Error -Message "Cannot create file $Path. Use -Force parameter to overwrite if the target file already exists."; break } 
   }  
   
   Process { 
