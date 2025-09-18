@@ -5,12 +5,13 @@ Diese Dokumentation beschreibt das Verhalten von Sammel-E-Mails. Sammel-E-Mails 
 Hier wird nur die Konstellation ab Ende August 2025 beschrieben!
 
 ### Einrichtung
-Der Ausdruck muss über XGHOSTPDF.BAT und XXGHOSTPDF.BAT bzw. XGHOSTPDFX.BAT und XXGHOSTPDFX.BAT erfolgen. Nur diese Druckertreibervariante unterstützt das Sammeln. Die Druckertreiberversion im Delapro muss auf Version 8 gestellt werden und Druckerjob-Sammeltreiber muss auf Ja gestellt sein.
+Der Ausdruck muss über XGHOSTPDF.BAT und XXGHOSTPDF.BAT bzw. XGHOSTPDFX.BAT und XXGHOSTPDFX.BAT erfolgen. Nur diese Druckertreibervariante unterstützt das Sammeln. Die Druckertreiberversion im Delapro muss auf Version 8 gestellt werden und Druckerjob-Sammeltreiber muss auf Ja gestellt sein. In <Code>DLP_Main.ini</Code> muss <Code>SammelDruckAktiv</Code> bei der Sektion <Code>Modus</Code> auf <Code>1</Code> gesetzt werden.
 
 Nochmal kurz zusammengefasst:
 - XGHOSTPDF.BAT oder XGHOSTPDFX.BAT
 - Druckertreiberversion 8
 - Druckerjob-Sammeltreiber auf Ja
+- DLP_MAIN.INI [Modus] SammelDruckAktiv=1 setzen
 
 ### Benutzeraufklärung
 Bei Netzwerkversion zu beachten:
