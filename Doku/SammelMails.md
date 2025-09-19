@@ -24,6 +24,11 @@ Die Sammel-E-Mails müssen immer in einem Zug durchgeführt werden. D. h. es dar
 ## Einstellungen
 Beim Kunden sind die Einstellungen für PDF-Dateien entscheidend, XML-Datei-Einstellungen werden für den E-Mailversand ignoriert. D.h. die Einstellung über ZIP-Verschlüsselung sowie Betreffzeile werden von den PDF-Export-E-Mail-Einstellungen herangezogen. Auch wird eine speziell hinterlegte KZBV-XML-E-Mailadresse ignoriert weil die Standard-E-Mailadresse bzw. Rechnungs-E-Mailadresse verwendet wird.
 
+## weitere Einstellungen die im Zusammenhang sinnvoll sind
+
+[Nachweis immer ausgeben](Nachweise.md#nachweis-immer-drucken)
+[Nachweis immer neu erstellen](Nachweise.md#nachweis-immer-neu-erstellen)
+
 ## Anwendung
 Man kann bei einem Druckertreiber der das Sammeln unterstützt wenn man den Treiber bei der Ausgabe ausgewählt hat mit F7-Optionen aufrufen. Momentan kann man hier gezielt das Sammeln ausschalten. Bei einem Druckertreiber der kein Sammeln unterstützt erscheint die Möglichkeit zum Sammeln nicht bzw.erscheint der Dialog mit F7-Optionen nicht.
 
