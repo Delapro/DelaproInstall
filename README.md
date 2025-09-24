@@ -916,8 +916,12 @@ $pdf = (Get-ChildItem "$DLPPath\Laser\*.pdf" | Out-GridView -Title "PDF zum Konv
 If (Test-Path $pdf) {
     $bmp = $pdf.Replace(".pdf", ".bmp")
     Convert-PDF -PDFFile $pdf -OutFile $bmp -Verbose
-    # Falls man noch was ändern müsste, oder einfach zum Anschauen
-    Start-Process $bmp -Verb Edit
+	If (Test-Path $env:SystemRoot\System32\mspaint.exe) {
+      # Falls man noch was ändern müsste, oder einfach zum Anschauen
+      Start-Process $bmp -Verb Edit
+	} else {
+		Write-Host -Foregroundcolor Green "MSPaint fehlt! Falls nötig mittels 'Add-WindowsCapability -Online -Name Microsoft.Paint~~~~0.0.1.0' nachinstallieren."
+	}
 }
 
 # bei Problemen mit Rand bzw. Schnittmarken hilft evtl.
