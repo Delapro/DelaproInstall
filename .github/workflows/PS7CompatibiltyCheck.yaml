@@ -27,7 +27,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
-      - name: PC7CompatibilityRules laden und auf Repository anwenden
+      - name: PS7CompatibilityRules laden und auf Repository anwenden
         env:
           Platform: ${{ matrix.platform }}
         run: |
