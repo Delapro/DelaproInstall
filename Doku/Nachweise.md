@@ -172,6 +172,8 @@ IF %2 == "DELAPROMAIL" (
 REM PAUSE
 ```
 
+Für <Code>WaitMailJob.VBS</Code> siehe [doku/probleme/dlpxmlpr-leere-seiten-bei-email.md]
+
 Zusätzlich muss noch .\LASER\XXGhostPDF.BAT mit diesem Inhalt vorhanden sein:
 
 ```
