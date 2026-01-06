@@ -5,10 +5,14 @@ CURL verwenden zum Testen
 
 curl smtp://mail.server.de:25 -v --mail-from "info@domain.de" --mail-rcpt "support@easysoftware.de" -u "info@domain.de:pw" -k --anyauth --trace c:\temp\smtp.log --trace-time
 # oder
-curl smtps://mail.server.de:587 -v --mail-from "info@domain.de" --mail-rcpt "support@easysoftware.de" -u "info@domain.de:pw" -k --anyauth --trace c:\temp\smtp.log --trace-time
+curl --url smtp://mail.server.de:587 -v --mail-from "info@domain.de" --mail-rcpt "support@easysoftware.de" --user "info@domain.de:pw" --ssl-reqd --trace c:\temp\smtp.log --trace-time
+curl --urlsmtps://mail.server.de:587 -v --mail-from "info@domain.de" --mail-rcpt "support@easysoftware.de" --user "info@domain.de:pw" -k --anyauth --trace c:\temp\smtp.log --trace-time
 # oder SSL --ssl-reqd 
 curl smtps://mail.server.de:465 -v --mail-from "info@domain.de" --mail-rcpt "support@easysoftware.de" -u "info@domain.de:pw" -k --anyauth --trace c:\temp\smtp.log --trace-time
 ```
+
+# Outlook Ports einsehen
+Bei aktuellen Outlookversionen sieht man nur noch einen modernen Dialog mit rudimentären Angaben für die E-Maileinstellungen wenn man innerhalb Outlooks die Kontoeinstellungen anschaut. Wenn man tiefergehenden Einblick benötigt muss man über die Systemsteuerung und Mail gehen, dort werden dann wieder die alten Dialoge mit mehr Informationen angezeigt.
 
 # Rückfrage von E-Mailprogramm bei Versand
 
