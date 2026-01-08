@@ -9,6 +9,36 @@ curl --url smtp://mail.server.de:587 -v --mail-from "info@domain.de" --mail-rcpt
 curl --urlsmtps://mail.server.de:587 -v --mail-from "info@domain.de" --mail-rcpt "support@easysoftware.de" --user "info@domain.de:pw" -k --anyauth --trace c:\temp\smtp.log --trace-time
 # oder SSL --ssl-reqd 
 curl smtps://mail.server.de:465 -v --mail-from "info@domain.de" --mail-rcpt "support@easysoftware.de" -u "info@domain.de:pw" -k --anyauth --trace c:\temp\smtp.log --trace-time
+
+# mittels Powershell Port testen ist auch manchmal nicht verkehrt:
+PS > Test-NetConnection -ComputerName smtp.t-online.de -Port 587
+WARNUNG: TCP connect to (194.25.134.24 : 587) failed
+WARNUNG: TCP connect to (194.25.134.89 : 587) failed
+WARNUNG: TCP connect to (194.25.134.25 : 587) failed
+PS > ping smtp.t-online.de
+
+Ping wird ausgeführt für fwdallmx.t-online.com [194.25.134.24] mit 32 Bytes Daten:
+Antwort von 194.25.134.24: Bytes=32 Zeit=19ms TTL=246
+Antwort von 194.25.134.24: Bytes=32 Zeit=22ms TTL=246
+Antwort von 194.25.134.24: Bytes=32 Zeit=20ms TTL=246
+Antwort von 194.25.134.24: Bytes=32 Zeit=20ms TTL=246
+
+PS > Test-NetConnection -ComputerName securesmtp.t-online.de -Port 587
+ComputerName     : securesmtp.t-online.de
+RemoteAddress    : 194.25.134.110
+RemotePort       : 587
+InterfaceAlias   : WLAN
+SourceAddress    : 192.168.178.40
+TcpTestSucceeded : True
+
+PS > Test-NetConnection -ComputerName imap.t-online.de -Port 993
+ComputerName     : imap.t-online.de
+RemoteAddress    : 194.25.134.50
+RemotePort       : 993
+InterfaceAlias   : WLAN
+SourceAddress    : 192.168.178.40
+TcpTestSucceeded : True
+
 ```
 
 # Outlook Ports einsehen
