@@ -1,5 +1,9 @@
 # Bildarchivierung
 
+## App für Bilder von Handy
+
+https://www.photosync-app.com/de/index
+
 ## Pfad für Bilderverzeichnis festlegen
 
 Der Pfad wird in <Code>DLP_Main.INI</Code> unter der Sektion \[Dateien\] beim Eintrag Bilder gesetzt. Zusätzlich muss der Pfad noch in der <Code>Grabber.BAT</Code> angepasst werden.
