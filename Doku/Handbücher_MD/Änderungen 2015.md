@@ -2,23 +2,21 @@
 Stand 02.01.2015
 
 # Inhalt
-Delapro Update - 2015 ............................................................................................................................ 1
-Einleitung ................................................................................................................................................. 4
-Vorbereitung ............................................................................................................................................ 5
-Was ist zu tun bei Problemen oder Fragen? ....................................................................................... 5
-Kopieren der Daten ins Spielprogramm ............................................................................................... 5
-Datensicherung durchführen................................................................................................................ 5
-Update einspielen ................................................................................................................................ 5
-Preisupdate einspielen ......................................................................................................................... 6
-Nutzung des Spielprogramms ............................................................................................................. 6
-Aktivierung ........................................................................................................................................... 6
-Änderungen ............................................................................................................................................. 7
-Aktualisierung der BEL II-2014 ............................................................................................................ 7
-BEL Erläuterungstexte ......................................................................................................................... 7
-Aktualisierung auf Version 4.4 der KZBV-XML-Schnittstelle ............................................................... 7
-BEL II -2006 nach BEL II-2014 Konverter ........................................................................................... 8
-TLS Transportoptionen beim E-Mailversand per SMTP ...................................................................... 8
-
+- [Delapro Update - 2015](#delapro-update-2015)
+- [Einleitung](#einleitung)
+- [Was ist zu tun bei Problemen oder Fragen?](#was-ist-zu-tun-bei-problemen-oder-fragen)
+- [Kopieren der Daten ins Spielprogramm](#kopieren-der-daten-ins-spielprogramm)
+- [Datensicherung durchführen](#datensicherung-durchführen)
+- [Update einspielen](#update-einspielen)
+- [Preisupdate einspielen](#preisupdate-einspielen)
+- [Nutzung des Spielprogramms](#nutzung-des-spielprogramms)
+- [Aktivierung](#aktivierung)
+- [Änderungen](#änderungen)
+- [Aktualisierung der BEL II-2014](#aktualisierung-der-bel-ii-2014)
+- [BEL Erläuterungstexte](#bel-erläuterungstexte)
+- [Aktualisierung auf Version 4.4 der KZBV-XML-Schnittstelle](#aktualisierung-auf-version-44-der-kzbv-xml-schnittstelle)
+- [BEL II -2006 nach BEL II-2014 Konverter](#bel-ii--2006-nach-bel-ii-2014-konverter)
+- [TLS Transportoptionen beim E-Mailversand per SMTP](#tls-transportoptionen-beim-e-mailversand-per-smtp)
 
 # Einleitung
 Dieses Dokument beschreibt die Änderungen die im Delapro fürs Jahr 2015 vorgenommen wurden. Dabei geht es primär um die Ergänzung der Position 380-5 BELII „Gebogene Auflage“ und deren Implikationen.
