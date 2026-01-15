@@ -123,14 +123,14 @@ Beim Schreiben einer Rechnung, wenn Sie sich bei den Auftragspositionen befinden
 Ebenso können Sie in der Leistungsverwaltung bei der gewünschten Leistung **F8-Text** drücken und bekommen wieder den Erläuterungstext angezeigt.
 Sie können den Text auch abändern bzw. durch eigene Hinweise ergänzen. Etwaige Änderungen am Text speichern Sie mittels **F10-Speichern**.
 
-<img width="889" height="420" alt="image" src="https://github.com/user-attachments/assets/4392e6eb-7106-434a-beef-5ba2160b81d5" />
+<img width="889" height="420" alt="Delapro BEL- und BEB-Erläuterungstexte" src="https://github.com/user-attachments/assets/4392e6eb-7106-434a-beef-5ba2160b81d5" />
 
 ## Aktualisierung auf Version 4.4 der KZBV-XML-Schnittstelle
 Mit diesem Update wird automatisch beim Einspielen die Version 4.4 aktiv. Man kann zwar im Einzelfall beim Kunden eine ältere Version einstellen, aber dies wird nicht empfohlen. Die Version 4.4 ist ab 1.1.2015 vorgeschrieben, denn nur mit dieser können alle BEL II – Positionen sauber abgerechnet werden.
 
 Da die Struktur der KZBV-XML-Dateien für 2015 nur um die Position 380-5 BELII ergänzt wurde, sind keine speziellen Dinge wie z. B. zur Abrechnung von Altfällen zu beachten. Beim Update einspielen wurde automatisch der neue Schalter KZBV-XML-Version für manuelle oder automatische Versionsauswahl hinzugefügt. Automatisch ist nun die Vorgabe, es sei denn, Sie hätten einen Grund manuell auf eine ältere Version zurückzugreifen. Automatisch bedeutet, dass ausgehend vom Liefertermin des Auftrags die für den Zeitpunkt gültige KZBV-XML-Version verwendet wird.
 
-<img width="736" height="275" alt="image" src="https://github.com/user-attachments/assets/6538a1e5-5122-4608-b09f-2f3d357e3a8b" />
+<img width="736" height="275" alt="Delapro XML-Einstellungen mit automatischer und manueller Auswahl der KZBV-XML-Version 4.2 bis 4.4" src="https://github.com/user-attachments/assets/6538a1e5-5122-4608-b09f-2f3d357e3a8b" />
 
 > **Hinweis**
 >
@@ -142,7 +142,7 @@ Beim Anlegen von neuen Kunden gelten nun andere Vorgaben. Die Versionauswahl der
 ## BEL II -2006 nach BEL II-2014 Konverter
 Wenn Sie einen alten Auftrag kopieren oder einen Jumbo einspielen, welcher noch den Kriterien der BEL II – 2006 entspricht, können Sie z. B. so einen Hinweis erhalten:
 
-<img width="526" height="275" alt="image" src="https://github.com/user-attachments/assets/e75986bd-2189-45c4-8759-029c1149bb07" />
+<img width="526" height="275" alt="Meldungsfenster des BEL-II-Konverters beim Umwandeln von BELII-2006 nach BELII-2014" src="https://github.com/user-attachments/assets/e75986bd-2189-45c4-8759-029c1149bb07" />
 
 Der BEL II –Konverter wurde überarbeitet, damit die Position 380 5 BELII wieder aus alten Aufträgen kopiert werden kann. D. h. der BEL II-Konverter wird bei der Position 380 5 BELII nicht aktiv.
 
@@ -161,11 +161,11 @@ Sie können die Einstellungen beim **Export der KZBV-XML-Daten** aufrufen, wenn 
 
 Wenn Ihre E-Mailversandoptionen diese Einstellung haben:
 
-<img width="281" height="144" alt="image" src="https://github.com/user-attachments/assets/3e1f4b8a-5497-49c9-981a-71cf14828717" />
+<img width="281" height="144" alt="Delapro Mailversand-Einstellungen mit Auswahl des Versandproviders SMTP" src="https://github.com/user-attachments/assets/3e1f4b8a-5497-49c9-981a-71cf14828717" />
 
 Dann finden Sie im Register SMTP-Server weitere Optionen für die sichere Verbindung:
 
-<img width="752" height="544" alt="image" src="https://github.com/user-attachments/assets/25b93779-ae28-4142-8f9c-e01a17402c12" />
+<img width="752" height="544" alt="SMTP-Servereinstellungen in Delapro mit Auswahl der sicheren Verbindung per TLS oder SSL" src="https://github.com/user-attachments/assets/25b93779-ae28-4142-8f9c-e01a17402c12" />
 
 Nutzen Sie diese Optionen, wenn es Probleme mit den Einstellungen beim E-Mailversand geben sollte. Diese können manchmal helfen, das Problem einzukreisen. Da es sich leider um ein sehr technisches Thema handelt, zeigen Sie am besten Ihrem IT-Betreuer die Möglichkeit.
 
