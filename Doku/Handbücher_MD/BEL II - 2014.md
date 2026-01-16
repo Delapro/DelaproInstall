@@ -20,24 +20,6 @@ Stand 01.04.2014
   - [BEL Erläuterungstexte](#bel-erläuterungstexte)
   - [Aktualisierung auf Version 4.3 der KZBV-XML-Schnittstelle](#aktualisierung-auf-version-43-der-kzbv-xml-schnittstelle)
   - [BEL II -2006 nach BEL II-2014 Konverter](#bel-ii--2006-nach-bel-ii-2014-konverter)
-  - - 
-Delapro BEL II - 2014 .............................................................................................................................. 1
-Einleitung ................................................................................................................................................. 4
-Weitere Infos ........................................................................................................................................... 4
-Vorbereitung ............................................................................................................................................ 5
-Was ist zu tun bei Problemen oder Fragen? ....................................................................................... 5
-Kopieren der Daten ins Spielprogramm ............................................................................................... 5
-Datensicherung durchführen................................................................................................................ 5
-Update einspielen ................................................................................................................................ 5
-Nutzung des Spielprogramms ............................................................................................................. 6
-Aktivierung ............................................................................................................................................... 6
-Einspielen der neuen BEL II-2014 Positionen ..................................................................................... 6
-Preisupdate „Preise April 2014.1“ einspielen....................................................................................... 7
-Anwendung .............................................................................................................................................. 8
-Abrechnen von Altfällen ....................................................................................................................... 8
-BEL Erläuterungstexte ......................................................................................................................... 8
-Aktualisierung auf Version 4.3 der KZBV-XML-Schnittstelle ............................................................... 8
-BEL II -2006 nach BEL II-2014 Konverter ........................................................................................... 9
 
 # Einleitung
 Dieses Dokument beschreibt die Änderungen die im Delapro für 2014 vorgenommen wurden. Es geht vor allem um die Änderungen für die BEL II – 2014.
@@ -132,9 +114,6 @@ Bei der Aktivierung werden dann die neuen Positionen hinzugefügt. Dabei werden 
 
 In der nachfolgenden Tabelle können Sie sehen, was sich effektiv verändert hat:
 
-
-
-
 | Position | Bemerkung |
 |----------|-----------|
 | 202-1 bis 202-4 | werden zur Position 202-1 zusammengefasst |
@@ -166,7 +145,7 @@ Der eigentliche Vorgang wird wie im Punkt „Update einspielen“ beschrieben du
 # Anwendung
 ## Abrechnen von Altfällen 
 
-> ** Ganz wichtig – unbedingt merken!**
+> **Ganz wichtig – unbedingt merken!**
 >
 > Damit Sie die neue BEL II – 2014 parallel zur alten BEL II - 2006 einsetzen können, wurde die „alte“ BEL I wieder reaktiviert.
 >
