@@ -16,9 +16,9 @@ Stand 01.04.2014
   - [Einspielen der neuen BEL II-2014-Positionen](#einspielen-der-neuen-bel-ii-2014-positionen)
   - [Preisupdate "Preise April 2014.1" einspielen](#preisupdate-preise-april-20141-einspielen)
 - [Anwendung](#anwendung)
-  - [Abrechnen von Altfällen](#abrechnen-von-altfaellen)
+  - [Abrechnen von Altfällen](#abrechnen-von-altfällen)
   - [BEL Erläuterungstexte](#bel-erläuterungstexte)
-  - [Aktualisierung auf Version 4.4 der KZBV-XML-Schnittstelle](#aktualisierung-auf-version-44-der-kzbv-xml-schnittstelle)
+  - [Aktualisierung auf Version 4.3 der KZBV-XML-Schnittstelle](#aktualisierung-auf-version-43-der-kzbv-xml-schnittstelle)
   - [BEL II -2006 nach BEL II-2014 Konverter](#bel-ii--2006-nach-bel-ii-2014-konverter)
   - - 
 Delapro BEL II - 2014 .............................................................................................................................. 1
