@@ -1036,6 +1036,10 @@ New-PowershellScriptShortcut -Path C:\temp\test.ps1 -LinkFilename TestOhneAdmin 
 control userpasswords2
 ```
 
+## Anonymisieren von Log-Daten
+
+Einfach <CODE>Convert-ClipboardToDummyDomain</CODE> aufrufen. Ersetzt Hostnamen und E-Mailadressen.
+
 ## Installation von zusätzlichen Programmen
 
 ### Teamviewer - easy Quicksupport
