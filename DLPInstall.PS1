@@ -6726,7 +6726,66 @@ Function New-Password {
     Add-Type -AssemblyName 'System.Web'
     return [System.Web.Security.Membership]::GeneratePassword($length, $NonAlphanumericChars)
 }
- 
+
+# Zum Anonymisieren aus Protokollausgaben, holt sich die aktuelle Windows Zwischenablage ersetzt host.domain.tld und user@domain.tld durch dummy.tld und user, gibt das Ergebnis auf der Konsole aus und kopiert es wieder in die Zwischenablage
+Function Convert-ClipboardToDummyDomain {
+    [CmdletBinding()]
+    param (
+        # Dummy-Werte
+        [string]$DummyDomain = "dummy.tld",
+        [string]$DummyUser   = "user",
+
+        # Für klassische Windows-Anmeldung: DOMAIN\user (NetBIOS)
+        # Default: erster Label-Teil aus DummyDomain, in UPPERCASE (z.B. dummy.tld -> DUMMY)
+        [string]$DummyWinDomain = $null
+    )
+
+    if (-not $DummyWinDomain) {
+        $DummyWinDomain = (($DummyDomain -split '\.')[0]).ToUpperInvariant()
+    }
+
+    Write-Host "Lese Inhalt der Zwischenablage..." -ForegroundColor Cyan
+    $clipboardText = Get-Clipboard -Raw
+
+    if ([string]::IsNullOrWhiteSpace($clipboardText)) {
+        Write-Warning "Zwischenablage ist leer oder enthält keinen Text."
+        return
+    }
+
+    $originalText = $clipboardText
+
+    # 0. Windows DOMAIN\user ersetzen (aber NICHT C:\... und NICHT \\server\share)
+    # - (?<![A-Za-z]:)  verhindert Match direkt nach Laufwerksbuchstaben (C:\)
+    # - (?<!\\)         verhindert Match direkt nach einem Backslash (UNC-Pfade \\...)
+    # - Domain-Teil: 1..15 Zeichen (typisch NetBIOS), User-Teil: "klassisch" breit gefasst
+    $clipboardText = $clipboardText -replace `
+        '(?<![A-Za-z]:)(?<!\\)\b([A-Za-z0-9][A-Za-z0-9._-]{0,14})\\([A-Za-z0-9][A-Za-z0-9._-]{0,63})\b', `
+        "$DummyWinDomain\$DummyUser"
+
+    # 1. E-Mail-Adressen ersetzen: user@firma.tld -> user@dummy.tld (Dummy-User + Dummy-Domain)
+    $clipboardText = $clipboardText -replace `
+        '\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b', `
+        "$DummyUser@$DummyDomain"
+
+    # 2. Hostnamen / FQDNs ersetzen: exch.firma.tld -> exch.dummy.tld
+    $clipboardText = $clipboardText -replace `
+        '\b([a-zA-Z0-9-]+)\.[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b', `
+        "`$1.$DummyDomain"
+
+    # Ergebnis zurück in die Zwischenablage
+    Set-Clipboard -Value $clipboardText
+
+    Write-Host "Ersetzung abgeschlossen." -ForegroundColor Green
+    Write-Host "----------------------------------------"
+    Write-Host "Vorher:" -ForegroundColor Yellow
+    Write-Host $originalText
+    Write-Host "----------------------------------------"
+    Write-Host "Nachher:" -ForegroundColor Yellow
+    Write-Host $clipboardText
+    Write-Host "----------------------------------------"
+    Write-Host "Ergebnis wurde in die Zwischenablage zurückgeschrieben." -ForegroundColor Green
+}
+
 
 #Read more: https://www.sharepointdiary.com/2020/04/powershell-generate-random-password.html#ixzz8BrA66ijd
 #If($PSReadlineActive) {
