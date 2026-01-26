@@ -1111,39 +1111,39 @@ Function Import-OldDLPVersion {
 	Copy-Item -Path "$SourcePath\*.*" $DestinationPath -Force -Verbose 4>&1 | Tee-Object DelaproDatenübernahme.log | Out-Host
 
 	Write-Verbose "Laser-Verzeichnis einspielen"
-	Copy-Item -Path "$SourcePath\Laser\DlpWin.M*" "$($DestinationPath)\Laser" -Force -Verbose 4>&1 | Tee-Object DelaproDatenübernahme.log | Out-Host
-	Copy-Item -Path "$SourcePath\Laser\DlpWinIn.M*" "$($DestinationPath)\Laser" -Force -Verbose 4>&1 | Tee-Object DelaproDatenübernahme.log | Out-Host
-	Copy-Item -Path "$SourcePath\Laser\*.BMP" "$($DestinationPath)\Laser" -Force -Verbose 4>&1 | Tee-Object DelaproDatenübernahme.log | Out-Host
-	Copy-Item -Path "$SourcePath\Laser\*.JPG" "$($DestinationPath)\Laser" -Force -Verbose 4>&1 | Tee-Object DelaproDatenübernahme.log | Out-Host
-	Copy-Item -Path "$SourcePath\Laser\*.PDF" "$($DestinationPath)\Laser" -Force -Verbose 4>&1 | Tee-Object DelaproDatenübernahme.log | Out-Host
+	Copy-Item -Path "$SourcePath\Laser\DlpWin.M*" "$($DestinationPath)\Laser" -Force -Verbose 4>&1 | Tee-Object DelaproDatenübernahme.log -Append | Out-Host
+	Copy-Item -Path "$SourcePath\Laser\DlpWinIn.M*" "$($DestinationPath)\Laser" -Force -Verbose 4>&1 | Tee-Object DelaproDatenübernahme.log -Append | Out-Host
+	Copy-Item -Path "$SourcePath\Laser\*.BMP" "$($DestinationPath)\Laser" -Force -Verbose 4>&1 | Tee-Object DelaproDatenübernahme.log -Append | Out-Host
+	Copy-Item -Path "$SourcePath\Laser\*.JPG" "$($DestinationPath)\Laser" -Force -Verbose 4>&1 | Tee-Object DelaproDatenübernahme.log -Append | Out-Host
+	Copy-Item -Path "$SourcePath\Laser\*.PDF" "$($DestinationPath)\Laser" -Force -Verbose 4>&1 | Tee-Object DelaproDatenübernahme.log -Append | Out-Host
 	# LASER\GHOSTPDFX.BAT usw. koperen
-	Copy-Item -Path "$SourcePath\Laser\*GHOST*.BAT" "$($DestinationPath)\Laser" -Force -Verbose 4>&1 | Tee-Object DelaproDatenübernahme.log | Out-Host
+	Copy-Item -Path "$SourcePath\Laser\*GHOST*.BAT" "$($DestinationPath)\Laser" -Force -Verbose 4>&1 | Tee-Object DelaproDatenübernahme.log -Append | Out-Host
 	# TODO: Abklären, ob noch die Ghostversion aktualisiert werden muss: Ja muss!
 
 	Write-Verbose "Windowsformulare vorhanden?"
 	If (Test-Path "$SourcePath\XMLForm") {
-		Copy-Item -Path "$SourcePath\XMLForm" "$($DestinationPath)" -Force -Verbose -Recurse 4>&1 | Tee-Object DelaproDatenübernahme.log | Out-Host
+		Copy-Item -Path "$SourcePath\XMLForm" "$($DestinationPath)" -Force -Verbose -Recurse 4>&1 | Tee-Object DelaproDatenübernahme.log -Append | Out-Host
 	}
 
 	Write-Verbose "Bildarchivierung vorhanden?"
 	If (Test-Path "$SourcePath\Image") {
-		Copy-Item -Path "$SourcePath\Image" "$($DestinationPath)" -Force -Verbose -Recurse 4>&1 | Tee-Object DelaproDatenübernahme.log | Out-Host
+		Copy-Item -Path "$SourcePath\Image" "$($DestinationPath)" -Force -Verbose -Recurse 4>&1 | Tee-Object DelaproDatenübernahme.log -Append | Out-Host
 	}
 
 	Write-Verbose "Bilder vorhanden?"
 	If (Test-Path "$SourcePath\Bilder") {
-		Copy-Item -Path "$SourcePath\Bilder" "$($DestinationPath)" -Force -Verbose -Recurse 4>&1 | Tee-Object DelaproDatenübernahme.log | Out-Host
+		Copy-Item -Path "$SourcePath\Bilder" "$($DestinationPath)" -Force -Verbose -Recurse 4>&1 | Tee-Object DelaproDatenübernahme.log -Append | Out-Host
 	}
 
 	Write-Verbose "Zertifikatmodul vorhanden?"
 	If (Test-Path "$SourcePath\Zert") {
-		Copy-Item -Path "$SourcePath\Zert" "$($DestinationPath)" -Force -Verbose -Recurse 4>&1 | Tee-Object DelaproDatenübernahme.log | Out-Host
+		Copy-Item -Path "$SourcePath\Zert" "$($DestinationPath)" -Force -Verbose -Recurse 4>&1 | Tee-Object DelaproDatenübernahme.log -Append | Out-Host
 	}
 
 	Write-Verbose "Marker für neue Formulare vorhanden?"
 	If (-Not (Test-Path "$SourcePath\ExtFSup.BAT")) {
 		Remove-Item -Path "$($DestinationPath)\ExtFSup.BAT"
-		Write-Verbose "Marker für neue Formulare in $DestinationPath gelöscht" 4>&1 | Tee-Object DelaproDatenübernahme.log | Out-Host
+		Write-Verbose "Marker für neue Formulare in $DestinationPath gelöscht" 4>&1 | Tee-Object DelaproDatenübernahme.log -Append | Out-Host
 	}
 
 	# TODO: Zeiterfassung
