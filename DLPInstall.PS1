@@ -5552,6 +5552,141 @@ Function Invoke-DesktopRefresh {
  	$Type::SHChangeNotify($SHCNE_ASSOCCHANGED, $SHCNF_FLUSH, [IntPtr]::Zero, [IntPtr]::Zero)
 }
 
+# benötigt Adminrechte, zum Abfragen der Microsoft 2023 SecureBoot-Zertifikate
+function Get-UefiX509FromSecureBootDb {
+  [CmdletBinding()]
+  param(
+    [ValidateSet("PK","KEK","db")]
+    [string]$Name
+  )
+
+  # Helper: safe slice -> byte[]
+  function Get-ByteSlice([byte[]]$arr, [int]$start, [int]$len) {
+    if ($start -lt 0 -or $len -lt 0 -or ($start + $len) -gt $arr.Length) { return $null }
+    $out = New-Object byte[] $len
+    [Array]::Copy($arr, $start, $out, 0, $len)
+    return $out
+  }
+
+  $bytes = (Get-SecureBootUEFI -Name $Name).Bytes
+  if (-not $bytes -or $bytes.Length -lt 28) { return @() }
+
+  $EFI_CERT_X509_GUID = [Guid]"a5c059a1-94e4-4aa7-87b5-ab155c2bf072"  # X509 signature list type
+
+  $results = New-Object System.Collections.Generic.List[object]
+  $pos = 0
+
+  while ($pos -lt $bytes.Length) {
+
+    # Need at least EFI_SIGNATURE_LIST header (16 + 4 + 4 + 4 = 28)
+    if ($pos + 28 -gt $bytes.Length) { break }
+
+    $sigTypeBytes = Get-ByteSlice $bytes $pos 16
+    if (-not $sigTypeBytes) { break }
+    $sigType = [Guid]::new([byte[]]$sigTypeBytes)
+    $pos += 16
+
+    $sigListSize   = [BitConverter]::ToUInt32($bytes, $pos); $pos += 4
+    $sigHeaderSize = [BitConverter]::ToUInt32($bytes, $pos); $pos += 4
+    $sigSize       = [BitConverter]::ToUInt32($bytes, $pos); $pos += 4
+
+    # Basic sanity
+    if ($sigListSize -lt 28) { break }
+
+    $listStart = $pos - 28
+    $listEnd   = $listStart + [int]$sigListSize
+    if ($listEnd -gt $bytes.Length) { break }
+
+    # Skip SignatureHeader
+    $sigDataPos = $pos + [int]$sigHeaderSize
+    if ($sigDataPos -gt $listEnd) {
+      $pos = $listEnd
+      continue
+    }
+
+    if ($sigType -eq $EFI_CERT_X509_GUID) {
+      # Each entry: SignatureOwner (16) + cert (sigSize-16)
+      while ($sigDataPos + [int]$sigSize -le $listEnd) {
+
+        $ownerBytes = Get-ByteSlice $bytes $sigDataPos 16
+        if (-not $ownerBytes) { break }
+        $owner = [Guid]::new([byte[]]$ownerBytes)
+
+        $certLen = [int]$sigSize - 16
+        if ($certLen -le 0) { break }
+
+        $certDer = Get-ByteSlice $bytes ($sigDataPos + 16) $certLen
+        if ($certDer) {
+          try {
+            $cert = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new([byte[]]$certDer)
+            $results.Add([pscustomobject]@{
+              Store      = $Name
+              Subject    = $cert.Subject
+              Issuer     = $cert.Issuer
+              NotAfter   = $cert.NotAfter
+              Thumbprint = $cert.Thumbprint
+              OwnerGuid  = $owner
+            }) | Out-Null
+          } catch {
+            # ignore parse errors (can happen with padding/odd entries)
+          }
+        }
+
+        $sigDataPos += [int]$sigSize
+      }
+    }
+
+    # Move to next list
+    $pos = $listEnd
+  }
+
+  $results
+}
+
+# Status der SecureBoot-Zertifikate abfragen wegen wahrscheinlich Umstellung von Microsoft in 2026 auf die 2023er Zertifikate
+Function Test-SecureBoot2026Readiness {
+  [CmdletBinding()]
+  param()
+
+  $result = [ordered]@{
+    ComputerName    = $env:COMPUTERNAME
+    SecureBootOn    = $null
+    Has2023InKEK    = $false
+    Has2023Indb     = $false
+    Notes           = @()
+  }
+
+  try {
+    $result.SecureBootOn = [bool](Confirm-SecureBootUEFI)
+  } catch {
+    $result.SecureBootOn = $false
+    $result.Notes += "Confirm-SecureBootUEFI failed (not UEFI / not admin / cmdlet unavailable)"
+  }
+
+  # Wenn SB aus ist, ist "2026 Secure Boot readiness" erstmal irrelevant,
+  # aber für deine Governance kann es trotzdem interessant sein:
+  # wir prüfen trotzdem, sofern Get-SecureBootUEFI funktioniert.
+
+  try {
+    $kek = Get-UefiX509FromSecureBootDb -Name KEK
+    $db  = Get-UefiX509FromSecureBootDb -Name db
+
+    # Heuristik: Suche nach 2023 in Subject/Issuer ODER NotAfter deutlich > 2026
+    $result.Has2023InKEK = @($kek | Where-Object {
+      $_.Subject -match '2023' -or $_.Issuer -match '2023'
+    }).Count -gt 0
+
+    $result.Has2023Indb  = @($db | Where-Object {
+      $_.Subject -match '2023' -or $_.Issuer -match '2023'
+    }).Count -gt 0
+
+  } catch {
+    $result.Notes += "Failed reading Secure Boot UEFI variables (Get-SecureBootUEFI)"
+  }
+
+  [pscustomobject]$result
+}
+
 # ermittelt das Standard-E-Mailprogramm
 Function Get-DefaultEMailClient {
 	[CmdletBinding()]
