@@ -1426,6 +1426,18 @@ siehe auch: https://github.com/joaovitoriasilva/uninstall-office-msi-install-cli
 Get-HotFix  | Sort-Object -Property InstalledOn –Descending
 ```
 
+### Probleme mit fehlenden SecureBoot Microsoft Zertifikaten von 2023 ermitteln
+
+Weitere Infos: 
+https://support.microsoft.com/en-us/topic/secure-boot-certificate-updates-guidance-for-it-professionals-and-organizations-e2b43f9f-b424-42df-bc6a-8476db65ab2f
+https://techcommunity.microsoft.com/blog/windows-itpro-blog/secure-boot-playbook-for-certificates-expiring-in-2026/4469235
+https://support.microsoft.com/en-us/topic/windows-secure-boot-certificate-expiration-and-ca-updates-7ff40d33-95dc-4c3c-8725-a9b95457578e
+https://aka.ms/GetSecureBoot
+
+```Powershell
+Test-SecureBoot2026Readiness
+```
+
 ### Probleme mit Virenscannern
 
 siehe hier: [Probleme mit Virenscannern](https://github.com/Delapro/DelaproInstall/wiki/Probleme-mit-Virenscannern)
