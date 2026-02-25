@@ -154,7 +154,7 @@ dir tage*,woch*,zei*,tech*,tecz*,tecr*,wego*,dlp_main.ini,feiert*|Compress-Archi
 
 Die zu testenden Zeitdaten liegen in C:\Temp:
 
-> Vorsicht! **Funktioniert noch nicht in allen Situationen!** *.PRN-Dateien müssen im DLP_DEFA-Verzeichnis vorhanden sein. *.REP-Dateien werden vom Startverzeichnis und nicht DLP_DEFA-Verzeichnis verwendet, bzw. DLP_MAIN.INI RepPath beachten! CDX-Dateien? Gegenenfalls neu aufbauen. Test.out-Dateien werden im Startverzeichnis mit einem Byte angelegt und im DLP_DEFA-Verzeichnis nochmal aber mit Inhalt angelegt. Abhängigkeiten, müssen also darauf ausgerichtet werden! Test.Out-Datei mittels <Code>MKLINK Startverzeichnis\test.out DLP_DEFA-Verzeichnis\test.out</Code> verlinken (**benötigt Adminrechte!**). Dann klappts auch ohne extra Anpassungen. DLP_MAIN.INI wird vom Startverzeichnis verwendet! Zum Prüfen ob der Link von Test.out richtig sitzt: <Code>C:\delacdx>dir test.out /A L</Code> es wird dann <Code>25.02.2026  09:29    `<SYMLINK`>      test.out [\temp\Zeitdaten-2026-02-11\test.out]</Code> ausgegeben.
+> Vorsicht! **Funktioniert noch nicht in allen Situationen!** *.PRN-Dateien müssen im DLP_DEFA-Verzeichnis (verwendet bzw. setzt intern SET DEFAULT Path) vorhanden sein. *.REP-Dateien werden vom Startverzeichnis und nicht DLP_DEFA-Verzeichnis verwendet, bzw. DLP_MAIN.INI RepPath beachten! CDX-Dateien? Gegenenfalls neu aufbauen. Test.out-Dateien werden im Startverzeichnis mit einem Byte angelegt und im DLP_DEFA-Verzeichnis nochmal aber mit Inhalt angelegt. Abhängigkeiten, müssen also darauf ausgerichtet werden! Test.Out-Datei mittels <Code>MKLINK Startverzeichnis\test.out DLP_DEFA-Verzeichnis\test.out</Code> verlinken (**benötigt Adminrechte!**). Dann klappts auch ohne extra Anpassungen. DLP_MAIN.INI wird vom Startverzeichnis verwendet! Zum Prüfen ob der Link von Test.out richtig sitzt: <Code>C:\delacdx>dir test.out /A L</Code> es wird dann <Code>25.02.2026  09:29    `<SYMLINK`>      test.out [\temp\Zeitdaten-2026-02-11\test.out]</Code> ausgegeben.
 Die Verlinkung wird durch `<SYMLINK`> deutlich gemacht.
 
 ```Powershell
@@ -163,16 +163,21 @@ $dlpPath='C:\delacdx'  						# Pfad wo die Programmdateien liegen
 $dataPath='C:\temp\Zeitdaten-2026-02-11'	# Pfad wo die Datendateien liegen
 
 # Vorbereitungen
+# Hardlink geht nur im gleichen Volume
+if ((Split-Path $dlpPath -Qualifier) -ne (Split-Path $dataPath -Qualifier)) {
+    throw "Hardlink geht nicht über Laufwerke hinweg. Bitte Symlink/Junction nutzen."
+} 
+
 cd $dlpPath
 If (Test-Path "$($dlpPath)\*.CDX") {Remove-Item "$($dlpPath)\*.CDX"}	# CDX-Dateien im Programmverzeichnis entfernen, dadurch werden sie im Datenverzeichnis neu angelegt
 If (-Not (Test-Path "$($dataPath)\PRINTER*.prn")) {
 	# PRINTER*.PRN-Dateien müssen im Datenverzeichnis vorhanden sein!
 	Copy-Item "$($dlppath)\PRINTER*.prn" "$($dataPath)\" -Verbose
 }
-[System.Environment]::SetEnvironmentVariable('DLP_DEFA', $dataPath)
+[System.Environment]::SetEnvironmentVariable('DLP_DEFA', $dataPath, 'Process') # alternativ zu Process, User oder Machine
 # TEST.OUT muss verlinkt werden damit Druckausgaben möglich sind
 If (-Not (Test-Path "$($dataPath)\test.out")) {"" | Set-Content -Path "$($dataPath)\test.out"}  # test.out muss für MKLINK (New-Item Hardlink) vorhanden sein
-# Hardlink ist noch nicht sicher!
+# Hardlink ist noch nicht sicher (Delapro ignoriert es, deshalb MKLINK benutzen)! Zum Prüfen "fsutil hardlink list" verwenden, sollte beide Pfade von test.out ausgeben
 New-Item -ItemType HardLink -Path "$($dlppath)\test.out" -Target "$($dataPath)\test.out"        # MKLINK Ersatz, benötigt keine Adminrechte
 
 # Zeiterfassung starten
@@ -180,7 +185,7 @@ New-Item -ItemType HardLink -Path "$($dlppath)\test.out" -Target "$($dataPath)\t
 
 # zum Aufheben, verwendet man
 Remove-Item -Path "$($dlppath)\test.out"
-[System.Environment]::SetEnvironmentVariable('DLP_DEFA', '')
+[System.Environment]::SetEnvironmentVariable('DLP_DEFA', '', 'Process')
 ```
 
 ## Programmverteilereintrag um Datum/Uhrzeit auf Terminal zu setzen
