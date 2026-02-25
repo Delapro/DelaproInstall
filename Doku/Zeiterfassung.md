@@ -158,6 +158,8 @@ Die zu testenden Zeitdaten liegen in C:\Temp:
 Die Verlinkung wird durch `<SYMLINK`> deutlich gemacht.
 
 ```Powershell
+# WICHTIG: Benötigt Adminrechte solange SymbolicLink benutzt wird, Hardlink würde ohne auskommen funktioniert aber mit TEST.OUT nicht.
+
 # Pfade setzen
 $dlpPath='C:\delacdx'  						# Pfad wo die Programmdateien liegen
 $dataPath='C:\temp\Zeitdaten-2026-02-11'	# Pfad wo die Datendateien liegen
@@ -177,8 +179,8 @@ If (-Not (Test-Path "$($dataPath)\PRINTER*.prn")) {
 [System.Environment]::SetEnvironmentVariable('DLP_DEFA', $dataPath, 'Process') # alternativ zu Process, User oder Machine
 # TEST.OUT muss verlinkt werden damit Druckausgaben möglich sind
 If (-Not (Test-Path "$($dataPath)\test.out")) {"" | Set-Content -Path "$($dataPath)\test.out"}  # test.out muss für MKLINK (New-Item Hardlink) vorhanden sein
-# Hardlink ist noch nicht sicher (Delapro ignoriert es, deshalb MKLINK benutzen)! Zum Prüfen "fsutil hardlink list" verwenden, sollte beide Pfade von test.out ausgeben
-New-Item -ItemType HardLink -Path "$($dlppath)\test.out" -Target "$($dataPath)\test.out"        # MKLINK Ersatz, benötigt keine Adminrechte
+# Hardlink ist noch nicht sicher (Delapro ignoriert es, deshalb MKLINK benutzen)! Zum Prüfen "fsutil hardlink list test.out" verwenden, sollte beide Pfade von test.out ausgeben
+New-Item -ItemType SymbolicLink -Path "$($dlppath)\test.out" -Target "$($dataPath)\test.out"        # MKLINK Ersatz, benötigt keine Adminrechte (nur bei Hardlink!)
 
 # Zeiterfassung starten
 .\Dlp_Time.exe
