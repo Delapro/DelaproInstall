@@ -154,12 +154,32 @@ dir tage*,woch*,zei*,tech*,tecz*,tecr*,wego*,dlp_main.ini,feiert*|Compress-Archi
 
 Die zu testenden Zeitdaten liegen in C:\Temp:
 
-> Vorsicht! Funktioniert noch nicht in allen Situationen! *.PRN-Dateien müssen im DLP_DEFA-Verzeichnis vorhanden sein. *.REP-Dateien werden vom Startverzeichnis und nicht DLP_DEFA-Verzeichnis verwendet, bzw. DLP_MAIN.INI RepPath beachten! CDX-Dateien? Gegenenfalls neu aufbauen. Test.out-Dateien werden im Startverzeichnis mit einem Byte angelegt und im DLP_DEFA-Verzeichnis nochmal aber mit Inhalt angelegt. Abhängigkeiten, müssen also darauf ausgerichtet werden! Test.Out-Datei mittels MKLINK Startverzeichnis\test.out DLP_DEFA-Verzeichnis\test.out verlinken. Dann klappts auch ohne extra Anpassungen. DLP_MAIN.INI wird vom Startverzeichnis verwendet!
+> Vorsicht! **Funktioniert noch nicht in allen Situationen!** *.PRN-Dateien müssen im DLP_DEFA-Verzeichnis vorhanden sein. *.REP-Dateien werden vom Startverzeichnis und nicht DLP_DEFA-Verzeichnis verwendet, bzw. DLP_MAIN.INI RepPath beachten! CDX-Dateien? Gegenenfalls neu aufbauen. Test.out-Dateien werden im Startverzeichnis mit einem Byte angelegt und im DLP_DEFA-Verzeichnis nochmal aber mit Inhalt angelegt. Abhängigkeiten, müssen also darauf ausgerichtet werden! Test.Out-Datei mittels <Code>MKLINK Startverzeichnis\test.out DLP_DEFA-Verzeichnis\test.out</Code> verlinken (**benötigt Adminrechte!**). Dann klappts auch ohne extra Anpassungen. DLP_MAIN.INI wird vom Startverzeichnis verwendet! Zum Prüfen ob der Link von Test.out richtig sitzt: <Code>C:\delacdx>dir test.out /A L</Code> es wird dann <Code>25.02.2026  09:29    `<SYMLINK`>      test.out [\temp\Zeitdaten-2026-02-11\test.out]</Code> ausgegeben.
+Die Verlinkung wird durch `<SYMLINK`> deutlich gemacht.
 
 ```Powershell
-[System.Environment]::SetEnvironmentVariable('DLP_DEFA', 'C:\temp')
+# Pfade setzen
+$dlpPath='C:\delacdx'  						# Pfad wo die Programmdateien liegen
+$dataPath='C:\temp\Zeitdaten-2026-02-11'	# Pfad wo die Datendateien liegen
+
+# Vorbereitungen
+cd $dlpPath
+If (Test-Path "$($dlpPath)\*.CDX") {Remove-Item "$($dlpPath)\*.CDX"}	# CDX-Dateien im Programmverzeichnis entfernen, dadurch werden sie im Datenverzeichnis neu angelegt
+If (-Not (Test-Path "$($dataPath)\PRINTER*.prn")) {
+	# PRINTER*.PRN-Dateien müssen im Datenverzeichnis vorhanden sein!
+	Copy-Item "$($dlppath)\PRINTER*.prn" "$($dataPath)\" -Verbose
+}
+[System.Environment]::SetEnvironmentVariable('DLP_DEFA', $dataPath)
+# TEST.OUT muss verlinkt werden damit Druckausgaben möglich sind
+If (-Not (Test-Path "$($dataPath)\test.out")) {"" | Set-Content -Path "$($dataPath)\test.out"}  # test.out muss für MKLINK (New-Item Hardlink) vorhanden sein
+# Hardlink ist noch nicht sicher!
+New-Item -ItemType HardLink -Path "$($dlppath)\test.out" -Target "$($dataPath)\test.out"        # MKLINK Ersatz, benötigt keine Adminrechte
+
+# Zeiterfassung starten
 .\Dlp_Time.exe
+
 # zum Aufheben, verwendet man
+Remove-Item -Path "$($dlppath)\test.out"
 [System.Environment]::SetEnvironmentVariable('DLP_DEFA', '')
 ```
 
