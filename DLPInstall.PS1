@@ -5687,6 +5687,279 @@ Function Test-SecureBoot2026Readiness {
   [pscustomobject]$result
 }
 
+# Function zum Check von CodePage-Umstellung von CP437 auf CP850 und welche Dateien davon betroffen sind.
+# Man kann mehrere Verzeichnisse und Dateiextensions angeben, bei -IncludeExamples werden auch gefundene Daten ausgegeben und klar kommentiert. Funktioniert bei REP- und PRG-Dateien.
+#  $rep=Test-Cp437ToCp850Impact -Roots .\ -Patterns *.REP -IncludeExamples| where status -ne OK; $rep
+Function Test-Cp437ToCp850Impact {
+   [CmdletBinding()]
+   param(
+     [Parameter(Mandatory=$true)]
+     [string[]]$Roots,
+
+     [Parameter(Mandatory=$true)]
+     [string[]]$Patterns,
+
+     [int]$MaxDiffLinesPerFile = 5,
+
+     [string]$CsvPath = $null,
+
+     [switch]$IncludeExamples
+   )
+
+   # Strict encodings: we want to know when something can't be represented.
+   $cp437 = [System.Text.Encoding]::GetEncoding(
+     437,
+     [System.Text.EncoderFallback]::ExceptionFallback,
+     [System.Text.DecoderFallback]::ExceptionFallback
+   )
+   $cp850 = [System.Text.Encoding]::GetEncoding(
+     850,
+     [System.Text.EncoderFallback]::ExceptionFallback,
+     [System.Text.DecoderFallback]::ExceptionFallback
+   )
+
+   $results = New-Object System.Collections.Generic.List[object]
+
+   function Get-BomHint([byte[]]$b) {
+     if ($b.Length -ge 3 -and $b[0] -eq 0xEF -and $b[1] -eq 0xBB -and $b[2] -eq 0xBF) { return "UTF-8 BOM (EF BB BF)" }
+     if ($b.Length -ge 2 -and $b[0] -eq 0xFF -and $b[1] -eq 0xFE) { return "UTF-16 LE BOM (FF FE)" }
+     if ($b.Length -ge 2 -and $b[0] -eq 0xFE -and $b[1] -eq 0xFF) { return "UTF-16 BE BOM (FE FF)" }
+     return ""
+   }
+
+   function Get-LineColFromIndex {
+     param(
+       [Parameter(Mandatory=$true)][string]$Text,
+       [Parameter(Mandatory=$true)][int]$Index
+     )
+     if ($Index -lt 0) { $Index = 0 }
+     if ($Index -gt $Text.Length) { $Index = $Text.Length }
+
+     $pre = $Text.Substring(0, $Index)
+     $line = ($pre -split "`r?`n", 0, "RegexMatch").Count # 1-based
+     $lastNl = [Math]::Max($pre.LastIndexOf("`n"), $pre.LastIndexOf("`r"))
+     $col = $Index - ($lastNl + 1) + 1 # 1-based
+     return @($line, $col)
+   }
+
+   function Get-LineAt {
+     param(
+       [Parameter(Mandatory=$true)][string]$Text,
+       [Parameter(Mandatory=$true)][int]$LineNumber
+     )
+     $lines = $Text -split "`r?`n", 0, "RegexMatch"
+     if ($LineNumber -lt 1 -or $LineNumber -gt $lines.Count) { return "" }
+     return $lines[$LineNumber - 1]
+   }
+
+   foreach ($root in $Roots) {
+     $resolved = Resolve-Path -LiteralPath $root -ErrorAction Stop
+     foreach ($item in $resolved) {
+
+       $isFile = Test-Path -LiteralPath $item.Path -PathType Leaf
+       $isDir  = Test-Path -LiteralPath $item.Path -PathType Container
+
+       $files = @()
+
+       if ($isFile) {
+         $name = [System.IO.Path]::GetFileName($item.Path)
+         foreach ($p in $Patterns) {
+           if ($name -like $p) { $files += Get-Item -LiteralPath $item.Path; break }
+         }
+       }
+       elseif ($isDir) {
+         foreach ($p in $Patterns) {
+           $files += Get-ChildItem -LiteralPath $item.Path -Recurse -File -Filter $p -ErrorAction SilentlyContinue
+         }
+         $files = $files | Sort-Object FullName -Unique
+       } else {
+         continue
+       }
+
+       foreach ($f in $files) {
+         $file = $f.FullName
+         $bytes = $null
+
+         try {
+           $bytes = [System.IO.File]::ReadAllBytes($file)
+         } catch {
+           $results.Add([pscustomobject]@{
+             Root      = $item.Path
+             File      = $file
+             Status    = "READ_ERROR"
+             Changed   = $true
+             Note      = $_.Exception.Message
+             Index     = $null
+             Line      = $null
+             Col       = $null
+             BadChar   = $null
+             CodePoint = $null
+             LineText  = ""
+             ChangedLines = $null
+             Examples  = ""
+           })
+           continue
+         }
+
+         $bom = Get-BomHint $bytes
+         $hasNull = ($bytes | Where-Object { $_ -eq 0x00 } | Select-Object -First 1) -ne $null
+         $hints = @()
+         if ($bom) { $hints += $bom }
+         if ($hasNull) { $hints += "Contains NUL bytes (00) -> maybe UTF-16 or binary content" }
+         $hintText = ($hints -join "; ")
+
+         # BEFORE: what CP850 console shows if bytes are printed 1:1
+         $before850 = $cp850.GetString($bytes)
+
+         $as437 = $null
+         try {
+           $as437 = $cp437.GetString($bytes)
+         } catch {
+           $note = "Decode as CP437 failed: $($_.Exception.Message)."
+           if ($hintText) { $note += " Hints: $hintText" }
+
+           $results.Add([pscustomobject]@{
+             Root      = $item.Path
+             File      = $file
+             Status    = "DECODE_CP437_FAIL"
+             Changed   = $true
+             Note      = $note
+             Index     = $null
+             Line      = $null
+             Col       = $null
+             BadChar   = $null
+             CodePoint = $null
+             LineText  = ""
+             ChangedLines = $null
+             Examples  = ""
+           })
+           continue
+         }
+
+         $convertedBytes = $null
+         try {
+           $convertedBytes = $cp850.GetBytes($as437)
+         } catch {
+           $msg = $_.Exception.Message
+           $idx = -1
+           $m = [Regex]::Match($msg, 'at index\s+(\d+)', 'IgnoreCase')
+           if ($m.Success) { $idx = [int]$m.Groups[1].Value }
+
+           $line = $null; $col = $null; $badChar = $null; $codePoint = $null; $lineText = ""
+
+           if ($idx -ge 0 -and $idx -lt $as437.Length) {
+             $badChar = $as437[$idx]
+             $codePoint = "U+{0:X4}" -f ([int][char]$badChar)
+             $lc = Get-LineColFromIndex -Text $as437 -Index $idx
+             $line = $lc[0]; $col = $lc[1]
+             $lineText = Get-LineAt -Text $as437 -LineNumber $line
+           }
+
+           $note = "Encode as CP850 failed: $msg."
+           if ($hintText) { $note += " Hints: $hintText" }
+
+           $results.Add([pscustomobject]@{
+             Root      = $item.Path
+             File      = $file
+             Status    = "ENCODE_CP850_FAIL"
+             Changed   = $true
+             Note      = $note
+             Index     = if ($idx -ge 0) { $idx } else { $null }
+             Line      = $line
+             Col       = $col
+             BadChar   = $badChar
+             CodePoint = $codePoint
+             LineText  = $lineText
+             ChangedLines = $null
+             Examples  = ""
+           })
+           continue
+         }
+
+         # AFTER: what CP850 console would show after conversion
+         $after850 = $cp850.GetString($convertedBytes)
+
+         if ($before850 -ne $after850) {
+           $changedLines = 0
+           $examples = ""
+
+           $beforeLines = $before850 -split "`r?`n", 0, "RegexMatch"
+           $afterLines  = $after850  -split "`r?`n", 0, "RegexMatch"
+           $max = [Math]::Max($beforeLines.Count, $afterLines.Count)
+
+           if ($IncludeExamples) {
+             $samples = New-Object System.Collections.Generic.List[string]
+             for ($i = 0; $i -lt $max; $i++) {
+               $b = if ($i -lt $beforeLines.Count) { $beforeLines[$i] } else { "" }
+               $a = if ($i -lt $afterLines.Count)  { $afterLines[$i] } else { "" }
+               if ($b -ne $a) {
+                 $changedLines++
+                 if ($samples.Count -lt ($MaxDiffLinesPerFile * 3)) {
+                   $samples.Add(("L{0}: BEFORE: {1}" -f ($i + 1), $b))
+                   $samples.Add(("L{0}: AFTER : {1}" -f ($i + 1), $a))
+                   $samples.Add("")
+                 }
+               }
+             }
+             $examples = ($samples -join "`n")
+           } else {
+             for ($i = 0; $i -lt $max; $i++) {
+               $b = if ($i -lt $beforeLines.Count) { $beforeLines[$i] } else { "" }
+               $a = if ($i -lt $afterLines.Count)  { $afterLines[$i] } else { "" }
+               if ($b -ne $a) { $changedLines++ }
+             }
+           }
+
+           $results.Add([pscustomobject]@{
+             Root      = $item.Path
+             File      = $file
+             Status    = "DIFF"
+             Changed   = $true
+             Note      = $hintText
+             Index     = $null
+             Line      = $null
+             Col       = $null
+             BadChar   = $null
+             CodePoint = $null
+             LineText  = ""
+             ChangedLines = $changedLines
+             Examples  = $examples
+           })
+         } else {
+           $results.Add([pscustomobject]@{
+             Root      = $item.Path
+             File      = $file
+             Status    = "OK"
+             Changed   = $false
+             Note      = $hintText
+             Index     = $null
+             Line      = $null
+             Col       = $null
+             BadChar   = $null
+             CodePoint = $null
+             LineText  = ""
+             ChangedLines = 0
+             Examples  = ""
+           })
+         }
+       }
+     }
+   }
+
+   if ($CsvPath) {
+     $dir = Split-Path -Parent $CsvPath
+     if ($dir -and -not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir | Out-Null }
+
+     $results |
+       Select-Object Root, File, Status, ChangedLines, Index, Line, Col, BadChar, CodePoint, Note |
+       Export-Csv -NoTypeInformation -Encoding UTF8 -Path $CsvPath
+   }
+
+   $results | Group-Object Status | Sort-Object Name | Select-Object Name, Count | Format-Table -AutoSize
+   return $results
+}
+
+
 # ermittelt das Standard-E-Mailprogramm
 Function Get-DefaultEMailClient {
 	[CmdletBinding()]
