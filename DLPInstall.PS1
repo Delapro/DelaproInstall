@@ -5494,6 +5494,169 @@ Function Set-SystemRestore {
 
 }
 
+# Öffnet den Explorer und markiert automatisch die übergebenen Dateien (müssen natürlich vorhanden sein)
+Function Select-InExplorer {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory, Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Alias('FullName', 'LiteralPath')]
+        [string[]]$Path
+    )
+
+    begin {
+        if (-not ([System.Management.Automation.PSTypeName]'ExplorerSelection.Native').Type) {
+            $source = @"
+using System;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Collections.Generic;
+
+namespace ExplorerSelection
+{
+    internal static class Native
+    {
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
+        internal static extern int SHParseDisplayName(
+            string name,
+            IntPtr pbc,
+            out IntPtr ppidl,
+            uint sfgaoIn,
+            out uint psfgaoOut);
+
+        [DllImport("shell32.dll")]
+        internal static extern int SHOpenFolderAndSelectItems(
+            IntPtr pidlFolder,
+            uint cidl,
+            IntPtr[] apidl,
+            uint dwFlags);
+
+        [DllImport("shell32.dll")]
+        internal static extern IntPtr ILFindLastID(IntPtr pidl);
+
+        [DllImport("shell32.dll")]
+        internal static extern IntPtr ILClone(IntPtr pidl);
+
+        [DllImport("ole32.dll")]
+        internal static extern void CoTaskMemFree(IntPtr pv);
+    }
+
+    public static class ExplorerSelector
+    {
+        public static void SelectFiles(string[] inputPaths)
+        {
+            if (inputPaths == null || inputPaths.Length == 0)
+                throw new ArgumentException("Es wurden keine Pfade übergeben.");
+
+            var fullPaths = new List<string>();
+            foreach (var p in inputPaths)
+            {
+                if (string.IsNullOrWhiteSpace(p))
+                    continue;
+
+                string full = Path.GetFullPath(p);
+
+                if (!File.Exists(full) && !Directory.Exists(full))
+                    throw new FileNotFoundException("Pfad nicht gefunden: " + full, full);
+
+                fullPaths.Add(full);
+            }
+
+            if (fullPaths.Count == 0)
+                throw new ArgumentException("Es wurden keine gültigen Pfade übergeben.");
+
+            string folder = Path.GetDirectoryName(fullPaths[0]);
+            foreach (var p in fullPaths)
+            {
+                string currentFolder = Path.GetDirectoryName(p);
+                if (!string.Equals(folder, currentFolder, StringComparison.OrdinalIgnoreCase))
+                    throw new ArgumentException("Alle Elemente müssen im selben Ordner liegen.");
+            }
+
+            IntPtr folderPidl = IntPtr.Zero;
+            var absolutePidls = new List<IntPtr>();
+            var relativePidls = new List<IntPtr>();
+
+            try
+            {
+                uint attrs;
+                int hr = Native.SHParseDisplayName(folder, IntPtr.Zero, out folderPidl, 0, out attrs);
+                if (hr != 0 || folderPidl == IntPtr.Zero)
+                    Marshal.ThrowExceptionForHR(hr);
+
+                foreach (var path in fullPaths)
+                {
+                    IntPtr absPidl;
+                    hr = Native.SHParseDisplayName(path, IntPtr.Zero, out absPidl, 0, out attrs);
+                    if (hr != 0 || absPidl == IntPtr.Zero)
+                        Marshal.ThrowExceptionForHR(hr);
+
+                    absolutePidls.Add(absPidl);
+
+                    IntPtr child = Native.ILFindLastID(absPidl);
+                    if (child == IntPtr.Zero)
+                        throw new InvalidOperationException("ILFindLastID hat keinen gültigen PIDL geliefert: " + path);
+
+                    IntPtr childClone = Native.ILClone(child);
+                    if (childClone == IntPtr.Zero)
+                        throw new InvalidOperationException("ILClone ist fehlgeschlagen: " + path);
+
+                    relativePidls.Add(childClone);
+                }
+
+                hr = Native.SHOpenFolderAndSelectItems(
+                    folderPidl,
+                    (uint)relativePidls.Count,
+                    relativePidls.ToArray(),
+                    0);
+
+                if (hr != 0)
+                    Marshal.ThrowExceptionForHR(hr);
+            }
+            finally
+            {
+                foreach (var pidl in relativePidls)
+                {
+                    if (pidl != IntPtr.Zero)
+                        Native.CoTaskMemFree(pidl);
+                }
+
+                foreach (var pidl in absolutePidls)
+                {
+                    if (pidl != IntPtr.Zero)
+                        Native.CoTaskMemFree(pidl);
+                }
+
+                if (folderPidl != IntPtr.Zero)
+                    Native.CoTaskMemFree(folderPidl);
+            }
+        }
+    }
+}
+"@
+
+            Add-Type -TypeDefinition $source -Language CSharp
+        }
+
+        $collected = New-Object System.Collections.Generic.List[string]
+    }
+
+    process {
+        foreach ($p in $Path) {
+            if (-not [string]::IsNullOrWhiteSpace($p)) {
+                $collected.Add($p)
+            }
+        }
+    }
+
+    end {
+        if ($collected.Count -eq 0) {
+            throw "Keine Pfade übergeben."
+        }
+
+        [ExplorerSelection.ExplorerSelector]::SelectFiles($collected.ToArray())
+    }
+}
+
 Function Remove-JetztBesprechen {
 	[CmdletBinding()]
 	#[OutputType([System.Boolean])]
