@@ -1805,6 +1805,15 @@ Show-eDocPrintProLogFile
 Install-DebWin -Verbose
 ```
 
+## Sonstiges
+
+### Dateien im Explorer markieren
+
+Markiert automatisch die übergebenen Dateien im Windows-Explorer:
+```Powershell
+Select-InExplorer <Dateien>
+```
+
 ## Script-Tests
 
 ### Obfuscation Score ermitteln
