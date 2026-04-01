@@ -41,11 +41,11 @@ jobs:
       
         shell: pwsh
         run: |
-          # 32-Bit Unterstützung simulieren
-          function Test-64Bit { return [bool]::Parse("${{ matrix.is64 }}") }
           C:
           cd \temp
           . .\easy.PS1
+          # 32-Bit Unterstützung simulieren, "false" kommt von matrix.is64 vom yaml-File
+          function Test-64Bit { return [bool]::Parse("${{ matrix.is64 }}") }
           Install-7Zip -Verbose
 
           "Validierung"
