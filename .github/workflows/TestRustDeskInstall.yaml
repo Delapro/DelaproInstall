@@ -46,4 +46,4 @@ jobs:
           Install-RustDesk -Verbose
 
           # Prüfen
-          dir "\Program Files\rust*" -recurse
+          dir "\Program Files\rust*" -recurse -Directory
