@@ -41,7 +41,7 @@ jobs:
           . .\easy.PS1
           
           # notwendiges Verzeichnis anlegen
-          New-Item \Delapro
+          New-Item \Delapro -Type Directory
           
           Install-RustDesk -Verbose
 
