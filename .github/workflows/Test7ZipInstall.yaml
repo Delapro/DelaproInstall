@@ -35,6 +35,9 @@ jobs:
       
         shell: pwsh
         run: |
+          C:
+          cd \temp
+          . .\easy.PS1
           Install-7Zip
 
           # Validierung
