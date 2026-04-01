@@ -2654,32 +2654,31 @@ Function Install-7Zip {
 		[System.String]$tempDirectory="$Env:TEMP\"
 	)
 
-	$Version = '2408'	# aktuelle offizielle Version: http://www.7-zip.org/
+	$Version = '2600'	# aktuelle offizielle Version: https://www.7-zip.org/
 	If (Test-64Bit) {
 		If (Test-Arm64) {
-			$url = "http://www.7-zip.org/a/7z$($Version)-arm64.exe"
+			$url = "https://www.7-zip.org/a/7z$($Version)-arm64.exe"
 			$Dest = "$($tempDirectory)\7z$($Version)-arm64.exe"
-			$Sha256 = '52D721A9A346BD25E055A54C11F06668B1876A6E0BE2C7A08A8E5B854BF75C68'
+			$Sha256 = '92FAC666911336F3BBF3D99FDC48EC36FE20AC7A4200556936E61A8076AE6493'
 		} else {			
-			$url = "http://www.7-zip.org/a/7z$($Version)-x64.exe"
+			$url = "https://www.7-zip.org/a/7z$($Version)-x64.exe"
 			$Dest = "$($tempDirectory)\7z$($Version)-x64.exe"
-			$Sha256 = '67CB9D3452C9DD974B04F4A5FD842DBCBA8184F2344FF72E3662D7CDB68B099B'
+			$Sha256 = '6FE18D5B3080E39678CABFA6CEF12CFB25086377389B803A36A3C43236A8A82C'
 		}
 	} else {
-		$url = "http://www.7-zip.org/a/7z$($Version).exe"
+		$url = "https://www.7-zip.org/a/7z$($Version).exe"
 		$Dest = "$($tempDirectory)\7z$($Version).exe"
-		$Sha256 = 'FAA87251336D864B877A5E6C3E9C9A5E250318BE2FDFC8A42CEADB3A956E0405'
+		$Sha256 = 'D605EB609AA67796DCA7CFE26D7E28792090BB8048302D6E05EDE16E8E33145C'
 	}
 
 	Write-Verbose "Lade $url nach $Dest"
 	Start-BitsTransfer -Source $url -Destination $Dest
-	# Silent-Install Parameter: https://www.java.com/de/download/help/silent_install.xml
+	# Silent-Install Parameter: /S
 	If ((Get-FileHash -Path $Dest -Algorithm SHA256).Hash -eq $Sha256) {
 		Start-Process -Wait -FilePath $Dest -ArgumentList "/S"
 	} else {
 		Write-Error "Heruntergeladene 7Zip-Version ist nicht sicher!"
 	}
-
 }
 
 # ladet und installiert Git
