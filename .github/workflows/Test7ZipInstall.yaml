@@ -13,16 +13,19 @@ jobs:
             os: windows-2025
             is64: true
             isArm: false
+            sleep-seconds: 60
 
           - name: x86
             os: windows-2025
             is64: false
             isArm: false
-
+            sleep-seconds: 30
+            
           - name: arm64
             os: windows-11-arm
             is64: true
             isArm: true
+            sleep-seconds: 1
 
     runs-on: ${{ matrix.os }}
 
@@ -46,6 +49,7 @@ jobs:
           . .\easy.PS1
           # 32-Bit Unterstützung simulieren, "false" kommt von matrix.is64 vom yaml-File
           function Test-64Bit { return [bool]::Parse("${{ matrix.is64 }}") }
+          Start-Sleep -Seconds ${{ matrix.sleep-seconds }}  # um Timeout beim Download in den verschiedenen Runnern zu umgehen
           Install-7Zip -Verbose
 
           "Validierung"
