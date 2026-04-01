@@ -41,6 +41,8 @@ jobs:
       
         shell: pwsh
         run: |
+          # 32-Bit Unterstützung simulieren
+          function Test-64Bit { return [bool]::Parse("${{ matrix.is64 }}") }
           C:
           cd \temp
           . .\easy.PS1
