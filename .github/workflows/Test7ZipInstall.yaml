@@ -29,52 +29,12 @@ jobs:
     name: Test ${{ matrix.name }}
 
     steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v5
       - name: Run Install-7Zip
+      
         shell: pwsh
         run: |
-          $ErrorActionPreference = 'Stop'
-
-          # Architektur simulieren
-          function Test-64Bit { return [bool]::Parse("${{ matrix.is64 }}") }
-          function Test-Arm64 { return [bool]::Parse("${{ matrix.isArm }}") }
-
-          Function Install-7Zip {
-            [CmdletBinding()]
-            Param(
-              [System.String]$tempDirectory = "$Env:TEMP\"
-            )
-
-            $Version = '2600'
-            If (Test-64Bit) {
-              If (Test-Arm64) {
-                $url = "https://www.7-zip.org/a/7z$($Version)-arm64.exe"
-                $Dest = "$($tempDirectory)\7z$($Version)-arm64.exe"
-                $Sha256 = '92FAC666911336F3BBF3D99FDC48EC36FE20AC7A4200556936E61A8076AE6493'
-              } else {
-                $url = "https://www.7-zip.org/a/7z$($Version)-x64.exe"
-                $Dest = "$($tempDirectory)\7z$($Version)-x64.exe"
-                $Sha256 = '6FE18D5B3080E39678CABFA6CEF12CFB25086377389B803A36A3C43236A8A82C'
-              }
-            } else {
-              $url = "https://www.7-zip.org/a/7z$($Version).exe"
-              $Dest = "$($tempDirectory)\7z$($Version).exe"
-              $Sha256 = 'D605EB609AA67796DCA7CFE26D7E28792090BB8048302D6E05EDE16E8E33145C'
-            }
-
-            Write-Host "Download: $url"
-            Start-BitsTransfer -Source $url -Destination $Dest
-
-            $hash = (Get-FileHash -Path $Dest -Algorithm SHA256).Hash
-            Write-Host "SHA256: $hash"
-
-            if ($hash -ne $Sha256) {
-              throw "Hash stimmt nicht!"
-            }
-
-            Write-Host "Starte Silent-Installation..."
-            Start-Process -Wait -FilePath $Dest -ArgumentList "/S"
-          }
-
           Install-7Zip
 
           # Validierung
