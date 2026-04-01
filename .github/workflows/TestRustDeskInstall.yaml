@@ -39,5 +39,11 @@ jobs:
           C:
           cd \temp
           . .\easy.PS1
+          
+          # notwendiges Verzeichnis anlegen
+          New-Item \Delapro
+          
           Install-RustDesk -Verbose
+
+          # Prüfen
           dir "\Program Files\rust*" -recurse
