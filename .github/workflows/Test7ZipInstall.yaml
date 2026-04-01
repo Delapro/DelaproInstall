@@ -44,19 +44,18 @@ jobs:
           C:
           cd \temp
           . .\easy.PS1
-          Install-7Zip
+          Install-7Zip -Verbose
 
-          # Validierung
-          $paths = @(
+          "Validierung"
+          $exe = @(
             "${env:ProgramFiles}\7-Zip\7z.exe",
             "${env:ProgramFiles(x86)}\7-Zip\7z.exe"
-          ) | Where-Object { $_ -and (Test-Path $_) }
+          ) | Where-Object { $_ -and (Test-Path $_) } | Select-Object -First 1
 
-          if (-not $paths) {
+          if (-not $exe) {
             throw "7-Zip wurde nicht installiert!"
           }
 
-          $exe = $paths[0]
           Write-Host "Gefunden: $exe"
 
           & "$exe" i | Select-Object -First 20
