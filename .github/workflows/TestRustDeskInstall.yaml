@@ -1,5 +1,5 @@
 # diese Action soll das grundsätzliche Script testen
-name: TestRustDeskInstall
+name: Test RustDeskInstall
 
 # Controls when the workflow will run
 on:
