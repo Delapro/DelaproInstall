@@ -59,4 +59,4 @@ jobs:
           $exe = $paths[0]
           Write-Host "Gefunden: $exe"
 
-          & $exe i | Select-Object -First 20
+          & "$exe" i | Select-Object -First 20
