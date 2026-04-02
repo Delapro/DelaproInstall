@@ -49,4 +49,4 @@ jobs:
           # macht keinen Sinn, liegt ja im Fernwartungsverzeichnis
           # dir "\Program Files\rust*" -recurse -Directory -ea SilentlyContinue
           dir \Delapro\Fernwartung
-          dir (\Delapro\Fernwartung\Rustdesk.exe).VersionInfo.ProductVersion
+          (dir \Delapro\Fernwartung\Rustdesk.exe).VersionInfo.ProductVersion
