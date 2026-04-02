@@ -51,6 +51,3 @@ jobs:
           function Test-64Bit { return [bool]::Parse("${{ matrix.is64 }}") }
           Install-Powershell7 -Verbose
 
-          Write-Host "Gefunden: $exe"
-
-          & "$exe" i | Select-Object -First 20
