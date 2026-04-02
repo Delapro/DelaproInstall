@@ -46,4 +46,7 @@ jobs:
           Install-RustDesk -Verbose
 
           # Prüfen
-          dir "\Program Files\rust*" -recurse -Directory -ea SilentlyContinue
+          # macht keinen Sinn, liegt ja im Fernwartungsverzeichnis
+          # dir "\Program Files\rust*" -recurse -Directory -ea SilentlyContinue
+          dir \Delapro\Fernwartung
+          dir (\Delapro\Fernwartung\Rustdesk.exe).VersionInfo.ProductVersion
