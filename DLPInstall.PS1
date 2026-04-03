@@ -3980,6 +3980,7 @@ Function Invoke-DelaproPreUpdate {
 				Update-DlpRawPr -DelaproPath $DLPPath -Verbose
 				Update-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -Verbose
 				Install-AnyDesk -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -Verbose
+				Install-RustDesk -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -Verbose
 			} else {
 				Write-Error "Delapro läuft noch!"
 			}
@@ -6950,7 +6951,7 @@ Function Install-Delapro {
 		[Validateset("Main", "Zert", "Chart", "Image", "Preise",
 					 "Acrobatx64", "Acrobat", "AcrobatConfig", "Chrome", "Thunderbird",
 					 "Thunderbirdx64", 
-					 "eDocPrintPro", "Mailer", "AnyDesk", "Teamviewer", 
+					 "eDocPrintPro", "Mailer", "AnyDesk", 'RustDesk', "Teamviewer", 
 					 "ImportBackup", "ImportBackupFile", "ImportData", "CopyGame", "AntiMalware",
 					 "EdgeChromium", 'RegCombitx64Proxy' )]
 		[string[]]$InstallSwitch,
@@ -7105,9 +7106,13 @@ Function Install-Delapro {
 	If ($InstallSwitch -contains "TeamViewer") {
 		Install-Teamviewer -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -CreateDesktopLink "easy Internet Fernwartung (Teamviewer).lnk"
 		Install-AnyDesk -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -NoDesktopLink
+		Install-RustDesk -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -Verbose
 	}
 	If ($InstallSwitch -contains "AnyDesk") {
 		Install-AnyDesk -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -CreateDesktopLink "easy Internet Fernwartung (AnyDesk).lnk"
+	}
+	If ($InstallSwitch -contains "RustDesk") {
+		Install-RustDesk -TempDirectory $DLPInstPath -DestinationPath "$($DLPPath)" -CreateDesktopLink "easy Internet Fernwartung (RustDesk).lnk"
 	}
 
 	# Druckertreiber Installation
