@@ -4,7 +4,7 @@ Powershell Installationsskript um Delapro ab Windows 10 bis Windows 11 zu instal
 
 Zur Installation auf Mac OSX siehe hier: [Virtuelle Maschine auf Mac](https://github.com/Delapro/DelaproInstall/wiki/MACOSX)
 
-[Installation auf alten Windows-Systemen](Doku/Probleme/WindowsLegacyInstallation.md)
+[Installation auf alten Windows-Systemen](Doku/WindowsLegacyInstallation.md)
 
 ## Backup aktualisieren, Backup durchführen und DLPWinPr aktualisieren
 
