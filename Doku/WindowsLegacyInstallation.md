@@ -72,4 +72,4 @@ If ($Error[0].Exception.HResult -eq -2146233088) {
 
 ## Vorbereitende Maßnahmen für Windows 8.1
 
-[Aktivierung von TLS1.2](Doku/Probleme/Win81undTLS12.md)
+[Aktivierung von TLS1.2](Probleme/Win81undTLS12.md)
