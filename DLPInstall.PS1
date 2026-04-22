@@ -4963,8 +4963,8 @@ Function Install-FFMpeg {
 	# https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n7.1-latest-win64-gpl-7.1.zip
 	# https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n7.1-latest-winarm64-gpl-7.1.zip
 
-	$baseVersion = '7.1'
-	$Version = 'n7.1'
+	$baseVersion = '8.1'
+	$Version = 'n8.1'
 	If (Test-Arm64) {
 		$Platform = "winarm64"
 	} else {
