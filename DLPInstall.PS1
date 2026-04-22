@@ -2185,10 +2185,10 @@ Function Install-AcrobatDC {
 	# man entfernt nur das Jahrhundert und die Punkte!
 	#
 	# DC Version: https://ardownload.adobe.com/pub/adobe/acrobat/win/AcrobatDC/2500120467/AcroRdrDCx642500120467_de_DE.exe
-	# Start-BitsTransfer http://ardownload.adobe.com/pub/adobe/reader/win/11.x/11.0.10/de_DE/AdbeRdr11010_de_DE.exe
-	# DC Release-Infos: http://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html
+	# Start-BitsTransfer https://ardownload.adobe.com/pub/adobe/reader/win/11.x/11.0.10/de_DE/AdbeRdr11010_de_DE.exe
+	# DC Release-Infos: https://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html
 	# WICHTIG: Nur die Planned Updates können verwendet werden!!
-	$dcVersion = "26.001.21346".Replace(".", "")
+	$dcVersion = "26.001.21431".Replace(".", "")
 	$dcOptionalVersion = "19.021.20061".Replace(".", "")
 	$useOptionalUpdate = $false	# falls es mal kein aktuelles optionales Update gibt auf $false setzen
 	$x64Bit = ''
