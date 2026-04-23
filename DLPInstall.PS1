@@ -183,6 +183,13 @@ If ($null -eq (Get-Command Start-BitsTransfer -ErrorAction SilentlyContinue)) {
 	"Install-StartBitsTransfer aktiviert!"
 }
 Start-BitsTransfer "$easyBaseURI/util/PingDownload.txt" -ErrorAction SilentlyContinue
+If (($Error[0].Exception.HResult -eq -2146233088) -or ($Error[0].Exception.HResult -eq -2147023651)) {
+    # -2147023651 = 0x800704DD wurde unter Windows 11 in einem Domänennetz zurückgegeben
+    # rüstet eine einfache Variante von Start-BitsTransfer nach
+    Install-StartBitsTransfer
+	"Install-StartBitsTransfer aktiviert!"
+	Start-BitsTransfer "$easyBaseURI/util/PingDownload.txt" -ErrorAction STOP
+}
 
 # Testet ob der aktuelle Prozess ein 64-Bit Prozess ist
 Function Test-64Bit () {
