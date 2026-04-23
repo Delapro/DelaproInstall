@@ -63,7 +63,8 @@ Install-MissingPowershellCmdlets
 cd $env:temp
 Import-Module BitsTransfer
 Start-Bitstransfer https://easysoftware.de/util/dlpwinpr.exe
-If ($Error[0].Exception.HResult -eq -2146233088) {
+If (($Error[0].Exception.HResult -eq -2146233088) -or ($Error[0].Exception.HResult -eq -2147023651)) {
+    # -2147023651 = 0x800704DD wurde unter Windows 11 in einem Domänennetz zurückgegeben
     # rüstet eine einfache Variante von Start-BitsTransfer nach
     Install-StartBitsTransfer
 }
