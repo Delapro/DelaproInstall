@@ -5,6 +5,9 @@ Probleme mit auf einmal übergroßem Zeichensatz bei der Vorschau und generell b
 Beispiel:
 ![image](https://github.com/user-attachments/assets/415d31b8-fa94-4a9c-a25b-67e090d32688)
 
+weiteres Beispiel:
+<img width="977" height="538" alt="image" src="https://github.com/user-attachments/assets/92cf79b7-9975-481a-a35a-522223a84cbf" />
+
 # direkte Lösung
 
 Die Lösung ist die Umstellung von DlpWinPr(Typ 6)-Drucker mit DelaproPDF-Treiber auf DelaproMail-Treiber und GhostPDFPrev.BAT(Typ 8):
