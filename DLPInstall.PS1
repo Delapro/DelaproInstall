@@ -3524,9 +3524,9 @@ Function Install-RustDesk {
 			If (-Not ($NoDesktopLink)) {
 				# Link auf Desktop erstellen, Text: easy Internet Fernwartung (RustDesk)
 				If (Test-Admin) {
-					New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\RustDesk.exe" -Arguments '--silent' -LinkFilename $CreateDesktopLink
+					New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\RustDesk.exe" -LinkFilename $CreateDesktopLink -WorkingDirectory "$($DestinationPath)\Fernwartung\"
 				} else {
-					New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\RustDesk.exe" -Arguments '--silent' -LinkFilename $CreateDesktopLink -Folder (Get-DesktopFolder -CurrentUser)
+					New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\RustDesk.exe" -LinkFilename $CreateDesktopLink -Folder (Get-DesktopFolder -CurrentUser) -WorkingDirectory "$($DestinationPath)\Fernwartung\"
 				}
 			}
 		} else {
