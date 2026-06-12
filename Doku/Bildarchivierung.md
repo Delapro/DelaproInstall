@@ -38,6 +38,9 @@ ansonsten gilt:
 
 ## Pseudobildnamendateien erstellen
 
+> [!NOTE]
+> Gilt nur für die alte Variante bis Juni 2026, ab da xht000000.JPG ... xhtzzzzzz.JPG, also anstatt 65536 sind 2.176.782.336 erlaubt.
+
 Bilderverzeichnis mit Dummies füllen für Tests:
 2\*65536, einmal PCX und einmal tmp
 ```Powershell
