@@ -4,9 +4,53 @@
 
 https://www.photosync-app.com/de/index
 
-## Pfad für Bilderverzeichnis festlegen
+## Pfade für Bilderverzeichnis, CD/DVD-Laufwerk und Cache festlegen
 
-Der Pfad wird in <Code>DLP_Main.INI</Code> unter der Sektion \[Dateien\] beim Eintrag Bilder gesetzt. Zusätzlich muss der Pfad noch in der <Code>Grabber.BAT</Code> angepasst werden.
+### Konfiguration
+Der Pfad für Bilder wird in `DLP_Main.INI` unter der Sektion `[Dateien]` beim Eintrag `Bilder` gesetzt. Zusätzlich muss der Pfad gegebenenfalls auch in der `Grabber.BAT` angepasst werden. Diese beiden Punkte sind nicht Teil der hier gezeigten Funktion, sondern betreffen die allgemeine Konfiguration.
+
+Daneben gibt es in der Sektion `[Dateien]` der INI-Datei noch die Einträge `BildCDROMLaufwerk` und `BildCacheLaufwerk`. Dort werden jeweils Laufwerksbuchstaben ohne Doppelpunkt angegeben. Für `BildCDROMLaufwerk` wird standardmäßig `D` verwendet. Bei `BildCacheLaufwerk` bedeutet der Wert `Leer`, dass kein Cache-Laufwerk verwendet wird.
+
+### Zugriffslogik
+
+Der Standardpfad für Bilder lautet typischerweise `C:\DELAPRO\BILDER`. Ein normaler Dateiname in der `BILDER.DBF` kann z. B. so aussehen:
+
+`C:\DELAPRO\BILDER\xht39f1.JPG`
+
+Ist ein Bild auf CD/DVD ausgelagert, beginnt der gespeicherte Dateiname mit `CDROM`, danach folgt die Nummer der CD/DVD und anschließend ein Doppelpunkt. Beispiele:
+
+`CDROM1:\DELAPRO\BILDER\xht39f1.JPG`
+`CDROM293:\DELAPRO\BILDER\xht39f1.JPG`
+
+Wird ein Bild mit einem solchen `CDROM`-Pfad angefordert, wird zuerst geprüft, ob es über das konfigurierte `BildCacheLaufwerk` verfügbar ist. Dafür muss auf dem Cache-Laufwerk zunächst die Datei
+
+`<Laufwerk>:\BILDER\DISK.ID`
+
+vorhanden sein. Zusätzlich wird für die gesuchte CD/DVD-Nummer eine Datei in folgender Struktur erwartet:
+
+`<Laufwerk>:\BILDER\<CDNR>\BILDER\DISK<CDNR>.ID`
+
+Beispiel für CD/DVD Nummer `293`:
+
+`C:\BILDER\293\BILDER\DISK293.ID`
+
+Ist diese Datei vorhanden, wird der ursprüngliche `CDROM`-Pfad auf einen Pfad innerhalb des Cache-Laufwerks umgesetzt.
+
+Wird das Bild nicht im Cache gefunden, wird das konfigurierte CD/DVD-Laufwerk aus `BildCDROMLaufwerk` verwendet. Zuerst wird geprüft, ob das Laufwerk bereit ist. Danach wird geprüft, ob auf dem Laufwerk die passende Kennungsdatei vorhanden ist, z. B.:
+
+`D:\BILDER\DISK293.ID`
+
+Dabei wird nach dem gezeigten Code nicht der Inhalt einer `DISK.ID`-Datei ausgewertet, sondern nur geprüft, ob die erwartete Datei mit der passenden Nummer im Dateinamen existiert.
+
+Ist die passende CD/DVD nicht vorhanden, wird der Benutzer aufgefordert, die benötigte Bilder-CD-ROM einzulegen. Wenn der Benutzer abbricht oder übergeht, wird ein leerer Dateiname zurückgegeben. Andernfalls wird aus dem ursprünglichen `CDROM`-Pfad ein normaler Laufwerkspfad gebildet, z. B. aus
+
+`CDROM293:\DELAPRO\BILDER\xht39f1.JPG`
+
+wird bei `BildCDROMLaufwerk = D`:
+
+`D:\DELAPRO\BILDER\xht39f1.JPG`
+
+Und das betreffende Bild wird geladen.
 
 ## Verweise in BILD.DBF ändern
 
