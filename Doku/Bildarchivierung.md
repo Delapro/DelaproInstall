@@ -48,6 +48,187 @@ Bilderverzeichnis mit Dummies füllen für Tests:
 1..65532|%{Set-Content -Path (".\xht$((`"{0:x}`" -f $_).ToUpper()).tmp") -Value "$_"}
 ``` 
 
+## Verfügbare Dateinamen ermitteln
+
+Aufruf: <Code> Get-XhtTempNameAvailability -Path 'C:\DELAPRO\BILDER' -Extension 'JPG' -Scheme LegacyHex4</Code>
+oder: <Code> Get-XhtTempNameAvailability -Path 'C:\DELAPRO\BILDER' -Extension 'JPG' -Scheme Base36Six</Code>
+
+oder 
+```Powershell
+function Get-XhtTempNameAvailability {
+    [CmdletBinding()]
+    param(
+        [Parameter()]
+        [string] $Path = 'C:\DELAPRO\BILDER',
+
+        [Parameter()]
+        [string] $Extension = '.JPG',
+
+        [Parameter()]
+        [string] $Prefix = 'xht',
+
+        [Parameter()]
+        [ValidateSet('LegacyHex4', 'Base36Six', 'Both')]
+        [string] $Scheme = 'Both',
+
+        [Parameter()]
+        [switch] $AnyExtension,
+
+        [Parameter()]
+        [switch] $IncludeDetails
+    )
+
+    $resolvedPath = (Resolve-Path -LiteralPath $Path -ErrorAction Stop).ProviderPath
+
+    $normalizedExtension = if ($Extension.StartsWith('.')) {
+        $Extension
+    }
+    else {
+        ".$Extension"
+    }
+
+    $files = @(
+        Get-ChildItem -LiteralPath $resolvedPath -File -Filter "$Prefix*" -ErrorAction Stop |
+            Where-Object {
+                $AnyExtension -or ($_.Extension -ieq $normalizedExtension)
+            }
+    )
+
+    $prefixRegex = [regex]::Escape($Prefix)
+
+    $regexByScheme = @{
+        LegacyHex4 = [regex]::new(
+            "^$prefixRegex(?<key>[0-9A-Fa-f]{4})$",
+            [System.Text.RegularExpressions.RegexOptions]::IgnoreCase
+        )
+
+        Base36Six = [regex]::new(
+            "^$prefixRegex(?<key>[0-9A-Za-z]{6})$",
+            [System.Text.RegularExpressions.RegexOptions]::IgnoreCase
+        )
+    }
+
+    $schemeList = if ($Scheme -eq 'Both') {
+        @('LegacyHex4', 'Base36Six')
+    }
+    else {
+        @($Scheme)
+    }
+
+    $base36Total = [int64] 1
+    1..6 | ForEach-Object {
+        $base36Total *= 36
+    }
+
+    $totalByScheme = @{
+        LegacyHex4 = [int64] 0xFFFF
+        Base36Six = [int64] $base36Total
+    }
+
+    $patternByScheme = @{
+        LegacyHex4 = if ($AnyExtension) {
+            "$Prefix" + "0001.* bis $Prefix" + "FFFF.*"
+        }
+        else {
+            "$Prefix" + "0001$normalizedExtension bis $Prefix" + "FFFF$normalizedExtension"
+        }
+
+        Base36Six = if ($AnyExtension) {
+            "$Prefix" + "000000.* bis $Prefix" + "zzzzzz.*"
+        }
+        else {
+            "$Prefix" + "000000$normalizedExtension bis $Prefix" + "zzzzzz$normalizedExtension"
+        }
+    }
+
+    # Dateien, die mit dem Präfix beginnen, aber zu keinem der ausgewählten Schemata passen
+    $unexpectedNames = @()
+
+    foreach ($file in $files) {
+        $matchesAnySelectedScheme = $false
+
+        foreach ($schemeName in $schemeList) {
+            if ($regexByScheme[$schemeName].IsMatch($file.BaseName)) {
+                $matchesAnySelectedScheme = $true
+                break
+            }
+        }
+
+        if (-not $matchesAnySelectedScheme) {
+            $unexpectedNames += $file.FullName
+        }
+    }
+
+    foreach ($schemeName in $schemeList) {
+        $regex = $regexByScheme[$schemeName]
+
+        $used = [System.Collections.Generic.HashSet[string]]::new(
+            [System.StringComparer]::OrdinalIgnoreCase
+        )
+
+        $matchedFiles = @()
+        $duplicateFiles = @()
+        $zeroNames = @()
+
+        foreach ($file in $files) {
+            $match = $regex.Match($file.BaseName)
+
+            if (-not $match.Success) {
+                continue
+            }
+
+            $matchedFiles += $file.FullName
+            $rawKey = $match.Groups['key'].Value
+
+            if ($schemeName -eq 'LegacyHex4') {
+                $number = [Convert]::ToInt32($rawKey, 16)
+
+                # Beim alten 16-Bit-Hexschema zählen wir 0001 bis FFFF.
+                # xht0000 wird gesondert ausgewiesen.
+                if ($number -eq 0) {
+                    $zeroNames += $file.FullName
+                    continue
+                }
+
+                $key = '{0:X4}' -f $number
+            }
+            else {
+                # Base36Six: 000000 ist ein gültiger möglicher Wert.
+                $key = $rawKey.ToLowerInvariant()
+            }
+
+            if (-not $used.Add($key)) {
+                $duplicateFiles += $file.FullName
+            }
+        }
+
+        $result = [pscustomobject]@{
+            Path                     = $resolvedPath
+            Extension                = if ($AnyExtension) { '*' } else { $normalizedExtension }
+            Prefix                   = $Prefix
+            Scheme                   = $schemeName
+            Pattern                  = $patternByScheme[$schemeName]
+            TotalCombinations        = $totalByScheme[$schemeName]
+            UsedCombinations         = [int64] $used.Count
+            AvailableCombinations    = [int64] ($totalByScheme[$schemeName] - $used.Count)
+            MatchedFileCount         = $matchedFiles.Count
+            UnexpectedNameCount      = $unexpectedNames.Count
+            ZeroNameCount            = $zeroNames.Count
+            DuplicateNameCount       = $duplicateFiles.Count
+        }
+
+        if ($IncludeDetails) {
+            $result | Add-Member -NotePropertyName MatchedFiles -NotePropertyValue $matchedFiles
+            $result | Add-Member -NotePropertyName UnexpectedNames -NotePropertyValue $unexpectedNames
+            $result | Add-Member -NotePropertyName ZeroNames -NotePropertyValue $zeroNames
+            $result | Add-Member -NotePropertyName DuplicateFiles -NotePropertyValue $duplicateFiles
+        }
+
+        $result
+    }
+}
+```
+
 ## Prüfen, ob die Bilder aus der BILDER.DBF wirklich vorhanden sind
 
 Als <Code>Test-BilderDateien.PS1</Code> speichern!
