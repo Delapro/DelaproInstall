@@ -52,6 +52,725 @@ wird bei `BildCDROMLaufwerk = D`:
 
 Und das betreffende Bild wird geladen.
 
+## Verschieben der Bilder ins Cachelaufwerk
+
+Um die heißen Daten schneller sichern zu können kann man mit dieser Funktion über den Aufruf
+```Powershell
+Move-DelaproBilderToCache -IniPath 'C:\DELAPRO\DLP_Main.INI' -DbfPath 'C:\DELAPRO\BILDER.DBF' -OlderThanWeeks 12 -WhatIf -IncludeSkipped
+```
+bzw.
+```Powershell
+Move-DelaproBilderToCache -IniPath 'C:\DELAPRO\DLP_Main.INI' -DbfPath 'C:\DELAPRO\BILDER.DBF' -OlderThanWeeks 12
+```
+die Daten auf ein separates Laufwerk z.b. NAS- oder Clowd-Laufwerk legen. Damit wird die tägliche Sicherung kleiner und handhabbarer.
+
+> [!CAUTION]
+> Mit Vorsicht zu genießen, ist noch nicht vollständig ausgetestet!
+
+```Powershell
+function Move-DelaproBilderToCache {
+    <#
+    .SYNOPSIS
+    Verschiebt ältere lokale DELAPRO-Bilder auf das konfigurierte BildCacheLaufwerk
+    und ersetzt den DATEINAME-Eintrag in BILDER.DBF durch einen CDROM<n>:-Verweis.
+
+    .DESCRIPTION
+    Die Funktion bildet die DELAPRO/xHarbour-Zugriffslogik nach:
+
+    Aus:
+        C:\DELAPRO\BILDER\xht39f1.JPG
+
+    wird in BILDER.DBF z. B.:
+        CDROM293:\DELAPRO\BILDER\xht39f1.JPG
+
+    und physisch im Cache:
+        <Cache>:\BILDER\293\DELAPRO\BILDER\xht39f1.JPG
+
+    Zusätzlich werden angelegt:
+        <Cache>:\BILDER\DISK.ID
+        <Cache>:\BILDER\293\BILDER\DISK293.ID
+
+    Hinweis:
+    Der Inhalt der DISK.ID-Dateien ist für den gezeigten DELAPRO-Code nicht entscheidend,
+    weil dort nur die Existenz der Datei geprüft wird. Trotzdem wird die Nummer hineingeschrieben.
+
+    .EXAMPLE
+    Move-DelaproBilderToCache -IniPath C:\DELAPRO\DLP_Main.INI -DbfPath C:\DELAPRO\BILDER.DBF -WhatIf
+
+    .EXAMPLE
+    Move-DelaproBilderToCache -IniPath C:\DELAPRO\DLP_Main.INI -DbfPath C:\DELAPRO\BILDER.DBF -OlderThanWeeks 12
+
+    .EXAMPLE
+    Move-DelaproBilderToCache -IniPath C:\DELAPRO\DLP_Main.INI -DbfPath C:\DELAPRO\BILDER.DBF -OlderThanWeeks 52 -ArchiveNumber 293
+    #>
+
+    [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
+    param(
+        [Parameter()]
+        [string] $IniPath = 'C:\DELAPRO\DLP_Main.INI',
+
+        [Parameter()]
+        [string] $DbfPath,
+
+        [Parameter()]
+        [ValidateRange(1, 10000)]
+        [int] $OlderThanWeeks = 12,
+
+        [Parameter()]
+        [ValidateRange(1, 999999)]
+        [int] $ArchiveNumber = 0,
+
+        [Parameter()]
+        [ValidateSet('Datum', 'LastWriteTime')]
+        [string] $AgeSource = 'Datum',
+
+        [Parameter()]
+        [string] $AgeFieldName = 'DATUM',
+
+        [Parameter()]
+        [string] $BilderPath,
+
+        [Parameter()]
+        [switch] $IncludeOutsideBilderPath,
+
+        [Parameter()]
+        [switch] $KeepOriginal,
+
+        [Parameter()]
+        [switch] $VerifyHash,
+
+        [Parameter()]
+        [switch] $IncludeSkipped,
+
+        [Parameter()]
+        [switch] $NoDbfBackup
+    )
+
+    begin {
+        function Get-IniValue {
+            param(
+                [Parameter(Mandatory)]
+                [string] $Path,
+
+                [Parameter(Mandatory)]
+                [string] $Section,
+
+                [Parameter(Mandatory)]
+                [string] $Key,
+
+                [Parameter()]
+                [string] $DefaultValue
+            )
+
+            $currentSection = ''
+
+            foreach ($line in Get-Content -LiteralPath $Path -ErrorAction Stop) {
+                $trimmed = $line.Trim()
+
+                if ([string]::IsNullOrWhiteSpace($trimmed)) {
+                    continue
+                }
+
+                if ($trimmed.StartsWith(';') -or $trimmed.StartsWith('#')) {
+                    continue
+                }
+
+                if ($trimmed -match '^\[(?<section>[^\]]+)\]\s*$') {
+                    $currentSection = $matches['section']
+                    continue
+                }
+
+                if ($currentSection -ieq $Section -and $trimmed -match '^(?<key>[^=]+?)\s*=\s*(?<value>.*)$') {
+                    if ($matches['key'].Trim() -ieq $Key) {
+                        return $matches['value'].Trim().Trim('"')
+                    }
+                }
+            }
+
+            return $DefaultValue
+        }
+
+        function Get-DbfText {
+            param(
+                [object] $Value
+            )
+
+            if ($null -eq $Value) {
+                return ''
+            }
+
+            return ([string] $Value).Replace([string][char]0, '').Trim()
+        }
+
+        function ConvertTo-DelaproDriveLetter {
+            param(
+                [string] $Value,
+                [string] $Name
+            )
+
+            if ([string]::IsNullOrWhiteSpace($Value)) {
+                return $null
+            }
+
+            $v = $Value.Trim()
+
+            if ($v -ieq 'Leer') {
+                return $null
+            }
+
+            if ($v -match '^([A-Za-z])(?::)?(?:\\)?$') {
+                return $matches[1].ToUpperInvariant()
+            }
+
+            throw "$Name muss ein Laufwerksbuchstabe ohne Pfad sein, z. B. 'D' oder 'E'. Aktueller Wert: '$Value'"
+        }
+
+        function Test-IsSubPath {
+            param(
+                [Parameter(Mandatory)]
+                [string] $Path,
+
+                [Parameter(Mandatory)]
+                [string] $BasePath
+            )
+
+            try {
+                $full = [System.IO.Path]::GetFullPath($Path).TrimEnd('\') + '\'
+                $base = [System.IO.Path]::GetFullPath($BasePath).TrimEnd('\') + '\'
+
+                return $full.StartsWith($base, [System.StringComparison]::OrdinalIgnoreCase)
+            }
+            catch {
+                return $false
+            }
+        }
+
+        function Get-RecordAgeDate {
+            param(
+                [Parameter(Mandatory)]
+                [object] $Record,
+
+                [Parameter(Mandatory)]
+                [System.IO.FileInfo] $FileInfo,
+
+                [Parameter(Mandatory)]
+                [string] $PreferredSource,
+
+                [Parameter(Mandatory)]
+                [string] $FieldName
+            )
+
+            if ($PreferredSource -eq 'Datum') {
+                $prop = $Record.PSObject.Properties[$FieldName]
+
+                if ($null -ne $prop -and $null -ne $prop.Value) {
+                    if ($prop.Value -is [datetime] -and $prop.Value -gt [datetime]'1900-01-01') {
+                        return ([datetime] $prop.Value)
+                    }
+
+                    [datetime] $parsed = [datetime]::MinValue
+
+                    if ([datetime]::TryParse((Get-DbfText $prop.Value), [ref] $parsed)) {
+                        if ($parsed -gt [datetime]'1900-01-01') {
+                            return $parsed
+                        }
+                    }
+                }
+            }
+
+            return $FileInfo.LastWriteTime
+        }
+
+        function Get-CdromRestPathFromLocalPath {
+            param(
+                [Parameter(Mandatory)]
+                [string] $FullPath
+            )
+
+            if ($FullPath -notmatch '^[A-Za-z]:\\') {
+                throw "Nur lokale Laufwerkspfade können sauber in CDROM<n>:-Pfade umgeschrieben werden: $FullPath"
+            }
+
+            # Aus C:\DELAPRO\BILDER\x.JPG wird \DELAPRO\BILDER\x.JPG
+            return $FullPath.Substring(2)
+        }
+
+        function ConvertTo-CacheTargetPath {
+            param(
+                [Parameter(Mandatory)]
+                [string] $CacheDrive,
+
+                [Parameter(Mandatory)]
+                [int] $Number,
+
+                [Parameter(Mandatory)]
+                [string] $RestPath
+            )
+
+            $archiveRoot = Join-Path -Path ('{0}:\BILDER' -f $CacheDrive) -ChildPath ([string] $Number)
+            return Join-Path -Path $archiveRoot -ChildPath ($RestPath.TrimStart('\'))
+        }
+
+        function New-DelaproCacheMarker {
+            param(
+                [Parameter(Mandatory)]
+                [string] $CacheDrive,
+
+                [Parameter(Mandatory)]
+                [int] $Number
+            )
+
+            $cacheRoot = '{0}:\BILDER' -f $CacheDrive
+            $archiveRoot = Join-Path -Path $cacheRoot -ChildPath ([string] $Number)
+            $archiveBilderRoot = Join-Path -Path $archiveRoot -ChildPath 'BILDER'
+
+            if ($PSCmdlet.ShouldProcess($cacheRoot, "DELAPRO-Cache-Struktur fuer Archiv $Number anlegen")) {
+                New-Item -ItemType Directory -Path $cacheRoot -Force | Out-Null
+                New-Item -ItemType Directory -Path $archiveBilderRoot -Force | Out-Null
+
+                Set-Content -LiteralPath (Join-Path -Path $cacheRoot -ChildPath 'DISK.ID') `
+                    -Value 'DELAPRO-BILDER-CACHE' `
+                    -Encoding ASCII `
+                    -Force
+
+                Set-Content -LiteralPath (Join-Path -Path $archiveBilderRoot -ChildPath ('DISK{0}.ID' -f $Number)) `
+                    -Value ([string] $Number) `
+                    -Encoding ASCII `
+                    -Force
+            }
+        }
+
+        function Get-DbfFieldDefinition {
+            param(
+                [Parameter(Mandatory)]
+                [object] $Dbf,
+
+                [Parameter(Mandatory)]
+                [string] $FieldName
+            )
+
+            $field = $Dbf.Header.Fields | Where-Object { $_.Name -ieq $FieldName } | Select-Object -First 1
+
+            if ($null -eq $field) {
+                throw "Das Feld '$FieldName' wurde in der DBF-Struktur nicht gefunden."
+            }
+
+            return $field
+        }
+
+        function Set-DbfCharacterFieldValue {
+            param(
+                [Parameter(Mandatory)]
+                [object] $Dbf,
+
+                [Parameter(Mandatory)]
+                [int] $RecNo,
+
+                [Parameter(Mandatory)]
+                [string] $FieldName,
+
+                [Parameter(Mandatory)]
+                [string] $Value,
+
+                [Parameter(Mandatory)]
+                [System.Text.Encoding] $Encoding
+            )
+
+            $field = Get-DbfFieldDefinition -Dbf $Dbf -FieldName $FieldName
+            $fieldLength = [int] $field.Length
+            $bytes = $Encoding.GetBytes($Value)
+
+            if ($bytes.Length -gt $fieldLength) {
+                throw "Wert fuer '$FieldName' ist zu lang: $($bytes.Length) Bytes, erlaubt sind $fieldLength Bytes. Wert: $Value"
+            }
+
+            $buffer = [byte[]]::new($fieldLength)
+
+            for ($i = 0; $i -lt $buffer.Length; $i++) {
+                $buffer[$i] = 0x20
+            }
+
+            [System.Array]::Copy($bytes, 0, $buffer, 0, $bytes.Length)
+
+            $recordPos = [int64] $Dbf.Header.DataOffset + (([int64] $RecNo - 1) * [int64] $Dbf.Header.RecordSize)
+
+            # +1 wegen Delete-Flag am Anfang des DBF-Datensatzes.
+            # PSDBF liest Zeichenfelder ebenfalls mit FieldPos + 1.
+            $fieldPos = $recordPos + 1 + [int64] $field.FieldPos
+
+            $null = $Dbf.FilehandleOfDBF.Seek($fieldPos, [System.IO.SeekOrigin]::Begin)
+            $Dbf.FilehandleOfDBF.Write($buffer, 0, $buffer.Length)
+
+            # Header-Änderungsdatum aktualisieren.
+            $date = Get-Date
+            $dateBytes = [byte[]]::new(3)
+            $dateBytes[0] = [byte] ($date.Year - 1900)
+            $dateBytes[1] = [byte] $date.Month
+            $dateBytes[2] = [byte] $date.Day
+
+            $null = $Dbf.FilehandleOfDBF.Seek(1, [System.IO.SeekOrigin]::Begin)
+            $Dbf.FilehandleOfDBF.Write($dateBytes, 0, $dateBytes.Length)
+
+            $Dbf.FilehandleOfDBF.Flush()
+        }
+
+        function Get-NextDelaproArchiveNumber {
+            param(
+                [Parameter(Mandatory)]
+                [object] $Dbf,
+
+                [Parameter(Mandatory)]
+                [string] $CacheDrive
+            )
+
+            $used = [System.Collections.Generic.HashSet[int]]::new()
+
+            foreach ($recNo in $Dbf.ListAll()) {
+                $record = $Dbf.ReadRecord($recNo)
+                $dateiname = Get-DbfText $record.DATEINAME
+
+                if ($dateiname -match '^CDROM(?<nr>\d+):') {
+                    [void] $used.Add([int] $matches['nr'])
+                }
+            }
+
+            $cacheRoot = '{0}:\BILDER' -f $CacheDrive
+
+            if (Test-Path -LiteralPath $cacheRoot -PathType Container) {
+                foreach ($dir in Get-ChildItem -LiteralPath $cacheRoot -Directory -ErrorAction SilentlyContinue) {
+                    if ($dir.Name -match '^\d+$') {
+                        [void] $used.Add([int] $dir.Name)
+                    }
+                }
+            }
+
+            if ($used.Count -eq 0) {
+                return 1
+            }
+
+            return (($used | Measure-Object -Maximum).Maximum + 1)
+        }
+
+        function New-ResultObject {
+            param(
+                [int] $RecNo,
+                [string] $Verweis,
+                [string] $Status,
+                [string] $DateinameAlt,
+                [string] $DateinameNeu,
+                [string] $Quelle,
+                [string] $Ziel,
+                [datetime] $Datum,
+                [string] $Hinweis
+            )
+
+            [pscustomobject]@{
+                RecNo        = $RecNo
+                Verweis      = $Verweis
+                Status       = $Status
+                Datum        = $Datum
+                DateinameAlt = $DateinameAlt
+                DateinameNeu = $DateinameNeu
+                Quelle       = $Quelle
+                Ziel         = $Ziel
+                Hinweis      = $Hinweis
+            }
+        }
+    }
+
+    process {
+        if (-not (Test-Path -LiteralPath $IniPath -PathType Leaf)) {
+            throw "INI-Datei nicht gefunden: $IniPath"
+        }
+
+        $iniResolved = (Resolve-Path -LiteralPath $IniPath -ErrorAction Stop).ProviderPath
+        $iniDirectory = Split-Path -Path $iniResolved -Parent
+
+        if ([string]::IsNullOrWhiteSpace($DbfPath)) {
+            $DbfPath = Join-Path -Path $iniDirectory -ChildPath 'BILDER.DBF'
+        }
+
+        if (-not (Test-Path -LiteralPath $DbfPath -PathType Leaf)) {
+            throw "BILDER.DBF nicht gefunden: $DbfPath"
+        }
+
+        $dbfResolved = (Resolve-Path -LiteralPath $DbfPath -ErrorAction Stop).ProviderPath
+
+        $iniBilderPath = Get-IniValue -Path $iniResolved -Section 'Dateien' -Key 'Bilder' -DefaultValue 'C:\DELAPRO\BILDER'
+        $iniCacheDrive = Get-IniValue -Path $iniResolved -Section 'Dateien' -Key 'BildCacheLaufwerk' -DefaultValue 'Leer'
+        $iniCdromDrive = Get-IniValue -Path $iniResolved -Section 'Dateien' -Key 'BildCDROMLaufwerk' -DefaultValue 'D'
+
+        if ([string]::IsNullOrWhiteSpace($BilderPath)) {
+            $BilderPath = $iniBilderPath
+        }
+
+        $cacheDrive = ConvertTo-DelaproDriveLetter -Value $iniCacheDrive -Name 'BildCacheLaufwerk'
+        $cdromDrive = ConvertTo-DelaproDriveLetter -Value $iniCdromDrive -Name 'BildCDROMLaufwerk'
+
+        if ([string]::IsNullOrWhiteSpace($cacheDrive)) {
+            throw "BildCacheLaufwerk ist in $iniResolved auf 'Leer' gesetzt. Ohne Cache-Laufwerk kann nicht ausgelagert werden."
+        }
+
+        if ([string]::IsNullOrWhiteSpace($cdromDrive)) {
+            Write-Warning "BildCDROMLaufwerk ist leer oder ungueltig. Fuer den Cache-Zugriff ist es nicht direkt noetig, aber DELAPRO nutzt es als Fallback."
+        }
+
+        if (-not (Get-Command -Name Use-DBF -ErrorAction SilentlyContinue)) {
+            if (Get-Command -Name Invoke-PSDBFDownloadAndInit -ErrorAction SilentlyContinue) {
+                Invoke-PSDBFDownloadAndInit
+            }
+        }
+
+        if (-not (Get-Command -Name Use-DBF -ErrorAction SilentlyContinue)) {
+            throw "PSDBF ist nicht geladen. Bitte PSDBF laden, so dass Use-DBF verfuegbar ist."
+        }
+
+        try {
+            [System.Text.Encoding]::RegisterProvider([System.Text.CodePagesEncodingProvider]::Instance)
+        }
+        catch {
+            # Windows PowerShell kennt Codepage 850 normalerweise ohne Registrierung.
+        }
+
+        $dbfEncoding = [System.Text.Encoding]::GetEncoding(850)
+        $cutoff = (Get-Date).AddDays(-7 * $OlderThanWeeks)
+
+        if (-not $NoDbfBackup) {
+            $backupPath = '{0}.{1:yyyyMMdd-HHmmss}.bak' -f $dbfResolved, (Get-Date)
+
+            if ($PSCmdlet.ShouldProcess($dbfResolved, "Sicherungskopie anlegen: $backupPath")) {
+                Copy-Item -LiteralPath $dbfResolved -Destination $backupPath -ErrorAction Stop
+            }
+        }
+
+        $dbf = Use-DBF $dbfResolved -ReadWrite
+
+        try {
+            $dateinameField = Get-DbfFieldDefinition -Dbf $dbf -FieldName 'DATEINAME'
+
+            if ($ArchiveNumber -le 0) {
+                $ArchiveNumber = Get-NextDelaproArchiveNumber -Dbf $dbf -CacheDrive $cacheDrive
+            }
+
+            New-DelaproCacheMarker -CacheDrive $cacheDrive -Number $ArchiveNumber
+
+            foreach ($recNo in $dbf.ListAll()) {
+                $record = $dbf.ReadRecord($recNo)
+
+                if ($dbf.Deleted) {
+                    if ($IncludeSkipped) {
+                        New-ResultObject -RecNo $recNo -Status 'UebersprungenGeloescht'
+                    }
+
+                    continue
+                }
+
+                $dateinameAlt = Get-DbfText $record.DATEINAME
+                $verweis = Get-DbfText $record.VERWEIS
+
+                if ([string]::IsNullOrWhiteSpace($dateinameAlt)) {
+                    if ($IncludeSkipped) {
+                        New-ResultObject -RecNo $recNo -Verweis $verweis -Status 'UebersprungenLeer' -DateinameAlt $dateinameAlt
+                    }
+
+                    continue
+                }
+
+                if ($dateinameAlt -match '^CDROM\d+:') {
+                    if ($IncludeSkipped) {
+                        New-ResultObject -RecNo $recNo -Verweis $verweis -Status 'UebersprungenBereitsArchiviert' -DateinameAlt $dateinameAlt
+                    }
+
+                    continue
+                }
+
+                $sourcePath = $dateinameAlt
+
+                if (-not [System.IO.Path]::IsPathRooted($sourcePath)) {
+                    $sourcePath = Join-Path -Path $BilderPath -ChildPath $sourcePath
+                }
+
+                if (-not (Test-Path -LiteralPath $sourcePath -PathType Leaf)) {
+                    New-ResultObject `
+                        -RecNo $recNo `
+                        -Verweis $verweis `
+                        -Status 'Fehlt' `
+                        -DateinameAlt $dateinameAlt `
+                        -Quelle $sourcePath `
+                        -Hinweis 'Quelldatei existiert nicht.'
+                    continue
+                }
+
+                $sourceItem = Get-Item -LiteralPath $sourcePath -ErrorAction Stop
+                $sourceFullPath = $sourceItem.FullName
+
+                if (-not $IncludeOutsideBilderPath) {
+                    if (-not (Test-IsSubPath -Path $sourceFullPath -BasePath $BilderPath)) {
+                        if ($IncludeSkipped) {
+                            New-ResultObject `
+                                -RecNo $recNo `
+                                -Verweis $verweis `
+                                -Status 'UebersprungenAusserhalbBilderpfad' `
+                                -DateinameAlt $dateinameAlt `
+                                -Quelle $sourceFullPath `
+                                -Hinweis "Pfad liegt nicht unter '$BilderPath'."
+                        }
+
+                        continue
+                    }
+                }
+
+                $ageDate = Get-RecordAgeDate -Record $record -FileInfo $sourceItem -PreferredSource $AgeSource -FieldName $AgeFieldName
+
+                if ($ageDate -gt $cutoff) {
+                    if ($IncludeSkipped) {
+                        New-ResultObject `
+                            -RecNo $recNo `
+                            -Verweis $verweis `
+                            -Status 'UebersprungenZuNeu' `
+                            -DateinameAlt $dateinameAlt `
+                            -Quelle $sourceFullPath `
+                            -Datum $ageDate `
+                            -Hinweis "Grenze: $cutoff"
+                    }
+
+                    continue
+                }
+
+                try {
+                    $restPath = Get-CdromRestPathFromLocalPath -FullPath $sourceFullPath
+                }
+                catch {
+                    New-ResultObject `
+                        -RecNo $recNo `
+                        -Verweis $verweis `
+                        -Status 'UebersprungenKeinLokalerLaufwerkspfad' `
+                        -DateinameAlt $dateinameAlt `
+                        -Quelle $sourceFullPath `
+                        -Datum $ageDate `
+                        -Hinweis $_.Exception.Message
+                    continue
+                }
+
+                $dateinameNeu = 'CDROM{0}:{1}' -f $ArchiveNumber, $restPath
+                $newNameByteCount = $dbfEncoding.GetByteCount($dateinameNeu)
+
+                if ($newNameByteCount -gt [int] $dateinameField.Length) {
+                    New-ResultObject `
+                        -RecNo $recNo `
+                        -Verweis $verweis `
+                        -Status 'UebersprungenDATEINAMEZuLang' `
+                        -DateinameAlt $dateinameAlt `
+                        -DateinameNeu $dateinameNeu `
+                        -Quelle $sourceFullPath `
+                        -Datum $ageDate `
+                        -Hinweis "DATEINAME waere $newNameByteCount Bytes lang, erlaubt sind $($dateinameField.Length)."
+                    continue
+                }
+
+                $targetPath = ConvertTo-CacheTargetPath -CacheDrive $cacheDrive -Number $ArchiveNumber -RestPath $restPath
+                $targetDirectory = Split-Path -Path $targetPath -Parent
+
+                $operationText = if ($KeepOriginal) {
+                    "in Cache kopieren und BILDER.DBF auf '$dateinameNeu' setzen"
+                }
+                else {
+                    "in Cache verschieben und BILDER.DBF auf '$dateinameNeu' setzen"
+                }
+
+                if (-not $PSCmdlet.ShouldProcess($sourceFullPath, $operationText)) {
+                    New-ResultObject `
+                        -RecNo $recNo `
+                        -Verweis $verweis `
+                        -Status 'WhatIf' `
+                        -DateinameAlt $dateinameAlt `
+                        -DateinameNeu $dateinameNeu `
+                        -Quelle $sourceFullPath `
+                        -Ziel $targetPath `
+                        -Datum $ageDate `
+                        -Hinweis $operationText
+                    continue
+                }
+
+                try {
+                    New-Item -ItemType Directory -Path $targetDirectory -Force | Out-Null
+
+                    $copyNeeded = $true
+
+                    if (Test-Path -LiteralPath $targetPath -PathType Leaf) {
+                        $targetItemExisting = Get-Item -LiteralPath $targetPath -ErrorAction Stop
+
+                        if ($targetItemExisting.Length -eq $sourceItem.Length) {
+                            $copyNeeded = $false
+                        }
+                        else {
+                            throw "Zieldatei existiert bereits mit anderer Groesse: $targetPath"
+                        }
+                    }
+
+                    if ($copyNeeded) {
+                        Copy-Item -LiteralPath $sourceFullPath -Destination $targetPath -ErrorAction Stop
+                    }
+
+                    $targetItem = Get-Item -LiteralPath $targetPath -ErrorAction Stop
+
+                    if ($targetItem.Length -ne $sourceItem.Length) {
+                        throw "Kopierpruefung fehlgeschlagen: Quellgroesse $($sourceItem.Length), Zielgroesse $($targetItem.Length)."
+                    }
+
+                    if ($VerifyHash) {
+                        $sourceHash = Get-FileHash -LiteralPath $sourceFullPath -Algorithm SHA256
+                        $targetHash = Get-FileHash -LiteralPath $targetPath -Algorithm SHA256
+
+                        if ($sourceHash.Hash -ne $targetHash.Hash) {
+                            throw "Hash-Pruefung fehlgeschlagen: $sourceFullPath -> $targetPath"
+                        }
+                    }
+
+                    Set-DbfCharacterFieldValue `
+                        -Dbf $dbf `
+                        -RecNo $recNo `
+                        -FieldName 'DATEINAME' `
+                        -Value $dateinameNeu `
+                        -Encoding $dbfEncoding
+
+                    if (-not $KeepOriginal) {
+                        Remove-Item -LiteralPath $sourceFullPath -Force -ErrorAction Stop
+                    }
+
+                    New-ResultObject `
+                        -RecNo $recNo `
+                        -Verweis $verweis `
+                        -Status $(if ($KeepOriginal) { 'KopiertUndDBFAktualisiert' } else { 'VerschobenUndDBFAktualisiert' }) `
+                        -DateinameAlt $dateinameAlt `
+                        -DateinameNeu $dateinameNeu `
+                        -Quelle $sourceFullPath `
+                        -Ziel $targetPath `
+                        -Datum $ageDate
+                }
+                catch {
+                    New-ResultObject `
+                        -RecNo $recNo `
+                        -Verweis $verweis `
+                        -Status 'Fehler' `
+                        -DateinameAlt $dateinameAlt `
+                        -DateinameNeu $dateinameNeu `
+                        -Quelle $sourceFullPath `
+                        -Ziel $targetPath `
+                        -Datum $ageDate `
+                        -Hinweis $_.Exception.Message
+                }
+            }
+        }
+        finally {
+            if ($null -ne $dbf) {
+                $dbf.Close()
+            }
+        }
+    }
+}
+```
+
 ## Verweise in BILD.DBF ändern
 
 Unter \<EASYCLIP\>:\D\TEST\bildlink findet man das Projekt Bildlink mit dem Verweise in Bild.DBF ganz einfach geändert werden können.
