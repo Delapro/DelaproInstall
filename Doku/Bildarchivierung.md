@@ -12,6 +12,7 @@ Der Pfad wird in <Code>DLP_Main.INI</Code> unter der Sektion \[Dateien\] beim Ei
 
 Unter \<EASYCLIP\>:\D\TEST\bildlink findet man das Projekt Bildlink mit dem Verweise in Bild.DBF ganz einfach geändert werden können.
 
+> [!CAUTION]
 > Groß-/Kleinschreibung des Pfadnamen beachten!
 
 Syntax:
