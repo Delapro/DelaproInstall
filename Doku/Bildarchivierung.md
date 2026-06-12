@@ -45,6 +45,329 @@ Bilderverzeichnis mit Dummies füllen für Tests:
 1..65532|%{Set-Content -Path (".\xht$((`"{0:x}`" -f $_).ToUpper()).tmp") -Value "$_"}
 ``` 
 
+## Prüfen, ob die Bilder aus der BILDER.DBF wirklich vorhanden sind
+
+Als <Code>Test-BilderDateien.PS1</Code> speichern!
+```Powershell
+<#
+.SYNOPSIS
+Prüft die DATEINAME-Verweise aus BILDER.DBF.
+
+.DESCRIPTION
+- Lädt PSDBF über Invoke-PSDBFDownloadAndInit
+- Öffnet BILDER.DBF mit Use-DBF
+- Durchläuft alle Datensätze
+- Prüft DATEINAME als Datei
+- Wenn nicht gefunden: entfernt die Endung und sucht mit Dateiname.*
+- Gibt nur problematische oder speziell behandelte Treffer als PowerShell-Objekte zurück
+
+.SAMPLE
+# evtl. vorher: Install-StartBitsTransfer
+$bt=.\Test-BilderDateien.PS1 -dbfpath ..\BILDER.DBF -BasePath N:\Delapro\
+
+#>
+
+[CmdletBinding()]
+param(
+    [Parameter()]
+    [string] $DbfPath = '.\Copy\BILDER.DBF',
+
+    [Parameter()]
+    [string] $BasePath = '.'
+)
+
+# PSDBF Modul laden, wie im DelaproInstall-Projekt üblich
+. Invoke-PSDBFDownloadAndInit
+
+function Get-DbfText {
+    param(
+        [object] $Value
+    )
+
+    if ($null -eq $Value) {
+        return ''
+    }
+
+    return ([string] $Value).Replace([string][char]0, '').Trim()
+}
+
+function Resolve-BilderDateinamePath {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Dateiname,
+
+        [Parameter(Mandatory)]
+        [string] $BasePath
+    )
+
+    $dateinameTrimmed = Get-DbfText $Dateiname
+
+    if ([string]::IsNullOrWhiteSpace($dateinameTrimmed)) {
+        return [pscustomobject]@{
+            Ok        = $false
+            FullPath  = $null
+            ErrorText = 'DATEINAME ist leer'
+        }
+    }
+
+    try {
+        $baseResolved = (Resolve-Path -LiteralPath $BasePath -ErrorAction Stop).ProviderPath
+
+        if ([System.IO.Path]::IsPathRooted($dateinameTrimmed)) {
+            $fullPath = $dateinameTrimmed
+        }
+        else {
+            $fullPath = Join-Path -Path $baseResolved -ChildPath $dateinameTrimmed
+        }
+
+        return [pscustomobject]@{
+            Ok        = $true
+            FullPath  = $fullPath
+            ErrorText = $null
+        }
+    }
+    catch {
+        return [pscustomobject]@{
+            Ok        = $false
+            FullPath  = $null
+            ErrorText = $_.Exception.Message
+        }
+    }
+}
+
+$dbfResolvedPath = Resolve-Path -LiteralPath $DbfPath -ErrorAction Stop
+$dbf = Use-DBF $dbfResolvedPath
+
+try {
+    foreach ($recNo in $dbf.ListAll()) {
+        $record = $dbf.ReadRecord($recNo)
+
+        $verweis = Get-DbfText $record.VERWEIS
+        $dateiname = Get-DbfText $record.DATEINAME
+
+        $resolved = Resolve-BilderDateinamePath `
+            -Dateiname $dateiname `
+            -BasePath $BasePath
+
+        if (-not $resolved.Ok) {
+            [pscustomobject]@{
+                RecNo        = $recNo
+                Verweis      = $verweis
+                Dateiname    = $dateiname
+                Status       = 'UngueltigerPfad'
+                Geprueft     = $null
+                GefundenAls  = $null
+                TrefferCount = 0
+                Fehler       = $resolved.ErrorText
+            }
+
+            continue
+        }
+
+        $fullPath = $resolved.FullPath
+
+        $existsExact = $false
+
+        try {
+            $existsExact = Test-Path -LiteralPath $fullPath -PathType Leaf -ErrorAction Stop
+        }
+        catch {
+            [pscustomobject]@{
+                RecNo        = $recNo
+                Verweis      = $verweis
+                Dateiname    = $dateiname
+                Status       = 'UngueltigerPfad'
+                Geprueft     = $fullPath
+                GefundenAls  = $null
+                TrefferCount = 0
+                Fehler       = $_.Exception.Message
+            }
+
+            continue
+        }
+
+        # Normalfall: Datei existiert exakt so wie angegeben.
+        # Diese Datensätze werden ignoriert.
+        if ($existsExact) {
+            continue
+        }
+
+        # Fallback: Endung entfernen und mit Dateiname.* suchen
+        try {
+            $directory = [System.IO.Path]::GetDirectoryName($fullPath)
+            $fileNameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($fullPath)
+        }
+        catch {
+            [pscustomobject]@{
+                RecNo        = $recNo
+                Verweis      = $verweis
+                Dateiname    = $dateiname
+                Status       = 'UngueltigerPfad'
+                Geprueft     = $fullPath
+                GefundenAls  = $null
+                TrefferCount = 0
+                Fehler       = $_.Exception.Message
+            }
+
+            continue
+        }
+
+        $matches = @()
+
+        if (-not [string]::IsNullOrWhiteSpace($directory) -and
+            (Test-Path -LiteralPath $directory -PathType Container)) {
+
+            $matches = @(
+                Get-ChildItem `
+                    -LiteralPath $directory `
+                    -Filter "$fileNameWithoutExtension.*" `
+                    -File `
+                    -ErrorAction SilentlyContinue
+            )
+        }
+
+        if ($matches.Count -gt 0) {
+            [pscustomobject]@{
+                RecNo        = $recNo
+                Verweis      = $verweis
+                Dateiname    = $dateiname
+                Status       = if ($matches.Count -eq 1) {
+                    'GefundenMitAndererEndung'
+                }
+                else {
+                    'MehrereTrefferMitAndererEndung'
+                }
+                Geprueft     = $fullPath
+                GefundenAls  = ($matches.FullName -join '; ')
+                TrefferCount = $matches.Count
+                Fehler       = $null
+            }
+
+            continue
+        }
+
+        [pscustomobject]@{
+            RecNo        = $recNo
+            Verweis      = $verweis
+            Dateiname    = $dateiname
+            Status       = 'Fehlt'
+            Geprueft     = $fullPath
+            GefundenAls  = $null
+            TrefferCount = 0
+            Fehler       = $null
+        }
+    }
+}
+finally {
+    if ($null -ne $dbf) {
+        $dbf.Close()
+    }
+}
+```
+
+## Prüfen ob doppelte Dateinamen in BILDER.DBF enthalten sind
+
+```Powershell
+<#
+.SYNOPSIS
+Prüft doppelte DATEINAME-Einträge in BILDER.DBF.
+
+.DESCRIPTION
+- Lädt PSDBF über Invoke-PSDBFDownloadAndInit
+- Öffnet BILDER.DBF mit Use-DBF
+- Liest alle Datensätze
+- Gruppiert nach DATEINAME
+- Gibt nur Dateinamen zurück, die mehrfach vorkommen
+
+.SAMPLE
+$duplikate = .\Test-BilderDateinameDuplikate.ps1 -DbfPath ..\BILDER.DBF
+#>
+
+[CmdletBinding()]
+param(
+    [Parameter()]
+    [string] $DbfPath = '.\Copy\BILDER.DBF',
+
+    [Parameter()]
+    [switch] $CaseSensitive,
+
+    [Parameter()]
+    [switch] $IncludeEmpty
+)
+
+# PSDBF Modul laden, wie im DelaproInstall-Projekt üblich
+. Invoke-PSDBFDownloadAndInit
+
+function Get-DbfText {
+    param(
+        [object] $Value
+    )
+
+    if ($null -eq $Value) {
+        return ''
+    }
+
+    return ([string] $Value).Replace([string][char]0, '').Trim()
+}
+
+$dbfResolvedPath = Resolve-Path -LiteralPath $DbfPath -ErrorAction Stop
+$dbf = Use-DBF $dbfResolvedPath
+
+try {
+    $records = foreach ($recNo in $dbf.ListAll()) {
+        $record = $dbf.ReadRecord($recNo)
+
+        $dateiname = Get-DbfText $record.DATEINAME
+
+        if (-not $IncludeEmpty -and [string]::IsNullOrWhiteSpace($dateiname)) {
+            continue
+        }
+
+        [pscustomobject]@{
+            RecNo     = $recNo
+            Verweis   = Get-DbfText $record.VERWEIS
+            Dateiname = $dateiname
+            Bemerkung = Get-DbfText $record.BEMERKUNG
+            Datum     = $record.DATUM
+        }
+    }
+
+    if ($CaseSensitive) {
+        $groups = $records | Group-Object -Property Dateiname
+    }
+    else {
+        $groups = $records |
+            ForEach-Object {
+                $_ | Add-Member -NotePropertyName DateinameKey -NotePropertyValue ($_.Dateiname.ToUpperInvariant()) -PassThru
+            } |
+            Group-Object -Property DateinameKey
+    }
+
+    foreach ($group in $groups) {
+        if ($group.Count -le 1) {
+            continue
+        }
+
+        $items = @($group.Group)
+        $first = $items[0]
+
+        [pscustomobject]@{
+            Dateiname    = $first.Dateiname
+            Anzahl       = $group.Count
+            RecNos       = ($items.RecNo -join ', ')
+            Verweise     = ($items.Verweis -join ', ')
+            Datensaetze  = $items
+        }
+    }
+}
+finally {
+    if ($null -ne $dbf) {
+        $dbf.Close()
+    }
+}
+
+```
+
 ## Fehlermeldung beim Öffnen
 
 Ist die Einstellung, dass gleich nach Aufruf ein Livebild angezeigt werden soll und es gibt Probleme mit der Quelle, kann diese Meldung erscheinen:
