@@ -93,3 +93,152 @@ REM @CMD /C "%1DlpXMLpr.exe" %2 %3 %4 %5 %6
 REM @ECHO %1 %2 %3 %4 %5 %6 >> LOG.TXT
 @CMD /C ".\LASER\XGHOSTPDFX.BAT" %2 %3 %4 %5 %6
 ```
+
+## Anpassung an PrintReport2
+
+Für den Verifymodus benötigt man einheitliche Zeitstempel, deshalb müssen alle .REP-Dateien entsprechend mit diesem Script aktualisiert werden.
+
+Dadurch wird dann <Code>.      XMLWrTagValue (ABSVXML, "Erstellungsdatum", DTOC (DATE ()) + " " + TIME ())</Code> durch <Code>.      XMLWrTagValue (ABSVXML, "Erstellungsdatum", REP_GetPrintDate ())</Code> ersetzt. Die Routine fragt vor dem Ersetzen nach, arbeitet rekursiv, behält das ursprüngliche Dateidatum bei und zeigt am Ende eine Zusammenfassung an.
+
+```Powershell
+function Update-ErstellungsdatumPrintDate {
+    [CmdletBinding()]
+    param(
+        [string]$RootPath = (Get-Location).Path
+    )
+
+    function Get-TextEncodingFromBytes {
+        param(
+            [byte[]]$Bytes
+        )
+
+        if ($Bytes.Length -ge 3 -and
+            $Bytes[0] -eq 0xEF -and $Bytes[1] -eq 0xBB -and $Bytes[2] -eq 0xBF) {
+            return [System.Text.UTF8Encoding]::new($true)
+        }
+
+        if ($Bytes.Length -ge 2 -and
+            $Bytes[0] -eq 0xFF -and $Bytes[1] -eq 0xFE) {
+            return [System.Text.UnicodeEncoding]::new($false, $true)
+        }
+
+        if ($Bytes.Length -ge 2 -and
+            $Bytes[0] -eq 0xFE -and $Bytes[1] -eq 0xFF) {
+            return [System.Text.UnicodeEncoding]::new($true, $true)
+        }
+
+        # UTF-8 ohne BOM erkennen
+        try {
+            $utf8NoBom = [System.Text.UTF8Encoding]::new($false, $true)
+            $null = $utf8NoBom.GetString($Bytes)
+            return $utf8NoBom
+        }
+        catch {
+            # Falls kein gültiges UTF-8: lokale ANSI-Codepage verwenden
+            try {
+                Add-Type -AssemblyName System.Text.Encoding.CodePages -ErrorAction SilentlyContinue
+                [System.Text.Encoding]::RegisterProvider([System.Text.CodePagesEncodingProvider]::Instance)
+            }
+            catch {
+            }
+
+            try {
+                return [System.Text.Encoding]::GetEncoding(
+                    [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ANSICodePage
+                )
+            }
+            catch {
+                return [System.Text.Encoding]::Default
+            }
+        }
+    }
+
+    $oldLine = '.      XMLWrTagValue (ABSVXML, "Erstellungsdatum", DTOC (DATE ()) + " " + TIME ())'
+    $newLine = '.      XMLWrTagValue (ABSVXML, "Erstellungsdatum", REP_GetPrintDate ())'
+
+    $foundCount = 0
+    $changedCount = 0
+    $changedFiles = 0
+
+    $files = Get-ChildItem -LiteralPath $RootPath -Recurse -File |
+        Where-Object {
+            $_.Name -like 'FORM*.TXT' -or $_.Name -like '*.REP'
+        }
+
+    foreach ($file in $files) {
+        try {
+            $fileInfo = Get-Item -LiteralPath $file.FullName
+
+            $originalCreationTimeUtc = $fileInfo.CreationTimeUtc
+            $originalLastWriteTimeUtc = $fileInfo.LastWriteTimeUtc
+            $originalLastAccessTimeUtc = $fileInfo.LastAccessTimeUtc
+
+            $bytes = [System.IO.File]::ReadAllBytes($fileInfo.FullName)
+            $encoding = Get-TextEncodingFromBytes -Bytes $bytes
+            $text = $encoding.GetString($bytes)
+
+            # Zeilen inklusive Zeilenenden trennen, damit CRLF/LF erhalten bleibt
+            $parts = [regex]::Split($text, '(\r\n|\n|\r)')
+            $lineCount = [int][Math]::Ceiling($parts.Count / 2)
+
+            $fileChanged = $false
+
+            for ($lineIndex = 0; $lineIndex -lt $lineCount; $lineIndex++) {
+                $partIndex = $lineIndex * 2
+
+                if ($parts[$partIndex] -ceq $oldLine) {
+                    $foundCount++
+
+                    $from = [Math]::Max(0, $lineIndex - 3)
+                    $to = [Math]::Min($lineCount - 1, $lineIndex + 3)
+
+                    Write-Host ""
+                    Write-Host "Fundstelle in:"
+                    Write-Host $fileInfo.FullName
+                    Write-Host ""
+
+                    for ($i = $from; $i -le $to; $i++) {
+                        $marker = if ($i -eq $lineIndex) { '>' } else { ' ' }
+                        '{0} {1,6}: {2}' -f $marker, ($i + 1), $parts[$i * 2] | Write-Host
+                    }
+
+                    Write-Host ""
+                    $answer = Read-Host "Diese Stelle aktualisieren? [j/N]"
+
+                    if ($answer -match '^(j|ja|y|yes)$') {
+                        $parts[$partIndex] = $newLine
+                        $fileChanged = $true
+                        $changedCount++
+                        Write-Host "Markiert zur Aktualisierung."
+                    }
+                    else {
+                        Write-Host "Übersprungen."
+                    }
+                }
+            }
+
+            if ($fileChanged) {
+                $newText = -join $parts
+                [System.IO.File]::WriteAllText($fileInfo.FullName, $newText, $encoding)
+
+                $updatedFile = Get-Item -LiteralPath $fileInfo.FullName
+                $updatedFile.CreationTimeUtc = $originalCreationTimeUtc
+                $updatedFile.LastWriteTimeUtc = $originalLastWriteTimeUtc
+                $updatedFile.LastAccessTimeUtc = $originalLastAccessTimeUtc
+
+                $changedFiles++
+                Write-Host "Datei aktualisiert, ursprüngliche Zeitstempel wiederhergestellt."
+            }
+        }
+        catch {
+            Write-Warning "Fehler bei Datei '$($file.FullName)': $($_.Exception.Message)"
+        }
+    }
+
+    [pscustomobject]@{
+        GefundeneStellen     = $foundCount
+        AktualisierteStellen = $changedCount
+        GeaenderteDateien    = $changedFiles
+    }
+}
+```
