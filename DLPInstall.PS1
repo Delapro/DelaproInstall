@@ -3494,7 +3494,7 @@ Function Install-AnyDesk {
 		# AnyDesk Fernwartung einrichten
 		Start-BitsTransfer 'https://download.anydesk.com/AnyDesk.exe'  -Destination $tempDirectory
 		# prüfen, ob es sich überhaupt um eine neuere Version handelt
-		If (([Version](Get-Item -Path $tempDirectory\AnyDesk.exe).VersionInfo.ProductVersion) -gt ([Version](Get-Item -Path $DestinationPath\Fernwartung).VersionInfo.ProductVersion)) {
+		If (([Version](Get-Item -Path $tempDirectory\AnyDesk.exe).VersionInfo.ProductVersion) -gt ([Version](Get-Item -Path $DestinationPath\Fernwartung\AnyDesk.exe).VersionInfo.ProductVersion)) {
 			Unblock-File "$($tempDirectory)AnyDesk.exe"
 			If (-Not (Test-Path $DestinationPath\Fernwartung)) {
 				New-Item -path $DestinationPath\Fernwartung -Type Directory
