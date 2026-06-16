@@ -3509,11 +3509,12 @@ Function Install-RustDesk {
 		If (-Not (Test-Path $DestinationPath\Fernwartung)) {
 			New-Item -path $DestinationPath\Fernwartung -Type Directory
 		}
-		Start-BitsTransfer 'https://github.com/rustdesk/rustdesk/releases/download/1.4.6/rustdesk-1.4.6-x86_64.exe'  -Destination $tempDirectory
+		$version = "1.4.7"
+		Start-BitsTransfer "https://github.com/rustdesk/rustdesk/releases/download/$($version)/rustdesk-$($version)-x86_64.exe"  -Destination $tempDirectory
 		# prüfen, ob es sich überhaupt um eine neuere Version handelt
-		If ((-not (Test-Path $DestinationPath\Fernwartung\RustDesk.exe)) -or ([Version](Get-Item -Path $tempDirectory\rustdesk-1.4.6-x86_64.exe).VersionInfo.ProductVersion.Replace('+','.')) -gt ([Version](Get-Item -Path $DestinationPath\Fernwartung\RustDesk.exe).VersionInfo.ProductVersion.Replace('+','.'))) {
-			Unblock-File "$($tempDirectory)rustdesk-1.4.6-x86_64.exe"
-			Rename-Item "$($tempDirectory)rustdesk-1.4.6-x86_64.exe" "$($tempDirectory)rustdesk.exe" -Force
+		If ((-not (Test-Path $DestinationPath\Fernwartung\RustDesk.exe)) -or ([Version](Get-Item -Path "$tempDirectory\rustdesk-$($version)-x86_64.exe").VersionInfo.ProductVersion.Replace('+','.')) -gt ([Version](Get-Item -Path $DestinationPath\Fernwartung\RustDesk.exe).VersionInfo.ProductVersion.Replace('+','.'))) {
+			Unblock-File "$($tempDirectory)rustdesk-$($version)-x86_64.exe"
+			Rename-Item "$($tempDirectory)rustdesk-$($version)-x86_64.exe" "$($tempDirectory)rustdesk.exe" -Force
 			If (Test-Path -Path "$($DestinationPath)\Fernwartung\RustDesk.exe") {
 				# alte Version umbennen, damit es keine Fehlermeldung gibt, falls diese gerade aktiv ist
 				If (Test-Path -Path "$($DestinationPath)\Fernwartung\RustDesk.exe.alt") {
