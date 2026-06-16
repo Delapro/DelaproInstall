@@ -2653,40 +2653,71 @@ Function Get-ImageMagick {
 	$imDirs
 }
 
-
-# ladet und installiert 7Zip
+# ladet und installiert 7-Zip
 Function Install-7Zip {
-	[CmdletBinding()]
-	Param(
-		#[parameter(Mandatory=$true)]
-		[System.String]$tempDirectory="$Env:TEMP\"
-	)
+    [CmdletBinding()]
+    Param(
+        [System.String]$tempDirectory = "$Env:TEMP\"
+    )
 
-	$Version = '2600'	# aktuelle offizielle Version: https://www.7-zip.org/
-	If (Test-64Bit) {
-		If (Test-Arm64) {
-			$url = "https://www.7-zip.org/a/7z$($Version)-arm64.exe"
-			$Dest = "$($tempDirectory)\7z$($Version)-arm64.exe"
-			$Sha256 = '92FAC666911336F3BBF3D99FDC48EC36FE20AC7A4200556936E61A8076AE6493'
-		} else {			
-			$url = "https://www.7-zip.org/a/7z$($Version)-x64.exe"
-			$Dest = "$($tempDirectory)\7z$($Version)-x64.exe"
-			$Sha256 = '6FE18D5B3080E39678CABFA6CEF12CFB25086377389B803A36A3C43236A8A82C'
-		}
-	} else {
-		$url = "https://www.7-zip.org/a/7z$($Version).exe"
-		$Dest = "$($tempDirectory)\7z$($Version).exe"
-		$Sha256 = 'D605EB609AA67796DCA7CFE26D7E28792090BB8048302D6E05EDE16E8E33145C'
-	}
+    $Version = '2601' # 7-Zip 26.01, aktuelle offizielle Version: https://www.7-zip.org/
 
-	Write-Verbose "Lade $url nach $Dest"
-	Start-BitsTransfer -Source $url -Destination $Dest
-	# Silent-Install Parameter: /S
-	If ((Get-FileHash -Path $Dest -Algorithm SHA256).Hash -eq $Sha256) {
-		Start-Process -Wait -FilePath $Dest -ArgumentList "/S"
-	} else {
-		Write-Error "Heruntergeladene 7Zip-Version ist nicht sicher!"
-	}
+    If (-Not (Test-Path -LiteralPath $tempDirectory -PathType Container)) {
+        New-Item -Path $tempDirectory -ItemType Directory -Force | Out-Null
+    }
+
+    # Architektur möglichst OS-basiert ermitteln, nicht nur anhand der PowerShell-Prozess-Bitness.
+    # Das vermeidet x86-Installation auf einem x64-Windows, wenn versehentlich 32-Bit-PowerShell läuft.
+    $processorArchitectures = @(
+        $Env:PROCESSOR_ARCHITEW6432,
+        $Env:PROCESSOR_ARCHITECTURE
+    ) | Where-Object { -Not [String]::IsNullOrWhiteSpace($_) }
+
+    $isArm64 = $processorArchitectures -contains 'ARM64'
+
+    Try {
+        $is64BitOS = [Environment]::Is64BitOperatingSystem
+    }
+    Catch {
+        # Fallback auf vorhandene Repo-Funktion
+        $is64BitOS = Test-64Bit
+    }
+
+    If ($isArm64) {
+        $filename = "7z$($Version)-arm64.exe"
+        $sha256   = '1FECF4E3407950939C8FFCC3E42E3039821997DEA155301C75369474E5F15175'
+    }
+    ElseIf ($is64BitOS) {
+        $filename = "7z$($Version)-x64.exe"
+        $sha256   = 'D64A0468F5B5B0B0FC5B2188450BCD655B70809D97B1C4535F2884635094377D'
+    }
+    Else {
+        $filename = "7z$($Version).exe"
+        $sha256   = '615976598F800C70827C5A47E68C2B0D2B17D048B9721BA071C8AF825D2476BD'
+    }
+
+    $url  = "https://www.7-zip.org/a/$filename"
+    $dest = Join-Path -Path $tempDirectory -ChildPath $filename
+
+    If (Test-Path -LiteralPath $dest) {
+        Remove-Item -LiteralPath $dest -Force
+    }
+
+    Write-Verbose "Lade $url nach $dest"
+    Start-BitsTransfer -Source $url -Destination $dest -ErrorAction Stop
+
+    $actualSha256   = (Get-FileHash -Path $dest -Algorithm SHA256).Hash.ToUpperInvariant()
+    $expectedSha256 = $sha256.ToUpperInvariant()
+
+    If ($actualSha256 -ne $expectedSha256) {
+        Remove-Item -LiteralPath $dest -Force -ErrorAction SilentlyContinue
+        Throw "Heruntergeladene 7-Zip-Version ist nicht sicher! Erwartet: $expectedSha256; Ist: $actualSha256; Datei: $dest"
+    }
+
+    Write-Verbose "SHA256 OK: $actualSha256"
+
+    # Silent-Install-Parameter für 7-Zip
+    Start-Process -Wait -FilePath $dest -ArgumentList "/S"
 }
 
 # ladet und installiert Git
