@@ -1,0 +1,115 @@
+name: Test Install-DotNetCore
+
+on:
+  workflow_dispatch:
+  #push:
+  #  paths:
+  #    - 'DLPInstall.PS1'
+  #    - '.github/workflows/test-dotnetcore.yml'
+  #pull_request:
+  #  paths:
+  #    - 'DLPInstall.PS1'
+
+jobs:
+  test-dotnetcore:
+    name: .NET ${{ matrix.dotnet_major }} ${{ matrix.arch }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-2025
+          - windows-2022
+        dotnet_major:
+          - '8'
+          - '10'
+        arch:
+          - x64
+          - x86
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show runner image and existing .NET runtimes
+        shell: powershell
+        run: |
+          Write-Host "ImageOS: $env:ImageOS"
+          Write-Host "ImageVersion: $env:ImageVersion"
+          Write-Host "RunnerArch: $env:RUNNER_ARCH"
+
+          if (Get-Command dotnet -ErrorAction SilentlyContinue) {
+            dotnet --info
+            dotnet --list-runtimes
+          } else {
+            Write-Host "dotnet ist nicht im PATH."
+          }
+
+      - name: PowerShell AST check
+        shell: powershell
+        run: |
+          $tokens = $null
+          $errors = $null
+
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            "$env:GITHUB_WORKSPACE\DLPInstall.PS1",
+            [ref]$tokens,
+            [ref]$errors
+          ) | Out-Null
+
+          if ($errors.Count -gt 0) {
+            $errors | Format-List * | Out-String | Write-Error
+            exit 1
+          }
+
+          Write-Host "PowerShell-Syntax OK."
+
+      - name: Run Install-DotNetCore
+        shell: powershell
+        run: |
+          . "$env:GITHUB_WORKSPACE\DLPInstall.PS1"
+
+          Install-DotNetCore `
+            -Version '${{ matrix.dotnet_major }}' `
+            -Architecture '${{ matrix.arch }}' `
+            -tempDirectory "$env:RUNNER_TEMP" `
+            -Verbose
+
+      - name: Verify installed Windows Desktop Runtime
+        shell: powershell
+        run: |
+          $major = '${{ matrix.dotnet_major }}'
+          $arch  = '${{ matrix.arch }}'
+
+          $expected = @{
+            '8'  = '8.0.28'
+            '10' = '10.0.9'
+          }[$major]
+
+          if ($arch -eq 'x86') {
+            $dotnetRoot = "${env:ProgramFiles(x86)}\dotnet"
+          } else {
+            $dotnetRoot = "$env:ProgramFiles\dotnet"
+          }
+
+          $runtimePath = Join-Path $dotnetRoot 'shared\Microsoft.WindowsDesktop.App'
+
+          Write-Host "Prüfe Runtime-Pfad: $runtimePath"
+
+          if (-not (Test-Path -LiteralPath $runtimePath)) {
+            throw "Runtime-Pfad nicht gefunden: $runtimePath"
+          }
+
+          $versions = Get-ChildItem -LiteralPath $runtimePath -Directory |
+            Select-Object -ExpandProperty Name
+
+          $versions | Sort-Object | ForEach-Object {
+            Write-Host "Microsoft.WindowsDesktop.App $_ [$arch]"
+          }
+
+          if ($versions -notcontains $expected) {
+            throw "Erwartete Runtime $expected wurde nicht gefunden."
+          }
+
+          Write-Host "OK: Microsoft.WindowsDesktop.App $expected [$arch] gefunden."
