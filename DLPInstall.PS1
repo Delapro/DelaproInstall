@@ -3586,24 +3586,205 @@ Function Invoke-SysInternalTool {
 
 }
 
+# ladet und installiert die .NET Windows Desktop Runtime
 Function Install-DotNetCore {
-	[CmdletBinding()]
-	Param(
-		[Validateset(6,8)] [String]$Version=8,
-		[System.String]$tempDirectory="$Env:TEMP\"
-	)
+    [CmdletBinding(SupportsShouldProcess)]
+    Param(
+        # Achtung:
+        # .NET 10 ersetzt .NET 8 nicht automatisch.
+        # Anwendungen mit TargetFramework net8.0-windows benötigen normalerweise die 8er Runtime.
+        [ValidateSet('8', '10')]
+        [String]$Version = '8',
 
-	# TODO: Version, Platform, OS beachten
+        [ValidateSet('auto', 'x64', 'x86', 'arm64')]
+        [String]$Architecture = 'auto',
 
-	# Infos: https://dotnet.microsoft.com/download/dotnet-core/3.1
-	switch ($Version) {
-		'6' {$filename = "windowsdesktop-runtime-6.0.26-win-x64.exe"; $base='3136e217-e5b7-4899-9b7e-aa52ecb8b108/d74134edaa75e3300f8692660b9fb7b5'}
-		'8' {$filename = "windowsdesktop-runtime-8.0.1-win-x64.exe"; $base='f18288f6-1732-415b-b577-7fb46510479a/a98239f751a7aed31bc4aa12f348a9bf'}
-	}
-	Write-Verbose "https://download.visualstudio.microsoft.com/download/pr/$base/$Filename"
-	Start-BitsTransfer "https://download.visualstudio.microsoft.com/download/pr/$base/$Filename" -Destination "$($tempDirectory)\$Filename"
-	Start-Process -Wait -FilePath "$($tempDirectory)\$Filename"
+        [System.String]$tempDirectory = "$Env:TEMP\",
 
+        [Switch]$Force
+    )
+
+    $runtimeVersions = @{
+        '8'  = '8.0.28'
+        '10' = '10.0.9'
+    }
+
+    $runtimeVersion = $runtimeVersions[$Version]
+
+    If (-Not $runtimeVersion) {
+        Throw "Für .NET $Version ist keine Runtime-Version hinterlegt."
+    }
+
+    If (-Not (Test-Path -LiteralPath $tempDirectory -PathType Container)) {
+        New-Item -Path $tempDirectory -ItemType Directory -Force | Out-Null
+    }
+
+    If ($Architecture -eq 'auto') {
+        $processorArchitectures = @(
+            $Env:PROCESSOR_ARCHITEW6432,
+            $Env:PROCESSOR_ARCHITECTURE
+        ) | Where-Object { -Not [String]::IsNullOrWhiteSpace($_) }
+
+        If ($processorArchitectures -contains 'ARM64') {
+            $Architecture = 'arm64'
+        }
+        ElseIf ([Environment]::Is64BitOperatingSystem) {
+            $Architecture = 'x64'
+        }
+        Else {
+            $Architecture = 'x86'
+        }
+    }
+
+    Function Get-DotNetRootForArchitecture {
+        Param(
+            [ValidateSet('x64', 'x86', 'arm64')]
+            [String]$Architecture
+        )
+
+        switch ($Architecture) {
+            'x86' {
+                If ([Environment]::Is64BitOperatingSystem -and ${Env:ProgramFiles(x86)}) {
+                    Join-Path -Path ${Env:ProgramFiles(x86)} -ChildPath 'dotnet'
+                }
+                Else {
+                    Join-Path -Path $Env:ProgramFiles -ChildPath 'dotnet'
+                }
+            }
+
+            'x64' {
+                If ($Env:ProgramW6432) {
+                    Join-Path -Path $Env:ProgramW6432 -ChildPath 'dotnet'
+                }
+                Else {
+                    Join-Path -Path $Env:ProgramFiles -ChildPath 'dotnet'
+                }
+            }
+
+            'arm64' {
+                Join-Path -Path $Env:ProgramFiles -ChildPath 'dotnet'
+            }
+        }
+    }
+
+    Function Get-InstalledWindowsDesktopRuntimeVersion {
+        Param(
+            [Int]$MajorVersion,
+            [ValidateSet('x64', 'x86', 'arm64')]
+            [String]$Architecture
+        )
+
+        $dotNetRoot = Get-DotNetRootForArchitecture -Architecture $Architecture
+        $runtimePath = Join-Path -Path $dotNetRoot -ChildPath 'shared\Microsoft.WindowsDesktop.App'
+
+        If (-Not (Test-Path -LiteralPath $runtimePath -PathType Container)) {
+            return $null
+        }
+
+        Get-ChildItem -LiteralPath $runtimePath -Directory -ErrorAction SilentlyContinue |
+            ForEach-Object {
+                Try {
+                    [Version]$_.Name
+                }
+                Catch {
+                    $null
+                }
+            } |
+            Where-Object {
+                $null -ne $_ -and $_.Major -eq $MajorVersion
+            } |
+            Sort-Object -Descending |
+            Select-Object -First 1
+    }
+
+    $requestedVersion = [Version]$runtimeVersion
+    $installedVersion = Get-InstalledWindowsDesktopRuntimeVersion `
+        -MajorVersion ([Int]$Version) `
+        -Architecture $Architecture
+
+    If ($installedVersion -and -Not $Force) {
+        If ($installedVersion -ge $requestedVersion) {
+            Write-Verbose ".NET Windows Desktop Runtime $installedVersion ($Architecture) ist bereits installiert."
+            return
+        }
+    }
+
+    $filename = "windowsdesktop-runtime-$runtimeVersion-win-$Architecture.exe"
+    $downloadUrl = "https://builds.dotnet.microsoft.com/dotnet/WindowsDesktop/$runtimeVersion/$filename"
+    $checksumUrl = "https://builds.dotnet.microsoft.com/dotnet/checksums/$runtimeVersion-sha.txt"
+    $destination = Join-Path -Path $tempDirectory -ChildPath $filename
+    $logFile = Join-Path -Path $tempDirectory -ChildPath "windowsdesktop-runtime-$runtimeVersion-$Architecture-install.log"
+
+    If (Test-Path -LiteralPath $destination) {
+        Remove-Item -LiteralPath $destination -Force
+    }
+
+    Write-Verbose "Lade Checksum-Datei: $checksumUrl"
+
+    Try {
+        $checksumText = (Invoke-WebRequest -UseBasicParsing -Uri $checksumUrl -ErrorAction Stop).Content
+    }
+    Catch {
+        Throw "Konnte die offizielle .NET-Checksum-Datei nicht laden: $checksumUrl `n$($_.Exception.Message)"
+    }
+
+    $escapedFilename = [Regex]::Escape($filename)
+    $checksumLine = $checksumText -split "`r?`n" |
+        Where-Object { $_ -match $escapedFilename } |
+        Select-Object -First 1
+
+    If (-Not $checksumLine) {
+        Throw "In der offiziellen .NET-Checksum-Datei wurde kein Eintrag für $filename gefunden."
+    }
+
+    If ($checksumLine -notmatch '(?i)([0-9a-f]{128})') {
+        Throw "Der SHA512-Wert für $filename konnte nicht aus der Checksum-Zeile gelesen werden: $checksumLine"
+    }
+
+    $expectedSha512 = $Matches[1].ToUpperInvariant()
+
+    Write-Verbose "Lade Runtime: $downloadUrl"
+    Start-BitsTransfer -Source $downloadUrl -Destination $destination -ErrorAction Stop
+
+    $actualSha512 = (Get-FileHash -Path $destination -Algorithm SHA512).Hash.ToUpperInvariant()
+
+    If ($actualSha512 -ne $expectedSha512) {
+        Remove-Item -LiteralPath $destination -Force -ErrorAction SilentlyContinue
+        Throw "Heruntergeladene .NET Runtime ist nicht sicher! Erwartet: $expectedSha512; Ist: $actualSha512; Datei: $destination"
+    }
+
+    Write-Verbose "SHA512 OK: $actualSha512"
+
+    Unblock-File -LiteralPath $destination -ErrorAction SilentlyContinue
+
+    $argumentList = @(
+        '/install'
+        '/quiet'
+        '/norestart'
+        "/log `"$logFile`""
+    )
+
+    If ($PSCmdlet.ShouldProcess(".NET Windows Desktop Runtime $runtimeVersion ($Architecture)", "Installieren")) {
+        $process = Start-Process `
+            -FilePath $destination `
+            -ArgumentList $argumentList `
+            -Wait `
+            -PassThru
+
+        switch ($process.ExitCode) {
+            0 {
+                Write-Verbose ".NET Windows Desktop Runtime $runtimeVersion ($Architecture) wurde installiert."
+            }
+
+            3010 {
+                Write-Warning ".NET Windows Desktop Runtime $runtimeVersion ($Architecture) wurde installiert, benötigt aber einen Neustart. Log: $logFile"
+            }
+
+            default {
+                Throw ".NET Windows Desktop Runtime $runtimeVersion ($Architecture) Installation fehlgeschlagen. ExitCode: $($process.ExitCode). Log: $logFile"
+            }
+        }
+    }
 }
 
 # diese Funktion übernimmt die Installation des .Net-Frameworks, wenn dieses nicht installiert sein sollte
