@@ -23,7 +23,7 @@ LogInGuest     : C:\Temp\DelaproInstall-HyperVTest.log
 
 ## OSCDIMG.EXE oder -AllowPromptBootIso
 
-Bitte Windows ADK mit 'Deployment Tools' installieren oder -OscdimgPath angeben. Alternativ -AllowPromptBootIso setzen.
+Bitte Windows ADK mit 'Deployment Tools' installieren oder -OscdimgPath angeben. Alternativ -AllowPromptBootIso setzen. Siehe auch: https://github.com/Delapro/Get-OscdImg. Aufruf: <Code>-OscdimgPath C:\temp\oscdImg\oscdimg.exe</Code>
 
 ## Parallele Peer-Server-/Peer-Client-Installation
 
