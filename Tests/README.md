@@ -5,7 +5,7 @@ Die Tests hier werden über GithubActions ausgeführt. Momentan manuell. Siehe: 
 <Code>New-DelaproInstallHyperVTestVM.ps1</Code> ergaenzt das Repository um eine lokale Hyper-V-Testinstallation. Es erzeugt eine Windows-Generation-2-VM, erstellt eine zweite ISO mit `Autounattend.xml` und startet nach dem ersten Login ein frei waehlbares Testskript.
 
 ## Standardlauf
-Aufruf z. B.: <Code>.\New-DelaproInstallHyperVTestVM.PS1 -WindowsIsoPath D:\ISOs\de-de_windows_11_consumer_editions_version_24h2_updated_may_2025_x64_dvd_9c776dbb.iso -VmName DLPTest -VmPath D:\VMs\DelaproTest</Code>
+Aufruf z. B.: <Code>.\New-DelaproInstallHyperVTestVM.PS1 -WindowsIsoPath D:\ISOs\de-de_windows_11_consumer_editions_version_24h2_updated_may_2025_x64_dvd_9c776dbb.iso -VmName DLPTest -VmPath D:\VMs\DelaproTest -AllowPromptBootIso</Code>
 
 Erzeugt folgende Ausgabe:
 ```
@@ -20,6 +20,10 @@ LogInGuest     : C:\Temp\DelaproInstall-HyperVTest.log
 ```
 
 <Code>LogInGuest</Code> ist nach der Installation in der Gast-VM einsehbar.
+
+## OSCDIMG.EXE oder -AllowPromptBootIso
+
+Bitte Windows ADK mit 'Deployment Tools' installieren oder -OscdimgPath angeben. Alternativ -AllowPromptBootIso setzen.
 
 ## Parallele Peer-Server-/Peer-Client-Installation
 
