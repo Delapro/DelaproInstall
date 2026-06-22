@@ -1,16 +1,16 @@
 #requires -RunAsAdministrator
 <#!
 .SYNOPSIS
-    Erzeugt eine Windows-Test-VM in Hyper-V und startet eine automatische DelaproInstall-Testinstallation.
+    Erzeugt eine Windows-/Windows-Server-Test-VM in Hyper-V und startet eine automatische DelaproInstall-Testinstallation.
 .DESCRIPTION
-    Erwartet eine lokal heruntergeladene Windows-11-ISO. Das Skript remastert diese ISO standardmaessig
+    Erwartet eine lokal heruntergeladene Windows- oder Windows-Server-ISO. Das Skript remastert diese ISO standardmaessig
     zu einer No-Prompt-Boot-ISO, damit Hyper-V Gen2 nicht bei "Press any key to boot from CD or DVD" haengen bleibt.
     Zusaetzlich wird eine zweite ISO mit Autounattend.xml, DelaproTestConfig.json und Start-DelaproInstallTest.ps1 erstellt.
 
-    Das auszufuehrende Testskript ist per -TestScript waehltbar. Damit koennen mehrere VMs mit verschiedenen
-    Testrollen parallel installiert werden, z. B. Peer-Server und Peer-Clients.
+    Die auszufuehrende Testaktion ist per -TestScript oder -TestCommand waehltbar. Damit koennen mehrere VMs mit
+    verschiedenen Testrollen parallel installiert werden, z. B. Peer-Server und Peer-Clients.
 
-    Offizieller ISO-Download: https://www.microsoft.com/software-download/windows11
+    Offizieller Windows-11-ISO-Download: https://www.microsoft.com/software-download/windows11
 !#>
 [CmdletBinding(SupportsShouldProcess=$true)]
 param(
@@ -39,18 +39,43 @@ param(
     [ValidateRange(1, 64)]
     [int]$ProcessorCount = 4,
 
-    [string]$EditionName = 'Windows 11 Pro',
+    # Vordefinierte Editions-/Key-Kombinationen. Mit -EditionName und -ProductKey kann gezielt uebersteuert werden.
+    [ValidateSet('Auto', 'Windows11Pro', 'Server2025Standard', 'Server2025Datacenter', 'Custom')]
+    [string]$OsProfile = 'Auto',
 
-    # Microsoft GVLK fuer Windows 11/10 Pro. Dient der Editionsauswahl/Installation, nicht der Aktivierung.
-    [string]$ProductKey = 'W269N-WFGWX-YVC9B-4J6C9-T83GX',
+    # Nur fuer Server-Profile relevant: Core entspricht dem normalen Server ohne GUI; DesktopExperience installiert mit GUI.
+    [ValidateSet('Core', 'DesktopExperience')]
+    [string]$ServerInstallationType = 'DesktopExperience',
+
+    # Optional: exakte Image-Auswahl aus install.wim/install.esd. 0 = automatisch anhand OsProfile/ServerInstallationType.
+    [ValidateRange(0, 999)]
+    [int]$ImageIndex = 0,
+
+    # Optional: exakter Image-Name oder Description aus DISM/Get-WindowsImage. Hat Vorrang vor -EditionName, wenn gesetzt.
+    [string]$ImageName = '',
+
+    [string]$EditionName = '',
+
+    # Microsoft GVLK/KMS-Client-Setup-Key. Dient der Editionsauswahl/Installation, nicht der Aktivierung.
+    [string]$ProductKey = '',
+
+    # Wenn die No-Prompt-ISO schon existiert, wird sie standardmaessig wiederverwendet. Dieser Schalter erzwingt die Neuerzeugung.
+    [switch]$ForceRebuildNoPromptIso,
 
     # Leer lassen: wird eindeutig aus -VmName abgeleitet. Explizit setzen, wenn ein bestimmter Gastname gewuenscht ist.
     [string]$ComputerName = '',
     [string]$AdminUser = 'DelaproTest',
     [string]$AdminPassword = 'DlpTest-2026!',
 
-    # repo:Tests/TestInstalls.PS1, Tests/TestInstalls.PS1, https://..., file:.\Tests\MeinTest.ps1
-    [string]$TestScript = 'repo:Tests/TestInstalls.PS1',
+    # Entweder -TestScript ODER -TestCommand verwenden.
+    # -TestScript: repo:Tests/TestInstalls.PS1, Tests/TestInstalls.PS1, https://..., file:.\Tests\MeinTest.ps1
+    [string]$TestScript,
+
+    # -TestCommand: PowerShell-Code, der nach dem Laden von easy.PS1 im Gast ausgefuehrt wird.
+    # Beispiel: -TestCommand 'Write-Host "Hallo aus der Test-VM"; Get-Command DLP*'
+    [string]$TestCommand,
+
+    # Nur fuer -TestScript. Fuer -TestCommand Argumente direkt in den Befehl schreiben.
     [string[]]$TestScriptArguments = @(),
     [string]$RepositoryRawBaseUri = 'https://raw.githubusercontent.com/Delapro/DelaproInstall/master',
 
@@ -68,6 +93,7 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+$script:DelaproHyperVTestVmScriptVersion = 'v15-2026-06-20'
 
 function Test-DelaproAdmin {
     $principal = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
@@ -118,6 +144,378 @@ function New-DelaproGuestComputerName {
     $prefix = $clean.Substring(0, [Math]::Min(10, $clean.Length)).TrimEnd('-')
     if ([string]::IsNullOrWhiteSpace($prefix)) { $prefix = 'DLPTEST' }
     return ('{0}-{1}' -f $prefix, $hash).Substring(0, [Math]::Min(15, ('{0}-{1}' -f $prefix, $hash).Length))
+}
+
+
+function Resolve-DelaproOperatingSystemDefaults {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)][string]$OsProfile,
+        [Parameter(Mandatory=$true)][string]$WindowsIsoPath,
+        [Parameter(Mandatory=$true)][string]$ServerInstallationType,
+        [AllowNull()][string]$EditionName,
+        [AllowNull()][string]$ProductKey,
+        [System.Collections.IDictionary]$BoundParameters
+    )
+
+    $requestedOsProfile = $OsProfile
+
+    if ($OsProfile -eq 'Auto') {
+        $isoLeaf = [System.IO.Path]::GetFileName($WindowsIsoPath)
+        $isoProbe = $isoLeaf.ToLowerInvariant()
+
+        if ($isoProbe -match 'windows[_ -]?server[_ -]?2025|server[_ -]?2025') {
+            # Bei einer Server-ISO kann das Skript Standard/Datacenter nicht sicher aus dem Dateinamen unterscheiden.
+            # Deshalb ist Standard die konservative Vorgabe; Datacenter muss explizit mit -OsProfile Server2025Datacenter gesetzt werden.
+            $OsProfile = 'Server2025Standard'
+        }
+        elseif ($isoProbe -match 'windows[_ -]?11|win11') {
+            $OsProfile = 'Windows11Pro'
+        }
+        else {
+            throw "-OsProfile Auto konnte aus dem ISO-Dateinamen nicht sicher ableiten, welches Betriebssystem installiert werden soll: $isoLeaf. Bitte -OsProfile Windows11Pro, Server2025Standard, Server2025Datacenter oder Custom explizit angeben."
+        }
+
+        Write-Verbose ("OsProfile Auto: '{0}' wurde aus ISO-Dateiname '{1}' abgeleitet." -f $OsProfile, $isoLeaf)
+    }
+
+    $resolvedEditionName = $EditionName
+    $resolvedProductKey = $ProductKey
+
+    $editionWasSpecified = $false
+    $keyWasSpecified = $false
+    if ($BoundParameters) {
+        $editionWasSpecified = $BoundParameters.ContainsKey('EditionName')
+        $keyWasSpecified = $BoundParameters.ContainsKey('ProductKey')
+    }
+
+    switch ($OsProfile) {
+        'Windows11Pro' {
+            if (-not $editionWasSpecified -or [string]::IsNullOrWhiteSpace($resolvedEditionName)) {
+                $resolvedEditionName = 'Windows 11 Pro'
+            }
+            if (-not $keyWasSpecified -or [string]::IsNullOrWhiteSpace($resolvedProductKey)) {
+                $resolvedProductKey = 'W269N-WFGWX-YVC9B-4J6C9-T83GX'
+            }
+        }
+        'Server2025Standard' {
+            if (-not $editionWasSpecified -or [string]::IsNullOrWhiteSpace($resolvedEditionName)) {
+                if ($ServerInstallationType -eq 'DesktopExperience') {
+                    $resolvedEditionName = 'Windows Server 2025 Standard (Desktop Experience)'
+                } else {
+                    $resolvedEditionName = 'Windows Server 2025 Standard'
+                }
+            }
+            if (-not $keyWasSpecified -or [string]::IsNullOrWhiteSpace($resolvedProductKey)) {
+                $resolvedProductKey = 'TVRH6-WHNXV-R9WG3-9XRFY-MY832'
+            }
+        }
+        'Server2025Datacenter' {
+            if (-not $editionWasSpecified -or [string]::IsNullOrWhiteSpace($resolvedEditionName)) {
+                if ($ServerInstallationType -eq 'DesktopExperience') {
+                    $resolvedEditionName = 'Windows Server 2025 Datacenter (Desktop Experience)'
+                } else {
+                    $resolvedEditionName = 'Windows Server 2025 Datacenter'
+                }
+            }
+            if (-not $keyWasSpecified -or [string]::IsNullOrWhiteSpace($resolvedProductKey)) {
+                $resolvedProductKey = 'D764K-2NDRG-47T6Q-P8T8W-YP6DF'
+            }
+        }
+        'Custom' {
+            if ([string]::IsNullOrWhiteSpace($resolvedEditionName)) {
+                throw 'Bei -OsProfile Custom muss -EditionName angegeben werden.'
+            }
+        }
+        default {
+            throw "Unbekanntes OsProfile: $OsProfile"
+        }
+    }
+
+    [pscustomobject]@{
+        RequestedOsProfile = $requestedOsProfile
+        OsProfile = $OsProfile
+        ServerInstallationType = $ServerInstallationType
+        EditionName = $resolvedEditionName
+        ProductKey = $resolvedProductKey
+    }
+}
+
+
+function ConvertFrom-DelaproDismImageInfoText {
+    [CmdletBinding()]
+    param([string[]]$Lines)
+
+    $items = New-Object System.Collections.Generic.List[object]
+    $current = [ordered]@{}
+
+    foreach ($line in @($Lines)) {
+        if ($line -match '^\s*(Index)\s*:\s*(.+?)\s*$') {
+            if ($current.Contains('Index')) {
+                $items.Add([pscustomobject]$current)
+            }
+            $current = [ordered]@{}
+            $current.Index = [int]$Matches[2]
+            continue
+        }
+
+        if ($line -match '^\s*(Name)\s*:\s*(.*?)\s*$') {
+            $current.Name = [string]$Matches[2]
+            continue
+        }
+
+        if ($line -match '^\s*(Description|Beschreibung)\s*:\s*(.*?)\s*$') {
+            $current.Description = [string]$Matches[2]
+            continue
+        }
+    }
+
+    if ($current.Contains('Index')) {
+        $items.Add([pscustomobject]$current)
+    }
+
+    return @($items)
+}
+
+function Get-DelaproWindowsSetupImageInfo {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [ValidateScript({ Test-Path -LiteralPath $_ -PathType Leaf })]
+        [string]$IsoPath
+    )
+
+    $resolvedIsoPath = (Resolve-Path -LiteralPath $IsoPath).Path
+    $diskImage = $null
+
+    try {
+        $diskImage = Mount-DiskImage -ImagePath $resolvedIsoPath -StorageType ISO -PassThru -ErrorAction Stop
+        Start-Sleep -Seconds 2
+
+        $volume = $diskImage | Get-Volume | Where-Object { $_.DriveLetter } | Select-Object -First 1
+        if (-not $volume) {
+            throw "Fuer die gemountete ISO '$resolvedIsoPath' wurde kein Laufwerksbuchstabe gefunden."
+        }
+
+        $sourceRoot = "$($volume.DriveLetter):\"
+        $installImagePath = Join-Path $sourceRoot 'sources\install.wim'
+        if (-not (Test-Path -LiteralPath $installImagePath -PathType Leaf)) {
+            $installImagePath = Join-Path $sourceRoot 'sources\install.esd'
+        }
+        if (-not (Test-Path -LiteralPath $installImagePath -PathType Leaf)) {
+            throw "In der ISO wurde weder sources\install.wim noch sources\install.esd gefunden: $resolvedIsoPath"
+        }
+
+        $windowsImageCommand = Get-Command -Name Get-WindowsImage -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($windowsImageCommand) {
+            $images = Get-WindowsImage -ImagePath $installImagePath -ErrorAction Stop
+            return @($images | ForEach-Object {
+                [pscustomobject]@{
+                    Index = [int]$_.ImageIndex
+                    Name = [string]$_.ImageName
+                    Description = [string]$_.ImageDescription
+                    ImagePath = $installImagePath
+                }
+            })
+        }
+
+        $dismOut = & dism.exe /English /Get-WimInfo /WimFile:$installImagePath 2>&1
+        $dismExitCode = $LASTEXITCODE
+        if ($dismExitCode -ne 0) {
+            $dismText = ($dismOut | ForEach-Object { $_.ToString() }) -join [Environment]::NewLine
+            throw "DISM /Get-WimInfo ist mit Exitcode $dismExitCode fehlgeschlagen.$([Environment]::NewLine)$dismText"
+        }
+
+        $parsed = ConvertFrom-DelaproDismImageInfoText -Lines @($dismOut)
+        return @($parsed | ForEach-Object {
+            [pscustomobject]@{
+                Index = [int]$_.Index
+                Name = [string]$_.Name
+                Description = [string]$_.Description
+                ImagePath = $installImagePath
+            }
+        })
+    }
+    finally {
+        if ($diskImage) {
+            Dismount-DiskImage -ImagePath $resolvedIsoPath -ErrorAction SilentlyContinue | Out-Null
+        }
+    }
+}
+
+function Format-DelaproInstallImageList {
+    [CmdletBinding()]
+    param([object[]]$Images)
+
+    return (@($Images) | Sort-Object Index | ForEach-Object {
+        '{0}: {1} | {2}' -f $_.Index, $_.Name, $_.Description
+    }) -join [Environment]::NewLine
+}
+
+function Resolve-DelaproInstallImageSelection {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)][string]$WindowsIsoPath,
+        [Parameter(Mandatory=$true)][string]$OsProfile,
+        [Parameter(Mandatory=$true)][string]$ServerInstallationType,
+        [Parameter(Mandatory=$true)][string]$EditionName,
+        [ValidateRange(0, 999)][int]$ImageIndex,
+        [AllowNull()][string]$ImageName
+    )
+
+    $images = @(Get-DelaproWindowsSetupImageInfo -IsoPath $WindowsIsoPath)
+    if ($images.Count -eq 0) {
+        throw "In der ISO wurden keine installierbaren Windows-Images gefunden: $WindowsIsoPath"
+    }
+
+    $selected = $null
+    $selectionReason = $null
+
+    if ($ImageIndex -gt 0) {
+        $selected = @($images | Where-Object { $_.Index -eq $ImageIndex }) | Select-Object -First 1
+        if (-not $selected) {
+            throw "-ImageIndex $ImageIndex wurde in der ISO nicht gefunden. Verfuegbare Images:$([Environment]::NewLine)$(Format-DelaproInstallImageList -Images $images)"
+        }
+        $selectionReason = 'Parameter ImageIndex'
+    }
+    elseif (-not [string]::IsNullOrWhiteSpace($ImageName)) {
+        $selectedMatches = @($images | Where-Object { $_.Name -eq $ImageName -or $_.Description -eq $ImageName })
+        if ($selectedMatches.Count -eq 0) {
+            $selectedMatches = @($images | Where-Object { $_.Name -like "*$ImageName*" -or $_.Description -like "*$ImageName*" })
+        }
+        if ($selectedMatches.Count -ne 1) {
+            throw "-ImageName '$ImageName' konnte nicht eindeutig aufgeloest werden. Treffer: $($selectedMatches.Count). Verfuegbare Images:$([Environment]::NewLine)$(Format-DelaproInstallImageList -Images $images)"
+        }
+        $selected = $selectedMatches[0]
+        $selectionReason = 'Parameter ImageName'
+    }
+    else {
+        $profileWord = $null
+        switch ($OsProfile) {
+            'Windows11Pro' { $profileWord = 'Windows 11 Pro' }
+            'Server2025Standard' { $profileWord = 'Standard' }
+            'Server2025Datacenter' { $profileWord = 'Datacenter' }
+            'Custom' { $profileWord = $EditionName }
+            default { $profileWord = $EditionName }
+        }
+
+        $candidates = @($images)
+        if (-not [string]::IsNullOrWhiteSpace($profileWord)) {
+            if ($OsProfile -eq 'Custom') {
+                $candidates = @($candidates | Where-Object { $_.Name -eq $profileWord -or $_.Description -eq $profileWord })
+                if ($candidates.Count -eq 0) {
+                    $candidates = @($images | Where-Object { $_.Name -like "*$profileWord*" -or $_.Description -like "*$profileWord*" })
+                }
+            } else {
+                $escapedProfileWord = [Regex]::Escape($profileWord)
+                $candidates = @($candidates | Where-Object { $_.Name -match $escapedProfileWord -or $_.Description -match $escapedProfileWord })
+            }
+        }
+
+        if ($OsProfile -like 'Server2025*') {
+            # Windows-Server-ISOs sind lokalisiert. In deutschen ISOs heisst
+            # "Desktop Experience" z. B. "Desktopdarstellung". Darum darf hier
+            # nicht nur auf den englischen Image-Namen gefiltert werden.
+            $desktopExperiencePattern = '(Desktop\s*Experience|Desktopdarstellung|Desktop-Darstellung|Server\s+with\s+Desktop|vollst[aä]ndige\s+grafische\s+Umgebung)'
+            if ($ServerInstallationType -eq 'DesktopExperience') {
+                $candidates = @($candidates | Where-Object { $_.Name -match $desktopExperiencePattern -or $_.Description -match $desktopExperiencePattern })
+            } else {
+                $candidates = @($candidates | Where-Object { $_.Name -notmatch $desktopExperiencePattern -and $_.Description -notmatch $desktopExperiencePattern })
+            }
+        }
+
+        # Exakte EditionName-Treffer bevorzugen, falls vorhanden. Bei Server-ISOs kann EditionName aber
+        # je nach Medium/Evaluation/Language vom echten Image-Namen abweichen; darum erst nach Profilfiltern bevorzugen.
+        $exactEditionCandidates = @($candidates | Where-Object { $_.Name -eq $EditionName -or $_.Description -eq $EditionName })
+        if ($exactEditionCandidates.Count -eq 1) {
+            $selected = $exactEditionCandidates[0]
+        }
+        elseif ($candidates.Count -eq 1) {
+            $selected = $candidates[0]
+        }
+        else {
+            throw "Das Installationsimage konnte fuer OsProfile=$OsProfile, ServerInstallationType=$ServerInstallationType, EditionName='$EditionName' nicht eindeutig bestimmt werden. Treffer: $($candidates.Count). Verfuegbare Images:$([Environment]::NewLine)$(Format-DelaproInstallImageList -Images $images)"
+        }
+
+        $selectionReason = 'Auto aus ISO-Image-Liste'
+    }
+
+    [pscustomobject]@{
+        Key = '/IMAGE/INDEX'
+        Value = [string]$selected.Index
+        ImageIndex = [int]$selected.Index
+        ImageName = [string]$selected.Name
+        ImageDescription = [string]$selected.Description
+        ImagePath = [string]$selected.ImagePath
+        SelectionReason = $selectionReason
+        AvailableImages = @($images)
+    }
+}
+
+function Get-DelaproNoPromptIsoPath {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)][string]$SourceIsoPath,
+        [Parameter(Mandatory=$true)][string]$FallbackFolder
+    )
+
+    $sourceIso = Get-Item -LiteralPath $SourceIsoPath -ErrorAction Stop
+    $leafName = '{0}-NoPrompt.iso' -f $sourceIso.BaseName
+
+    try {
+        return (Join-Path $sourceIso.DirectoryName $leafName)
+    }
+    catch {
+        return (Join-Path $FallbackFolder $leafName)
+    }
+}
+
+function New-DelaproVmNotes {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)][string]$AdminUser,
+        [Parameter(Mandatory=$true)][string]$AdminPassword,
+        [Parameter(Mandatory=$true)][string]$OsProfile,
+        [Parameter(Mandatory=$true)][string]$ServerInstallationType,
+        [Parameter(Mandatory=$true)][string]$EditionName,
+        [AllowNull()][string]$ProductKey,
+        [Parameter(Mandatory=$true)][string]$ImageSelectionKey,
+        [Parameter(Mandatory=$true)][string]$ImageSelectionValue,
+        [AllowNull()][string]$SelectedImageName,
+        [AllowNull()][string]$SelectedImageDescription,
+        [Parameter(Mandatory=$true)][string]$OriginalWindowsIsoPath,
+        [Parameter(Mandatory=$true)][string]$EffectiveWindowsIsoPath,
+        [Parameter(Mandatory=$true)][string]$AnswerIsoPath,
+        [Parameter(Mandatory=$true)][string]$TestActionKind,
+        [AllowNull()][string]$TestScript,
+        [AllowNull()][string]$TestScriptSourceKind,
+        [AllowNull()][string[]]$TestScriptArguments,
+        [AllowNull()][string]$TestCommand
+    )
+
+    $testArgsText = if ($TestScriptArguments -and $TestScriptArguments.Count -gt 0) { $TestScriptArguments -join ' ' } else { '' }
+    $productKeyText = if ([string]::IsNullOrWhiteSpace($ProductKey)) { '<leer>' } else { $ProductKey }
+
+    @(
+        "Autoinstall, Admin: $AdminUser : $AdminPassword",
+        "OsProfile              : $OsProfile",
+        "ServerInstallationType : $ServerInstallationType",
+        "IsServerOs             : $($OsProfile -like 'Server*')",
+        "EditionName            : $EditionName",
+        "ProductKey             : $productKeyText",
+        "ImageSelectionKey      : $ImageSelectionKey",
+        "ImageSelectionValue    : $ImageSelectionValue",
+        "SelectedImageName      : $SelectedImageName",
+        "SelectedImageDesc      : $SelectedImageDescription",
+        "OriginalWindowsIsoPath : $OriginalWindowsIsoPath",
+        "EffectiveWindowsIsoPath: $EffectiveWindowsIsoPath",
+        "AnswerIsoPath          : $AnswerIsoPath",
+        "TestActionKind         : $TestActionKind",
+        "TestScript             : $TestScript",
+        "TestScriptSourceKind   : $TestScriptSourceKind",
+        "TestScriptArguments    : $testArgsText",
+        "TestCommand            : $TestCommand"
+    ) -join [Environment]::NewLine
 }
 
 function Resolve-DelaproOscdimgPath {
@@ -242,18 +640,76 @@ function New-DelaproNoPromptWindowsIso {
         '-o',
         '-u2',
         '-udfver102',
-        '-lDLPWIN11NP',
+        '-lDLPOSNP',
         $bootData,
         $extractRoot,
         $DestinationIsoPath
     )
 
-    & $resolvedOscdimg @oscdimgArguments
-    if ($LASTEXITCODE -ne 0) {
-        throw "oscdimg.exe ist mit Exitcode $LASTEXITCODE fehlgeschlagen."
+    # Wichtig: oscdimg.exe ist ein natives Programm. Unter Windows PowerShell/PowerShell 7
+    # kann STDERR zusammen mit $ErrorActionPreference='Stop' als NativeCommandError behandelt
+    # werden. Deshalb wird fuer genau diesen Aufruf die native Fehler-Promotion abgeschaltet
+    # und STDOUT/STDERR werden beide in Logdateien umgeleitet. In die Funktionspipeline darf
+    # nur das finale FileInfo-Objekt gelangen.
+    $oscdimgStdOutPath = Join-Path $WorkingFolder 'oscdimg.stdout.log'
+    $oscdimgStdErrPath = Join-Path $WorkingFolder 'oscdimg.stderr.log'
+    foreach ($logPath in @($oscdimgStdOutPath, $oscdimgStdErrPath)) {
+        if (Test-Path -LiteralPath $logPath) {
+            Remove-Item -LiteralPath $logPath -Force
+        }
     }
 
-    Get-Item -LiteralPath $DestinationIsoPath
+    $previousErrorActionPreference = $ErrorActionPreference
+    $hadNativeCommandPreference = Test-Path -LiteralPath 'Variable:\PSNativeCommandUseErrorActionPreference'
+    if ($hadNativeCommandPreference) {
+        $previousNativeCommandPreference = $PSNativeCommandUseErrorActionPreference
+    }
+
+    try {
+        $ErrorActionPreference = 'Continue'
+        if ($hadNativeCommandPreference) {
+            $PSNativeCommandUseErrorActionPreference = $false
+        }
+
+        & $resolvedOscdimg @oscdimgArguments 1> $oscdimgStdOutPath 2> $oscdimgStdErrPath
+        $oscdimgExitCode = $LASTEXITCODE
+    } catch {
+        $oscdimgExitCode = -1
+        $_.Exception.Message | Set-Content -LiteralPath $oscdimgStdErrPath -Encoding UTF8
+    } finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+        if ($hadNativeCommandPreference) {
+            $PSNativeCommandUseErrorActionPreference = $previousNativeCommandPreference
+        }
+    }
+
+    $oscdimgStdOut = @()
+    if (Test-Path -LiteralPath $oscdimgStdOutPath -PathType Leaf) {
+        $oscdimgStdOut = Get-Content -LiteralPath $oscdimgStdOutPath -ErrorAction SilentlyContinue
+    }
+
+    $oscdimgStdErr = @()
+    if (Test-Path -LiteralPath $oscdimgStdErrPath -PathType Leaf) {
+        $oscdimgStdErr = Get-Content -LiteralPath $oscdimgStdErrPath -ErrorAction SilentlyContinue
+    }
+
+    foreach ($line in @($oscdimgStdOut + $oscdimgStdErr)) {
+        if (-not [string]::IsNullOrWhiteSpace([string]$line)) {
+            Write-Verbose ("oscdimg: {0}" -f $line)
+        }
+    }
+
+    if ($oscdimgExitCode -ne 0) {
+        $oscdimgText = (@($oscdimgStdOut + $oscdimgStdErr) | ForEach-Object { $_.ToString() }) -join [Environment]::NewLine
+        throw "oscdimg.exe ist mit Exitcode $oscdimgExitCode fehlgeschlagen.$([Environment]::NewLine)$oscdimgText"
+    }
+
+    if (-not (Test-Path -LiteralPath $DestinationIsoPath -PathType Leaf)) {
+        $oscdimgText = (@($oscdimgStdOut + $oscdimgStdErr) | ForEach-Object { $_.ToString() }) -join [Environment]::NewLine
+        throw "oscdimg.exe meldete Erfolg, aber die Ziel-ISO wurde nicht gefunden: $DestinationIsoPath$([Environment]::NewLine)$oscdimgText"
+    }
+
+    return (Get-Item -LiteralPath $DestinationIsoPath)
 }
 
 function New-DelaproDataIso {
@@ -335,14 +791,17 @@ function New-DelaproAutounattendXml {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)] [string]$Path,
-        [Parameter(Mandatory=$true)] [string]$EditionName,
+        [Parameter(Mandatory=$true)] [string]$ImageSelectionKey,
+        [Parameter(Mandatory=$true)] [string]$ImageSelectionValue,
         [Parameter(Mandatory=$true)] [string]$ProductKey,
         [Parameter(Mandatory=$true)] [string]$ComputerName,
         [Parameter(Mandatory=$true)] [string]$AdminUser,
-        [Parameter(Mandatory=$true)] [string]$AdminPassword
+        [Parameter(Mandatory=$true)] [string]$AdminPassword,
+        [Parameter(Mandatory=$true)] [bool]$IsServerOs
     )
 
-    $edition = ConvertTo-XmlEscapedText $EditionName
+    $imageSelectionKey = ConvertTo-XmlEscapedText $ImageSelectionKey
+    $imageSelectionValue = ConvertTo-XmlEscapedText $ImageSelectionValue
     $key = ConvertTo-XmlEscapedText $ProductKey
     $computer = ConvertTo-XmlEscapedText $ComputerName
     $user = ConvertTo-XmlEscapedText $AdminUser
@@ -358,6 +817,24 @@ function New-DelaproAutounattendXml {
                 </ProductKey>
 "@
     }
+
+    # Windows Server zeigt ohne diese beiden Einstellungen trotz LocalAccount/AutoLogon
+    # die OOBE-Seite zur Vergabe des Administrator-Kennworts. HideLocalAccountScreen ist laut
+    # Microsoft nur fuer Server-Editionen vorgesehen; deshalb wird der Block nicht fuer Windows 11 geschrieben.
+    $hideLocalAccountScreenBlock = if ($IsServerOs) {
+@"
+                <HideLocalAccountScreen>true</HideLocalAccountScreen>
+"@
+    } else { '' }
+
+    $administratorPasswordBlock = if ($IsServerOs) {
+@"
+                <AdministratorPassword>
+                    <Value>$password</Value>
+                    <PlainText>true</PlainText>
+                </AdministratorPassword>
+"@
+    } else { '' }
 
     $xml = @"
 <?xml version="1.0" encoding="utf-8"?>
@@ -416,8 +893,8 @@ function New-DelaproAutounattendXml {
                 <OSImage>
                     <InstallFrom>
                         <MetaData wcm:action="add">
-                            <Key>/IMAGE/NAME</Key>
-                            <Value>$edition</Value>
+                            <Key>$imageSelectionKey</Key>
+                            <Value>$imageSelectionValue</Value>
                         </MetaData>
                     </InstallFrom>
                     <InstallTo>
@@ -451,13 +928,13 @@ $productKeyBlock            </UserData>
         <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
             <OOBE>
                 <HideEULAPage>true</HideEULAPage>
-                <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
+$hideLocalAccountScreenBlock                <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
                 <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
                 <NetworkLocation>Work</NetworkLocation>
                 <ProtectYourPC>3</ProtectYourPC>
             </OOBE>
             <UserAccounts>
-                <LocalAccounts>
+$administratorPasswordBlock                <LocalAccounts>
                     <LocalAccount wcm:action="add">
                         <Password>
                             <Value>$password</Value>
@@ -501,6 +978,7 @@ function New-DelaproFirstLogonScript {
     $script = @'
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+$script:DelaproHyperVTestVmScriptVersion = 'v15-2026-06-20'
 
 function Save-DelaproWebTextFile {
     [CmdletBinding()]
@@ -548,6 +1026,7 @@ Start-Transcript -Path 'C:\Temp\DelaproInstall-HyperVTest.log' -Force
 $completedPath = 'C:\Temp\DelaproInstall-HyperVTest.done.json'
 $script:Succeeded = $false
 $script:Failure = $null
+$config = $null
 
 try {
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -573,41 +1052,64 @@ try {
         Set-Content -LiteralPath $installScriptPath -Value $installScript -Encoding UTF8
     }
 
-    switch ([string]$config.TestScriptSourceKind) {
-        'RepositoryRelative' {
-            $repoPath = ([string]$config.TestScript).TrimStart('/')
-            Save-DelaproWebTextFile -Uri "$baseUri/$repoPath" -Path $testScriptPath
-        }
-        'Uri' {
-            Save-DelaproWebTextFile -Uri ([string]$config.TestScript) -Path $testScriptPath
-        }
-        'IsoFile' {
-            $source = Join-Path $mediaRoot ([string]$config.TestScriptIsoRelativePath)
-            if (-not (Test-Path -LiteralPath $source -PathType Leaf)) {
-                throw "Lokales Testskript wurde auf dem Antwortmedium nicht gefunden: $source"
-            }
-            Copy-Item -LiteralPath $source -Destination $testScriptPath -Force
-        }
-        default {
-            throw "Unbekannte TestScriptSourceKind: $($config.TestScriptSourceKind)"
-        }
-    }
-
     $env:Platform = if ([IntPtr]::Size -eq 8) { 'x64' } else { 'x86' }
-
-    $testArgs = @()
-    if ($null -ne $config.TestScriptArguments) {
-        $testArgs = @($config.TestScriptArguments)
-    }
 
     Set-Location 'C:\Temp'
     . $installScriptPath
 
-    Write-Host "Starte Testskript: $($config.TestScript)"
-    if ($testArgs.Count -gt 0) {
-        Write-Host "Testskript-Argumente: $($testArgs -join ' ')"
+    $testActionKind = 'Script'
+    if ($config.PSObject.Properties.Name -contains 'TestActionKind' -and -not [string]::IsNullOrWhiteSpace([string]$config.TestActionKind)) {
+        $testActionKind = [string]$config.TestActionKind
     }
-    & $testScriptPath @testArgs
+
+    switch ($testActionKind) {
+        'Script' {
+            switch ([string]$config.TestScriptSourceKind) {
+                'RepositoryRelative' {
+                    $repoPath = ([string]$config.TestScript).TrimStart('/')
+                    Save-DelaproWebTextFile -Uri "$baseUri/$repoPath" -Path $testScriptPath
+                }
+                'Uri' {
+                    Save-DelaproWebTextFile -Uri ([string]$config.TestScript) -Path $testScriptPath
+                }
+                'IsoFile' {
+                    $source = Join-Path $mediaRoot ([string]$config.TestScriptIsoRelativePath)
+                    if (-not (Test-Path -LiteralPath $source -PathType Leaf)) {
+                        throw "Lokales Testskript wurde auf dem Antwortmedium nicht gefunden: $source"
+                    }
+                    Copy-Item -LiteralPath $source -Destination $testScriptPath -Force
+                }
+                default {
+                    throw "Unbekannte TestScriptSourceKind: $($config.TestScriptSourceKind)"
+                }
+            }
+
+            $testArgs = @()
+            if ($null -ne $config.TestScriptArguments) {
+                $testArgs = @($config.TestScriptArguments)
+            }
+
+            Write-Host "Starte Testskript: $($config.TestScript)"
+            if ($testArgs.Count -gt 0) {
+                Write-Host "Testskript-Argumente: $($testArgs -join ' ')"
+            }
+            & $testScriptPath @testArgs
+        }
+        'Command' {
+            $commandText = [string]$config.TestCommand
+            if ([string]::IsNullOrWhiteSpace($commandText)) {
+                throw 'TestActionKind ist Command, aber TestCommand ist leer.'
+            }
+
+            Write-Host 'Starte Testkommando:'
+            Write-Host $commandText
+            $commandBlock = [scriptblock]::Create($commandText)
+            & $commandBlock
+        }
+        default {
+            throw "Unbekannte TestActionKind: $testActionKind"
+        }
+    }
 
     $script:Succeeded = $true
 }
@@ -715,22 +1217,80 @@ function New-DelaproTestConfigFile {
     param(
         [Parameter(Mandatory=$true)][string]$Path,
         [Parameter(Mandatory=$true)][string]$RepositoryRawBaseUri,
-        [Parameter(Mandatory=$true)]$TestScriptSource,
+        [AllowNull()]$TestScriptSource,
+        [AllowNull()][string]$TestCommand,
         [string[]]$TestScriptArguments,
         [bool]$EjectOpticalMediaInGuest
     )
 
-    $config = [ordered]@{
-        RepositoryRawBaseUri = $RepositoryRawBaseUri.TrimEnd('/')
-        TestScriptSourceKind = $TestScriptSource.Kind
-        TestScript = $TestScriptSource.TestScript
-        TestScriptIsoRelativePath = $TestScriptSource.IsoRelativePath
-        TestScriptArguments = @($TestScriptArguments)
-        EjectOpticalMediaInGuest = $EjectOpticalMediaInGuest
+    if (-not [string]::IsNullOrWhiteSpace($TestCommand)) {
+        $config = [ordered]@{
+            RepositoryRawBaseUri = $RepositoryRawBaseUri.TrimEnd('/')
+            TestRunnerVersion = $script:DelaproHyperVTestVmScriptVersion
+            TestActionKind = 'Command'
+            TestCommand = $TestCommand
+            TestScriptSourceKind = $null
+            TestScript = $null
+            TestScriptIsoRelativePath = $null
+            TestScriptArguments = @()
+            EjectOpticalMediaInGuest = $EjectOpticalMediaInGuest
+        }
+    } else {
+        if ($null -eq $TestScriptSource) {
+            throw 'TestScriptSource fehlt, obwohl kein TestCommand angegeben wurde.'
+        }
+
+        $config = [ordered]@{
+            RepositoryRawBaseUri = $RepositoryRawBaseUri.TrimEnd('/')
+            TestRunnerVersion = $script:DelaproHyperVTestVmScriptVersion
+            TestActionKind = 'Script'
+            TestCommand = $null
+            TestScriptSourceKind = $TestScriptSource.Kind
+            TestScript = $TestScriptSource.TestScript
+            TestScriptIsoRelativePath = $TestScriptSource.IsoRelativePath
+            TestScriptArguments = @($TestScriptArguments)
+            EjectOpticalMediaInGuest = $EjectOpticalMediaInGuest
+        }
     }
 
     $config | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $Path -Encoding UTF8
     Get-Item -LiteralPath $Path
+}
+
+
+function Test-DelaproGeneratedTestConfig {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)][string]$Path,
+        [AllowNull()][string]$ExpectedTestCommand,
+        [AllowNull()][string]$ExpectedTestScript
+    )
+
+    if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
+        throw "DelaproTestConfig.json wurde nicht erzeugt: $Path"
+    }
+
+    $generatedConfig = Get-Content -LiteralPath $Path -Raw | ConvertFrom-Json
+    if (-not [string]::IsNullOrWhiteSpace($ExpectedTestCommand)) {
+        if ([string]$generatedConfig.TestActionKind -ne 'Command') {
+            throw "Interner Fehler: -TestCommand wurde angegeben, aber DelaproTestConfig.json enthaelt TestActionKind='$($generatedConfig.TestActionKind)'."
+        }
+        if ([string]$generatedConfig.TestCommand -ne $ExpectedTestCommand) {
+            throw "Interner Fehler: DelaproTestConfig.json enthaelt nicht das erwartete TestCommand. Erwartet: '$ExpectedTestCommand', gefunden: '$($generatedConfig.TestCommand)'."
+        }
+        if (-not [string]::IsNullOrWhiteSpace([string]$generatedConfig.TestScript)) {
+            throw "Interner Fehler: -TestCommand wurde angegeben, aber DelaproTestConfig.json enthaelt trotzdem TestScript='$($generatedConfig.TestScript)'."
+        }
+    } else {
+        if ([string]$generatedConfig.TestActionKind -ne 'Script') {
+            throw "Interner Fehler: -TestScript wurde erwartet, aber DelaproTestConfig.json enthaelt TestActionKind='$($generatedConfig.TestActionKind)'."
+        }
+        if ([string]::IsNullOrWhiteSpace([string]$generatedConfig.TestScript)) {
+            throw 'Interner Fehler: DelaproTestConfig.json enthaelt kein TestScript.'
+        }
+    }
+
+    return $generatedConfig
 }
 
 function Dismount-DelaproVMDvdMedia {
@@ -789,6 +1349,16 @@ if (-not (Test-DelaproAdmin)) {
 
 Import-Module Hyper-V -ErrorAction Stop
 
+$originalWindowsIsoPath = (Resolve-Path -LiteralPath $WindowsIsoPath).Path
+
+$osDefaults = Resolve-DelaproOperatingSystemDefaults -OsProfile $OsProfile -WindowsIsoPath $WindowsIsoPath -ServerInstallationType $ServerInstallationType -EditionName $EditionName -ProductKey $ProductKey -BoundParameters $PSBoundParameters
+$RequestedOsProfile = $osDefaults.RequestedOsProfile
+$OsProfile = $osDefaults.OsProfile
+$EditionName = $osDefaults.EditionName
+$ProductKey = $osDefaults.ProductKey
+
+$imageSelection = Resolve-DelaproInstallImageSelection -WindowsIsoPath $originalWindowsIsoPath -OsProfile $OsProfile -ServerInstallationType $ServerInstallationType -EditionName $EditionName -ImageIndex $ImageIndex -ImageName $ImageName
+
 if ([string]::IsNullOrWhiteSpace($ComputerName)) {
     $ComputerName = New-DelaproGuestComputerName -Name $VmName
 }
@@ -814,10 +1384,40 @@ if ($WaitForCompletion -and $NoStart) {
     throw '-WaitForCompletion kann nicht mit -NoStart kombiniert werden.'
 }
 
+if (-not [string]::IsNullOrWhiteSpace($TestCommand) -and -not [string]::IsNullOrWhiteSpace($TestScript)) {
+    throw 'Bitte entweder -TestCommand oder -TestScript verwenden, nicht beides gleichzeitig.'
+}
+
+if ([string]::IsNullOrWhiteSpace($TestCommand) -and [string]::IsNullOrWhiteSpace($TestScript)) {
+    $TestScript = 'repo:Tests/TestInstalls.PS1'
+}
+
+if (-not [string]::IsNullOrWhiteSpace($TestCommand) -and $TestScriptArguments.Count -gt 0) {
+    throw '-TestScriptArguments gehoert zu -TestScript. Bei -TestCommand die Argumente direkt in das Kommando schreiben.'
+}
+
 $existingVM = Get-VM -Name $VmName -ErrorAction SilentlyContinue
 if ($existingVM) {
     if ($RemoveExistingVM) {
-        if ($existingVM.State -ne 'Off') {
+        try {
+            Remove-VMSavedState -VMName $VmName -ErrorAction SilentlyContinue | Out-Null
+        }
+        catch {
+            Write-Verbose "Remove-VMSavedState fuer '$VmName' war nicht noetig oder ist fehlgeschlagen: $($_.Exception.Message)"
+        }
+
+        try {
+            $snapshots = Get-VMSnapshot -VMName $VmName -ErrorAction SilentlyContinue
+            if ($snapshots) {
+                $snapshots | Remove-VMSnapshot -ErrorAction SilentlyContinue
+            }
+        }
+        catch {
+            Write-Verbose "Alte Hyper-V-Checkpoints fuer '$VmName' konnten nicht entfernt werden: $($_.Exception.Message)"
+        }
+
+        $existingVM = Get-VM -Name $VmName -ErrorAction SilentlyContinue
+        if ($existingVM -and $existingVM.State -ne 'Off') {
             Stop-VM -Name $VmName -Force
         }
         Remove-VM -Name $VmName -Force
@@ -843,27 +1443,64 @@ if (Test-Path -LiteralPath $answerRoot) {
 }
 New-Item -Path $answerRoot -ItemType Directory -Force | Out-Null
 
-$effectiveWindowsIsoPath = (Resolve-Path -LiteralPath $WindowsIsoPath).Path
+$effectiveWindowsIsoPath = $originalWindowsIsoPath
 if (-not $AllowPromptBootIso) {
     if ([string]::IsNullOrWhiteSpace($NoPromptWindowsIsoPath)) {
-        $NoPromptWindowsIsoPath = Join-Path $vmRoot ("{0}-Windows11-NoPrompt.iso" -f $safeVmName)
+        $NoPromptWindowsIsoPath = Get-DelaproNoPromptIsoPath -SourceIsoPath $originalWindowsIsoPath -FallbackFolder $vmRoot
     }
 
-    $noPromptWorkFolder = Join-Path $vmRoot 'WindowsIsoNoPromptWork'
-    $effectiveWindowsIsoPath = (New-DelaproNoPromptWindowsIso -SourceIsoPath $effectiveWindowsIsoPath -DestinationIsoPath $NoPromptWindowsIsoPath -WorkingFolder $noPromptWorkFolder -OscdimgPath $OscdimgPath).FullName
+    if ((Test-Path -LiteralPath $NoPromptWindowsIsoPath -PathType Leaf) -and -not $ForceRebuildNoPromptIso) {
+        Write-Host "Verwende vorhandene No-Prompt-ISO: $NoPromptWindowsIsoPath"
+    } else {
+        $noPromptWorkFolder = Join-Path $vmRoot 'WindowsIsoNoPromptWork'
+        $noPromptIsoItem = New-DelaproNoPromptWindowsIso -SourceIsoPath $effectiveWindowsIsoPath -DestinationIsoPath $NoPromptWindowsIsoPath -WorkingFolder $noPromptWorkFolder -OscdimgPath $OscdimgPath
+        if ($noPromptIsoItem -is [array]) {
+            $noPromptIsoItem = $noPromptIsoItem | Where-Object { $_ -is [System.IO.FileInfo] } | Select-Object -Last 1
+        }
+        if ($null -eq $noPromptIsoItem -or -not (Test-Path -LiteralPath $NoPromptWindowsIsoPath -PathType Leaf)) {
+            throw "Die No-Prompt-Windows-ISO wurde nicht erzeugt: $NoPromptWindowsIsoPath"
+        }
+    }
+    $effectiveWindowsIsoPath = (Get-Item -LiteralPath $NoPromptWindowsIsoPath).FullName
 }
 
-New-DelaproAutounattendXml -Path (Join-Path $answerRoot 'Autounattend.xml') -EditionName $EditionName -ProductKey $ProductKey -ComputerName $ComputerName -AdminUser $AdminUser -AdminPassword $AdminPassword | Out-Null
+$isServerOs = ($OsProfile -like 'Server*')
+New-DelaproAutounattendXml -Path (Join-Path $answerRoot 'Autounattend.xml') -ImageSelectionKey $imageSelection.Key -ImageSelectionValue $imageSelection.Value -ProductKey $ProductKey -ComputerName $ComputerName -AdminUser $AdminUser -AdminPassword $AdminPassword -IsServerOs $isServerOs | Out-Null
 New-DelaproFirstLogonScript -Path (Join-Path $answerRoot 'Start-DelaproInstallTest.ps1') | Out-Null
-$testScriptSource = Resolve-DelaproTestScriptSource -TestScript $TestScript -AnswerRoot $answerRoot
-New-DelaproTestConfigFile -Path (Join-Path $answerRoot 'DelaproTestConfig.json') -RepositoryRawBaseUri $RepositoryRawBaseUri -TestScriptSource $testScriptSource -TestScriptArguments $TestScriptArguments -EjectOpticalMediaInGuest (-not $KeepIsoMounted) | Out-Null
+$testScriptSource = $null
+if ([string]::IsNullOrWhiteSpace($TestCommand)) {
+    $testScriptSource = Resolve-DelaproTestScriptSource -TestScript $TestScript -AnswerRoot $answerRoot
+}
+$testConfigPath = Join-Path $answerRoot 'DelaproTestConfig.json'
+New-DelaproTestConfigFile -Path $testConfigPath -RepositoryRawBaseUri $RepositoryRawBaseUri -TestScriptSource $testScriptSource -TestCommand $TestCommand -TestScriptArguments $TestScriptArguments -EjectOpticalMediaInGuest (-not $KeepIsoMounted) | Out-Null
+$generatedTestConfig = Test-DelaproGeneratedTestConfig -Path $testConfigPath -ExpectedTestCommand $TestCommand -ExpectedTestScript $TestScript
 New-DelaproDataIso -SourceFolder $answerRoot -DestinationIso $answerIsoPath -VolumeName 'AUTOUNATTEND' | Out-Null
+
+$resultTestActionKind = if ([string]::IsNullOrWhiteSpace($TestCommand)) { 'Script' } else { 'Command' }
+$resultTestScriptSourceKind = if ($testScriptSource) { $testScriptSource.Kind } else { $null }
+$resultGeneratedTestActionKind = [string]$generatedTestConfig.TestActionKind
+$resultGeneratedTestCommand = if ($generatedTestConfig.PSObject.Properties.Name -contains 'TestCommand') { [string]$generatedTestConfig.TestCommand } else { $null }
+$resultGeneratedTestScript = if ($generatedTestConfig.PSObject.Properties.Name -contains 'TestScript') { [string]$generatedTestConfig.TestScript } else { $null }
+
+$vmNotes = New-DelaproVmNotes `
+    -AdminUser $AdminUser `
+    -AdminPassword $AdminPassword `
+    -OsProfile $OsProfile `
+    -ServerInstallationType $ServerInstallationType `
+    -EditionName $EditionName `
+    -OriginalWindowsIsoPath $originalWindowsIsoPath `
+    -TestActionKind $resultGeneratedTestActionKind `
+    -TestScript $resultGeneratedTestScript `
+    -TestScriptSourceKind $resultTestScriptSourceKind `
+    -TestScriptArguments $TestScriptArguments `
+    -TestCommand $resultGeneratedTestCommand
 
 if ($PSCmdlet.ShouldProcess($VmName, 'Hyper-V-Test-VM erstellen')) {
     $null = New-VM -Name $VmName -Generation 2 -MemoryStartupBytes $MemoryStartupBytes -Path $vmRoot -NewVHDPath $vhdPath -NewVHDSizeBytes $VhdSizeBytes -SwitchName $SwitchName
 
     Set-VMProcessor -VMName $VmName -Count $ProcessorCount
     Set-VMMemory -VMName $VmName -DynamicMemoryEnabled $true -MinimumBytes 2GB -StartupBytes $MemoryStartupBytes -MaximumBytes ([Math]::Max($MemoryStartupBytes, 8GB))
+    Set-VM -VMName $VmName -Notes $vmNotes | Out-Null
 
     Set-VMFirmware -VMName $VmName -EnableSecureBoot On -SecureBootTemplate 'MicrosoftWindows'
 
@@ -901,23 +1538,44 @@ if ($PSCmdlet.ShouldProcess($VmName, 'Hyper-V-Test-VM erstellen')) {
         }
     }
 
+    $resultGuestSucceeded = if ($guestStatus) { $guestStatus.Succeeded } else { $null }
+
     [pscustomobject]@{
+        ScriptVersion = $script:DelaproHyperVTestVmScriptVersion
         VMName = $VmName
         ComputerName = $ComputerName
         VMPath = $vmRoot
         VhdPath = $vhdPath
-        OriginalWindowsIsoPath = (Resolve-Path -LiteralPath $WindowsIsoPath).Path
+        OriginalWindowsIsoPath = $originalWindowsIsoPath
         EffectiveWindowsIsoPath = $effectiveWindowsIsoPath
         AnswerIsoPath = $answerIsoPath
         AnswerIsoFileNameNote = 'Der ISO-Dateiname ist fuer Windows Setup nicht entscheidend; wichtig ist Autounattend.xml im Wurzelverzeichnis der ISO.'
         SwitchName = $SwitchName
+        RequestedOsProfile = $RequestedOsProfile
+        OsProfile = $OsProfile
+        ServerInstallationType = $ServerInstallationType
+        IsServerOs = ($OsProfile -like 'Server*')
+        EditionName = $EditionName
+        ProductKey = $ProductKey
+        ImageSelectionKey = $imageSelection.Key
+        ImageSelectionValue = $imageSelection.Value
+        SelectedImageIndex = $imageSelection.ImageIndex
+        SelectedImageName = $imageSelection.ImageName
+        SelectedImageDescription = $imageSelection.ImageDescription
+        ImageSelectionReason = $imageSelection.SelectionReason
+        Notes = $vmNotes
+        TestActionKind = $resultTestActionKind
+        GeneratedTestActionKind = $resultGeneratedTestActionKind
         TestScript = $TestScript
-        TestScriptSourceKind = $testScriptSource.Kind
+        TestCommand = $TestCommand
+        GeneratedTestCommand = $resultGeneratedTestCommand
+        TestScriptSourceKind = $resultTestScriptSourceKind
         TestScriptArguments = @($TestScriptArguments)
+        GeneratedConfigPath = $testConfigPath
         Started = $started
         WaitedForCompletion = $waitedForCompletion
         IsoMediaDetachedByHost = $isoMediaDetachedByHost
-        GuestSucceeded = if ($guestStatus) { $guestStatus.Succeeded } else { $null }
+        GuestSucceeded = $resultGuestSucceeded
         LogInGuest = 'C:\Temp\DelaproInstall-HyperVTest.log'
         CompletionStatusInGuest = 'C:\Temp\DelaproInstall-HyperVTest.done.json'
     }
