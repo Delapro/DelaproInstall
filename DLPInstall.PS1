@@ -876,6 +876,306 @@ Function ConvertFrom-UTF8 {
 	return [System.Text.Encoding]::UTF8.GetString($Bytes)
 }
 
+<#
+.SYNOPSIS
+Konvertiert Dateien aus OEM-Codepage 437 oder 850 nach UTF-8.
+
+.DESCRIPTION
+Die Funktion liest eine oder mehrere Dateien bytegenau ein, interpretiert die Bytes
+als CP437 oder CP850 und schreibt den Inhalt als UTF-8.
+
+Die Funktion unterstützt Pipeline-Eingaben, z. B.:
+
+    dir *.prg | ConvertFrom-OemCodePageToUtf8
+
+Wird kein -DestinationPath angegeben, wird die UTF-8-Datei im gleichen Verzeichnis
+mit ".utf8" vor der ursprünglichen Extension erzeugt:
+
+    test.prg  -> test.utf8.prg
+    abc.txt   -> abc.utf8.txt
+    file      -> file.utf8
+
+Wird -DestinationPath als Verzeichnis angegeben, bleibt der Original-Dateiname
+inklusive Extension erhalten:
+
+    dir .\alt\*.txt | ConvertFrom-OemCodePageToUtf8 -DestinationPath .\utf8 -CreateDirectory
+
+ergibt z. B.:
+
+    .\alt\test.txt -> .\utf8\test.txt
+
+Bei mehreren Eingabedateien muss -DestinationPath ein Verzeichnis sein.
+Ein einzelner Ziel-Dateipfad ist nur bei genau einer Eingabedatei erlaubt.
+
+Für PowerShell 7 / .NET Core ist die Registrierung von
+System.Text.CodePagesEncodingProvider wichtig, damit ältere Codepages wie
+437 und 850 zuverlässig über [System.Text.Encoding]::GetEncoding(...) verfügbar sind.
+Unter Windows PowerShell 5.1 ist das in der Regel nicht nötig, aber der Code ist dort
+harmlos, sofern der Provider-Typ vorhanden ist.
+
+.EXAMPLE
+dir *.txt | ConvertFrom-OemCodePageToUtf8
+
+Konvertiert alle PRG-Dateien im aktuellen Verzeichnis.
+Aus test.txt wird test.utf8.txt.
+
+.EXAMPLE
+dir *.txt | ConvertFrom-OemCodePageToUtf8 -CodePage 437
+
+Konvertiert alle PRG-Dateien aus CP437 statt CP850 nach UTF-8.
+
+.EXAMPLE
+dir .\alt\*.txt | ConvertFrom-OemCodePageToUtf8 -DestinationPath .\utf8 -CreateDirectory
+
+Konvertiert alle PRG-Dateien aus .\alt nach .\utf8.
+Die Original-Dateinamen bleiben erhalten.
+
+.EXAMPLE
+dir *.txt | ConvertFrom-OemCodePageToUtf8 -Summary
+
+Gibt zusätzlich zu den Einzeldateien eine Summenzeile aus.
+
+.EXAMPLE
+dir *.txt | ConvertFrom-OemCodePageToUtf8 -DestinationPath .\utf8 -Force
+
+Überschreibt bereits vorhandene Zieldateien.
+
+.EXAMPLE
+dir *.txt | ConvertFrom-OemCodePageToUtf8 -WhatIf
+
+Zeigt nur an, welche Dateien konvertiert würden, ohne Dateien zu schreiben.
+#>
+Function ConvertFrom-OemCodePageToUtf8 {
+    [CmdletBinding(SupportsShouldProcess)]
+    Param(
+        [Parameter(
+            Mandatory,
+            Position = 0,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName
+        )]
+        [Alias('FullName', 'PSPath')]
+        [String[]]$Path,
+
+        # Optional:
+        # - nicht angegeben: Quelldatei.ext -> Quelldatei.utf8.ext
+        # - vorhandenes Verzeichnis: Original-Dateiname inkl. Extension bleibt erhalten
+        # - Datei-Pfad: nur bei genau einer Eingabedatei erlaubt
+        [Parameter(Position = 1)]
+        [String]$DestinationPath,
+
+        [ValidateSet(437, 850)]
+        [Int]$CodePage = 850,
+
+        # Für Windows PowerShell 5.1-Skripte mit Umlauten ggf. sinnvoll.
+        [Switch]$Bom,
+
+        # Zielverzeichnis bei Bedarf anlegen.
+        [Switch]$CreateDirectory,
+
+        # Bestehende Zieldateien überschreiben.
+        [Switch]$Force,
+
+        # Zusätzlich am Ende eine Summenzeile ausgeben.
+        [Switch]$Summary
+    )
+
+    Begin {
+        $resolvedFiles = New-Object System.Collections.Generic.List[String]
+
+        # Wichtig für PowerShell 7 / .NET Core:
+        # Alte DOS-/OEM-Codepages wie 437 und 850 sind dort nicht immer
+        # ohne Registrierung eines EncodingProviders verfügbar.
+        #
+        # Unter Windows PowerShell 5.1 ist das normalerweise nicht nötig.
+        # Der Block ist aber absichtlich defensiv geschrieben und stört dort nicht,
+        # falls System.Text.CodePagesEncodingProvider vorhanden ist.
+        try {
+            if ('System.Text.CodePagesEncodingProvider' -as [Type]) {
+                [System.Text.Encoding]::RegisterProvider(
+                    [System.Text.CodePagesEncodingProvider]::Instance
+                )
+            }
+        }
+        catch {
+            Write-Verbose "CodePagesEncodingProvider konnte nicht registriert werden: $($_.Exception.Message)"
+        }
+
+        $sourceEncoding = [System.Text.Encoding]::GetEncoding($CodePage)
+        $targetEncoding = [System.Text.UTF8Encoding]::new([Bool]$Bom)
+    }
+
+    Process {
+        foreach ($item in $Path) {
+            $resolved = Resolve-Path -LiteralPath $item -ErrorAction Stop
+
+            foreach ($entry in $resolved) {
+                $file = Get-Item -LiteralPath $entry.ProviderPath -ErrorAction Stop
+
+                if (-not $file.PSIsContainer) {
+                    [Void]$resolvedFiles.Add($file.FullName)
+                }
+            }
+        }
+    }
+
+    End {
+        if ($resolvedFiles.Count -eq 0) {
+            Write-Error "Keine Eingabedateien gefunden."
+            return
+        }
+
+        $destinationIsDirectory = $false
+        $singleDestinationFile  = $null
+        $destinationDirectory   = $null
+
+        if ($DestinationPath) {
+            if (Test-Path -LiteralPath $DestinationPath -PathType Container) {
+                $destinationIsDirectory = $true
+                $destinationDirectory = (
+                    Resolve-Path -LiteralPath $DestinationPath -ErrorAction Stop
+                ).ProviderPath
+            }
+            else {
+                $looksLikeDirectory =
+                    $DestinationPath.EndsWith('\') -or
+                    $DestinationPath.EndsWith('/') -or
+                    -not [System.IO.Path]::HasExtension($DestinationPath)
+
+                if ($looksLikeDirectory) {
+                    $destinationIsDirectory = $true
+                    $destinationDirectory = $ExecutionContext.SessionState.Path.
+                        GetUnresolvedProviderPathFromPSPath($DestinationPath)
+
+                    if (-not (Test-Path -LiteralPath $destinationDirectory -PathType Container)) {
+                        if ($CreateDirectory) {
+                            [Void](New-Item -ItemType Directory -Path $destinationDirectory -Force)
+                        }
+                        else {
+                            Write-Error "Zielverzeichnis existiert nicht: $destinationDirectory. Verwende -CreateDirectory zum Anlegen."
+                            return
+                        }
+                    }
+                }
+                else {
+                    if ($resolvedFiles.Count -gt 1) {
+                        Write-Error "Bei mehreren Eingabedateien muss -DestinationPath ein Verzeichnis sein."
+                        return
+                    }
+
+                    $singleDestinationFile = $ExecutionContext.SessionState.Path.
+                        GetUnresolvedProviderPathFromPSPath($DestinationPath)
+
+                    $parent = Split-Path -Parent $singleDestinationFile
+
+                    if ($parent -and -not (Test-Path -LiteralPath $parent -PathType Container)) {
+                        if ($CreateDirectory) {
+                            [Void](New-Item -ItemType Directory -Path $parent -Force)
+                        }
+                        else {
+                            Write-Error "Zielverzeichnis existiert nicht: $parent. Verwende -CreateDirectory zum Anlegen."
+                            return
+                        }
+                    }
+                }
+            }
+        }
+
+        $totalFiles            = 0
+        $totalBytes            = 0
+        $totalAffectedBytes    = 0
+        $totalOutputBytes      = 0
+        $totalOutputCharacters = 0
+
+        foreach ($sourceFile in $resolvedFiles) {
+            $sourceItem = Get-Item -LiteralPath $sourceFile -ErrorAction Stop
+
+            if (-not $DestinationPath) {
+                if ($sourceItem.Extension) {
+                    # test.txt -> test.utf8.txt
+                    $targetName = $sourceItem.BaseName + '.utf8' + $sourceItem.Extension
+                }
+                else {
+                    # file -> file.utf8
+                    $targetName = $sourceItem.Name + '.utf8'
+                }
+
+                $targetFile = Join-Path `
+                    -Path $sourceItem.DirectoryName `
+                    -ChildPath $targetName
+            }
+            elseif ($destinationIsDirectory) {
+                # Bei Zielverzeichnis: Originalname inkl. Extension bleibt erhalten.
+                $targetFile = Join-Path `
+                    -Path $destinationDirectory `
+                    -ChildPath $sourceItem.Name
+            }
+            else {
+                $targetFile = $singleDestinationFile
+            }
+
+            if (
+                (Test-Path -LiteralPath $targetFile -PathType Leaf) -and
+                -not $Force
+            ) {
+                Write-Error "Zieldatei existiert bereits: $targetFile. Verwende -Force zum Überschreiben."
+                continue
+            }
+
+            $sourceBytes = [System.IO.File]::ReadAllBytes($sourceFile)
+
+            # Zählung:
+            # Bytes < 128 sind ASCII und bleiben in UTF-8 byte-identisch.
+            # Bytes >= 128 sind die eigentlichen OEM-Codepage-Zeichen,
+            # die nach Unicode/UTF-8 umgesetzt werden.
+            $affectedBytes = 0
+            foreach ($byte in $sourceBytes) {
+                if ($byte -ge 128) {
+                    $affectedBytes++
+                }
+            }
+
+            $text = $sourceEncoding.GetString($sourceBytes)
+            $outputBytes = $targetEncoding.GetBytes($text)
+
+            if ($PSCmdlet.ShouldProcess($sourceFile, "Konvertiere nach UTF-8: $targetFile")) {
+                [System.IO.File]::WriteAllBytes($targetFile, $outputBytes)
+            }
+
+            $totalFiles++
+            $totalBytes            += $sourceBytes.Length
+            $totalAffectedBytes    += $affectedBytes
+            $totalOutputBytes      += $outputBytes.Length
+            $totalOutputCharacters += $text.Length
+
+            [PSCustomObject]@{
+                SourcePath        = $sourceFile
+                DestinationPath   = $targetFile
+                CodePage          = $CodePage
+                Utf8Bom           = [Bool]$Bom
+                SourceBytes       = $sourceBytes.Length
+                AffectedBytes     = $affectedBytes
+                OutputCharacters  = $text.Length
+                OutputBytes       = $outputBytes.Length
+            }
+        }
+
+        if ($Summary) {
+            [PSCustomObject]@{
+                SourcePath        = '<TOTAL>'
+                DestinationPath   = ''
+                CodePage          = $CodePage
+                Utf8Bom           = [Bool]$Bom
+                SourceBytes       = $totalBytes
+                AffectedBytes     = $totalAffectedBytes
+                OutputCharacters  = $totalOutputCharacters
+                OutputBytes       = $totalOutputBytes
+                Files             = $totalFiles
+            }
+        }
+    }
+}
+
 # druckt eine Windowstestseite vom angegebenen Drucker
 Function Invoke-PrinterTestPage {
 	[CmdletBinding()]
