@@ -93,3 +93,36 @@ Beispiel mit Host-seitigem Abschluss und ISO-Trennung:
   -WaitForCompletion `
   -RemoveExistingVM
 ```
+
+
+# Automatische Ubuntu Server Installation in Hyper-V
+
+<Code>New-DelaproUbuntu2604HyperVTestVM.ps1</Code>
+
+Wegen der Autoinstallation wird Xorriso benötigt, siehe: https://github.com/Delapro/Get-Xorisso
+
+Aufruf z.B.: <Code>.\New-DelaproUbuntu2604HyperVTestVM.ps1 -UbuntuIsoPath C:\ISOs\ubuntu-26.04-live-server-amd64.iso -VmName easyTest -VmPath D:\VMs\easyTestServer -RemoveExistingVM -XorrisoPath C:\temp\Xorriso\xorriso.exe</Code>
+
+Erzeugt folgende Ausgabe:
+```
+Lade herunter: https://releases.ubuntu.com/26.04/SHA256SUMS
+Ziel: C:\Users\Chef\AppData\Local\Temp\ubuntu-sha256sums-a49dd7be23694007b8f4bb1bb3c056cc.txt
+SHA256 OK: ubuntu-26.04-live-server-amd64.iso
+xorriso-Modus: Msys2 (C:\temp\Xorriso\xorriso.exe)
+Autoinstall-ISO erzeugt: D:\VMs\easyTestServer\easyTest\ISO\easyTest-Ubuntu2604-Autoinstall.iso
+
+VMName             : easyTest
+HostName           : easytest
+SwitchName         : Default Switch
+Started            : True
+GuestIPv4          :
+DotNetInstallMode  : Sdk10
+DotNetPackage      : dotnet-sdk-10.0
+UbuntuIsoPath      : C:\ISOs\ubuntu-26.04-live-server-amd64.iso
+AutoinstallIsoPath : D:\VMs\easyTestServer\easyTest\ISO\easyTest-Ubuntu2604-Autoinstall.iso
+VhdPath            : D:\VMs\easyTestServer\easyTest\Virtual Hard Disks\easyTest.vhdx
+VmRoot             : D:\VMs\easyTestServer\easyTest
+SecureBoot         : True
+DynamicMemory      : False
+
+```
