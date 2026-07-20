@@ -48,13 +48,49 @@ function Add-Tls12InSession {
 Add-Tls12InSession -Verbose
 $text = @'
 REM kleines Hilfsscript zum nachträglichen Starten von easy.PS1
-powershell.exe -NoExit -NoProfile -executionPolicy Bypass -File .\easy.PS1
+@echo off
+setlocal
+
+set "PSHOST=%ProgramFiles%\PowerShell\7\pwsh.exe"
+
+if not exist "%PSHOST%" (
+    where pwsh.exe >nul 2>&1
+
+    if errorlevel 1 (
+        set "PSHOST=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe"
+    ) else (
+        set "PSHOST=pwsh.exe"
+    )
+)
+
+"%PSHOST%" -NoExit -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%~dp0easy.PS1"
+
+set "EXITCODE=%ERRORLEVEL%"
+endlocal & exit /b %EXITCODE%
 '@ 
 $text | Set-Content -Path '.\psEasy.bat' 
 
 # Achtung 2047 Zeichen-Beschränkung bei cmd.exe!!
 $text = @'
-powershell.exe -NoExit -NoProfile -executionPolicy Bypass -File .\easyUpdate.PS1
+@echo off
+setlocal
+
+set "PSHOST=%ProgramFiles%\PowerShell\7\pwsh.exe"
+
+if not exist "%PSHOST%" (
+    where pwsh.exe >nul 2>&1
+
+    if errorlevel 1 (
+        set "PSHOST=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe"
+    ) else (
+        set "PSHOST=pwsh.exe"
+    )
+)
+
+"%PSHOST%" -NoExit -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%~dp0easyUpdate.PS1"
+
+set "EXITCODE=%ERRORLEVEL%"
+endlocal & exit /b %EXITCODE%
 '@ 
 $text | Set-Content -Path '.\psEasyUpdate.bat'
 
