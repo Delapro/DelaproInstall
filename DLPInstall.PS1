@@ -771,7 +771,8 @@ Function Invoke-DelaproAutomateDownloadAndInit {
 	Param()
 
 	$Files = @('DLPAutoCommon.PS1'
-				,'DLPAutoKunde.ps1'  # muss leider klein sein! 
+				,'DLPAutoKunde.ps1'  # muss leider klein sein!
+				,'DLPAutoBehandler.PS1'
 				,'DLPAutoAuftrag.PS1'
 				,'DLPAutoAufPos.PS1'
 				,'DLPAutoArtikel.PS1'
@@ -779,6 +780,7 @@ Function Invoke-DelaproAutomateDownloadAndInit {
 				,'DLPAutoJumbo.PS1'
 				,'DLPAutoMonatsaufstellung.PS1'
 				,'DLPAutoVideoTools.PS1'
+				,'DLPAutomateBehandlerDocument.PS1'
 			  )
 
 	Invoke-GithubRawDownload -Repository DelaproAutomate -Files $Files
