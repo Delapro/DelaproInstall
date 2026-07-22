@@ -809,6 +809,7 @@ Function Invoke-DelaproAutomateDownloadAndInit {
 	Invoke-GithubRawDownload -Repository DelaproAutomate -Files @('AutoLoadFiles.json')
 	$AutoLoad = Get-Content -Path ".\AutoLoadFiles.json" -Raw | ConvertFrom-Json
 	$Files = $AutoLoad.Files
+    Invoke-GithubRawDownload -Repository DelaproAutomate -Files $Files
 
 	foreach ($file in $Files) {
 		If (Test-Path $file) {
