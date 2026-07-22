@@ -806,20 +806,9 @@ Function Invoke-DelaproAutomateDownloadAndInit {
 	[CmdletBinding()]
 	Param()
 
-	$Files = @('DLPAutoCommon.PS1'
-				,'DLPAutoKunde.ps1'  # muss leider klein sein!
-				,'DLPAutoBehandler.PS1'
-				,'DLPAutoAuftrag.PS1'
-				,'DLPAutoAufPos.PS1'
-				,'DLPAutoArtikel.PS1'
-				,'DLPAutoTechniker.PS1'
-				,'DLPAutoJumbo.PS1'
-				,'DLPAutoMonatsaufstellung.PS1'
-				,'DLPAutoVideoTools.PS1'
-				,'DLPAutomateBehandlerDocument.PS1'
-			  )
-
-	Invoke-GithubRawDownload -Repository DelaproAutomate -Files $Files
+	Invoke-GithubRawDownload -Repository DelaproAutomate -Files @('AutoLoadFiles.json')
+	$AutoLoad = Get-Content -Path ".\AutoLoadFiles.json" -Raw | ConvertFrom-Json
+	$Files = $AutoLoad.Files
 
 	foreach ($file in $Files) {
 		If (Test-Path $file) {
