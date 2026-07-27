@@ -1644,6 +1644,8 @@ Invoke-SysInternalTool -Tool ProcDump -Verbose
 & $Env:Temp\ProcDump.Exe -accepteula -e -w -ma KZBVExp -o C:\Temp\KzbvExp.DMP
 ```
 
+Zur Analyse siehe https://github.com/Delapro/DelaproInstall/blob/master/Doku/Probleme/Windows-Dmp-File-Analyse.md
+
 ### Hardwareprobleme erkennen
 
 ```Powershell
