@@ -1,6 +1,6 @@
 # Analyse von Windows Dump Dateien.
 
-Dump-Dateien von <Code>DlpXMLPr.exe</Code> werden z.B. in <Code>C:\Users\Benutzer\AppData\Local\CrashDumps\</Code> abgelegt. Für das folgende Powershellscript zur DMP-Dateianalyse braucht man aber vorab WinDbg.
+Dump-Dateien von <Code>DlpXMLPr.exe</Code> werden z.B. in <Code>C:\Users\Benutzer\AppData\Local\CrashDumps</Code> abgelegt. Für das folgende Powershellscript zur DMP-Dateianalyse braucht man aber vorab WinDbg.
 
 ```Powershell
 #Requires Admin
