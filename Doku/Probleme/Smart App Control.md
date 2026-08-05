@@ -84,6 +84,14 @@ Message          : Code Integrity determined that a process (\Device\HarddiskVol
                    that did not meet the Enterprise signing level requirements.
 ```
 
+|Übliche IDs|
+|-|
+3077: Die Datei wurde von einer erzwungenen Richtlinie blockiert.
+3089: Signaturinformationen; TotalSignatureCount = 0 bedeutet unsigniert.
+3092: Keine Freigabe durch den Intelligent Security Graph oder einen verwalteten Installer.
+3099: Eine App-Control-Richtlinie wurde geladen.
+3065: Eine Benutzermodus-DLL erfüllte die Richtlinienanforderungen nicht.
+
 ## Lösung
 
 Die Dateien müssen mit einer digitalen Signatur versehen sein. D.h. im Zweifelsfall muss ein Update eingespielt werden.
