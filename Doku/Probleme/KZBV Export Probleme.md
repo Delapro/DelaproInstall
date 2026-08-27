@@ -26,6 +26,6 @@ Mögliche Lösung: Den Preis positiv eintragen, also z. B. aus -54,12€ werden 
 
 ![image](https://github.com/user-attachments/assets/b08306b2-ac46-4ad9-83ea-2af89a694ad9)
 
-Sollte es eigentlich nicht geben, aber wird trotzdem mal dokumentiert.
+Sollte es eigentlich nicht geben, aber wird trotzdem mal dokumentiert. Kann es allerdings geben, wenn zwar Positionen im Auftrag eingetragen sind und mengenmäßig enthalten sind aber kein Einzelpreis und damit kein Gesamtpreis berechnet wird.
 
-Lösung: Etwas abrechnen oder keine XML-Datei erstellen.
+Lösung: Etwas abrechnen oder keine XML-Datei erstellen. Wenn die gesamte Rechnung am Ende auf 0 stehen soll, dann sollte man alle Positionen einmal berechnen und gleich oder am Ende wieder gutschreiben, indem man die Positionen alle nochmal berechnet allerdings mit negativem Vorzeichen bei der Menge. Dadurch enthält die XML-Datei alle abgerechneten Positionen für die KZV aber gleichzeitig Rabattpositionen wo wieder alles auf 0 gegenrechnet.
