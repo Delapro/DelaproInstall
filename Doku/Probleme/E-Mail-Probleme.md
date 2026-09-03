@@ -1,4 +1,13 @@
-CURL verwenden zum Testen
+# Probleme bei der Zustellung / SPAM / Whitelisting
+
+Wenn Delapro die E-Mail erfolgreich an Outlook, Thunderbird oder ein anderes MAPI-fähiges E-Mailprogramm übergeben hat, die Nachricht beim Empfänger aber nicht im Posteingang erscheint, siehe:
+
+[E-Mail-Zustellung, SPAM und Whitelisting](E-Mail-Zustellung-SPAM-Whitelisting.md)
+
+Dort werden SPAM-/Junk-Filter, Erwünscht-Listen, Whitelisting, Provider-Einstellungen und mögliche Filterregeln auf Empfängerseite beschrieben.
+
+
+# bei Problemen CURL verwenden zum Testen
 
 ```
 # bei Verwendung von Powershell ein cmd /c davor setzen!
