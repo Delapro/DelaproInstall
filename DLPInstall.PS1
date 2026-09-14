@@ -4358,7 +4358,7 @@ Function Invoke-DelaproUpdate {
 	Param(
 		[Int]$DlpAlterInTagen=1,
 		[String]$DlpPath,
-		[String]$DlpUpdateFile = 'C:\temp\Exes.exe'
+		[String]$DlpUpdateFile = 'C:\temp\DelaproUpdate.exe'
 
 	)
 
