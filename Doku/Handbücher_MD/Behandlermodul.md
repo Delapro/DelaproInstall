@@ -28,11 +28,11 @@
 
 Über die Behandlerverwaltung erhalten Sie alle Daten zu den einzelnen Behandlern eines Kunden. So z.B. Name, Anschrift, Telefonnummern, E-Mail-Adresse, Geburtsdatum und Bemerkungen.
 
-Die Behandlerverwaltung ist besonders für Praxen, Gemeinschaftspraxen und Einrichtungen interessant, bei denen mehrere Zahnärzte oder andere Behandler unter einer gemeinsamen Kundennummer geführt werden.
+Die Behandlerverwaltung ist besonders für Praxen und Einrichtungen interessant, bei denen mehrere Zahnärzte oder andere Behandler unter einer gemeinsamen DeLaPro-Kundennummer geführt werden. Das kann sowohl eine Berufsausübungsgemeinschaft (BAG, früher Gemeinschaftspraxis) mit gemeinsamer Abrechnung als auch eine Praxisgemeinschaft mit getrennt abrechnenden Praxen betreffen.
 
 Ein Behandler gehört immer zu einem Kunden. Die Behandlernummer gilt deshalb nur innerhalb dieses Kunden. Die gleiche Behandlernummer kann bei einem anderen Kunden erneut verwendet werden.
 
-Wenn Sie einen Auftrag schreiben, kann der passende Behandler direkt dem Auftrag zugeordnet werden. Dadurch können später die Umsätze der Behandler einzeln angezeigt und innerhalb des Kunden miteinander verglichen werden.
+Wenn Sie einen Auftrag schreiben, kann der passende Behandler direkt dem Auftrag zugeordnet werden. Dadurch können später die Umsätze der Behandler einzeln angezeigt und innerhalb des Kunden miteinander verglichen werden. Zusätzlich können bei Bedarf behandlerabhängige Einstellungen hinterlegt werden, beispielsweise eine abweichende Vorgabe für die XML-Zahnarztauftragsnummer.
 
 Die Behandlerverwaltung steht nur zur Verfügung, wenn die Behandler-Unterstützung in DeLaPro aktiviert wurde.
 
@@ -188,9 +188,25 @@ Welche Behandlerparameter bei der Auftragsbearbeitung ausgewertet werden, kann v
 
 Hier kann festgelegt werden, ob und in welcher Form für Aufträge dieses Behandlers automatisch ein Prothetik-Paß oder Materialnachweis erstellt werden soll.
 
+### Z.-Auf.-Nr.-Vorgabe
+
+Bei der XML-Zahnarztauftragsnummer kann ein konstanter linker Teil als Vorgabe hinterlegt werden. Die Vorgabe kann entweder beim Kunden oder – falls erforderlich – abweichend beim einzelnen Behandler gespeichert werden.
+
+Die **Z.-Auf.-Nr.-Vorgabe** beim Kunden auf der dritten Seite der Kundendaten ist der Standard für den gesamten Kunden. Verwenden Sie diese Einstellung, wenn für alle Behandler dieses Kunden derselbe konstante Teil der Auftragsnummer gilt.
+
+Die **Z.-Auf.-Nr.-Vorgabe** beim Behandler auf der zweiten Seite der Behandlerdaten wird nur benötigt, wenn für diesen Behandler ein anderer konstanter Teil verwendet werden muß. Ist das Feld beim Behandler leer, verwendet DeLaPro automatisch die beim Kunden hinterlegte Vorgabe. Ist auch dort keine Vorgabe eingetragen, erfolgt keine automatische Vorbelegung.
+
+Typische Beispiele:
+
+Bei einer **Berufsausübungsgemeinschaft** (BAG, früher Gemeinschaftspraxis) erfolgt die vertragszahnärztliche Leistungsabrechnung gemeinschaftlich. Wenn die verwendete Praxissoftware deshalb für alle Behandler denselben konstanten Teil der XML-Auftragsnummer erzeugt, genügt normalerweise die Vorgabe beim Kunden.
+
+Bei einer **Praxisgemeinschaft** arbeiten mehrere rechtlich und abrechnungstechnisch selbständige Praxen in gemeinsamen Räumen. Jeder Vertragszahnarzt rechnet über eine eigene Abrechnungsnummer ab. Werden diese Praxen in DeLaPro unter einer gemeinsamen Kundennummer mit einzelnen Behandlern geführt und liefert die Praxissoftware unterschiedliche konstante Teile der XML-Auftragsnummer, kann die jeweilige Vorgabe direkt beim Behandler hinterlegt werden.
+
+> **Hinweis:** Entscheidend ist nicht allein die Organisationsform oder die Anzahl der Behandler, sondern der tatsächliche Aufbau der von der Praxissoftware gelieferten XML-Auftragsnummer. Die hier hinterlegte Z.-Auf.-Nr.-Vorgabe ist lediglich eine Eingabehilfe für einen konstanten linken Teil der Auftragsnummer. Sie ersetzt weder die KZV-Abrechnungsnummer der Praxis noch die persönliche Zahnarztnummer eines Behandlers.
+
 > **Bildvorschlag:** Zweite Seite der Behandlerdaten.
 >
-> *Bildunterschrift: Auf der zweiten Seite werden Geburtsdatum, Aufnahmedatum, Preislisten und der automatische Nachweis festgelegt.*
+> *Bildunterschrift: Auf der zweiten Seite werden Geburtsdatum, Aufnahmedatum, Preislisten, der automatische Nachweis und XML-Zahnarztauftragsnummer festgelegt.*
 
 ---
 
@@ -234,11 +250,29 @@ Ist die Behandler-Unterstützung aktiviert, erscheint in der Auftragsmaske das F
 
 Nach Auswahl des Kunden kann die Behandlernummer direkt eingegeben werden. Mit **F2 - Auswahl** wird die Behandlerverwaltung geöffnet. Es werden nur die Behandler des im Auftrag eingetragenen Kunden angeboten.
 
-Markieren Sie den gewünschten Behandler und bestätigen Sie die Auswahl. Die Behandlernummer wird anschließend in den Auftrag übernommen.
-
-Die Zuordnung gilt für den gesamten Auftrag. Alle Positionen des Auftrages werden dem ausgewählten Behandler zugerechnet.
+Markieren Sie den gewünschten Behandler und bestätigen Sie die Auswahl. Die Behandlernummer wird anschließend in den Auftrag übernommen. Die Zuordnung gilt für den gesamten Auftrag. Alle Positionen des Auftrages werden dem ausgewählten Behandler zugerechnet.
 
 Falls noch kein Behandler bekannt ist, kann das Feld leer bleiben. Der Umsatz erscheint dann in der Auswertung unter **ohne Behandler**. Für eine vollständige und aussagekräftige Statistik sollte der Behandler möglichst bereits bei der Auftragserfassung ausgewählt werden.
+
+### Schnelle Übernahme im Feld Zahnarztauftragsnummer
+
+Bei der Neuanlage eines Auftrages kann der Kunde beziehungsweise der Behandler auch direkt über das Feld der XML-Zahnarztauftragsnummer ausgewählt werden.
+
+Geben Sie dazu **Kundennummer/Behandlernummer** ein und bestätigen Sie die Eingabe. Beispiel:
+
+`471/2`
+
+DeLaPro übernimmt den Kunden und den angegebenen Behandler und trägt anschließend die passende Z.-Auf.-Nr.-Vorgabe ein. Ist beim Behandler eine eigene Vorgabe hinterlegt, wird diese verwendet. Ist die Behandlervorgabe leer, wird auf die Vorgabe des Kunden zurückgegriffen.
+
+Ist die Behandlernummer noch nicht bekannt, geben Sie nur die Kundennummer mit anschließendem Schrägstrich ein:
+
+`471/`
+
+Nach Bestätigung öffnet DeLaPro automatisch die Behandlerauswahl für diesen Kunden. Die Auswahl kann in dieser Eingabesituation auch mit **F2** aufgerufen werden. Solange noch kein Behandler gewählt wurde, wird keine Behandlervorgabe übernommen. Erst nach der Auswahl setzt DeLaPro die zum Behandler beziehungsweise Kunden passende Vorgabe ein.
+
+Der Cursor steht anschließend direkt hinter der übernommenen Vorgabe, so daß der noch fehlende variable Teil der XML-Zahnarztauftragsnummer unmittelbar ergänzt werden kann.
+
+Ist der Kunde bereits bekannt, kann die bisherige Übernahme der Vorgabe mit + weiterhin verwendet werden. Ist dem Auftrag bereits ein Behandler zugeordnet, wird dabei dessen abweichende Vorgabe berücksichtigt; andernfalls gilt die Vorgabe des Kunden.
 
 > **Bildvorschlag:** Auftragsmaske mit dem Feld „Kun-Nr/Beh-Nr“ und geöffneter F2-Auswahl.
 >
@@ -361,6 +395,16 @@ Ein größerer Anteil in der Zeile **ohne Behandler** weist darauf hin, daß Auf
 
 Scheidet ein Behandler aus, sollte er als Karteileiche erhalten bleiben. Ein neuer Behandler erhält eine neue Nummer. So bleiben ältere Aufträge und Umsätze eindeutig.
 
+### Vorgabe möglichst nur einmal pflegen
+
+Wenn alle Behandler eines Kunden dieselbe Z.-Auf.-Nr.-Vorgabe verwenden, tragen Sie diese ausschließlich beim Kunden ein. Die Behandlerfelder können leer bleiben und übernehmen automatisch die Kundenvorgabe.
+
+Tragen Sie eine Vorgabe beim Behandler nur dann ein, wenn dieser tatsächlich einen abweichenden konstanten Teil der XML-/Zahnarztauftragsnummer benötigt. Dadurch bleibt die Pflege übersichtlich und Änderungen an einer gemeinsamen Vorgabe müssen nur an einer Stelle vorgenommen werden.
+
+### Abrechnungseinheit (im Sinne von Praxis) und Behandler nicht verwechseln
+
+Eine gemeinsame DeLaPro-Kundennummer bedeutet nicht automatisch, daß alle darin geführten Behandler auch eine gemeinsame Abrechnungseinheit bilden. Bei einer Berufsausübungsgemeinschaft wird gemeinschaftlich abgerechnet, während eine Praxisgemeinschaft aus getrennt abrechnenden Praxen bestehen kann. Für die Z.-Auf.-Nr.-Vorgabe ist deshalb maßgeblich, ob die Praxissoftware für die Behandler denselben oder unterschiedliche konstante Teile der XML-Auftragsnummer liefert.
+
 ### F9 und Kundenliste haben unterschiedliche Aufgaben
 
 **F9 beim Behandler** zeigt schnell die Umsatzentwicklung des aktuellen Behandlers.
@@ -432,3 +476,7 @@ Ergänzend sind folgende Bilder sinnvoll:
 | Behandler eines Kunden vergleichen | Kundenverwaltung → F10 Listen → Behandlerumsatzvergleich |
 | Monatsaufstellung gruppieren | Kundendaten, 2. Seite → Behan.-Grupp. = J |
 | Adreß- oder Kommunikationslisten | Behandlerverwaltung → F10 Listen |
+| Gemeinsame Z.-Auf.-Nr.-Vorgabe hinterlegen | Kundendaten, 3. Seite → Z.-Auf.-Nr.-Vorgabe |
+| Abweichende Z.-Auf.-Nr.-Vorgabe eines Behandlers hinterlegen | Behandlerdaten, 2. Seite → Z.-Auf.-Nr.-Vorgabe |
+| Kunde und Behandler über die Zahnarztauftragsnummer übernehmen | Zahnarztauftragsnummer → `Kundennummer/Behandlernummer` |
+| Behandlerauswahl aus der Zahnarztauftragsnummer öffnen | Zahnarztauftragsnummer → `Kundennummer/` + Enter oder F2 |
