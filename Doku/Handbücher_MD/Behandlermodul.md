@@ -198,7 +198,7 @@ Die **Z.-Auf.-Nr.-Vorgabe** beim Behandler auf der zweiten Seite der Behandlerda
 
 Typische Beispiele:
 
-Bei einer **Berufsausübungsgemeinschaft** (BAG, früher Gemeinschaftspraxis) erfolgt die vertragszahnärztliche Leistungsabrechnung gemeinschaftlich. Wenn die verwendete Praxissoftware deshalb für alle Behandler denselben konstanten Teil der XML-Auftragsnummer erzeugt, genügt normalerweise die Vorgabe beim Kunden.
+Bei einer **Berufsausübungsgemeinschaft** (BAG, früher Gemeinschaftspraxis) erfolgt die vertragszahnärztliche Leistungsabrechnung gemeinschaftlich. Wenn die verwendete Praxissoftware für alle Behandler denselben konstanten Teil der XML-Auftragsnummer erzeugt, genügt normalerweise die Vorgabe beim Kunden.
 
 Bei einer **Praxisgemeinschaft** arbeiten mehrere rechtlich und abrechnungstechnisch selbständige Praxen in gemeinsamen Räumen. Jeder Vertragszahnarzt rechnet über eine eigene Abrechnungsnummer ab. Werden diese Praxen in DeLaPro unter einer gemeinsamen Kundennummer mit einzelnen Behandlern geführt und liefert die Praxissoftware unterschiedliche konstante Teile der XML-Auftragsnummer, kann die jeweilige Vorgabe direkt beim Behandler hinterlegt werden.
 
@@ -206,7 +206,7 @@ Bei einer **Praxisgemeinschaft** arbeiten mehrere rechtlich und abrechnungstechn
 
 > **Bildvorschlag:** Zweite Seite der Behandlerdaten.
 >
-> *Bildunterschrift: Auf der zweiten Seite werden Geburtsdatum, Aufnahmedatum, Preislisten, der automatische Nachweis und XML-Zahnarztauftragsnummer festgelegt.*
+> *Bildunterschrift: Auf der zweiten Seite werden Geburtsdatum, Aufnahmedatum, Preislisten, der automatische Nachweis und die Vorgabe für die XML-Zahnarztauftragsnummer festgelegt.*
 
 ---
 
@@ -262,7 +262,7 @@ Geben Sie dazu **Kundennummer/Behandlernummer** ein und bestätigen Sie die Eing
 
 `471/2`
 
-DeLaPro übernimmt den Kunden und den angegebenen Behandler und trägt anschließend die passende Z.-Auf.-Nr.-Vorgabe ein. Ist beim Behandler eine eigene Vorgabe hinterlegt, wird diese verwendet. Ist die Behandlervorgabe leer, wird auf die Vorgabe des Kunden zurückgegriffen.
+DeLaPro übernimmt den Kunden und den angegebenen Behandler und trägt anschließend, sofern hinterlegt, die passende Z.-Auf.-Nr.-Vorgabe ein. Ist beim Behandler eine eigene Vorgabe hinterlegt, wird diese verwendet. Ist die Behandlervorgabe leer, wird auf die Vorgabe des Kunden zurückgegriffen.
 
 Ist die Behandlernummer noch nicht bekannt, geben Sie nur die Kundennummer mit anschließendem Schrägstrich ein:
 
@@ -270,7 +270,7 @@ Ist die Behandlernummer noch nicht bekannt, geben Sie nur die Kundennummer mit a
 
 Nach Bestätigung öffnet DeLaPro automatisch die Behandlerauswahl für diesen Kunden. Die Auswahl kann in dieser Eingabesituation auch mit **F2** aufgerufen werden. Solange noch kein Behandler gewählt wurde, wird keine Behandlervorgabe übernommen. Erst nach der Auswahl setzt DeLaPro die zum Behandler beziehungsweise Kunden passende Vorgabe ein.
 
-Der Cursor steht anschließend direkt hinter der übernommenen Vorgabe, so daß der noch fehlende variable Teil der XML-Zahnarztauftragsnummer unmittelbar ergänzt werden kann.
+Wird eine Vorgabe übernommen, steht der Cursor anschließend direkt hinter der übernommenen Vorgabe, so daß der noch fehlende variable Teil der XML-Zahnarztauftragsnummer unmittelbar ergänzt werden kann.
 
 Ist der Kunde bereits bekannt, kann die bisherige Übernahme der Vorgabe mit + weiterhin verwendet werden. Ist dem Auftrag bereits ein Behandler zugeordnet, wird dabei dessen abweichende Vorgabe berücksichtigt; andernfalls gilt die Vorgabe des Kunden.
 
@@ -400,6 +400,8 @@ Scheidet ein Behandler aus, sollte er als Karteileiche erhalten bleiben. Ein neu
 Wenn alle Behandler eines Kunden dieselbe Z.-Auf.-Nr.-Vorgabe verwenden, tragen Sie diese ausschließlich beim Kunden ein. Die Behandlerfelder können leer bleiben und übernehmen automatisch die Kundenvorgabe.
 
 Tragen Sie eine Vorgabe beim Behandler nur dann ein, wenn dieser tatsächlich einen abweichenden konstanten Teil der XML-/Zahnarztauftragsnummer benötigt. Dadurch bleibt die Pflege übersichtlich und Änderungen an einer gemeinsamen Vorgabe müssen nur an einer Stelle vorgenommen werden.
+
+> **Faustregel:** Die gemeinsame Vorgabe gehört zum Kunden, nur die Abweichung gehört zum Behandler.
 
 ### Abrechnungseinheit (im Sinne von Praxis) und Behandler nicht verwechseln
 
