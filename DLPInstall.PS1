@@ -3311,7 +3311,7 @@ Function Install-Thunderbird {
 		#[parameter(Mandatory=$true)]
 		[System.String]$tempDirectory="$Env:TEMP\",
 		[switch]$Force,
-		[Validateset('156.0.0', '155.0.1', '154.0.0', '153.2.0esr', '152.0.1', '151.0.1', '150.0.2', '149.0.2', '148.0.1', '148.0', '147.0.2', '147.0', '146.0.1', '146.0', '145.0', '144.0.1', '144.0', '143.0.1', '143.0', '142.0', '141.0', '140.1.1esr', '139.0.2', '138.0.2', '137.0.2', '128.9.2esr', '115.13.0', '102.15.1', '91.13.1', "78.14.0", "68.12.0", "60.9.1")]
+		[Validateset('156.0', '155.0.1', '154.0.0', '153.2.0esr', '152.0.1', '151.0.1', '150.0.2', '149.0.2', '148.0.1', '148.0', '147.0.2', '147.0', '146.0.1', '146.0', '145.0', '144.0.1', '144.0', '143.0.1', '143.0', '142.0', '141.0', '140.1.1esr', '139.0.2', '138.0.2', '137.0.2', '128.9.2esr', '115.13.0', '102.15.1', '91.13.1', "78.14.0", "68.12.0", "60.9.1")]
 		[string[]]$Version,
 		[validateset("win32", "win64")]
 		[string]$Platform="win32"
@@ -3324,7 +3324,7 @@ Function Install-Thunderbird {
 	# z. B. 60.50.0 unter: https://ftp.mozilla.org/pub/thunderbird/releases/60.5.0/win32/de/
 	If ($null -eq $Version) {
 		# aktuelle Version
-		$tbVersion = '156.0.0'  # evtl. mal umstellen auf (Get-Variable "Version").Attributes.ValidValues[0]? Aber Achtung wegen Set-ScriptMode...
+		$tbVersion = '156.0'  # evtl. mal umstellen auf (Get-Variable "Version").Attributes.ValidValues[0]? Aber Achtung wegen Set-ScriptMode...
 		$downloadUrlBase = "https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$tbVersion"
 	} else {
 		$tbVersion = $Version
