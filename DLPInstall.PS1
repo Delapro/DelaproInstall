@@ -4611,7 +4611,7 @@ Function Install-DelaproPreisupdate {
 	# Backslash anhängen falls notwendig
 	$TempDirectory = Join-Path -Path $TempDirectory -ChildPath ""
 	# aktuelles Preisupdate
-	$dlpPreise = "DLPPreise2026-2.exe"
+	$dlpPreise = "DLPPreise2026-3.exe"
 	Start-BitsTransfer $easyBaseURI/download/$dlpPreise $TempDirectory
 	Unblock-File "$($TempDirectory)$($dlpPreise)"
 	Start-Process -Wait "$($TempDirectory)$($dlpPreise)" -ArgumentList "-o$($TempDirectory)\PreisUpdate", "-y"
