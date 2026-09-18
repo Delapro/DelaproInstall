@@ -2989,7 +2989,7 @@ Function Install-7Zip {
         [System.String]$tempDirectory = "$Env:TEMP\"
     )
 
-    $Version = '2601' # 7-Zip 26.01, aktuelle offizielle Version: https://www.7-zip.org/
+    $Version = '2603' # 7-Zip 26.01, aktuelle offizielle Version: https://www.7-zip.org/
 
     If (-Not (Test-Path -LiteralPath $tempDirectory -PathType Container)) {
         New-Item -Path $tempDirectory -ItemType Directory -Force | Out-Null
