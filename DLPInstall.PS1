@@ -5123,145 +5123,252 @@ Function Get-InstalledWindowsPrinterDriver {
 	$printerDriver
 }
 
+# Ermittelt bekannte Microsoft-PS-Class-Driver-INF-Dateien direkt aus dem
+# DriverStore. Dies ist wesentlich schneller als Get-InstalledWindowsPrinterDriver.
+#
+# Falls Microsoft den INF-Namen irgendwann ändert, neuen Namen zusätzlich
+# in $InfNames aufnehmen, z.B.:
+# @('prnms005.inf', 'prnms006.inf')
+Function Get-MicrosoftPSClassDriverInf {
+    [CmdletBinding()]
+    Param(
+		# NICHT die DriverStore-Hashwerte hier hinterlegen!
+		# Der Hash ist nicht stabil.
+		#
+		# Falls Microsoft den INF-Namen ändert:
+		# Install-DelaproMailPrinter -Verbose ausführen.
+		# Der langsame DISM-Fallback meldet den neu gefundenen INF-Namen.
+        [String[]]$InfNames = @('prnms005.inf')
+    )
+
+    $driverStore = Join-Path $env:windir 'System32\DriverStore\FileRepository'
+
+    If (-Not ([System.IO.Directory]::Exists($driverStore))) {
+        Write-Verbose "DriverStore-Verzeichnis nicht gefunden: $driverStore"
+        return
+    }
+
+    # Architektur des Betriebssystems, nicht des PowerShell-Prozesses!
+    If (Test-ARM64) {
+        $architecture = 'arm64'
+    } elseif ([System.Environment]::Is64BitOperatingSystem) {
+        $architecture = 'amd64'
+    } else {
+        $architecture = 'x86'
+    }
+
+    foreach ($infName in $InfNames) {
+        $pattern = "$($infName)_$($architecture)_*"
+
+        Write-Verbose "Suche im DriverStore nach $pattern"
+
+        try {
+            $directories = [System.IO.Directory]::EnumerateDirectories(
+                $driverStore,
+                $pattern,
+                [System.IO.SearchOption]::TopDirectoryOnly
+            )
+
+            foreach ($directory in $directories) {
+                $inf = Join-Path $directory $infName
+
+                If ([System.IO.File]::Exists($inf)) {
+                    Write-Verbose "Microsoft PS Class Driver Kandidat gefunden: $inf"
+                    $inf
+                }
+            }
+        }
+        catch {
+            Write-Verbose "Direkte DriverStore-Suche fehlgeschlagen: $($_.Exception.Message)"
+        }
+    }
+}
+
 # installiert den DelaproMail Drucker, dazu werden Adminrechte benötigt!
 Function Install-DelaproMailPrinter {
-	[CmdletBinding()]
-	Param(
-		[System.String]$DelaproPath = "C:\Delapro",
-		[System.String]$Portname = "$($DelaproPath)\Export\PDF\Delapro.EPS",
-		[System.String]$PrinterName = "DelaproMail"
-	)
+    [CmdletBinding()]
+    Param(
+        [System.String]$DelaproPath = "C:\Delapro",
+        [System.String]$Portname = "$($DelaproPath)\Export\PDF\Delapro.EPS",
+        [System.String]$PrinterName = "DelaproMail"
+    )
 
-	# DelaproMail-Port anlegen:
-	Write-Verbose "Lege $Portname an"
-	If (-Not (Test-PrinterPort -Portname $Portname)) {
-		New-PrinterPort -Portname $PortName
-	}
+    # DelaproMail-Port anlegen
+    Write-Verbose "Lege $Portname an"
+    If (-Not (Test-PrinterPort -Portname $Portname)) {
+        New-PrinterPort -Portname $PortName
+    }
 
-	If (-Not (Test-Path $DelaproPath\Export\PDF\Temp)) {
-		Write-Verbose "Lege Tempverzeichnis für Export an $DelaproPath\Export\PDF\Temp"
-		New-Item -Type Directory $DelaproPath\Export\PDF\Temp
-	}
+    # Temp-Verzeichnis für PDF-Export anlegen
+    $tempPath = "$DelaproPath\Export\PDF\Temp"
 
-	# DelaproMail-Druckertreiber anlegen
-	# für künftige Aktionen GhostScript-Druckertreiber installieren:
-	# rundll32 printui.dll,PrintUIEntry /Gw /ia /m "Ghostscript PDF" /f "C:\program files\gs\gs9.18\lib\ghostpdf.inf"
-	# klappt aber noch nicht wegen der Zertifikate. Doch, wenn dies vorweg installiert wird: C:\Program Files\GS\gs9.18\lib>pnputil -i -a ghostpdf.inf
-	# dann noch dies hinterher um den eigentlichen Druckertreiber anzulegen:  rundll32 printui.dll,PrintUIEntry /if /b "DelaproTest" /r "$($DlpPath)\Export\PDF\Delapro.EPS" /m "Ghostscript PDF"
-	If (Test-WindowsVista) {
-		Write-Verbose "Installiere Druckertreiber unter Vista"
-		rundll32 printui.dll,PrintUIEntry /if /b "$PrinterName" /f  $env:WinDir\inf\ntprint.inf /r "$($DelaproPath)\Export\Pdf\Delapro.EPS" /m "Xerox Phaser 5400 PS"
-	} else {
-		if (Test-Windows7) {
-			Write-Verbose "Installiere Druckertreiber unter Win7"
-			rundll32 printui.dll,PrintUIEntry /if /b "$PrinterName" /f $env:WinDir\inf\ntprint.inf /r "$($DelaproPath)\Export\Pdf\Delapro.EPS" /m "Xerox Phaser 6120 PS"
-		} else {
-			If ((Test-Windows10) -or (Test-Windows11)) {
-				# PRÜFEN! Alternative Xerox PS Color Class Driver V1.1, Oder HP Laserjet 2500 PS wird von Parallels verwendet
-				$driverName = "Microsoft PS Class Driver"
-				$driverID = ""
-				$winBuild = (Get-CimInstance Win32_OperatingSystem).Version
-				If (Test-64Bit) {
-					# leider ändert sich die ID mit jedem größeren Windows 10 Update
-					switch ($winBuild) {
-						"10.0.10240" {$driverID = "865ce515acd2fce4"}
-						"10.0.10586" {$driverID = "d74c8d3824a210d1"}
-						"10.0.14393" {$driverID = "f9239fa24dfa8848"}
-						"10.0.15063" {$driverID = "468bda717012acbd"}
-						"10.0.16299" {$driverID = "34c0896eae1bf8d0"}
-						"10.0.17134" {$driverID = "c43129a734557745"}
-						"10.0.17763" {$driverID = "6c1071b47c60ba60"}
-						"10.0.18362" {$driverID = "ff08dae4bacd9003"} # {$driverID = "0074e542b81fb408"}
-						"10.0.18363" {$driverID = "ff08dae4bacd9003"} # wegen SP?
-						"10.0.19041" {$driverID = "add71423ba73e797"}
-						"10.0.19042" {$driverID = "add71423ba73e797"} # gleichgeblieben!
-						"10.0.19043" {$driverID = "add71423ba73e797"} # gleichgeblieben!
-						"10.0.19044" {$driverID = "add71423ba73e797"} # gleichgeblieben!
-						"10.0.19045" {$driverID = "add71423ba73e797"} # gleichgeblieben! Win10 22H2
-						"10.0.22000" {$driverID = "b0d591b9cf5aba04"} # Win11
-						"10.0.22631" {$driverID = "63b2b03e6b568836"} # Win11, 23H2
-						"10.0.26100" {$driverID = "3de64f94f420c01f"} # Win11 24H2
-                        "10.0.26200" {$driverID = "37d804f990d11ff9"} # Win11 25H2
-						# "10.0.22621" {$driverID = "63b2b03e6b568836"} # Win11, 22H2 aber von HP!
-						# "10.0.22621" {$driverID = "8a3bfbb177fb69e5"} # Win11, 22H2, wird über extra Abfrage unten abgefangen, vorher b2cace2d3b2ffe99
-						# "10.0.22621" {$driverID = "890f4aa8c4a4dba6"} # ist auch mal aufgetaucht Herm
-						"10.0.22621" {If (Test-ARM64) {$driverID = '6ee1b90220efac21'} else {$driverID = "890f4aa8c4a4dba6"}} # Win11 22H2
-						# neue IDs siehe: https://github.com/Delapro/DelaproInstall#druckertreiber-id-bei-neuen-windows-featureupdate-versionen-ermitteln
-					}
-				} else {
-					# zusätzlich gibt es unterschiede zwischen 32-Bit und 64-Bit
-					switch ($winBuild) {
-						"10.0.10240" {$driverID = "1233c058c621b357"}
-						"10.0.10586" {$driverID = "a3895815234f1110"}
-						"10.0.14393" {$driverID = "05a177376e5c60f5"}
-						"10.0.15063" {$driverID = "9265cc492d241846"}
-						"10.0.16299" {$driverID = "00521e6b8bf17036"}
-						"10.0.17134" {$driverID = "90475034b6bba97d"}
-						"10.0.17763" {$driverID = "38a0c03601c7c0b3"}
-						"10.0.18362" {$driverID = "8bf3519455d76308"} # {$driverID = "ccd0ba5b543d779d"}
-						"10.0.18363" {$driverID = "8bf3519455d76308"}
-						"10.0.19041" {$driverID = "b969fdbb40be3d0c"}
-						"10.0.19042" {$driverID = "b969fdbb40be3d0c"}
-						"10.0.19043" {$driverID = "b969fdbb40be3d0c"}
-						"10.0.19044" {$driverID = "b969fdbb40be3d0c"}
-						# Win11 gibts nicht!
-					}
-				}
+    If (-Not (Test-Path $tempPath)) {
+        Write-Verbose "Lege Tempverzeichnis für Export an $tempPath"
+        New-Item -ItemType Directory -Path $tempPath | Out-Null
+    }
 
-				If (-Not ($driverID)) {
-					Write-Verbose "Microsoft Postscriptdruckertreiber wird ermittelt"
-					$driver = Get-InstalledWindowsPrinterDriver -Vendor Microsoft -Driver $driverName
-					$driverIDFound = ($driver[0]).OriginalFilename -match '\\prnms005.inf_[amd_64|x86|arm64]+_([0-9a-fA-F]{16})\\prnms005.inf'
-					If ($driverIDFound) {
-						$driverID = $Matches[1]
-						Write-Verbose "ermittelte driverID: $driverID"
-					}
-					Write-Verbose "ermittelte PS-Datei: $(($driver).OriginalFilename)"
-					$driverInf = ($driver[0]).OriginalFilename
-				} else {
-					If (Test-64Bit) {
-						If (Test-ARM64) {
-							$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_arm64_$($driverID)\prnms005.inf"
-						} else {
-							$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_$($driverID)\prnms005.inf"
-						}
-						If (-Not (Test-Path $driverInf)) { # Win11 Sonderfälle
-							$driverID = "8a3bfbb177fb69e5"
-							# Win11, Spezialfall muss noch abgeklärt werden, welcher Wert wirklich stimmt, oder ob es tatsächlich zwei geben kann
-							$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_$($driverID)\prnms005.inf"
-						}
-						If (-Not (Test-Path $driverInf)) {  # Win11 Sonderfälle
-							$driverID = "63b2b03e6b568836"
-							# Win11, Spezialfall muss noch abgeklärt werden, welcher Wert wirklich stimmt, oder ob es tatsächlich zwei geben kann
-							$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_$($driverID)\prnms005.inf"
-						}
-					} else {
-						$driverInf = "C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_$($driverID)\prnms005.inf"
-					}
-				}
+    # DelaproMail-Druckertreiber anlegen
+    If (Test-WindowsVista) {
 
-			} else {
-				# Win8
+        Write-Verbose "Installiere Druckertreiber unter Vista"
 
-				# PRÜFEN! Alternative Xerox PS Color Class Driver V1.1, Oder HP Laserjet 2500 PS wird von Parallels verwendet
-				# oder Class Driver V1.2
-				$driverName = "Microsoft PS Class Driver"
-				If (Test-64Bit) {
-					# 64-Bit
-					$driverInf ="C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_amd64_2a40c5f594dc2ce8\prnms005.inf"
-				} else {
-					# 32-Bit!
-					$driverInf ="C:\Windows\System32\DriverStore\FileRepository\prnms005.inf_x86_b69a5a93baea1ad3\prnms005.inf"
-				}
+        rundll32 printui.dll,PrintUIEntry `
+            /if `
+            /b "$PrinterName" `
+            /f $env:WinDir\inf\ntprint.inf `
+            /r "$($DelaproPath)\Export\Pdf\Delapro.EPS" `
+            /m "Xerox Phaser 5400 PS"
 
-			}
-			Write-Verbose "Installiere Druckertreiber unter Win8/Win10 $driverName $driverInf"
-			Add-PrinterDriver -name $driverName -InfPath $driverInf
-			Write-Verbose "Installiere Druckerwarteschlange"
-			Add-Printer -Name $PrinterName -DriverName $driverName -PortName $Portname
-		}
-	}
+        return
+    }
 
+    If (Test-Windows7) {
+
+        Write-Verbose "Installiere Druckertreiber unter Win7"
+
+        rundll32 printui.dll,PrintUIEntry `
+            /if `
+            /b "$PrinterName" `
+            /f $env:WinDir\inf\ntprint.inf `
+            /r "$($DelaproPath)\Export\Pdf\Delapro.EPS" `
+            /m "Xerox Phaser 6120 PS"
+
+        return
+    }
+
+    #
+    # Windows 8 und neuer
+    #
+    $driverName = "Microsoft PS Class Driver"
+
+    #
+    # Ist der Treiber bereits installiert, brauchen wir weder
+    # DriverStore-Suche noch DISM.
+    #
+    $driverInstalled = $null -ne (
+        Get-PrinterDriver `
+            -Name $driverName `
+            -ErrorAction SilentlyContinue
+    )
+
+    If ($driverInstalled) {
+        Write-Verbose "Druckertreiber '$driverName' ist bereits installiert"
+    }
+
+    #
+    # Fast Path:
+    # Nur gezielt nach den bekannten INF-Dateien im DriverStore suchen.
+    #
+    If (-Not $driverInstalled) {
+
+        $driverInfs = @(
+            Get-MicrosoftPSClassDriverInf -Verbose:$VerbosePreference
+        )
+
+        foreach ($driverInf in $driverInfs) {
+
+            Write-Verbose "Versuche Druckertreiber '$driverName' aus:"
+            Write-Verbose "  $driverInf"
+
+            try {
+                Add-PrinterDriver `
+                    -Name $driverName `
+                    -InfPath $driverInf `
+                    -ErrorAction Stop
+
+                $driverInstalled = $true
+
+                Write-Verbose "Druckertreiber erfolgreich installiert: $driverInf"
+                break
+            }
+            catch {
+                Write-Verbose "Treiberpaket wurde abgelehnt: $driverInf"
+                Write-Verbose "Fehler: $($_.Exception.Message)"
+            }
+        }
+    }
+
+    #
+    # Langsamer Fallback:
+    #
+    # Falls prnms005.inf nicht gefunden wurde oder alle gefundenen
+    # Pakete abgelehnt wurden, Windows selbst nach dem Treiber fragen.
+    #
+    # Dieser Weg funktioniert auch dann noch, wenn Microsoft den
+    # INF-Dateinamen (z.B. prnms005.inf) geändert hat.
+    #
+    If (-Not $driverInstalled) {
+
+        Write-Verbose "Schnelle DriverStore-Suche erfolglos"
+        Write-Verbose "Ermittle '$driverName' über Windows/DISM - dies kann einige Zeit dauern"
+
+        $drivers = @(
+            Get-InstalledWindowsPrinterDriver `
+                -Vendor Microsoft `
+                -Driver $driverName
+        )
+
+        foreach ($driver in $drivers) {
+
+            $driverInf = $driver.OriginalFilename
+
+            If (-Not $driverInf) {
+                continue
+            }
+
+            Write-Verbose "Von Windows ermittelter Treiber: $driverInf"
+
+            #
+            # Besonders interessant:
+            # Hat Microsoft den bisher bekannten INF-Namen geändert?
+            #
+            $infName = Split-Path $driverInf -Leaf
+
+            If ($infName -ne 'prnms005.inf') {
+                Write-Warning "Der Microsoft PS Class Driver verwendet inzwischen '$infName' statt 'prnms005.inf'."
+                Write-Warning "Get-MicrosoftPSClassDriverInf sollte um diesen INF-Namen ergänzt werden."
+            }
+
+            try {
+                Add-PrinterDriver `
+                    -Name $driverName `
+                    -InfPath $driverInf `
+                    -ErrorAction Stop
+
+                $driverInstalled = $true
+
+                Write-Verbose "Druckertreiber erfolgreich installiert: $driverInf"
+                break
+            }
+            catch {
+                Write-Verbose "Auch der von Windows ermittelte Treiber wurde abgelehnt: $driverInf"
+                Write-Verbose "Fehler: $($_.Exception.Message)"
+            }
+        }
+    }
+
+    #
+    # Nicht einfach mit Add-Printer weitermachen:
+    # Ohne Treiber kann die Warteschlange ohnehin nicht angelegt werden.
+    #
+    If (-Not $driverInstalled) {
+        throw "Druckertreiber '$driverName' konnte weder über die schnelle DriverStore-Suche noch über die Windows-Treiberermittlung installiert werden."
+    }
+
+    #
+    # Sicherheitshalber nochmals überprüfen
+    #
+    If (-Not (Get-PrinterDriver -Name $driverName -ErrorAction SilentlyContinue)) {
+        throw "Druckertreiber '$driverName' wurde nach der Installation nicht gefunden."
+    }
+
+    Write-Verbose "Installiere Druckerwarteschlange"
+
+    Add-Printer `
+        -Name $PrinterName `
+        -DriverName $driverName `
+        -PortName $Portname `
+        -ErrorAction Stop
 }
 
 Function Add-DelaproNetPrinter {
