@@ -190,7 +190,7 @@ Copy-Printer -NewName TestPrinter
 
 ### Druckertreiber ID bei neuen Windows Featureupdate Versionen ermitteln
 
-Ermittelt die Buildnummer und DriverID gibt diese aus.
+Ermittelt die Buildnummer und DriverID gibt diese aus. Diese Variante wurde früher benötigt und der zweite Teil konnte dazu verwendet werden den Druckertreiber nachzuinstallieren wenn im Script etwas schief lief oder die ID noch nicht bekannt war. Ab 2026 wird aber die Ermittlung anders geführt, siehe dazu den Abschnitt "Microsoft PS Class Driver bei geänderten Windows-Versionen ermitteln".
 
 ```Powershell
 $driverName = "Microsoft PS Class Driver"
@@ -211,6 +211,117 @@ New-PrinterPort -Portname $PortName
 Add-Printer -Name $PrinterName -DriverName $driverName -PortName $Portname
 
 ```
+
+#### Microsoft PS Class Driver bei geänderten Windows-Versionen ermitteln
+
+Für den DelaproMail-Drucker wird unter Windows 8 und neuer normalerweise der **Microsoft PS Class Driver** verwendet.
+
+Die Installation sucht zunächst direkt im Windows DriverStore nach der bekannten INF-Datei:
+
+```text
+%windir%\System32\DriverStore\FileRepository\prnms005.inf_<Architektur>_*
+```
+
+Die hinter dem Paketnamen stehende DriverStore-ID bzw. der Hash wird **nicht mehr fest im Installationsskript hinterlegt**, da sich dieser Wert zwischen Windows-Versionen und teilweise auch zwischen unterschiedlichen Installationsmedien derselben Windows-Buildnummer ändern kann.
+
+Die direkte Suche nach `prnms005.inf` ist wesentlich schneller als die vollständige Ermittlung über `Get-WindowsDriver`.
+
+##### Falls die automatische Installation fehlschlägt
+
+Microsoft könnte in einer zukünftigen Windows-Version den Namen der INF-Datei oder das Treiberpaket ändern.
+
+In diesem Fall kann der Microsoft PS Class Driver unabhängig vom bisher bekannten INF-Namen über die Windows-Treiberdatenbank ermittelt werden:
+
+```powershell
+$driverName = "Microsoft PS Class Driver"
+
+$driver = @(
+    Get-InstalledWindowsPrinterDriver `
+        -Vendor Microsoft `
+        -Driver $driverName
+)
+
+$driver |
+    Select-Object `
+        HardwareDescription,
+        ProviderName,
+        Driver,
+        OriginalFilename
+```
+
+Die Ermittlung kann einige Zeit dauern, da Windows hierfür die vorhandenen Druckertreiberpakete untersucht.
+
+Entscheidend ist die Eigenschaft `OriginalFilename`.
+
+Beispiel:
+
+```text
+C:\Windows\System32\DriverStore\FileRepository\
+prnms005.inf_amd64_63b2b03e6b568836\
+prnms005.inf
+```
+
+Der ermittelte Treiber kann testweise direkt installiert werden:
+
+```powershell
+Add-PrinterDriver `
+    -Name $driverName `
+    -InfPath $driver[0].OriginalFilename `
+    -ErrorAction Stop
+```
+
+##### Falls Microsoft `prnms005.inf` umbenennt
+
+Endet `OriginalFilename` nicht mehr auf
+
+```text
+prnms005.inf
+```
+
+sondern beispielsweise auf einen neuen INF-Namen, sollte dieser Name zusätzlich in `Get-MicrosoftPSClassDriverInf` aufgenommen werden.
+
+Beispiel:
+
+```powershell
+[String[]]$InfNames = @(
+    'prnms005.inf',
+    'prnms006.inf'
+)
+```
+
+Der bisherige Name sollte dabei **nicht entfernt**, sondern der neue Name ergänzt werden, damit ältere Windows-Versionen weiterhin unterstützt werden.
+
+Danach verwendet die normale Installation wieder die schnelle direkte DriverStore-Suche. Die langsamere Ermittlung über `Get-InstalledWindowsPrinterDriver` bleibt lediglich als Fallback bestehen.
+
+##### Falls auch `Microsoft PS Class Driver` nicht mehr gefunden wird
+
+Falls
+
+```powershell
+Get-InstalledWindowsPrinterDriver `
+    -Vendor Microsoft `
+    -Driver "Microsoft PS Class Driver"
+```
+
+keinen Treffer mehr liefert, hat Microsoft möglicherweise nicht nur den INF-Dateinamen, sondern auch den Treibernamen bzw. das mit Windows ausgelieferte Treiberpaket geändert oder entfernt.
+
+Zur Diagnose können zunächst alle von Microsoft bereitgestellten Druckertreiberpakete angezeigt werden:
+
+```powershell
+Get-WindowsDriver -Online -All |
+    Where-Object {
+        $_.ClassName -eq 'Printer' -and
+        $_.ProviderName -eq 'Microsoft'
+    } |
+    Select-Object `
+        Driver,
+        OriginalFileName,
+        ProviderName,
+        ClassName,
+        Version
+```
+
+In diesem Fall muss geprüft werden, welcher aktuelle PostScript-Treiber als Ersatz für den bisherigen **Microsoft PS Class Driver** geeignet ist.
 
 ### Windowsdruckertreiber aus Windows-Updatekatalog laden
 
