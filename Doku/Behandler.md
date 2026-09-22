@@ -51,7 +51,7 @@ Behandler: @LTRIM (AVD_Master(36))@, @BEH_NameOrt (Auftrag->KunNummer, Auftrag->
 .ENDIF
 ```
 
-oder Ausgabe anstatt der XML-Auftragsnummer, dabei ist Behandler bündig zur Zahnfarbe (falls ausgegeben) und der Behandler wird nur ausgegeben wenn auch einer Hinterlegt wurde:
+oder Ausgabe anstatt der XML-Auftragsnummer, dabei ist Behandler bündig zur Zahnfarbe (falls ausgegeben) und der Behandler wird nur ausgegeben wenn auch einer hinterlegt wurde:
 ```
 .IF DLP_BehandlerAktiv() .AND. .NOT. EMPTY (AVD_Master (36))
 .* falls die Behandlernummer benötigt wird:  !12@LTRIM (AVD_LTExtAusgabe () + "  ") + "          Behandler: " + LTRIM (AVD_Master(36)) + ", " + BEH_NameOrt (Auftrag->KunNummer, Auftrag->Behandler)@
