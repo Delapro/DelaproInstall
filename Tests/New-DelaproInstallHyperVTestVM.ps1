@@ -1501,6 +1501,7 @@ if ($PSCmdlet.ShouldProcess($VmName, 'Hyper-V-Test-VM erstellen')) {
     Set-VMProcessor -VMName $VmName -Count $ProcessorCount
     Set-VMMemory -VMName $VmName -DynamicMemoryEnabled $true -MinimumBytes 2GB -StartupBytes $MemoryStartupBytes -MaximumBytes ([Math]::Max($MemoryStartupBytes, 8GB))
     Set-VM -VMName $VmName -Notes $vmNotes | Out-Null
+    Set-VM -VMName $VmName -AutomaticCheckpointsEnabled $false | Out-Null
 
     Set-VMFirmware -VMName $VmName -EnableSecureBoot On -SecureBootTemplate 'MicrosoftWindows'
 
