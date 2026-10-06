@@ -1102,6 +1102,7 @@ if ($PSCmdlet.ShouldProcess($VmName, 'Ubuntu-26.04-Hyper-V-VM erstellen')) {
         Set-VMMemory -VMName $VmName -DynamicMemoryEnabled $false -StartupBytes $MemoryStartupBytes
     }
     Set-VM -VMName $VmName -Notes $vmNotes | Out-Null
+    Set-VM -VMName $VmName -AutomaticCheckpointsEnabled $false | Out-Null
 
     if ($DisableSecureBoot) {
         Set-VMFirmware -VMName $VmName -EnableSecureBoot Off
