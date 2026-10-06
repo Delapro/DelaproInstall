@@ -906,7 +906,7 @@ function New-DelaproAutounattendXml {
             </ImageInstall>
             <UserData>
                 <AcceptEula>true</AcceptEula>
-                <FullName>Delapro Test</FullName>
+                <FullName>DelaproTest</FullName>
                 <Organization>Delapro</Organization>
 $productKeyBlock            </UserData>
         </component>
@@ -940,7 +940,7 @@ $administratorPasswordBlock                <LocalAccounts>
                             <Value>$password</Value>
                             <PlainText>true</PlainText>
                         </Password>
-                        <DisplayName>Delapro Test</DisplayName>
+                        <DisplayName>DelaproTest</DisplayName>
                         <Group>Administrators</Group>
                         <Name>$user</Name>
                     </LocalAccount>
