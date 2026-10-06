@@ -1029,6 +1029,10 @@ $script:Failure = $null
 $config = $null
 
 try {
+    # Das fuer die automatische Anmeldung verwendete lokale Testkonto soll nicht ablaufen.
+    Set-LocalUser -Name $env:USERNAME -PasswordNeverExpires $true -ErrorAction Stop
+    Write-Host "Kennwortablauf fuer lokalen Benutzer '$env:USERNAME' deaktiviert."
+    
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
     $mediaRoot = Split-Path -Parent $PSCommandPath
