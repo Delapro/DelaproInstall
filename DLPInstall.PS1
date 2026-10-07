@@ -3853,50 +3853,115 @@ Function Install-AnyDesk {
 }
 
 Function Install-RustDesk {
-	[CmdletBinding()]
-	Param(
-		[System.String]$tempDirectory="$Env:TEMP\",
-		[System.String]$DestinationPath="C:\Delapro",
-		[System.String]$CreateDesktopLink="easy Internet Fernwartung (RustDesk).lnk",
-		[Switch]$NoDesktopLink
-	)
+    [CmdletBinding()]
+    Param(
+        [System.String]$tempDirectory="$Env:TEMP\",
+        [System.String]$DestinationPath="C:\Delapro",
+        [System.String]$CreateDesktopLink="easy Internet Fernwartung (RustDesk).lnk",
+        [Switch]$NoDesktopLink
+    )
 
-	If (Test-Path $DestinationPath) {
-		If (-not (Test-Path $tempDirectory)) {
-			New-Item $tempDirectory -ItemType Directory
-		}
-		# RustDesk Fernwartung einrichten
-		If (-Not (Test-Path $DestinationPath\Fernwartung)) {
-			New-Item -path $DestinationPath\Fernwartung -Type Directory
-		}
-		$version = "1.4.7"
-		Start-BitsTransfer "https://github.com/rustdesk/rustdesk/releases/download/$($version)/rustdesk-$($version)-x86_64.exe"  -Destination $tempDirectory
-		# prüfen, ob es sich überhaupt um eine neuere Version handelt
-		If ((-not (Test-Path $DestinationPath\Fernwartung\RustDesk.exe)) -or ([Version](Get-Item -Path "$tempDirectory\rustdesk-$($version)-x86_64.exe").VersionInfo.ProductVersion.Replace('+','.')) -gt ([Version](Get-Item -Path $DestinationPath\Fernwartung\RustDesk.exe).VersionInfo.ProductVersion.Replace('+','.'))) {
-			Unblock-File "$($tempDirectory)rustdesk-$($version)-x86_64.exe"
-			Rename-Item "$($tempDirectory)rustdesk-$($version)-x86_64.exe" "$($tempDirectory)rustdesk.exe" -Force
-			If (Test-Path -Path "$($DestinationPath)\Fernwartung\RustDesk.exe") {
-				# alte Version umbennen, damit es keine Fehlermeldung gibt, falls diese gerade aktiv ist
-				If (Test-Path -Path "$($DestinationPath)\Fernwartung\RustDesk.exe.alt") {
-					Remove-Item -Path "$($DestinationPath)\Fernwartung\RustDesk.exe.alt"
-				}
-				Rename-Item -Path "$($DestinationPath)\Fernwartung\RustDesk.exe" -NewName "$($DestinationPath)\Fernwartung\RustDesk.exe.alt"
-			}
-			Copy-Item $tempDirectory\RustDesk.exe $DestinationPath\Fernwartung -Force
-			If (-Not ($NoDesktopLink)) {
-				# Link auf Desktop erstellen, Text: easy Internet Fernwartung (RustDesk)
-				If (Test-Admin) {
-					New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\RustDesk.exe" -LinkFilename $CreateDesktopLink -WorkingDirectory "$($DestinationPath)\Fernwartung\"
-				} else {
-					New-FileShortcut -FileTarget "$($DestinationPath)\Fernwartung\RustDesk.exe" -LinkFilename $CreateDesktopLink -Folder (Get-DesktopFolder -CurrentUser) -WorkingDirectory "$($DestinationPath)\Fernwartung\"
-				}
-			}
-		} else {
-			Write-Verbose "Keine neuere Version vorhanden"
-		}
-	} else {
-		Write-Error "$DestinationPath existiert nicht!"
-	}
+    If (Test-Path $DestinationPath) {
+        If (-not (Test-Path $tempDirectory)) {
+            New-Item $tempDirectory -ItemType Directory
+        }
+
+        # RustDesk Fernwartung einrichten
+        If (-Not (Test-Path $DestinationPath\Fernwartung)) {
+            New-Item -Path $DestinationPath\Fernwartung -Type Directory
+        }
+
+        # aktuelles stabiles RustDesk-Release von GitHub ermitteln
+        $release = Invoke-RestMethod `
+            -Uri 'https://api.github.com/repos/rustdesk/rustdesk/releases/latest' `
+            -Headers @{ 'User-Agent' = 'DelaproInstall' } `
+            -ErrorAction Stop
+
+        $version = $release.tag_name
+
+        # passende Windows-Architektur auswählen
+        If (($env:PROCESSOR_ARCHITECTURE -eq 'ARM64') -or
+            ($env:PROCESSOR_ARCHITEW6432 -eq 'ARM64')) {
+            $architecture = 'aarch64'
+        }
+        else {
+            $architecture = 'x86_64'
+        }
+
+        $assetName = "rustdesk-$($version)-$($architecture).exe"
+        $asset = $release.assets |
+            Where-Object { $_.name -eq $assetName } |
+            Select-Object -First 1
+
+        If ($null -eq $asset) {
+            throw "RustDesk-Download '$assetName' wurde im Release $version nicht gefunden!"
+        }
+
+        $downloadFile = Join-Path -Path $tempDirectory -ChildPath $assetName
+
+        Write-Verbose "RustDesk Version: $version"
+        Write-Verbose "RustDesk Architektur: $architecture"
+        Write-Verbose "Download: $($asset.browser_download_url)"
+
+        Start-BitsTransfer `
+            -Source $asset.browser_download_url `
+            -Destination $downloadFile
+
+        # prüfen, ob es sich überhaupt um eine neuere Version handelt
+        If (
+            (-not (Test-Path "$DestinationPath\Fernwartung\RustDesk.exe")) -or
+            (
+                ([Version](Get-Item -Path $downloadFile).VersionInfo.ProductVersion.Replace('+','.')) -gt
+                ([Version](Get-Item -Path "$DestinationPath\Fernwartung\RustDesk.exe").VersionInfo.ProductVersion.Replace('+','.'))
+            )
+        ) {
+            Unblock-File $downloadFile
+
+            $tempRustDesk = Join-Path -Path $tempDirectory -ChildPath 'RustDesk.exe'
+            Move-Item -Path $downloadFile -Destination $tempRustDesk -Force
+
+            If (Test-Path -Path "$DestinationPath\Fernwartung\RustDesk.exe") {
+                # alte Version umbenennen, damit es keine Fehlermeldung gibt,
+                # falls diese gerade aktiv ist
+                If (Test-Path -Path "$DestinationPath\Fernwartung\RustDesk.exe.alt") {
+                    Remove-Item -Path "$DestinationPath\Fernwartung\RustDesk.exe.alt"
+                }
+
+                Rename-Item `
+                    -Path "$DestinationPath\Fernwartung\RustDesk.exe" `
+                    -NewName "$DestinationPath\Fernwartung\RustDesk.exe.alt"
+            }
+
+            Copy-Item `
+                -Path $tempRustDesk `
+                -Destination "$DestinationPath\Fernwartung" `
+                -Force
+
+            If (-Not $NoDesktopLink) {
+                # Link auf Desktop erstellen
+                If (Test-Admin) {
+                    New-FileShortcut `
+                        -FileTarget "$DestinationPath\Fernwartung\RustDesk.exe" `
+                        -LinkFilename $CreateDesktopLink `
+                        -WorkingDirectory "$DestinationPath\Fernwartung\"
+                }
+                else {
+                    New-FileShortcut `
+                        -FileTarget "$DestinationPath\Fernwartung\RustDesk.exe" `
+                        -LinkFilename $CreateDesktopLink `
+                        -Folder (Get-DesktopFolder -CurrentUser) `
+                        -WorkingDirectory "$DestinationPath\Fernwartung\"
+                }
+            }
+        }
+        else {
+            Write-Verbose "Keine neuere Version vorhanden"
+            Remove-Item -Path $downloadFile -Force -ErrorAction SilentlyContinue
+        }
+    }
+    else {
+        Write-Error "$DestinationPath existiert nicht!"
+    }
 }
 
 Function Invoke-SysInternalTool {
