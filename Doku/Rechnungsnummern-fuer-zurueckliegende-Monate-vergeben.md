@@ -10,6 +10,9 @@ Es soll eine Rechnung mit einer Rechnungsnummer aus einem früheren Abrechnungsm
 
 Für die Rechnungsnummernvergabe kann in DeLaPro vorübergehend das **Buchungsdatum** auf den gewünschten Abrechnungsmonat gesetzt werden. Das Windows-Systemdatum muss dafür nicht verändert werden.
 
+> [!NOTE]
+> Die hier beschriebene Lösung kann nur von jemand angewandt werden, der auch die passenden Rechte im Programm hat.
+
 ### 1. Rechnungsnummer beim Kunden prüfen
 
 1. Den betreffenden Kunden aufrufen.
@@ -40,7 +43,7 @@ Für die Rechnungsnummernvergabe kann in DeLaPro vorübergehend das **Buchungsda
 
 1. Den gewünschten Auftrag aufrufen.
 2. Die Rechnung auf dem üblichen Weg erstellen bzw. drucken.
-3. Kontrollieren, ob die Rechnungsnummer den gewünschten Abrechnungsmonat **06/2026** und die laufende Nummer **001** enthält. Die Darstellung auf dem Rechnungsformular kann von der intern gespeicherten Nummer abweichen.
+3. Kontrollieren, ob die Rechnungsnummer den gewünschten Abrechnungsmonat **06/2026** und die laufende Nummer **001** enthält, in der Auftragsverwaltung wird 06001 dargestellt. Die Darstellung auf dem Rechnungsformular kann von der intern gespeicherten Nummer abweichen.
 4. Bei den Nummerneinstellungen des Kunden prüfen, ob der Rechnungsnummernzähler für die nächste Rechnung auf **2** weitergeschaltet wurde.
 
 ### 4. Buchungsdatum wieder zurückstellen
@@ -53,6 +56,8 @@ Für die Rechnungsnummernvergabe kann in DeLaPro vorübergehend das **Buchungsda
 4. Die Maske verlassen, ohne eine Monatsaufstellung zu verbuchen.
 
 Damit werden spätere Vorgänge nicht unbeabsichtigt mit dem vorübergehend eingestellten Juni-Datum bearbeitet.
+
+Alternativ kann man auch einfach das Programm verlassen und neu starten.
 
 ## Weitere Rechnungen für denselben zurückliegenden Monat
 
