@@ -1,11 +1,10 @@
 # Delapro wird nur in einem kleinen Fenster angezeigt
 
 **Zielgruppe:** Anwender und IT-Betreuer  
-**Stand:** 16. Oktober 2026
 
 ## Problem
 
-Delapro erscheint auf einem Windows-PC nur in einem kleinen Fenster und lässt sich dadurch schlecht bedienen.
+Delapro erscheint auf einem Windows-PC nur in einem kleinen Fenster oder erscheint unvollständig und lässt sich dadurch schlecht bedienen.
 
 **Empfehlung:** Zunächst das Fenster mit der Maus vergrößern. Nur wenn das nicht funktioniert, sollte die IT-Betreuung die gespeicherten Fenstereinstellungen zurücksetzen.
 
@@ -17,8 +16,6 @@ Delapro erscheint auf einem Windows-PC nur in einem kleinen Fenster und lässt s
 4. Die Maustaste loslassen und prüfen, ob die Größe passt.
 5. Falls nötig, das Ziehen wiederholen. Delapro übernimmt möglicherweise nicht jede kleine Änderung sofort, sondern erst eine zur verwendeten Schrift passende Fenstergröße.
 6. Bei Bedarf Delapro schließen und erneut starten, um die Darstellung zu prüfen.
-
-**Wenn sich das Fenster so nicht sinnvoll vergrößern lässt:** Die IT-Betreuung informieren. Hilfreich sind ein Screenshot (ohne vertrauliche Daten) und die Angabe, ob Delapro direkt am PC oder per Remotedesktop (RDP) genutzt wird.
 
 ## 2. Für IT-Betreuer: Fenstereinstellungen zurücksetzen
 
@@ -86,7 +83,3 @@ Der Reset allein erzeugt also **nicht automatisch ein großes Fenster**: Er erm�
 - [DelaproInstall auf GitHub – Einstellungen für Bildschirmdarstellung](https://github.com/Delapro/DelaproInstall#einstellungen-f%C3%BCr-bildschirmdarstellung)
 - [Start mit unterschiedlichen Auflösungen](https://github.com/Delapro/DelaproInstall/blob/master/Doku/StartMitUnterschiedlichenAufl%C3%B6sungen.md)
 - [Historische Installationsanleitung (PDF), Seite 8](https://www.easysoftware.de/Demo/Install.pdf)
-
----
-
-**Ablage im Repository:** `Doku/Delapro_Fenster_zu_klein.md`
