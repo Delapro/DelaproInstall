@@ -1,7 +1,6 @@
 # Delapro: PowerShell-Cmdlets bereitstellen
 
 **Zielgruppe:** IT-Betreuer und technisch versierte Anwender  
-**Stand:** 16. Oktober 2026
 
 Die PowerShell-Cmdlets aus dem Projekt **DelaproInstall** können für unterschiedliche Aufgaben rund um Delapro genutzt werden. Diese Anleitung beschreibt ausschließlich, **wie die Cmdlets bereitgestellt werden**. Die Durchführung einer bestimmten Aufgabe wird in der jeweils zugehörigen Anleitung erläutert.
 
@@ -12,13 +11,9 @@ Die PowerShell-Cmdlets aus dem Projekt **DelaproInstall** können für unterschi
 3. Auf dem betreffenden Windows-PC **PowerShell** öffnen (z. B. über die Suche im Startmenü).
    - Für **benutzerbezogene Einstellungen**, etwa die Delapro-Fenstergröße, PowerShell **als normaler, betroffener Windows-Benutzer** starten, **nicht als Administrator** und nicht unter einem anderen Benutzerkonto.
    - Ob für andere Aufgaben Administratorrechte notwendig sind, ergibt sich aus der jeweiligen Aufgabenbeschreibung.
-4. Die kopierte Befehlszeile mit **Strg + V** in PowerShell einfügen und mit **Enter** ausführen.
-5. Der vorbereitete Aufruf lädt die benötigten Skriptbestandteile herunter und stellt die Cmdlets bereit. Dabei kann sich **ein weiteres PowerShell-Fenster** öffnen. **Dort** weiterarbeiten.
+4. Die kopierte Befehlszeile mit **Strg + V** oder Windows-Zwischenablage in PowerShell einfügen und mit **Enter** ausführen.
+5. Der vorbereitete Aufruf lädt die benötigten Skriptbestandteile herunter und stellt die Cmdlets bereit.
 6. Sobald wieder eine Eingabeaufforderung sichtbar ist, das für die jeweilige Aufgabe benötigte Cmdlet ausführen.
-
-**Es ist nicht nötig, `DLPInstall.PS1` manuell von GitHub herunterzuladen.** Die Schaltfläche `easy.PS1` stellt den dafür vorgesehenen Weg bereit.
-
-> **Wichtig:** Die Schaltflächen **`Install`**, **`Cmdlets`** und **`easy.PS1`** auf der Webseite sind nicht gleichbedeutend. Für diese Anleitung wird ausdrücklich **`easy.PS1`** verwendet. Die kopierte Befehlszeile führt Skriptcode aus dem offiziellen Delapro-GitHub-Projekt aus; diesen Weg nur auf entsprechend vertrauenswürdigen und dafür freigegebenen PCs verwenden.
 
 ## Prüfen, ob die Cmdlets verfügbar sind
 
@@ -40,7 +35,3 @@ Das ist **nur ein Beispiel**, kein notwendiger Schritt für jede Aufgabe. Welche
 
 - [Webseite mit der Schaltfläche `easy.PS1`](https://easysoftware.de/ps/)
 - [DelaproInstall auf GitHub](https://github.com/Delapro/DelaproInstall)
-
----
-
-**Ablage im Repository:** `Doku/PowerShell_Cmdlets_bereitstellen.md`
