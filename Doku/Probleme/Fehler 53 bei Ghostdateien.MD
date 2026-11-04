@@ -12,3 +12,6 @@ IF /I %CD% == C:\DELAGAME (
   SET PDFFILE=C:\DELAPRO\EXPORT\PDF\DELAPRO.PDF
 )
 ```
+
+
+Problem kann auch bei Windowsformularen (DlpXmlPr) auftauchen, dann liegts daran, dass z.B. die Delapro.EPS bzw. Delapro.PDF-Datei (evtl. durch Probleme mit Ghostscript) nicht erstellt wurde und am Ende die PDF welche in KZBVMEtaMail.XML angegeben ist nicht existiert.
