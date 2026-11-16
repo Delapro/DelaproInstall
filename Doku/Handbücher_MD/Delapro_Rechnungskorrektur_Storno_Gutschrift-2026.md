@@ -27,13 +27,13 @@ Prüfen Sie die folgenden Fragen in dieser Reihenfolge:
 
 | Fall | Entscheidungskriterium | Vorgehen | Beispiel | Status / Belege |
 | --- | --- | --- | --- | --- |
-| 1. Rechnung direkt korrigieren | Keine abgeschlossene Monatsaufstellung; ursprüngliche Rechnung kann ersetzt werden | Rechnung zurücknehmen, Auftrag ändern, neue Rechnung erstellen | 100 € werden zu 90 € | `RZR` |
-| 2. Separate Korrekturrechnung | Keine abgeschlossene Monatsaufstellung; ursprüngliche Rechnung soll bestehen bleiben | Neuen Auftrag mit Differenzpositionen abrechnen | 100 € und −10 € ergeben 90 € | Ursprüngliche und zusätzliche Rechnung (`R` / `R`) |
-| 3. Rechnung nach Monatsabschluss ändern | Rechnung ist in einer abgeschlossenen Monatsaufstellung enthalten | Vollständige Gutschrift über die alte Rechnung und neue korrekte Rechnung | +100 € / −100 € / +90 € | Gutschrift (`G`) und neue Rechnung (`R`) |
-| 4. Falsche Belegart | Rechnung wurde irrtümlich statt eines Kostenvoranschlags erstellt; noch nicht monatsabgerechnet | Rechnung stornieren und benötigten Kostenvoranschlag erstellen | Rechnung über 100 € entfällt | Stornierte Rechnung (`RS`) |
-| 5. Falsche Praxis | Rechnung wurde an den falschen Kunden adressiert; noch nicht monatsabgerechnet | Falsche Rechnung stornieren, neue Rechnung für richtigen Kunden erstellen | Kunde 1: 0 €; Kunde 2: 100 € | `RS` und neuer Auftrag mit `R` |
-| 6. Gutschrift stornieren | Eine bereits ausgestellte Gutschrift ist falsch oder unbegründet | **Stornogutschrift** zum Ausgleich der Gutschrift erstellen | −100 € und +100 € ergeben 0 € | Gutschrift und zugehörige Stornogutschrift |
-| 7. Ungewollte Rechnung nach Monatsabschluss | Rechnung hätte nie entstehen dürfen, ist aber bereits monatsabgerechnet | Mit einer Gutschrift vollständig ausgleichen; keine neue Rechnung, sofern keine Leistung zu berechnen ist | +100 € und −100 € ergeben 0 € | Ursprüngliche Rechnung und Gutschrift (`G`) |
+| 1. Rechnung direkt korrigieren | Keine abgeschlossene Monatsaufstellung; ursprüngliche Rechnung kann ersetzt werden | Rechnung zurücknehmen, Auftrag ändern, neue Rechnung erstellen | 1000 € werden zu 900 € | `RZR` |
+| 2. Separate Korrekturrechnung | Keine abgeschlossene Monatsaufstellung; ursprüngliche Rechnung soll bestehen bleiben | Neuen Auftrag mit Differenzpositionen abrechnen | 1000 € und −100 € ergeben 900 € | Ursprüngliche und zusätzliche Rechnung (`R` / `R`) |
+| 3. Rechnung nach Monatsabschluss ändern | Rechnung ist in einer abgeschlossenen Monatsaufstellung enthalten | Vollständige Gutschrift über die alte Rechnung und neue korrekte Rechnung | +1000 € / −1000 € / +900 € | Gutschrift (`G`) und neue Rechnung (`R`) |
+| 4. Falsche Belegart | Rechnung wurde irrtümlich statt eines Kostenvoranschlags erstellt; noch nicht monatsabgerechnet | Rechnung stornieren und benötigten Kostenvoranschlag erstellen | Rechnung über 1000 € entfällt | Stornierte Rechnung (`RS`) |
+| 5. Falsche Praxis | Rechnung wurde an den falschen Kunden adressiert; noch nicht monatsabgerechnet | Falsche Rechnung stornieren, neue Rechnung für richtigen Kunden erstellen | Kunde 1: 0 €; Kunde 2: 1000 € | `RS` und neuer Auftrag mit `R` |
+| 6. Gutschrift stornieren | Eine bereits ausgestellte Gutschrift ist falsch oder unbegründet | **Stornogutschrift** zum Ausgleich der Gutschrift erstellen | −1000 € und +1000 € ergeben 0 € | Gutschrift und zugehörige Stornogutschrift |
+| 7. Ungewollte Rechnung nach Monatsabschluss | Rechnung hätte nie entstehen dürfen, ist aber bereits monatsabgerechnet | Mit einer Gutschrift vollständig ausgleichen; keine neue Rechnung, sofern keine Leistung zu berechnen ist | +1000 € und −1000 € ergeben 0 € | Ursprüngliche Rechnung und Gutschrift (`G`) |
 
 ## Fall 1: Rechnung zurücknehmen und neu erstellen (`RZR`)
 
