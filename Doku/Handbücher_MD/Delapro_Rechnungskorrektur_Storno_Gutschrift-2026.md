@@ -4,7 +4,7 @@ In DELAPRO werden Aufträge durch den jeweiligen Ausdruck zu Rechnungen, Kostenv
 
 Heute werden Rechnungen häufig direkt elektronisch übermittelt. Eine schon versandte Rechnung kann deshalb im gegenseitigen Einvernehmen durchaus noch kurzfristig ersetzt werden. Entscheidend ist nicht allein der Versand, sondern ob die ursprüngliche Fassung beim Empfänger noch eindeutig durch die korrigierte Fassung ersetzt werden kann.
 
-Die folgenden Fälle helfen bei der Auswahl des passenden Vorgehens. Die Beispiele verwenden einen Auftrag über **100,00 €**, der gegebenenfalls auf **90,00 €** korrigiert wird.
+Die folgenden Fälle helfen bei der Auswahl des passenden Vorgehens. Die Beispiele verwenden einen Auftrag über **1000,00 €**, der gegebenenfalls auf **900,00 €** korrigiert wird.
 
 > **Wichtig:** Eine zurückgenommene Rechnung, eine Stornorechnung und eine Gutschrift sind unterschiedliche Vorgänge. Bereits ausgestellte Dokumente und ihre Änderungen müssen nachvollziehbar bleiben. Dies gilt auch bei PDF- und E-Rechnungen.
 
@@ -52,7 +52,7 @@ Prüfen Sie die folgenden Fragen in dieser Reihenfolge:
 4. Auftrag speichern und die korrigierte Rechnung erneut erstellen.
 5. Falls bereits eine Rechnung versandt wurde, die korrigierte Fassung an die Praxis übermitteln und darauf hinweisen, dass sie die bisherige ersetzt.
 
-**Beispiel:** Ein Auftrag wurde über 100,00 € abgerechnet. Eine Position über 10,00 € war zu viel. Nach der Korrektur beträgt die gültige Rechnung **90,00 €**.
+**Beispiel:** Ein Auftrag wurde über 1000,00 € abgerechnet. Eine Position über 100,00 € war zu viel. Nach der Korrektur beträgt die gültige Rechnung **900,00 €**.
 
 Der Auftragsstatus lautet **`RZR`**:
 
@@ -77,7 +77,7 @@ Der Auftragsstatus lautet **`RZR`**:
 3. Zu viel berechnete Positionen mit negativer Menge erfassen; vergessene Positionen ergänzen.
 4. Den Korrekturauftrag als Rechnung ausgeben und der Praxis mit Bezug zur ursprünglichen Rechnung übermitteln.
 
-**Beispiel:** Ursprüngliche Rechnung **+100,00 €**, zusätzliche Korrekturrechnung **−10,00 €**. Zusammen sind **90,00 €** zu bezahlen.
+**Beispiel:** Ursprüngliche Rechnung **+1000,00 €**, zusätzliche Korrekturrechnung **−100,00 €**. Zusammen sind **900,00 €** zu bezahlen.
 
 In der Monatsaufstellung werden die beiden Rechnungen getrennt aufgeführt. Dies ist der im ursprünglichen DELAPRO-Handbuch beschriebene Weg für bereits außer Haus befindliche Rechnungen, deren ursprünglicher Beleg nicht mehr ersetzt werden kann.
 
@@ -99,12 +99,12 @@ In der Monatsaufstellung werden die beiden Rechnungen getrennt aufgeführt. Dies
 
 | Abrechnung | Beleg | Betrag |
 | --- | --- | ---: |
-| Alter Monat | Ursprüngliche Rechnung | +100,00 € |
-| Neuer Monat | Gutschrift zur ursprünglichen Rechnung | −100,00 € |
-| Neuer Monat | Neue korrekte Rechnung | +90,00 € |
-| **Insgesamt** | | **90,00 €** |
+| Alter Monat | Ursprüngliche Rechnung | +1000,00 € |
+| Neuer Monat | Gutschrift zur ursprünglichen Rechnung | −1000,00 € |
+| Neuer Monat | Neue korrekte Rechnung | +900,00 € |
+| **Insgesamt** | | **900,00 €** |
 
-Im neuen Monat beträgt die Differenz **−10,00 €**. Die alte Monatsaufstellung bleibt unverändert.
+Im neuen Monat beträgt die Differenz **−100,00 €**. Die alte Monatsaufstellung bleibt unverändert.
 
 **Hinweis:** Das historische Handbuch beschreibt hierfür eine automatische Folge aus Gutschrift und anschließend bearbeitbarer neuer Rechnung. Welche Menüs dafür in der eingesetzten DELAPRO-Version verwendet werden, kann abweichen.
 
@@ -122,7 +122,7 @@ Im neuen Monat beträgt die Differenz **−10,00 €**. Die alte Monatsaufstellu
 3. Anschließend den benötigten Kostenvoranschlag erstellen, gegebenenfalls in einem neuen Auftrag.
 4. Wurde die Rechnung bereits verschickt, die Praxis über das Storno informieren und den Stornobeleg übermitteln.
 
-**Ergebnis:** Die Rechnung über 100,00 € ist aufgehoben; der Kostenvoranschlag ist **keine abrechenbare Rechnung**. Der Status der stornierten Rechnung lautet **`RS`** (`R` = Rechnung, `S` = Storno).
+**Ergebnis:** Die Rechnung über 1000,00 € ist aufgehoben; der Kostenvoranschlag ist **keine abrechenbare Rechnung**. Der Status der stornierten Rechnung lautet **`RS`** (`R` = Rechnung, `S` = Storno).
 
 Ist die ungewollte Rechnung bereits in einer abgeschlossenen Monatsaufstellung enthalten, gilt **Fall 7**.
 
@@ -141,7 +141,7 @@ Ist die ungewollte Rechnung bereits in einer abgeschlossenen Monatsaufstellung e
 4. Die Rechnung für Kunde 2 erstellen und übermitteln.
 5. Stornobeleg und fehlerhaften ursprünglichen Beleg nachvollziehbar aufbewahren.
 
-**Ergebnis:** Bei Kunde 1 verbleibt aus diesem Vorgang kein Rechnungsbetrag; Kunde 2 erhält die gültige Rechnung über 100,00 €. Der ursprüngliche Auftrag zeigt **`RS`**, der neue Auftrag **`R`**.
+**Ergebnis:** Bei Kunde 1 verbleibt aus diesem Vorgang kein Rechnungsbetrag; Kunde 2 erhält die gültige Rechnung über 1000,00 €. Der ursprüngliche Auftrag zeigt **`RS`**, der neue Auftrag **`R`**.
 
 **Wichtig:** Eine bereits ausgestellte Rechnung wird für einen anderen Kunden nicht einfach per `RZR` umadressiert. Hier ist der eigenständige Storno- und Neurechnungsvorgang erforderlich.
 
@@ -164,8 +164,8 @@ Ist die ungewollte Rechnung bereits in einer abgeschlossenen Monatsaufstellung e
 
 | Beleg | Betrag |
 | --- | ---: |
-| Ursprüngliche Gutschrift | −100,00 € |
-| Stornogutschrift | +100,00 € |
+| Ursprüngliche Gutschrift | −1000,00 € |
+| Stornogutschrift | +1000,00 € |
 | **Auswirkung beider Belege zusammen** | **0,00 €** |
 
 Die Stornogutschrift gleicht **die Wirkung der Gutschrift** aus. Eine möglicherweise vorhandene ursprüngliche Rechnung wird dadurch nicht aufgehoben.
@@ -174,10 +174,10 @@ Die Stornogutschrift gleicht **die Wirkung der Gutschrift** aus. Eine möglicher
 
 | Beleg | Betrag |
 | --- | ---: |
-| Fehlerhafte Gutschrift | −100,00 € |
-| Stornogutschrift | +100,00 € |
-| Neue korrekte Gutschrift | −90,00 € |
-| **Verbleibende Gutschrift** | **−90,00 €** |
+| Fehlerhafte Gutschrift | −1000,00 € |
+| Stornogutschrift | +1000,00 € |
+| Neue korrekte Gutschrift | −900,00 € |
+| **Verbleibende Gutschrift** | **−900,00 €** |
 
 War die fehlerhafte Gutschrift bereits Bestandteil einer abgeschlossenen Monatsaufstellung, muss ihr Ausgleich in der nachfolgenden Abrechnung berücksichtigt werden. Bereits abgeschlossene Monatsaufstellungen werden nicht nachträglich stillschweigend verändert.
 
@@ -198,7 +198,7 @@ War die fehlerhafte Gutschrift bereits Bestandteil einer abgeschlossenen Monatsa
 3. Die Gutschrift mit Bezug auf die Rechnung an die Praxis übermitteln.
 4. Die Gutschrift in der nächsten Monatsaufstellung berücksichtigen.
 
-**Beispiel:** Rechnung im alten Monat **+100,00 €**, Gutschrift im neuen Monat **−100,00 €**. Der Vorgang ist damit insgesamt mit **0,00 €** ausgeglichen.
+**Beispiel:** Rechnung im alten Monat **+1000,00 €**, Gutschrift im neuen Monat **−1000,00 €**. Der Vorgang ist damit insgesamt mit **0,00 €** ausgeglichen.
 
 **Sonderfall:** Falls eine Monatsaufstellung zwar erstellt wurde, aber noch nicht verbindlich ausgegeben und vollständig zurückgenommen werden kann, beschreibt das historische Handbuch auch die Rücknahme der Monatsaufstellung mit anschließender Stornorechnung und erneutem Monatsabschluss. Dies ist nur für tatsächlich rücknehmbare Aufstellungen geeignet, nicht für einen bereits abgeschlossenen und übermittelten Abrechnungsmonat.
 
